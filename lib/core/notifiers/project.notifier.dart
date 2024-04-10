@@ -39,7 +39,9 @@ class ProjectNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
             // Navigator.pop(context);
           }
         } else {
@@ -51,9 +53,12 @@ class ProjectNotifier with ChangeNotifier {
         }
       }
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Progetti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 
@@ -81,7 +86,9 @@ class ProjectNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
             // Navigator.pop(context);
           }
         } else {
@@ -93,59 +100,12 @@ class ProjectNotifier with ChangeNotifier {
       }
       return isOk;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "progetti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
-
-  // Future wishlistingProject(
-  //     {required BuildContext context,
-  //     required String? token,
-  //     required int idUserAppInstitution,
-  //     required ProjectModel projectModel}) async {
-  //   try {
-  //     bool isOk = false;
-
-  //     var response = '''id': '1', 'name': 'Bananas''';
-  //     isOk = true; // send a wishlisting request to Server
-
-  //     if (response != null) {
-  //       // final Map<String, dynamic> parseData = await jsonDecode(response);
-  //       // isOk = parseData['isOk'];
-  //       if (!isOk) {
-  //         String errorDescription = ''; // parseData['errorDescription'];''
-  //         if (context.mounted) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackUtil.stylishSnackBar(
-  //                   text: errorDescription, context: context));
-  //           // Navigator.pop(context);
-  //         }
-  //       } else {
-  //         // ProjectModel projectDetail =
-  //         //     ProjectModel.fromJson(parseData['okResult']);
-  //         //return projectDetail;
-  //         // if (!currentProjectModel.isWishlisted) {
-  //         //   ScaffoldMessenger.of(context)
-  //         //       .showSnackBar(SnackBar(content: Text('Item Wishlisted')));
-  //         //   currentProjectModel.isWishlisted = true;
-  //         // } else {
-  //         //   ScaffoldMessenger.of(context).showSnackBar(
-  //         //       SnackBar(content: Text('Item removed from Wishlist')));
-  //         //   currentProjectModel.isWishlisted = false;
-  //         // }
-  //         notifyListeners();
-  //       }
-  //     }
-  //     return isOk;
-  //   } on SocketException catch (_) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackUtil.stylishSnackBar(
-  //           text: 'Oops No You Need A Good Internet Connection',
-  //           context: context),
-  //     );
-  //   }
-  // }
 }

@@ -9,19 +9,32 @@ import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class GiveNotifier with ChangeNotifier {
   final GiveAPI giveAPI = GiveAPI();
+  StakeholderGiveModelSearch currentStakeholderGiveModelSearch =
+      StakeholderGiveModelSearch.empty();
+
+  setStakeholder(StakeholderGiveModelSearch stakeholderGiveModelSearch) {
+    currentStakeholderGiveModelSearch = stakeholderGiveModelSearch;
+  }
+
+  getStakeholder() {
+    return currentStakeholderGiveModelSearch;
+  }
 
   Future findStakeholder(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
+      required int id,
       required String nameSurnameOrBusinessName,
       required String email,
       required String city,
       required String cf}) async {
     try {
       bool isOk = false;
+
       var response = await giveAPI.findStakeholder(
           token: token,
+          id: id,
           idUserAppInstitution: idUserAppInstitution,
           nameSurnameOrBusinessName: nameSurnameOrBusinessName,
           email: email,
@@ -36,7 +49,9 @@ class GiveNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Anagrafiche",
+                    message: errorDescription,
+                    contentType: "failure"));
             // Navigator.pop(context);
           }
         } else {
@@ -59,19 +74,18 @@ class GiveNotifier with ChangeNotifier {
       }
     } on SocketException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Anagrafiche",
+            message: "Errore di connessione",
+            contentType: "failure"));
       }
     }
   }
 
-  Future addStakeholder(
+  Future<StakeholderGiveModelWithRulesSearch?> addStakeholder(
       {required BuildContext context,
       required String? token,
+      required bool mustForce,
       required int idUserAppInstitution,
       required String nome,
       required String cognome,
@@ -96,8 +110,8 @@ class GiveNotifier with ChangeNotifier {
       required int consenso_materiale_info,
       required String datanascita,
       required String tipo_donatore}) async {
+    StakeholderGiveModelWithRulesSearch? cStakeholderGiveModelWithRulesSearch;
     try {
-      bool isOk = false;
       var response = await giveAPI.addStakeholder(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
@@ -123,40 +137,34 @@ class GiveNotifier with ChangeNotifier {
           com_email: com_email,
           consenso_materiale_info: consenso_materiale_info,
           datanascita: datanascita,
-          tipo_donatore: tipo_donatore);
+          tipo_donatore: tipo_donatore,
+          forza_duplicato: mustForce == true ? 1 : 0);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
-        isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
-          }
-        } else {
-          // ProjectModel projectDetail =
-          //     ProjectModel.fromJson(parseData['okResult']);
-          //return projectDetail;
-          //notifyListeners();
-        }
-      }
-      return isOk;
+        //bool isOk = parseData['isOk'];
+        cStakeholderGiveModelWithRulesSearch =
+            StakeholderGiveModelWithRulesSearch.fromJson(parseData['okResult']);
+        cStakeholderGiveModelWithRulesSearch.operationResult =
+            parseData['errorDescription'] ?? 'Ok';
+      } else {}
+      return cStakeholderGiveModelWithRulesSearch;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Anagrafiche",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+      return cStakeholderGiveModelWithRulesSearch;
     }
   }
 
-  Future updateStakeholder(
+  Future<StakeholderGiveModelWithRulesSearch?> updateStakeholder(
       {required BuildContext context,
       required String? token,
+      required int forcingId,
+      required bool mustForce,
       required int idUserAppInstitution,
       required int id,
       required String nome,
@@ -182,12 +190,19 @@ class GiveNotifier with ChangeNotifier {
       required int consenso_materiale_info,
       required String datanascita,
       required String tipo_donatore}) async {
+    StakeholderGiveModelWithRulesSearch? cStakeholderGiveModelWithRulesSearch;
     try {
-      bool isOk = false;
+      int toUpdateId = 0;
+
+      if (forcingId > 0) {
+        toUpdateId = forcingId;
+      } else {
+        toUpdateId = id;
+      }
       var response = await giveAPI.updateStakeholder(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
-          id: id,
+          id: toUpdateId,
           nome: nome,
           cognome: cognome,
           ragSoc: ragSoc,
@@ -195,7 +210,7 @@ class GiveNotifier with ChangeNotifier {
           sesso: sesso,
           email: email,
           tel: tel,
-          cell: tel,
+          cell: cell,
           nazione_nn_norm: nazione_nn_norm,
           prov_nn_norm: prov_nn_norm,
           cap_nn_norm: cap_nn_norm,
@@ -210,34 +225,40 @@ class GiveNotifier with ChangeNotifier {
           com_email: com_email,
           consenso_materiale_info: consenso_materiale_info,
           datanascita: datanascita,
-          tipo_donatore: tipo_donatore);
+          tipo_donatore: tipo_donatore,
+          forza_duplicato: mustForce == true ? 1 : 0);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
-        isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
-          }
+        //bool isOk = parseData['isOk'];
+        if (parseData['okResult'] != null &&
+            parseData['okResult'].toString().isNotEmpty) {
+          cStakeholderGiveModelWithRulesSearch =
+              StakeholderGiveModelWithRulesSearch.fromJson(
+                  parseData['okResult']);
+          cStakeholderGiveModelWithRulesSearch.operationResult =
+              parseData['errorDescription'] ?? 'Ok';
         } else {
-          // ProjectModel projectDetail =
-          //     ProjectModel.fromJson(parseData['okResult']);
-          //return projectDetail;
-          //notifyListeners();
+          cStakeholderGiveModelWithRulesSearch =
+              StakeholderGiveModelWithRulesSearch.empty();
+          cStakeholderGiveModelWithRulesSearch.operationResult =
+              parseData['errorDescription'] ?? 'Errore di connessione';
         }
+      } else {
+        cStakeholderGiveModelWithRulesSearch =
+            StakeholderGiveModelWithRulesSearch.empty();
+        cStakeholderGiveModelWithRulesSearch.operationResult =
+            'Errore di connessione';
       }
-      return isOk;
+      return cStakeholderGiveModelWithRulesSearch;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Anagrafiche",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+      return cStakeholderGiveModelWithRulesSearch;
     }
   }
 

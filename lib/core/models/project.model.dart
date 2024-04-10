@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 
 class ProjectModel {
   ProjectModel(
@@ -6,12 +6,14 @@ class ProjectModel {
       required this.idUserAppInstitution,
       required this.nameProject,
       required this.descriptionProject,
-      required this.imageProject});
-  late int idProject;
-  late int idUserAppInstitution;
-  late String nameProject;
-  late String descriptionProject;
-  late String imageProject;
+      required this.imageProject,
+      required this.giveIdsFlatStructureModel});
+  late final int idProject;
+  late final int idUserAppInstitution;
+  late final String nameProject;
+  late final String descriptionProject;
+  late final String imageProject;
+  late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
 
   ProjectModel.empty() {
     idProject = 0;
@@ -19,6 +21,7 @@ class ProjectModel {
     nameProject = "";
     descriptionProject = "";
     imageProject = "";
+    giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
   }
   ProjectModel.fromJson(Map<String, dynamic> json) {
     idProject = json['idProject'];
@@ -26,6 +29,8 @@ class ProjectModel {
     nameProject = json['nameProject'];
     descriptionProject = json['descriptionProject'];
     imageProject = json['imageProject'];
+    giveIdsFlatStructureModel =
+        GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +40,7 @@ class ProjectModel {
     data['nameProject'] = nameProject;
     data['descriptionProject'] = descriptionProject;
     data['imageProject'] = imageProject;
+    data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
   }
 }

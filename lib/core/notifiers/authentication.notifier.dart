@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cache_manager/cache_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
@@ -49,7 +50,9 @@ class AuthenticationNotifier with ChangeNotifier {
         setUser(userModel);
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -66,7 +69,7 @@ class AuthenticationNotifier with ChangeNotifier {
       notifyListeners();
       UserModel userModel = UserModel.empty();
 
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
       var response1 = await userAPI.userAuthenticate(
         email: email,
         password: password,
@@ -80,10 +83,12 @@ class AuthenticationNotifier with ChangeNotifier {
         String errorDescription = parseData1['errorDescription'];
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              text: errorDescription, context: context));
+              title: "Autenticazione",
+              message: errorDescription,
+              contentType: "failure"));
           _actualState = 'ErrorState';
           _isLoading = false;
-          await Future.delayed(const Duration(seconds: 1));
+          // await Future.delayed(const Duration(seconds: 1));
           notifyListeners();
           // Navigator.pop(context);
         }
@@ -99,10 +104,12 @@ class AuthenticationNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Autenticazione",
+                    message: errorDescription,
+                    contentType: "failure"));
             _actualState = 'ErrorState';
             _isLoading = false;
-            await Future.delayed(const Duration(seconds: 1));
+            // await Future.delayed(const Duration(seconds: 1));
             notifyListeners();
             // Navigator.pop(context);
           }
@@ -123,10 +130,12 @@ class AuthenticationNotifier with ChangeNotifier {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackUtil.stylishSnackBar(
-                      text: errorDescription, context: context));
+                      title: "Autenticazione",
+                      message: errorDescription,
+                      contentType: "failure"));
               _actualState = 'ErrorState';
               _isLoading = false;
-              await Future.delayed(const Duration(seconds: 1));
+              // await Future.delayed(const Duration(seconds: 1));
               notifyListeners();
             }
           }
@@ -144,10 +153,12 @@ class AuthenticationNotifier with ChangeNotifier {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackUtil.stylishSnackBar(
-                      text: errorDescription, context: context));
+                      title: "Autenticazione",
+                      message: errorDescription,
+                      contentType: "failure"));
               _actualState = 'ErrorState';
               _isLoading = false;
-              await Future.delayed(const Duration(seconds: 1));
+              // await Future.delayed(const Duration(seconds: 1));
               notifyListeners();
               // Navigator.pop(context);
             }
@@ -187,8 +198,10 @@ class AuthenticationNotifier with ChangeNotifier {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackUtil.stylishSnackBar(
-                      text: 'Errore di connessione', context: context));
-              await Future.delayed(const Duration(seconds: 1));
+                      title: "Autenticazione",
+                      message: "Errore di connessione",
+                      contentType: "failure"));
+              // await Future.delayed(const Duration(seconds: 1));
               _actualState = 'ErrorState';
               _isLoading = false;
               notifyListeners();
@@ -199,17 +212,21 @@ class AuthenticationNotifier with ChangeNotifier {
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            text: 'Errore di connessione', context: context));
-        _actualState = 'ErrorState';
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
         _isLoading = false;
         notifyListeners();
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-          text: 'Errore di connessione', context: context));
-      _actualState = 'ErrorState';
-      _isLoading = false;
-      notifyListeners();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -220,7 +237,9 @@ class AuthenticationNotifier with ChangeNotifier {
     try {
       var userData =
           await userAPI.userRegister(email: email, password: password);
-      print(userData);
+      if (kDebugMode) {
+        print(userData);
+      }
 
       final Map<String, dynamic> parseData = await jsonDecode(userData);
       bool isAuthenticated = parseData['authentication'];
@@ -233,16 +252,27 @@ class AuthenticationNotifier with ChangeNotifier {
         );
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackUtil.stylishSnackBar(text: authData, context: context));
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Autenticazione",
+              message: "Errore di connessione",
+              contentType: "failure"));
+          _isLoading = false;
+          notifyListeners();
         }
       }
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 

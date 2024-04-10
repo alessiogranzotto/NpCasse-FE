@@ -1,16 +1,13 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/cart.model.dart';
-import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/home.notifier.dart';
+import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/cartScreen/widgets/pdf.preview.wrapper.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
+import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +31,16 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
     HomeNotifier homeNotifier =
         Provider.of<HomeNotifier>(context, listen: false);
 
-    homeNotifier.setHomeIndex(1);
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    // homeNotifier.setHomeIndex(0);
+    // Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.pop(context);
+    PersistentNavBarNavigator.pushNewScreen(
+      context,
+      screen: const CartScreen(),
+      withNavBar: true,
+      pageTransitionAnimation: PageTransitionAnimation.fade,
+    );
+    homeNotifier.setHomeIndex(0);
   }
 
   @override

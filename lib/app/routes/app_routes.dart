@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
@@ -23,7 +24,7 @@ class AppRouter {
 
   // static const String appSettingsRoute = "/appSettings";
   static const String homeRoute = "/home";
-  // static const String cartRoute = "/cart";
+  static const String cartRoute = "/cart";
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -205,12 +206,12 @@ class AppRouter {
       //       settings: settings,
       //     );
       //   }
-      // case cartRoute:
-      //   {
-      //     return MaterialPageRoute(
-      //       builder: (_) => const AddCartScreen(),
-      //     );
-      //   }
+      case cartRoute:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const CartScreen(),
+          );
+        }
       // case searchRoute:
       //   {
       //     return MaterialPageRoute(

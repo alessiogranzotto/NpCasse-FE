@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/userAppInstitution.notifier.dart';
 import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +54,7 @@ class ProjectCard extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 50,
+              height: 60,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -100,7 +99,9 @@ class ProjectCard extends StatelessWidget {
                                       nameProject: project.nameProject,
                                       descriptionProject:
                                           project.descriptionProject,
-                                      imageProject: project.imageProject),
+                                      imageProject: project.imageProject,
+                                      giveIdsFlatStructureModel:
+                                          project.giveIdsFlatStructureModel),
                                 ),
                                 withNavBar: true,
                                 pageTransitionAnimation:

@@ -152,7 +152,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             // Button area
             InkWell(
               onTap: () {
-                print("Button clicked!");
                 Navigator.pop(context);
               },
               child: Container(
@@ -180,16 +179,16 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
 // OnBoarding area widget
 class OnBoardContent extends StatelessWidget {
-  OnBoardContent({
+  const OnBoardContent({
     super.key,
     required this.image,
     required this.title,
     required this.description,
   });
 
-  String image;
-  String title;
-  String description;
+  final String image;
+  final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {

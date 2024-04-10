@@ -33,7 +33,9 @@ class ImageUtils {
         var f = await imageFilePicked.readAsBytes();
         imagebytes = f;
       } else {
-        print('no image picked');
+        if (kDebugMode) {
+          print('no image picked');
+        }
       }
     } else if (kIsWeb) {
       imageXFile = await ImagePicker().pickImage(
@@ -47,10 +49,14 @@ class ImageUtils {
         imagebytes = f;
         imageFilePicked = File('a');
       } else {
-        print('no image picked');
+        if (kDebugMode) {
+          print('no image picked');
+        }
       }
     } else {
-      print('something went wrong');
+      if (kDebugMode) {
+        print('something went wrong');
+      }
     }
 
     base64Result = base64.encode(imagebytes);

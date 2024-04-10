@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/product.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
-import 'package:np_casse/core/notifiers/userAppInstitution.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,19 @@ class _ProductDetailState extends State<ProductDetailScreen> {
 
   final ValueNotifier<bool> isFreePriceProduct = ValueNotifier<bool>(false);
   String tImageString = '';
-  // final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController textEditingControllerIdFinalizzazione =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdEvento =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdAttivita =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdAgenda =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdComunicazioni =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdTipDonazione =
+      TextEditingController();
 
   @override
   void initState() {
@@ -48,6 +61,59 @@ class _ProductDetailState extends State<ProductDetailScreen> {
       textEditingControllerPriceProduct.text =
           widget.productModelArgument.priceProduct.toString();
       isFreePriceProduct.value = widget.productModelArgument.isFreePriceProduct;
+      if (widget
+              .productModelArgument.giveIdsFlatStructureModel.idFinalizzazione >
+          0) {
+        textEditingControllerIdFinalizzazione.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idFinalizzazione
+            .toString();
+      } else {
+        textEditingControllerIdFinalizzazione.text = '';
+      }
+      if (widget.productModelArgument.giveIdsFlatStructureModel.idEvento > 0) {
+        textEditingControllerIdEvento.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idEvento
+            .toString();
+      } else {
+        textEditingControllerIdEvento.text = '';
+      }
+
+      if (widget.productModelArgument.giveIdsFlatStructureModel.idAttivita >
+          0) {
+        textEditingControllerIdAttivita.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idAttivita
+            .toString();
+      } else {
+        textEditingControllerIdAttivita.text = '';
+      }
+
+      if (widget.productModelArgument.giveIdsFlatStructureModel.idAgenda > 0) {
+        textEditingControllerIdAgenda.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idAgenda
+            .toString();
+      } else {
+        textEditingControllerIdAgenda.text = '';
+      }
+
+      if (widget
+              .productModelArgument.giveIdsFlatStructureModel.idComunicazioni >
+          0) {
+        textEditingControllerIdComunicazioni.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idComunicazioni
+            .toString();
+      } else {
+        textEditingControllerIdComunicazioni.text = '';
+      }
+      if (widget.productModelArgument.giveIdsFlatStructureModel.idTipDonazione >
+          0) {
+        textEditingControllerIdTipDonazione.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idTipDonazione
+            .toString();
+      } else {
+        textEditingControllerIdTipDonazione.text = '';
+      }
+    } else {
+      //tImageString = AppAssets.noImageString;
     }
     super.initState();
   }
@@ -81,12 +147,31 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                     nameProduct: textEditingControllerNameProduct.text,
                     descriptionProduct:
                         textEditingControllerDescriptionProduct.text,
-                    priceProduct: double.tryParse(
-                            textEditingControllerPriceProduct.text) ??
-                        0,
+                    priceProduct:
+                        double.tryParse(textEditingControllerPriceProduct.text) ??
+                            0,
                     imageProduct: tImageString,
                     isWishlisted: ValueNotifier<bool>(false),
-                    isFreePriceProduct: isFreePriceProduct.value);
+                    isFreePriceProduct: isFreePriceProduct.value,
+                    giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
+                        idFinalizzazione:
+                            int.tryParse(textEditingControllerIdFinalizzazione.text) ??
+                                0,
+                        idEvento:
+                            int.tryParse(textEditingControllerIdEvento.text) ??
+                                0,
+                        idAttivita:
+                            int.tryParse(textEditingControllerIdAttivita.text) ??
+                                0,
+                        idAgenda:
+                            int.tryParse(textEditingControllerIdAgenda.text) ??
+                                0,
+                        idComunicazioni:
+                            int.tryParse(textEditingControllerIdComunicazioni.text) ??
+                                0,
+                        idTipDonazione:
+                            int.tryParse(textEditingControllerIdTipDonazione.text) ?? 0));
+
                 productNotifier
                     .addOrUpdateProduct(
                         context: context,
@@ -99,20 +184,18 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                     .then((value) {
                   if (value) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackUtil.stylishSnackBar(
-                        text: 'Info Updated',
-                        context: context,
-                      ),
-                    );
+                        SnackUtil.stylishSnackBar(
+                            title: "Prodotti",
+                            message: "Informazioni aggiornate",
+                            contentType: "success"));
                     Navigator.of(context).pop();
                     productNotifier.refresh();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackUtil.stylishSnackBar(
-                        text: 'Error Please Try Again , After a While',
-                        context: context,
-                      ),
-                    );
+                        SnackUtil.stylishSnackBar(
+                            title: "Prodotti",
+                            message: "Errore di connessione",
+                            contentType: "failure"));
                     Navigator.of(context).pop();
                   }
                 });
@@ -264,133 +347,1033 @@ class _ProductDetailState extends State<ProductDetailScreen> {
               ),
             ),
           ),
-          Card(
-            color: Theme.of(context).cardColor,
-            elevation: 4,
-            child: ListTile(
-              // title: Text(
-              //   'Nome Progetto',
-              //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              // ),
-              subtitle: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      //onChanged: ,
-                      controller: textEditingControllerNameProduct,
-                      minLines: 3,
-                      maxLines: 3,
-                      //maxLength: 300,
-                      //keyboardType: ,
-                      // decoration: const InputDecoration(
-                      //   prefixText: '€ ',
-                      //   label: Text('amount'),
-                      // ),
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              trailing: const Icon(Icons.edit),
-              leading: const Icon(Icons.title),
-              onTap: () {},
-            ),
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              var width = MediaQuery.of(context).size.width;
+              return width > 1200
+                  ? Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      // title: Text(
+                                      //   'Nome Progetto',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                      // ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              //onChanged: ,
+                                              controller:
+                                                  textEditingControllerNameProduct,
+                                              minLines: 3,
+                                              maxLines: 3,
+                                              //maxLength: 300,
+                                              //keyboardType: ,
+                                              // decoration: const InputDecoration(
+                                              //   prefixText: '€ ',
+                                              //   label: Text('amount'),
+                                              // ),
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.title),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      // title: Text(
+                                      //   'qui ci va la descrizione del progetto',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
+                                      // ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              //onChanged: ,
+                                              controller:
+                                                  textEditingControllerDescriptionProduct,
+                                              minLines: 3,
+                                              maxLines: 3,
+
+                                              //maxLength: 300,
+                                              //keyboardType: ,
+                                              // decoration: const InputDecoration(
+                                              //   prefixText: '€ ',
+                                              //   label: Text('amount'),
+                                              // ),
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.topic),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      // title: Text(
+                                      //   'qui ci va la descrizione del progetto',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
+                                      // ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              //onChanged: ,
+                                              controller:
+                                                  textEditingControllerPriceProduct,
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(),
+
+                                              minLines: 1,
+                                              maxLines: 1,
+
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.euro),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(children: [
+                                        Expanded(
+                                          child: ValueListenableBuilder<bool>(
+                                            builder: (BuildContext context,
+                                                bool value, Widget? child) {
+                                              return CheckboxListTile(
+                                                  title: const SizedBox(
+                                                      width: 100,
+                                                      child: Text(
+                                                          "Importo variabile")),
+                                                  value:
+                                                      isFreePriceProduct.value,
+                                                  onChanged: (bool? value) {
+                                                    isFreePriceProduct.value =
+                                                        value!;
+                                                  },
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .leading);
+                                            },
+                                            valueListenable: isFreePriceProduct,
+                                          ),
+                                        )
+                                      ]),
+                                      // trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.local_offer),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdFinalizzazione,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Fin",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdEvento,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Ev",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdAttivita,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Att",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdAgenda,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Ag",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdComunicazioni,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Com",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdTipDonazione,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Td",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      // title: Text(
+                                      //   'Nome Progetto',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                      // ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              //onChanged: ,
+                                              controller:
+                                                  textEditingControllerNameProduct,
+                                              minLines: 3,
+                                              maxLines: 3,
+                                              //maxLength: 300,
+                                              //keyboardType: ,
+                                              // decoration: const InputDecoration(
+                                              //   prefixText: '€ ',
+                                              //   label: Text('amount'),
+                                              // ),
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.title),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      // title: Text(
+                                      //   'qui ci va la descrizione del progetto',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
+                                      // ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              //onChanged: ,
+                                              controller:
+                                                  textEditingControllerDescriptionProduct,
+                                              minLines: 3,
+                                              maxLines: 3,
+
+                                              //maxLength: 300,
+                                              //keyboardType: ,
+                                              // decoration: const InputDecoration(
+                                              //   prefixText: '€ ',
+                                              //   label: Text('amount'),
+                                              // ),
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.topic),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      // title: Text(
+                                      //   'qui ci va la descrizione del progetto',
+                                      //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
+                                      // ),
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              //onChanged: ,
+                                              controller:
+                                                  textEditingControllerPriceProduct,
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(),
+
+                                              minLines: 1,
+                                              maxLines: 1,
+
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.euro),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(children: [
+                                        Expanded(
+                                          child: ValueListenableBuilder<bool>(
+                                            builder: (BuildContext context,
+                                                bool value, Widget? child) {
+                                              return CheckboxListTile(
+                                                  title: const SizedBox(
+                                                      width: 100,
+                                                      child: Text(
+                                                          "Importo variabile")),
+                                                  value:
+                                                      isFreePriceProduct.value,
+                                                  onChanged: (bool? value) {
+                                                    isFreePriceProduct.value =
+                                                        value!;
+                                                  },
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .leading);
+                                            },
+                                            valueListenable: isFreePriceProduct,
+                                          ),
+                                        )
+                                      ]),
+                                      // trailing: const Icon(Icons.edit),
+                                      leading: const Icon(Icons.local_offer),
+                                      onTap: () {},
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdFinalizzazione,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Fid",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdEvento,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Ev",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdAttivita,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Att",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdAgenda,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Ag",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdComunicazioni,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Com",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdTipDonazione,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .secondaryContainer,
+                                            child: Text("Td",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+            },
           ),
-          Card(
-            color: Theme.of(context).cardColor,
-            elevation: 4,
-            child: ListTile(
-              // title: Text(
-              //   'qui ci va la descrizione del progetto',
-              //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
-              // ),
-              subtitle: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      //onChanged: ,
-                      controller: textEditingControllerDescriptionProduct,
-
-                      minLines: 5,
-                      maxLines: 5,
-
-                      //maxLength: 300,
-                      //keyboardType: ,
-                      // decoration: const InputDecoration(
-                      //   prefixText: '€ ',
-                      //   label: Text('amount'),
-                      // ),
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              trailing: const Icon(Icons.edit),
-              leading: const Icon(Icons.topic),
-              onTap: () {},
-            ),
-          ),
-          Card(
-            color: Theme.of(context).cardColor,
-            elevation: 4,
-            child: ListTile(
-              // title: Text(
-              //   'qui ci va la descrizione del progetto',
-              //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
-              // ),
-              subtitle: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      //onChanged: ,
-                      controller: textEditingControllerPriceProduct,
-                      keyboardType: const TextInputType.numberWithOptions(),
-
-                      minLines: 1,
-                      maxLines: 1,
-
-                      onTapOutside: (event) {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              trailing: const Icon(Icons.edit),
-              leading: const Icon(Icons.euro),
-              onTap: () {},
-            ),
-          ),
-          Card(
-            color: Theme.of(context).cardColor,
-            elevation: 4,
-            child: ListTile(
-              subtitle: Row(children: [
-                Expanded(
-                  child: ValueListenableBuilder<bool>(
-                    builder: (BuildContext context, bool value, Widget? child) {
-                      return CheckboxListTile(
-                          title: const SizedBox(
-                              width: 100, child: Text("Importo variabile")),
-                          value: isFreePriceProduct.value,
-                          onChanged: (bool? value) {
-                            isFreePriceProduct.value = value!;
-                          },
-                          controlAffinity: ListTileControlAffinity.leading);
-                    },
-                    valueListenable: isFreePriceProduct,
-                  ),
-                )
-              ]),
-              // trailing: const Icon(Icons.edit),
-              leading: const Icon(Icons.local_offer),
-              onTap: () {},
-            ),
-          )
         ],
       ),
     );

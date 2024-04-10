@@ -34,12 +34,15 @@ class ShSearchTextfield extends StatelessWidget {
           prefixIcon: prefixIcon,
           fillColor: themeData.colorScheme.primary,
           filled: true,
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+                color: themeData.colorScheme.inversePrimary, width: 1.0),
           ),
-          focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black)),
+          focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderSide:
+                  BorderSide(color: themeData.colorScheme.inversePrimary)),
           hintText: hintText,
           hintStyle: TextStyle(color: themeData.hintColor, fontSize: 12)),
     );

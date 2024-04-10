@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/store.model.dart';
-import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
-import 'package:np_casse/core/notifiers/userAppInstitution.notifier.dart';
 import 'package:np_casse/screens/storeScreen/store.detail.screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
-import 'package:np_casse/core/notifiers/project.notifier.dart';
 
 class StoreCard extends StatelessWidget {
   const StoreCard({
@@ -20,8 +17,7 @@ class StoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // UserAppInstitutionNotifier userAppInstitutionNotifier =
     //     Provider.of<UserAppInstitutionNotifier>(context);
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context);
+
     // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
     StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
 
@@ -98,7 +94,9 @@ class StoreCard extends StatelessWidget {
                                       idProject: store.idProject,
                                       nameStore: store.nameStore,
                                       descriptionStore: store.descriptionStore,
-                                      imageStore: store.imageStore),
+                                      imageStore: store.imageStore,
+                                      giveIdsFlatStructureModel:
+                                          store.giveIdsFlatStructureModel),
                                 ),
                                 withNavBar: true,
                                 pageTransitionAnimation:

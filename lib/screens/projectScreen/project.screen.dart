@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
+import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -25,126 +26,147 @@ class ProjectScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            appBar: AppBar(
-              title: Text(
-                'Progetti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    PersistentNavBarNavigator.pushNewScreen(context,
-                        screen: ProjectDetailScreen(
-                          projectModelArgument: ProjectModel(
-                              idProject: 0,
-                              idUserAppInstitution:
-                                  cUserAppInstitutionModel.idUserAppInstitution,
-                              nameProject: '',
-                              descriptionProject: '',
-                              imageProject: ''),
-                        ),
-                        withNavBar: true,
-                        pageTransitionAnimation: PageTransitionAnimation.fade);
-                  },
-                ),
-              ],
+    // // Set the default number of columns to 3.
+    // int columnsCount = 3;
+    // // Define the icon size based on the screen width
+    // double iconSize = 45;
+
+    // // Use the ResponsiveUtils class to determine the device's screen size.
+    // if (ResponsiveUtils.isMobile(context)) {
+    //   columnsCount = 2;
+    //   iconSize = 30;
+    // } else if (ResponsiveUtils.isDesktop(context)) {
+    //   columnsCount = 4;
+    //   iconSize = 50;
+    // }
+    return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        appBar: AppBar(
+          title: Text(
+            'Progetti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                PersistentNavBarNavigator.pushNewScreen(context,
+                    screen: ProjectDetailScreen(
+                      projectModelArgument: ProjectModel(
+                          idProject: 0,
+                          idUserAppInstitution:
+                              cUserAppInstitutionModel.idUserAppInstitution,
+                          nameProject: '',
+                          descriptionProject: '',
+                          imageProject: '',
+                          giveIdsFlatStructureModel:
+                              GiveIdsFlatStructureModel.empty()),
+                    ),
+                    withNavBar: true,
+                    pageTransitionAnimation: PageTransitionAnimation.fade);
+              },
             ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  width: MediaQuery.of(context).size.width,
-                  child: Consumer<ProjectNotifier>(
-                    builder: (context, projectNotifier, _) {
-                      return FutureBuilder(
-                        future: projectNotifier.getProjects(
-                            context: context,
-                            token: authenticationNotifier.token,
-                            idUserAppInstitution:
-                                cUserAppInstitutionModel.idUserAppInstitution),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Center(
-                                      child: SizedBox(
-                                          width: 100,
-                                          height: 100,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 5,
-                                            color: Colors.redAccent,
-                                          ))),
-                                ],
-                              ),
-                            );
-                          } else if (!snapshot.hasData) {
-                            return const Center(
-                              child: Text(
-                                'No data...',
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                            );
-                          } else {
-                            var tSnapshot = snapshot.data as List;
-                            return GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-                                  crossAxisCount:
-                                      (MediaQuery.of(context).size.width) ~/
-                                          widgetWitdh,
-                                  crossAxisSpacing: (((MediaQuery.of(context)
-                                              .size
-                                              .width) -
-                                          (widgetWitdh *
-                                              ((MediaQuery.of(context)
-                                                      .size
-                                                      .width) ~/
-                                                  widgetWitdh))) /
-                                      ((MediaQuery.of(context).size.width) ~/
-                                          widgetWitdh)),
-                                  mainAxisSpacing: gridMainAxisSpacing,
-                                  height: widgetWitdh * widgetRatio,
-                                ),
-                                physics: const ScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: tSnapshot.length,
-                                // scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  ProjectModel project = tSnapshot[index];
-                                  return GestureDetector(
-                                    onTap: () {
-                                      projectNotifier.setProject(project);
-                                      PersistentNavBarNavigator.pushNewScreen(
-                                        context,
-                                        screen: const StoreScreen(),
-                                        withNavBar: true,
-                                        pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
-                                      );
-                                    },
-                                    child: ProjectCard(
-                                      project: project,
-                                    ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width,
+              child: Consumer<ProjectNotifier>(
+                builder: (context, projectNotifier, _) {
+                  return FutureBuilder(
+                    future: projectNotifier.getProjects(
+                        context: context,
+                        token: authenticationNotifier.token,
+                        idUserAppInstitution:
+                            cUserAppInstitutionModel.idUserAppInstitution),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Center(
+                                  child: SizedBox(
+                                      width: 100,
+                                      height: 100,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                        color: Colors.redAccent,
+                                      ))),
+                            ],
+                          ),
+                        );
+                      } else if (!snapshot.hasData) {
+                        return const Center(
+                          child: Text(
+                            'No data...',
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                            ),
+                          ),
+                        );
+                      } else {
+                        var tSnapshot = snapshot.data as List;
+                        return GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+                              crossAxisCount:
+                                  (MediaQuery.of(context).size.width) ~/
+                                      widgetWitdh,
+                              crossAxisSpacing: 10,
+                              //     (((MediaQuery.of(context).size.width) -
+                              //             (widgetWitdh *
+                              //                 ((MediaQuery.of(context)
+                              //                         .size
+                              //                         .width) ~/
+                              //                     widgetWitdh))) /
+                              //         ((MediaQuery.of(context).size.width) ~/
+                              //             widgetWitdh)),
+                              mainAxisSpacing: gridMainAxisSpacing,
+                              height: 300,
+                            ),
+                            // gridDelegate:
+                            //     SliverGridDelegateWithFixedCrossAxisCount(
+                            //   // Set the number of columns based on the device's screen size.
+                            //   crossAxisCount: columnsCount,
+                            //   // Set the aspect ratio of each card.
+                            //   childAspectRatio: 3 / 2,
+                            //   crossAxisSpacing: 10,
+                            //   mainAxisSpacing: 10,
+                            // ),
+                            physics: const ScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: tSnapshot.length,
+                            // scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              ProjectModel project = tSnapshot[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  projectNotifier.setProject(project);
+                                  PersistentNavBarNavigator.pushNewScreen(
+                                    context,
+                                    screen: const StoreScreen(),
+                                    withNavBar: true,
+                                    pageTransitionAnimation:
+                                        PageTransitionAnimation.fade,
                                   );
-                                });
-                          }
-                        },
-                      );
+                                },
+                                child: ProjectCard(
+                                  project: project,
+                                ),
+                              );
+                            });
+                      }
                     },
-                  ),
-                ),
+                  );
+                },
               ),
-            )));
+            ),
+          ),
+        ));
   }
 }

@@ -39,7 +39,7 @@ class Core extends StatelessWidget {
       debugShowCheckedModeBanner: true,
       onGenerateRoute: AppRouter.generateRoute,
       initialRoute: AppRouter.splashRoute,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
     );

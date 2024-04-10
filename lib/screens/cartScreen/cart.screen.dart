@@ -5,9 +5,12 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/cartScreen/payment.screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:np_casse/screens/cartScreen/widgets/cart.checkout.dart';
 import 'package:provider/provider.dart';
+
+class RefreshCartController {
+  void Function()? refreshMoneyCartFromParent;
+}
 
 class CartScreen extends StatefulWidget {
   const CartScreen({
@@ -21,16 +24,19 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   // final ValueNotifier<double> totalPrice = ValueNotifier(0);
   bool _isButtonDisabled = false;
+  bool cartHasData = true;
+
+  final RefreshCartController refreshCartController = RefreshCartController();
 
   @override
   void initState() {
     _isButtonDisabled = false;
+    cartHasData = true;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -41,7 +47,7 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'My Shopping Cart',
+          'Il mio carrello',
           style: Theme.of(context).textTheme.headlineLarge,
         ),
       ),
@@ -85,9 +91,9 @@ class _CartScreenState extends State<CartScreen> {
                     } else {
                       var tSnapshot =
                           snapshot.data.cartProducts as List<CartProductModel>;
-                      return Stack(children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.75,
+
+                      return Column(children: [
+                        Expanded(
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: tSnapshot.length,
@@ -97,475 +103,470 @@ class _CartScreenState extends State<CartScreen> {
                               return Container(
                                 width: double.infinity,
                                 margin: const EdgeInsets.all(15),
-                                padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onBackground
-                                            .withAlpha(150),
-                                        offset: const Offset(0.0, 1.0), //(x,y)
-                                        blurRadius: 4.0,
-                                        blurStyle: BlurStyle.outer)
-                                  ],
-                                  color: Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  alignment: WrapAlignment.spaceEvenly,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CircleAvatar(
-                                        radius: 80,
-                                        backgroundImage:
-                                            ImageUtils.getImageFromString(
-                                                    stringImage:
-                                                        cartProductModel
-                                                            .productModel
-                                                            .imageProduct)
-                                                .image),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            cartProductModel
-                                                .productModel.nameProduct,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .copyWith(
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                            cartProductModel.productModel
-                                                .descriptionProduct,
-                                            maxLines: 2,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .copyWith(
-                                                    fontWeight:
-                                                        FontWeight.w400)),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                            '${cartProductModel.productModel.priceProduct}€',
-                                            maxLines: 2,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .copyWith(
-                                                    fontWeight:
-                                                        FontWeight.w400)),
-                                        const SizedBox(height: 5),
-                                        Text('Qui ci potrei inserire le note',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .copyWith(
-                                                    fontWeight:
-                                                        FontWeight.w900)),
-                                      ],
-                                    ),
-                                    cartProductModel
-                                                .freePriceCartProduct.value >
-                                            0
-                                        ? Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onBackground,
+                                    Stack(children: [
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 0),
+                                        height: 150,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: (ImageUtils
+                                                      .getImageFromString(
+                                                          stringImage:
+                                                              cartProductModel
+                                                                  .productModel
+                                                                  .imageProduct)
+                                                  .image)
+                                              // (project.imageProject as ImageProvider)
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                SizedBox(
-                                                  width: 140,
-                                                  height: 60,
-                                                  child: ValueListenableBuilder<
-                                                      double>(
-                                                    builder:
-                                                        (BuildContext context,
+                                        ),
+                                      ),
+                                      CircleAvatar(
+                                        radius: 24,
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryContainer,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Text(
+                                              '${cartProductModel.productModel.priceProduct}€',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium),
+                                        ),
+                                      ),
+                                    ]),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: SizedBox(
+                                        width: 200,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                cartProductModel
+                                                    .productModel.nameProduct,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                                cartProductModel.productModel
+                                                    .descriptionProduct,
+                                                maxLines: 2,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall),
+                                            const SizedBox(height: 5),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Column(
+                                      children: [
+                                        cartProductModel.freePriceCartProduct
+                                                    .value >
+                                                0
+                                            ? Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onBackground,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 120,
+                                                      height: 50,
+                                                      child:
+                                                          ValueListenableBuilder<
+                                                              double>(
+                                                        builder: (BuildContext
+                                                                context,
                                                             double value,
                                                             Widget? child) {
-                                                      return Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(16.0),
-                                                            child: Text(
-                                                                '$value €',
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .titleMedium!
-                                                                    .copyWith(
-                                                                        fontWeight:
-                                                                            FontWeight.w900)),
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
-                                                    valueListenable:
-                                                        cartProductModel
-                                                            .freePriceCartProduct,
+                                                          return Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        2.0),
+                                                                child: Text(
+                                                                    '$value €',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .titleSmall),
+                                                              )
+                                                            ],
+                                                          );
+                                                        },
+                                                        valueListenable:
+                                                            cartProductModel
+                                                                .freePriceCartProduct,
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          if (_isButtonDisabled) {
+                                                            return;
+                                                          } else {
+                                                            _isButtonDisabled =
+                                                                true;
+                                                            int zero = 0;
+                                                            cartNotifier
+                                                                .updateItemQuantity(
+                                                                    context:
+                                                                        context,
+                                                                    token: authenticationNotifier
+                                                                        .token,
+                                                                    idUserAppInstitution:
+                                                                        cUserAppInstitutionModel
+                                                                            .idUserAppInstitution,
+                                                                    idCart: cartProductModel
+                                                                        .idCart,
+                                                                    idCartProduct:
+                                                                        cartProductModel
+                                                                            .idCartProduct,
+                                                                    quantityCartProduct:
+                                                                        zero)
+                                                                .then((value) {
+                                                              if (value) {
+                                                                cartProductModel
+                                                                    .quantityCartProduct
+                                                                    .value = 0;
+                                                                tSnapshot.remove(
+                                                                    cartProductModel);
+                                                                refreshCartController
+                                                                    .refreshMoneyCartFromParent!();
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            'Informazioni aggiornate. Prodotto ${cartProductModel.productModel.nameProduct} rimosso',
+                                                                        contentType:
+                                                                            "success"));
+
+                                                                _isButtonDisabled =
+                                                                    false;
+                                                                // totalPrice.value =
+                                                                //     cartNotifier.totalPrice;
+                                                                // Navigator.of(context).pop();
+                                                                // productNotifier.refresh();
+                                                              } else {
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Anagrafiche",
+                                                                        message:
+                                                                            "Errore di connessione",
+                                                                        contentType:
+                                                                            "error"));
+                                                                // Navigator.of(context).pop();
+                                                              }
+                                                            });
+                                                          }
+                                                        },
+                                                        icon: const Icon(
+                                                            size: 30,
+                                                            Icons
+                                                                .delete_outline)),
+                                                  ],
+                                                ),
+                                              )
+                                            : Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onBackground,
                                                   ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
-                                                IconButton(
-                                                    onPressed: () {
-                                                      if (_isButtonDisabled) {
-                                                        return;
-                                                      } else {
-                                                        _isButtonDisabled =
-                                                            true;
-                                                        int zero = 0;
-                                                        cartNotifier
-                                                            .updateItemQuantity(
-                                                                context:
-                                                                    context,
-                                                                token:
-                                                                    authenticationNotifier
-                                                                        .token,
-                                                                idUserAppInstitution:
-                                                                    cUserAppInstitutionModel
-                                                                        .idUserAppInstitution,
-                                                                idCart:
-                                                                    cartProductModel
-                                                                        .idCart,
-                                                                idCartProduct:
-                                                                    cartProductModel
-                                                                        .idCartProduct,
-                                                                quantityCartProduct:
-                                                                    zero)
-                                                            .then((value) {
-                                                          if (value) {
-                                                            cartProductModel
-                                                                .quantityCartProduct
-                                                                .value = 0;
-                                                            tSnapshot.remove(
-                                                                cartProductModel);
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Info Updated cart product: ${cartProductModel.quantityCartProduct.value}',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            _isButtonDisabled =
-                                                                false;
-                                                            // totalPrice.value =
-                                                            //     cartNotifier.totalPrice;
-                                                            // Navigator.of(context).pop();
-                                                            // productNotifier.refresh();
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          if (_isButtonDisabled ||
+                                                              cartProductModel
+                                                                      .quantityCartProduct
+                                                                      .value <
+                                                                  1) {
+                                                            return;
                                                           } else {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Error Please Try Again , After a While',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            // Navigator.of(context).pop();
+                                                            _isButtonDisabled =
+                                                                true;
+                                                            int tDecrease =
+                                                                cartProductModel
+                                                                        .quantityCartProduct
+                                                                        .value -
+                                                                    1;
+                                                            cartNotifier
+                                                                .updateItemQuantity(
+                                                                    context:
+                                                                        context,
+                                                                    token: authenticationNotifier
+                                                                        .token,
+                                                                    idUserAppInstitution:
+                                                                        cUserAppInstitutionModel
+                                                                            .idUserAppInstitution,
+                                                                    idCart: cartProductModel
+                                                                        .idCart,
+                                                                    idCartProduct:
+                                                                        cartProductModel
+                                                                            .idCartProduct,
+                                                                    quantityCartProduct:
+                                                                        tDecrease)
+                                                                .then((value) {
+                                                              if (value) {
+                                                                cartProductModel
+                                                                    .quantityCartProduct
+                                                                    .value -= 1;
+                                                                refreshCartController
+                                                                    .refreshMoneyCartFromParent!();
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.productModel.nameProduct} presenti',
+                                                                        contentType:
+                                                                            "success"));
+                                                                _isButtonDisabled =
+                                                                    false;
+                                                                // totalPrice.value =
+                                                                //     cartNotifier.totalPrice;
+                                                              } else {
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            "Errore di connessione",
+                                                                        contentType:
+                                                                            "error"));
+                                                                // Navigator.of(context).pop();
+                                                              }
+                                                            });
                                                           }
-                                                        });
-                                                      }
-                                                    },
-                                                    icon: const Icon(
-                                                        size: 30,
-                                                        Icons.delete_outline)),
-                                              ],
-                                            ),
-                                          )
-                                        : Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onBackground,
+                                                        },
+                                                        icon: const Icon(
+                                                            size: 24,
+                                                            Icons.remove)),
+                                                    SizedBox(
+                                                      width: 40,
+                                                      height: 50,
+                                                      child:
+                                                          ValueListenableBuilder<
+                                                              int>(
+                                                        builder: (BuildContext
+                                                                context,
+                                                            int value,
+                                                            Widget? child) {
+                                                          return Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                            children: <Widget>[
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        2.0),
+                                                                child: Text(
+                                                                    '$value',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .titleSmall),
+                                                              )
+                                                            ],
+                                                          );
+                                                        },
+                                                        valueListenable:
+                                                            cartProductModel
+                                                                .quantityCartProduct,
+                                                      ),
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          if (_isButtonDisabled) {
+                                                            return;
+                                                          } else {
+                                                            _isButtonDisabled =
+                                                                true;
+                                                            int tIncrease =
+                                                                cartProductModel
+                                                                        .quantityCartProduct
+                                                                        .value +
+                                                                    1;
+                                                            cartNotifier
+                                                                .updateItemQuantity(
+                                                                    context:
+                                                                        context,
+                                                                    token: authenticationNotifier
+                                                                        .token,
+                                                                    idUserAppInstitution:
+                                                                        cUserAppInstitutionModel
+                                                                            .idUserAppInstitution,
+                                                                    idCart: cartProductModel
+                                                                        .idCart,
+                                                                    idCartProduct:
+                                                                        cartProductModel
+                                                                            .idCartProduct,
+                                                                    quantityCartProduct:
+                                                                        tIncrease)
+                                                                .then((value) {
+                                                              if (value) {
+                                                                cartProductModel
+                                                                    .quantityCartProduct
+                                                                    .value += 1;
+                                                                refreshCartController
+                                                                    .refreshMoneyCartFromParent!();
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.productModel.nameProduct} presenti',
+                                                                        contentType:
+                                                                            "success"));
+
+                                                                _isButtonDisabled =
+                                                                    false;
+                                                                // totalPrice.value =
+                                                                //     cartNotifier.totalPrice;
+                                                                // Navigator.of(context).pop();
+                                                                // productNotifier.refresh();
+                                                              } else {
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            "Errore di connessione",
+                                                                        contentType:
+                                                                            "error"));
+                                                                // Navigator.of(context).pop();
+                                                              }
+                                                            });
+                                                          }
+                                                        },
+                                                        icon: const Icon(
+                                                            size: 24,
+                                                            Icons.add)),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          if (_isButtonDisabled) {
+                                                            return;
+                                                          } else {
+                                                            _isButtonDisabled =
+                                                                true;
+                                                            int zero = 0;
+                                                            cartNotifier
+                                                                .updateItemQuantity(
+                                                                    context:
+                                                                        context,
+                                                                    token: authenticationNotifier
+                                                                        .token,
+                                                                    idUserAppInstitution:
+                                                                        cUserAppInstitutionModel
+                                                                            .idUserAppInstitution,
+                                                                    idCart: cartProductModel
+                                                                        .idCart,
+                                                                    idCartProduct:
+                                                                        cartProductModel
+                                                                            .idCartProduct,
+                                                                    quantityCartProduct:
+                                                                        zero)
+                                                                .then((value) {
+                                                              if (value) {
+                                                                cartProductModel
+                                                                    .quantityCartProduct
+                                                                    .value = 0;
+                                                                tSnapshot.remove(
+                                                                    cartProductModel);
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            'Informazioni aggiornate. Prodotto ${cartProductModel.productModel.nameProduct} rimosso',
+                                                                        contentType:
+                                                                            "success"));
+
+                                                                _isButtonDisabled =
+                                                                    false;
+                                                                // totalPrice.value =
+                                                                //     cartNotifier.totalPrice;
+                                                                // Navigator.of(context).pop();
+                                                                // productNotifier.refresh();
+                                                              } else {
+                                                                ScaffoldMessenger
+                                                                        .of(
+                                                                            context)
+                                                                    .showSnackBar(SnackUtil.stylishSnackBar(
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            "Errore di connessione",
+                                                                        contentType:
+                                                                            "error"));
+                                                                // Navigator.of(context).pop();
+                                                              }
+                                                            });
+                                                          }
+                                                        },
+                                                        icon: const Icon(
+                                                            size: 24,
+                                                            Icons
+                                                                .delete_outline)),
+                                                  ],
+                                                ),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                    onPressed: () {
-                                                      if (_isButtonDisabled ||
-                                                          cartProductModel
-                                                                  .quantityCartProduct
-                                                                  .value <
-                                                              1) {
-                                                        return;
-                                                      } else {
-                                                        _isButtonDisabled =
-                                                            true;
-                                                        int tDecrease =
-                                                            cartProductModel
-                                                                    .quantityCartProduct
-                                                                    .value -
-                                                                1;
-                                                        cartNotifier
-                                                            .updateItemQuantity(
-                                                                context:
-                                                                    context,
-                                                                token:
-                                                                    authenticationNotifier
-                                                                        .token,
-                                                                idUserAppInstitution:
-                                                                    cUserAppInstitutionModel
-                                                                        .idUserAppInstitution,
-                                                                idCart:
-                                                                    cartProductModel
-                                                                        .idCart,
-                                                                idCartProduct:
-                                                                    cartProductModel
-                                                                        .idCartProduct,
-                                                                quantityCartProduct:
-                                                                    tDecrease)
-                                                            .then((value) {
-                                                          if (value) {
-                                                            cartProductModel
-                                                                .quantityCartProduct
-                                                                .value -= 1;
-                                                            // totalPrice.value =
-                                                            //     tDecrease.toDouble();
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Info Updated cart product: ${cartProductModel.quantityCartProduct.value}',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            _isButtonDisabled =
-                                                                false;
-                                                            // totalPrice.value =
-                                                            //     cartNotifier.totalPrice;
-                                                          } else {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Error Please Try Again , After a While',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            // Navigator.of(context).pop();
-                                                          }
-                                                        });
-                                                      }
-                                                    },
-                                                    icon: const Icon(
-                                                        size: 30,
-                                                        Icons.remove)),
-                                                ValueListenableBuilder<int>(
-                                                  builder:
-                                                      (BuildContext context,
-                                                          int value,
-                                                          Widget? child) {
-                                                    return Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(16.0),
-                                                          child: Text('$value',
-                                                              style: Theme.of(
-                                                                      context)
-                                                                  .textTheme
-                                                                  .titleMedium!
-                                                                  .copyWith(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w900)),
-                                                        )
-                                                      ],
-                                                    );
-                                                  },
-                                                  valueListenable:
-                                                      cartProductModel
-                                                          .quantityCartProduct,
-                                                ),
-                                                IconButton(
-                                                    onPressed: () {
-                                                      if (_isButtonDisabled) {
-                                                        return;
-                                                      } else {
-                                                        _isButtonDisabled =
-                                                            true;
-                                                        int tIncrease =
-                                                            cartProductModel
-                                                                    .quantityCartProduct
-                                                                    .value +
-                                                                1;
-                                                        cartNotifier
-                                                            .updateItemQuantity(
-                                                                context:
-                                                                    context,
-                                                                token:
-                                                                    authenticationNotifier
-                                                                        .token,
-                                                                idUserAppInstitution:
-                                                                    cUserAppInstitutionModel
-                                                                        .idUserAppInstitution,
-                                                                idCart:
-                                                                    cartProductModel
-                                                                        .idCart,
-                                                                idCartProduct:
-                                                                    cartProductModel
-                                                                        .idCartProduct,
-                                                                quantityCartProduct:
-                                                                    tIncrease)
-                                                            .then((value) {
-                                                          if (value) {
-                                                            cartProductModel
-                                                                .quantityCartProduct
-                                                                .value += 1;
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Info Updated cart product: ${cartProductModel.quantityCartProduct.value.toString()}',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            _isButtonDisabled =
-                                                                false;
-                                                            // totalPrice.value =
-                                                            //     cartNotifier.totalPrice;
-                                                            // Navigator.of(context).pop();
-                                                            // productNotifier.refresh();
-                                                          } else {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Error Please Try Again , After a While',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            // Navigator.of(context).pop();
-                                                          }
-                                                        });
-                                                      }
-                                                    },
-                                                    icon: const Icon(
-                                                        size: 30, Icons.add)),
-                                                IconButton(
-                                                    onPressed: () {
-                                                      if (_isButtonDisabled) {
-                                                        return;
-                                                      } else {
-                                                        _isButtonDisabled =
-                                                            true;
-                                                        int zero = 0;
-                                                        cartNotifier
-                                                            .updateItemQuantity(
-                                                                context:
-                                                                    context,
-                                                                token:
-                                                                    authenticationNotifier
-                                                                        .token,
-                                                                idUserAppInstitution:
-                                                                    cUserAppInstitutionModel
-                                                                        .idUserAppInstitution,
-                                                                idCart:
-                                                                    cartProductModel
-                                                                        .idCart,
-                                                                idCartProduct:
-                                                                    cartProductModel
-                                                                        .idCartProduct,
-                                                                quantityCartProduct:
-                                                                    zero)
-                                                            .then((value) {
-                                                          if (value) {
-                                                            cartProductModel
-                                                                .quantityCartProduct
-                                                                .value = 0;
-                                                            tSnapshot.remove(
-                                                                cartProductModel);
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Info Updated cart product: ${cartProductModel.quantityCartProduct.value}',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            _isButtonDisabled =
-                                                                false;
-                                                            // totalPrice.value =
-                                                            //     cartNotifier.totalPrice;
-                                                            // Navigator.of(context).pop();
-                                                            // productNotifier.refresh();
-                                                          } else {
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                              SnackUtil
-                                                                  .stylishSnackBar(
-                                                                text:
-                                                                    'Error Please Try Again , After a While',
-                                                                context:
-                                                                    context,
-                                                              ),
-                                                            );
-                                                            // Navigator.of(context).pop();
-                                                          }
-                                                        });
-                                                      }
-                                                    },
-                                                    icon: const Icon(
-                                                        size: 30,
-                                                        Icons.delete_outline)),
-                                              ],
-                                            ),
-                                          )
+                                      ],
+                                    ),
                                   ],
                                 ),
                               );
@@ -573,59 +574,12 @@ class _CartScreenState extends State<CartScreen> {
                           ),
                         ),
                         Align(
-                          child: ValueListenableBuilder<double>(
-                            builder: (BuildContext context, double value,
-                                Widget? child) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 32, top: 16),
-                                    child: Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: MaterialButton(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.05,
-                                        minWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.25,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        onPressed: () async {
-                                          PersistentNavBarNavigator
-                                              .pushNewScreen(
-                                            context,
-                                            screen: PaymentScreen(),
-                                            withNavBar: true,
-                                            pageTransitionAnimation:
-                                                PageTransitionAnimation.fade,
-                                          );
-                                        },
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondaryContainer,
-                                        child: Text(
-                                            'Totale da pagare: $value €',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headlineMedium),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              );
-                            },
-                            valueListenable: cartNotifier.totalCartMoney,
-                            // The child parameter is most helpful if the child is
-                            // expensive to build and does not depend on the value from
-                            // the notifier.
-                          ),
-                        )
+                          alignment: Alignment.bottomCenter,
+                          child: Visibility(
+                              visible: cartHasData,
+                              child: CheckoutCart(
+                                  controller: refreshCartController)),
+                        ),
                       ]);
                     }
                   },
@@ -635,6 +589,9 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ],
       ),
+      // bottomNavigationBar: Visibility(
+      //     visible: cartHasData,
+      //     child: CheckoutCart(controller: refreshCartController)),
     );
 
     // return Scaffold(

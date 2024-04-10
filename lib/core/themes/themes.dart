@@ -7,8 +7,8 @@ class AppTheme {
   // static colors
   // *****************
   static const Color _lightPrimaryColor = Colors.white;
-  static final Color _lightPrimaryVariantColor = Colors.blueGrey.shade800;
-  static final Color _lightOnPrimaryColor = Colors.blueGrey.shade200;
+  // static final Color _lightPrimaryVariantColor = Colors.blueGrey.shade800;
+  // static final Color _lightOnPrimaryColor = Colors.blueGrey.shade200;
   static const Color _lightTextColorPrimary = Colors.black;
   static const Color _appbarColorLight = Colors.blue;
   static const Color _lightcardColor = Colors.white;
@@ -31,8 +31,8 @@ class AppTheme {
   static const Color _lightonSurface = Colors.black87;
 
   static final Color _darkPrimaryColor = Colors.blueGrey.shade900;
-  static final Color _darkPrimaryVariantColor = Colors.blueGrey.shade400;
-  static final Color _darkOnPrimaryColor = Colors.blueGrey.shade700;
+  // static final Color _darkPrimaryVariantColor = Colors.blueGrey.shade400;
+  // static final Color _darkOnPrimaryColor = Colors.blueGrey.shade700;
   static const Color _darkTextColorPrimary = Colors.white;
   static final Color _appbarColorDark = Colors.indigo.shade900;
   static final Color _darkcardColor = Colors.grey.withAlpha(25);
@@ -56,7 +56,7 @@ class AppTheme {
 
   static const Color _iconColor = Colors.white;
 
-  static const Color _accentColor = Color.fromRGBO(74, 217, 217, 1);
+  // static const Color _accentColor = Color.fromRGBO(74, 217, 217, 1);
 
   // *****************
   // Text Style - light
@@ -254,7 +254,7 @@ class AppTheme {
       appBarTheme: const AppBarTheme(
           color: _appbarColorLight,
           iconTheme: IconThemeData(color: _iconColor)),
-      bottomAppBarColor: _appbarColorLight,
+      // bottomAppBarColor: _appbarColorLight,
       colorScheme: ColorScheme.light(
         background: _lightbackground,
         onBackground: _lightonBackground,
@@ -284,7 +284,7 @@ class AppTheme {
       appBarTheme: AppBarTheme(
           color: _appbarColorDark,
           iconTheme: const IconThemeData(color: _iconColor)),
-      bottomAppBarColor: _appbarColorDark,
+      // bottomAppBarColor: _appbarColorDark,
       colorScheme: ColorScheme.dark(
         background: _darkbackground,
         onBackground: _darkonBackground,

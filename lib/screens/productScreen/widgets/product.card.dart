@@ -318,11 +318,12 @@ class ProductCard extends StatelessWidget {
     }
     ValueNotifier<bool> addToCartButtonEnabled = ValueNotifier(
         (product.priceProduct > 0 && product.isFreePriceProduct) ||
-            (quantityForProduct.value > 0));
+            (!product.isFreePriceProduct && quantityForProduct.value > 0));
 
     CurrencyTextFieldController textEditingControllerFreePriceProduct =
         CurrencyTextFieldController(
-            decimalSymbol: '.',
+            decimalSymbol: ',',
+            thousandSymbol: '',
             currencySeparator: '',
             currencySymbol: '',
             enableNegative: false,
@@ -331,9 +332,10 @@ class ProductCard extends StatelessWidget {
             maxDigits: 8);
 
     void freePriceOnChange() {
-      final text = textEditingControllerFreePriceProduct.text;
-
-      var value = double.tryParse(text);
+      //final text = textEditingControllerFreePriceProduct.text;
+      var value = double.tryParse(
+          textEditingControllerFreePriceProduct.text.replaceAll(',', '.'));
+      //var value = double.tryParse(text);
       if (value != null) {
         freePriceProduct.value = value;
       } else {
@@ -385,7 +387,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
             SizedBox(
-              height: 50,
+              height: 60,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -585,30 +587,27 @@ class ProductCard extends StatelessWidget {
                               if (value) {
                                 if (product.isWishlisted.value) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackUtil.stylishSnackBar(
-                                      text:
-                                          '${product.nameProduct} rimosso dai preferiti',
-                                      context: context,
-                                    ),
-                                  );
+                                      SnackUtil.stylishSnackBar(
+                                          title: "Prodotti",
+                                          message:
+                                              '${product.nameProduct} rimosso dai preferiti',
+                                          contentType: "success"));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackUtil.stylishSnackBar(
-                                      text:
-                                          '${product.nameProduct} aggiunto ai preferiti',
-                                      context: context,
-                                    ),
-                                  );
+                                      SnackUtil.stylishSnackBar(
+                                          title: "Prodotti",
+                                          message:
+                                              '${product.nameProduct} aggiunto ai preferiti',
+                                          contentType: "success"));
                                 }
                                 product.isWishlisted.value =
                                     !product.isWishlisted.value;
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackUtil.stylishSnackBar(
-                                    text: 'Oops Something Went Wrong',
-                                    context: context,
-                                  ),
-                                );
+                                    SnackUtil.stylishSnackBar(
+                                        title: "Prodotti",
+                                        message: "Errore di connessione",
+                                        contentType: "success"));
                               }
                             });
                           },
@@ -648,7 +647,9 @@ class ProductCard extends StatelessWidget {
                                           isWishlisted:
                                               ValueNotifier<bool>(false),
                                           isFreePriceProduct:
-                                              product.isFreePriceProduct),
+                                              product.isFreePriceProduct,
+                                          giveIdsFlatStructureModel: product
+                                              .giveIdsFlatStructureModel),
                                     ),
                                     withNavBar: true,
                                     pageTransitionAnimation:
@@ -689,21 +690,20 @@ class ProductCard extends StatelessWidget {
                                   .then((value) {
                                 if (value) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackUtil.stylishSnackBar(
-                                      text:
-                                          '$quantity x ${product.nameProduct} aggiunti al carrello',
-                                      context: context,
-                                    ),
-                                  );
+                                      SnackUtil.stylishSnackBar(
+                                          title: "Prodotti",
+                                          message:
+                                              '$quantity x ${product.nameProduct} aggiunti al carrello',
+                                          contentType: "success"));
+
                                   // Navigator.of(context)
                                   //     .pushNamed(AppRouter.homeRoute);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackUtil.stylishSnackBar(
-                                      text: 'Oops Something Went Wrong',
-                                      context: context,
-                                    ),
-                                  );
+                                      SnackUtil.stylishSnackBar(
+                                          title: "Prodotti",
+                                          message: "Errore di connessione",
+                                          contentType: "success"));
                                 }
                               });
                             } else {

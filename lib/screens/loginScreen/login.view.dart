@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const Expanded(
                     child: Image(
-                        image: AssetImage(AppAssets.leftHomeImage),
+                        image: AssetImage(AppAssets.home2),
                         fit: BoxFit.cover,
                         height: double.infinity,
                         width: double.infinity,
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Form(
                             key: _formKey,
                             child: Padding(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(30),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -125,7 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     valueListenable: passwordNotifier,
                                     builder: (_, passwordObscure, __) {
                                       return Padding(
-                                        padding: const EdgeInsets.only(top: 20),
+                                        padding: const EdgeInsets.only(
+                                            top: 20, bottom: 20),
                                         child: AGTextFormField(
                                           obscureText: passwordObscure,
                                           controller: passwordController,
@@ -294,7 +295,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const Expanded(
                     child: Image(
-                        image: AssetImage(AppAssets.leftHomeImage),
+                        image: AssetImage(AppAssets.home2),
                         fit: BoxFit.cover,
                         height: double.infinity,
                         width: double.infinity,
@@ -311,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           Form(
                             key: _formKey,
                             child: Padding(
-                              padding: const EdgeInsets.all(20),
+                              padding: const EdgeInsets.all(30),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -335,35 +336,42 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ValueListenableBuilder(
                                     valueListenable: passwordNotifier,
                                     builder: (_, passwordObscure, __) {
-                                      return AGTextFormField(
-                                        obscureText: passwordObscure,
-                                        controller: passwordController,
-                                        labelText: AppStrings.password,
-                                        textInputAction: TextInputAction.done,
-                                        keyboardType:
-                                            TextInputType.visiblePassword,
-                                        onChanged: (_) =>
-                                            _formKey.currentState?.validate(),
-                                        validator: (value) {
-                                          return value!.isEmpty
-                                              ? AppStrings.pleaseEnterPassword
-                                              : AppConstants.passwordRegex
-                                                      .hasMatch(value)
-                                                  ? null
-                                                  : AppStrings.invalidPassword;
-                                        },
-                                        suffixIcon: IconButton(
-                                          onPressed: () => passwordNotifier
-                                              .value = !passwordObscure,
-                                          style: IconButton.styleFrom(
-                                            minimumSize: const Size.square(48),
-                                          ),
-                                          icon: Icon(
-                                            passwordObscure
-                                                ? Icons.visibility_off_outlined
-                                                : Icons.visibility_outlined,
-                                            size: 20,
-                                            color: Colors.black,
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 20, bottom: 20),
+                                        child: AGTextFormField(
+                                          obscureText: passwordObscure,
+                                          controller: passwordController,
+                                          labelText: AppStrings.password,
+                                          textInputAction: TextInputAction.done,
+                                          keyboardType:
+                                              TextInputType.visiblePassword,
+                                          onChanged: (_) =>
+                                              _formKey.currentState?.validate(),
+                                          validator: (value) {
+                                            return value!.isEmpty
+                                                ? AppStrings.pleaseEnterPassword
+                                                : AppConstants.passwordRegex
+                                                        .hasMatch(value)
+                                                    ? null
+                                                    : AppStrings
+                                                        .invalidPassword;
+                                          },
+                                          suffixIcon: IconButton(
+                                            onPressed: () => passwordNotifier
+                                                .value = !passwordObscure,
+                                            style: IconButton.styleFrom(
+                                              minimumSize:
+                                                  const Size.square(48),
+                                            ),
+                                            icon: Icon(
+                                              passwordObscure
+                                                  ? Icons
+                                                      .visibility_off_outlined
+                                                  : Icons.visibility_outlined,
+                                              size: 20,
+                                              color: Colors.black,
+                                            ),
                                           ),
                                         ),
                                       );
@@ -498,206 +506,227 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             );
           } else {
-            return Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.center,
-                    constraints: const BoxConstraints(maxWidth: 21),
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Form(
-                            key: _formKey,
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  AGTextFormField(
-                                    controller: emailController,
-                                    labelText: AppStrings.email,
-                                    keyboardType: TextInputType.emailAddress,
-                                    textInputAction: TextInputAction.next,
-                                    onChanged: (_) =>
-                                        _formKey.currentState?.validate(),
-                                    validator: (value) {
-                                      return value!.isEmpty
-                                          ? "AppStrings.pleaseEnterEmailAddress"
-                                          : AppConstants.emailRegex
-                                                  .hasMatch(value)
-                                              ? null
-                                              : "AppStrings.invalidEmailAddress";
-                                    },
-                                  ),
-                                  ValueListenableBuilder(
-                                    valueListenable: passwordNotifier,
-                                    builder: (_, passwordObscure, __) {
-                                      return AGTextFormField(
-                                        obscureText: passwordObscure,
-                                        controller: passwordController,
-                                        labelText: AppStrings.password,
-                                        textInputAction: TextInputAction.done,
-                                        keyboardType:
-                                            TextInputType.visiblePassword,
-                                        onChanged: (_) =>
-                                            _formKey.currentState?.validate(),
-                                        validator: (value) {
-                                          return value!.isEmpty
-                                              ? AppStrings.pleaseEnterPassword
-                                              : AppConstants.passwordRegex
-                                                      .hasMatch(value)
-                                                  ? null
-                                                  : AppStrings.invalidPassword;
-                                        },
-                                        suffixIcon: IconButton(
-                                          onPressed: () => passwordNotifier
-                                              .value = !passwordObscure,
-                                          style: IconButton.styleFrom(
-                                            minimumSize: const Size.square(48),
-                                          ),
-                                          icon: Icon(
-                                            passwordObscure
-                                                ? Icons.visibility_off_outlined
-                                                : Icons.visibility_outlined,
-                                            size: 20,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  authenticationNotifier.isLoading
-                                      ? const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: LinearProgressIndicator(
-                                            backgroundColor: Colors.transparent,
-                                            valueColor: AlwaysStoppedAnimation(
-                                                Colors.blue),
-                                            minHeight: 5,
-                                          ),
-                                        )
-                                      : const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextButton(
-                                          onPressed: () {},
-                                          child: const Text(
-                                            AppStrings.forgotPassword,
-                                            style: TextStyle(
+            return Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(AppAssets.home2),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      constraints: const BoxConstraints(maxWidth: 21),
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Form(
+                              key: _formKey,
+                              child: Padding(
+                                padding: const EdgeInsets.all(30),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    AGTextFormField(
+                                      controller: emailController,
+                                      labelText: AppStrings.email,
+                                      keyboardType: TextInputType.emailAddress,
+                                      textInputAction: TextInputAction.next,
+                                      onChanged: (_) =>
+                                          _formKey.currentState?.validate(),
+                                      validator: (value) {
+                                        return value!.isEmpty
+                                            ? "AppStrings.pleaseEnterEmailAddress"
+                                            : AppConstants.emailRegex
+                                                    .hasMatch(value)
+                                                ? null
+                                                : "AppStrings.invalidEmailAddress";
+                                      },
+                                    ),
+                                    ValueListenableBuilder(
+                                      valueListenable: passwordNotifier,
+                                      builder: (_, passwordObscure, __) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 20, bottom: 20),
+                                          child: AGTextFormField(
+                                            obscureText: passwordObscure,
+                                            controller: passwordController,
+                                            labelText: AppStrings.password,
+                                            textInputAction:
+                                                TextInputAction.done,
+                                            keyboardType:
+                                                TextInputType.visiblePassword,
+                                            onChanged: (_) => _formKey
+                                                .currentState
+                                                ?.validate(),
+                                            validator: (value) {
+                                              return value!.isEmpty
+                                                  ? AppStrings
+                                                      .pleaseEnterPassword
+                                                  : AppConstants.passwordRegex
+                                                          .hasMatch(value)
+                                                      ? null
+                                                      : AppStrings
+                                                          .invalidPassword;
+                                            },
+                                            suffixIcon: IconButton(
+                                              onPressed: () => passwordNotifier
+                                                  .value = !passwordObscure,
+                                              style: IconButton.styleFrom(
+                                                minimumSize:
+                                                    const Size.square(48),
+                                              ),
+                                              icon: Icon(
+                                                passwordObscure
+                                                    ? Icons
+                                                        .visibility_off_outlined
+                                                    : Icons.visibility_outlined,
+                                                size: 20,
                                                 color: Colors.black,
-                                                fontSize: 8),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    authenticationNotifier.isLoading
+                                        ? const Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: LinearProgressIndicator(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      Colors.blue),
+                                              minHeight: 5,
+                                            ),
+                                          )
+                                        : const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextButton(
+                                            onPressed: () {},
+                                            child: const Text(
+                                              AppStrings.forgotPassword,
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 8),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                        child: ValueListenableBuilder(
-                                          valueListenable: fieldValidNotifier,
-                                          builder: (_, isValid, __) {
-                                            return FilledButton(
-                                              onPressed: isValid
-                                                  ? () {
-                                                      SnackbarHelper
-                                                          .showSnackBar(
-                                                        AppStrings.loggedIn,
-                                                      );
-                                                      authenticateAccount();
-                                                      emailController.clear();
-                                                      passwordController
-                                                          .clear();
-                                                    }
-                                                  : null,
-                                              child:
-                                                  const Text(AppStrings.login),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                          child: Divider(
-                                              color: Colors.grey.shade200)),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Text(AppStrings.orLoginWith,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headlineSmall
-                                                ?.copyWith(
-                                                    color: Colors.blueGrey)),
-                                      ),
-                                      Expanded(
-                                          child: Divider(
-                                              color: Colors.grey.shade200)),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: OutlinedButton.icon(
-                                          onPressed: () {},
-                                          icon: SvgPicture.asset(Vectors.google,
-                                              width: 14),
-                                          label: const Text(
-                                            AppStrings.google,
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                        const SizedBox(width: 20),
+                                        Expanded(
+                                          child: ValueListenableBuilder(
+                                            valueListenable: fieldValidNotifier,
+                                            builder: (_, isValid, __) {
+                                              return FilledButton(
+                                                onPressed: isValid
+                                                    ? () {
+                                                        SnackbarHelper
+                                                            .showSnackBar(
+                                                          AppStrings.loggedIn,
+                                                        );
+                                                        authenticateAccount();
+                                                        emailController.clear();
+                                                        passwordController
+                                                            .clear();
+                                                      }
+                                                    : null,
+                                                child: const Text(
+                                                    AppStrings.login),
+                                              );
+                                            },
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Expanded(
-                                        child: OutlinedButton.icon(
-                                          onPressed: () {},
-                                          icon: SvgPicture.asset(
-                                              Vectors.facebook,
-                                              width: 14),
-                                          label: const Text(
-                                            AppStrings.facebook,
-                                            style:
-                                                TextStyle(color: Colors.black),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            child: Divider(
+                                                color: Colors.grey.shade200)),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: Text(AppStrings.orLoginWith,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headlineSmall
+                                                  ?.copyWith(
+                                                      color: Colors.blueGrey)),
+                                        ),
+                                        Expanded(
+                                            child: Divider(
+                                                color: Colors.grey.shade200)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: OutlinedButton.icon(
+                                            onPressed: () {},
+                                            icon: SvgPicture.asset(
+                                                Vectors.google,
+                                                width: 14),
+                                            label: const Text(
+                                              AppStrings.google,
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        const SizedBox(width: 20),
+                                        Expanded(
+                                          child: OutlinedButton.icon(
+                                            onPressed: () {},
+                                            icon: SvgPicture.asset(
+                                                Vectors.facebook,
+                                                width: 14),
+                                            label: const Text(
+                                              AppStrings.facebook,
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                AppStrings.doNotHaveAnAccount,
-                                style:
-                                    Theme.of(context).textTheme.headlineLarge,
-                              ),
-                              const SizedBox(width: 4),
-                              TextButton(
-                                onPressed: () => {},
-                                child: const Text(AppStrings.register),
-                              ),
-                            ],
-                          ),
-                        ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppStrings.doNotHaveAnAccount,
+                                  style:
+                                      Theme.of(context).textTheme.headlineLarge,
+                                ),
+                                const SizedBox(width: 4),
+                                TextButton(
+                                  onPressed: () => {},
+                                  child: const Text(AppStrings.register),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           }
         },

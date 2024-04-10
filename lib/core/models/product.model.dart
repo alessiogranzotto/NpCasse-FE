@@ -61,6 +61,7 @@
 // }
 
 import 'package:flutter/material.dart';
+import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 
 class ProductModel {
   ProductModel(
@@ -71,7 +72,8 @@ class ProductModel {
       required this.priceProduct,
       required this.imageProduct,
       required this.isWishlisted,
-      required this.isFreePriceProduct});
+      required this.isFreePriceProduct,
+      required this.giveIdsFlatStructureModel});
   late int idProduct;
   late int idStore;
   late String nameProduct;
@@ -80,6 +82,7 @@ class ProductModel {
   late String imageProduct;
   late ValueNotifier<bool> isWishlisted;
   late bool isFreePriceProduct;
+  late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
 
   ProductModel.empty() {
     idProduct = 0;
@@ -90,6 +93,7 @@ class ProductModel {
     imageProduct = '';
     isWishlisted = ValueNotifier<bool>(false);
     isFreePriceProduct = false;
+    giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
   }
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -101,6 +105,12 @@ class ProductModel {
     imageProduct = json['imageProduct'] ?? '';
     isWishlisted = ValueNotifier<bool>(json['isWishlisted']);
     isFreePriceProduct = json['isFreePriceProduct'];
+    if (json['giveIdsFlatStructure'] != null) {
+      giveIdsFlatStructureModel =
+          GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
+    } else {
+      giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -112,6 +122,7 @@ class ProductModel {
     data['priceProduct'] = priceProduct;
     data['imageProduct'] = imageProduct;
     data['isFreePriceProduct'] = isFreePriceProduct;
+    data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
   }
 }

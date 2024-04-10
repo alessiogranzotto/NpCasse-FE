@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:np_casse/core/models/user.app.institution.model.dart';
-// import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/home.notifier.dart';
@@ -66,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    int nrProductinCart = 0;
+    // int nrProductinCart = 0;
     ContextKeeper().init(context);
   }
 
@@ -108,12 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
     List<PersistentBottomNavBarItem> getNavBarsItems() {
       List<PersistentBottomNavBarItem> result = [];
       result.add(PersistentBottomNavBarItem(
-          icon: const Icon(CupertinoIcons.list_dash),
+          icon: const Icon(Icons.favorite),
           title: ("Preferiti"),
           activeColorPrimary: Theme.of(context).colorScheme.secondaryContainer,
           inactiveColorPrimary: Theme.of(context).hintColor));
       result.add(PersistentBottomNavBarItem(
-          icon: const Icon(CupertinoIcons.circle_grid_3x3),
+          icon: const Icon(Icons.layers),
           title: ("Progetti"),
           activeColorPrimary: Theme.of(context).colorScheme.secondaryContainer,
           inactiveColorPrimary: Theme.of(context).hintColor));
@@ -131,12 +128,15 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: Badge(
             label: Text(
               nrProductinCart.toString(),
-              style: const TextStyle(fontSize: 13),
+              style: const TextStyle(fontSize: 12),
             ),
             child: const Icon(Icons.shopping_cart)),
         title: ("Carrello"),
         activeColorPrimary: Theme.of(context).colorScheme.secondaryContainer,
         inactiveColorPrimary: Theme.of(context).hintColor,
+        // onPressed: (context) {
+        //   cartNotifier.setFirstRoute();
+        // },
       ));
       result.add(PersistentBottomNavBarItem(
         icon: const Icon(Icons.logout),
@@ -167,9 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
         handleAndroidBackButtonPress: true, // Default is true.
         resizeToAvoidBottomInset:
             true, // This needs to be true if you want to move up the screen when keyboard appears. Default is true.
-        stateManagement: homeNotifier.getStateManagement
+        stateManagement: homeNotifier.getStateManagement,
         //getStateManagement(_controller.index)
-        ,
 
         // Default is true.
         hideNavigationBarWhenKeyboardShows:
@@ -192,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
           curve: Curves.ease,
           duration: Duration(milliseconds: 1),
         ),
-        navBarStyle: NavBarStyle.style6, onItemSelected: (int index) {
+        navBarStyle: NavBarStyle.style3, onItemSelected: (int index) {
       setState(() {
         _controller.index = index;
         homeNotifier.setActualHomeIndex(index);
@@ -202,9 +201,10 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (index == 1) {
           projectNotifier.refresh();
         } else if (index == 2) {
+          cartNotifier.refresh();
         } else if (index == 0) {}
-        cartNotifier.refresh();
-        nrProductinCart = cartNotifier.nrProductInCart;
+        // cartNotifier.refresh();
+        // nrProductinCart = cartNotifier.nrProductInCart;
       });
     });
 

@@ -39,7 +39,9 @@ class StoreNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
             // Navigator.pop(context);
           }
         } else {
@@ -51,9 +53,12 @@ class StoreNotifier with ChangeNotifier {
         }
       }
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Negozi",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 
@@ -79,7 +84,9 @@ class StoreNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
             // Navigator.pop(context);
           }
         } else {
@@ -91,11 +98,12 @@ class StoreNotifier with ChangeNotifier {
       }
       return isOk;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Negozi",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 }

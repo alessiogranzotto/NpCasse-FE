@@ -1,18 +1,19 @@
+import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
+
 class StoreModel {
-  StoreModel({
-    required this.idStore,
-    required this.idProject,
-    required this.nameStore,
-    required this.descriptionStore,
-    required this.imageStore,
-    this.isWishlisted = false,
-  });
+  StoreModel(
+      {required this.idStore,
+      required this.idProject,
+      required this.nameStore,
+      required this.descriptionStore,
+      required this.imageStore,
+      required this.giveIdsFlatStructureModel});
   late final int idStore;
   late final int idProject;
   late final String nameStore;
   late final String descriptionStore;
   late final String imageStore;
-  late bool isWishlisted = false;
+  late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
 
   StoreModel.empty() {
     idStore = 0;
@@ -20,6 +21,7 @@ class StoreModel {
     nameStore = '';
     descriptionStore = "";
     imageStore = "";
+    giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
   }
 
   StoreModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,8 @@ class StoreModel {
     nameStore = json['nameStore'];
     descriptionStore = json['descriptionStore'];
     imageStore = json['imageStore'];
+    giveIdsFlatStructureModel =
+        GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
   }
 
   Map<String, dynamic> toJson() {
@@ -37,6 +41,7 @@ class StoreModel {
     data['nameStore'] = nameStore;
     data['descriptionStore'] = descriptionStore;
     data['imageStore'] = imageStore;
+    data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
   }
 }

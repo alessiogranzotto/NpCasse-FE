@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
-import 'package:np_casse/app/routes/app_routes.dart';
+import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -24,7 +24,6 @@ class StoreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
-    StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
     ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
 
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -48,7 +47,8 @@ class StoreScreen extends StatelessWidget {
                               nameStore: '',
                               descriptionStore: '',
                               imageStore: '',
-                              isWishlisted: false),
+                              giveIdsFlatStructureModel:
+                                  GiveIdsFlatStructureModel.empty()),
                         ),
                         withNavBar: true,
                         pageTransitionAnimation: PageTransitionAnimation.fade);
@@ -107,18 +107,19 @@ class StoreScreen extends StatelessWidget {
                                   crossAxisCount:
                                       (MediaQuery.of(context).size.width) ~/
                                           widgetWitdh,
-                                  crossAxisSpacing: (((MediaQuery.of(context)
-                                              .size
-                                              .width) -
-                                          (widgetWitdh *
-                                              ((MediaQuery.of(context)
-                                                      .size
-                                                      .width) ~/
-                                                  widgetWitdh))) /
-                                      ((MediaQuery.of(context).size.width) ~/
-                                          widgetWitdh)),
+                                  crossAxisSpacing: 10,
+                                  // (((MediaQuery.of(context)
+                                  //             .size
+                                  //             .width) -
+                                  //         (widgetWitdh *
+                                  //             ((MediaQuery.of(context)
+                                  //                     .size
+                                  //                     .width) ~/
+                                  //                 widgetWitdh))) /
+                                  //     ((MediaQuery.of(context).size.width) ~/
+                                  //         widgetWitdh)),
                                   mainAxisSpacing: gridMainAxisSpacing,
-                                  height: widgetWitdh * widgetRatio,
+                                  height: 300,
                                 ),
                                 physics: const ScrollPhysics(),
                                 shrinkWrap: true,

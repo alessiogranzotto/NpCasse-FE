@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
+import 'package:np_casse/app/utilities/initial_context.dart';
 import 'package:np_casse/core/api/cart.api.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -15,6 +17,8 @@ class CartNotifier with ChangeNotifier {
   int get nrProductTypeInCart => _nrProductTypeInCart;
 
   late ValueNotifier<double> totalCartMoney = ValueNotifier(0);
+  late ValueNotifier<int> totalCartProduct = ValueNotifier(0);
+  late ValueNotifier<int> totalCartProductType = ValueNotifier(0);
 
   setCart(CartModel cartModel) {
     _nrProductInCart = 0;
@@ -35,6 +39,8 @@ class CartNotifier with ChangeNotifier {
     }
 
     _nrProductTypeInCart = cartModel.cartProducts.length;
+    totalCartProduct.value = _nrProductInCart;
+    totalCartProductType.value = nrProductTypeInCart;
   }
 
   getCart() {
@@ -68,24 +74,26 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
             // Navigator.pop(context);
           }
         } else {
           // ProjectModel projectDetail =
           //     ProjectModel.fromJson(parseData['okResult']);
           //return projectDetail;
-          notifyListeners();
+          //notifyListeners();
         }
       }
       return isOk;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 
@@ -109,8 +117,9 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           if (parseData['okResult'] != null) {
@@ -122,17 +131,18 @@ class CartNotifier with ChangeNotifier {
 
             return cartModel;
           } else {
+            setCart(CartModel.empty());
             return null;
           }
         }
       }
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 
@@ -160,8 +170,9 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           CartModel cartModel = CartModel.fromJson(parseData['okResult'] ?? '');
@@ -178,17 +189,15 @@ class CartNotifier with ChangeNotifier {
       return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
       }
     }
   }
 
-  Future finalizeCart(
+  Future setCartPayment(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
@@ -197,7 +206,7 @@ class CartNotifier with ChangeNotifier {
     try {
       bool isOk = false;
       int savedIdCart = 0;
-      var response = await cartAPI.finalizeCart(
+      var response = await cartAPI.setCartPayment(
           token: token,
           idCart: idCart,
           idUserAppInstitution: idUserAppInstitution,
@@ -211,8 +220,9 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            Navigator.pop(context);
+                    title: "Autenticazione",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           CartModel cartModelDetail = CartModel.fromJson(parseData['okResult']);
@@ -223,12 +233,10 @@ class CartNotifier with ChangeNotifier {
       return savedIdCart;
     } on SocketException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
       }
     }
   }
@@ -251,8 +259,9 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           if (parseData['okResult'] != null) {
@@ -266,12 +275,10 @@ class CartNotifier with ChangeNotifier {
       return invoiceTypeModel;
     } on SocketException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
       }
       return List<InvoiceTypeModel>.empty();
     }
@@ -301,12 +308,10 @@ class CartNotifier with ChangeNotifier {
       }
     } on SocketException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
       }
     }
   }
@@ -333,8 +338,9 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            //Navigator.pop(context);
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           //notifyListeners();
@@ -343,17 +349,20 @@ class CartNotifier with ChangeNotifier {
       return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context,
-          ),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
       }
     }
   }
 
   void refresh() {
     notifyListeners();
+  }
+
+  void setFirstRoute() {
+    Navigator.pushNamedAndRemoveUntil(
+        ContextKeeper.buildContext, AppRouter.cartRoute, (_) => true);
   }
 }

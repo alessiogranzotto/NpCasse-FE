@@ -43,8 +43,9 @@ class ProductNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           List<ProductModel> products = List.from(parseData['okResult'])
@@ -65,9 +66,12 @@ class ProductNotifier with ChangeNotifier {
         }
       }
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Prodotti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 
@@ -95,8 +99,9 @@ class ProductNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           // ProjectModel projectDetail =
@@ -107,11 +112,12 @@ class ProductNotifier with ChangeNotifier {
       }
       return isOk;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Prodotti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 }

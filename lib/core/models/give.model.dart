@@ -1,3 +1,42 @@
+class StakeholderGiveModelWithRulesSearch {
+  StakeholderGiveModelWithRulesSearch(
+      {required this.operationResult,
+      required this.donatoriOk,
+      required this.donatoriWithRulesDeduplica});
+  String operationResult = "";
+  StakeholderGiveModelSearch? donatoriOk;
+  List<StakeholderDeduplicaResult>? donatoriWithRulesDeduplica;
+
+  StakeholderGiveModelWithRulesSearch.fromJson(Map<String, dynamic> json) {
+    if (json['donatoriOk'] != null) {
+      donatoriOk = StakeholderGiveModelSearch.fromJson(json['donatoriOk']);
+    }
+    if (json['donatoriWithRulesDeduplica'] != null) {
+      donatoriWithRulesDeduplica = List.from(json['donatoriWithRulesDeduplica'])
+          .map((e) => StakeholderDeduplicaResult.fromJson(e))
+          .toList();
+    }
+  }
+  StakeholderGiveModelWithRulesSearch.empty() {
+    operationResult = '';
+    donatoriOk = null;
+    donatoriWithRulesDeduplica = null;
+  }
+}
+
+class StakeholderDeduplicaResult {
+  StakeholderDeduplicaResult(
+      {required this.rules, required this.stakeholderGiveModelSearch});
+  late String rules;
+  late StakeholderGiveModelSearch stakeholderGiveModelSearch;
+
+  StakeholderDeduplicaResult.fromJson(Map<String, dynamic> json) {
+    rules = json['rules'];
+    stakeholderGiveModelSearch =
+        StakeholderGiveModelSearch.fromJson(json['donatori']);
+  }
+}
+
 class StakeholderGiveModelSearch {
   StakeholderGiveModelSearch(
       {required this.id,
@@ -51,6 +90,33 @@ class StakeholderGiveModelSearch {
   late final int? tipoDonatore;
   late final RecapitoGiveModel recapitoGiveModel;
 
+  StakeholderGiveModelSearch.empty() {
+    id = 0;
+    nome = '';
+    cognome = '';
+    ragionesociale = '';
+    codfisc = '';
+    sesso = 0;
+    email = '';
+    tel = '';
+    cell = '';
+    nazioneNnNorm = '';
+    provNnNorm = '';
+    capNnNorm = '';
+    cittaNnNorm = '';
+    indirizzoNnNorm = '';
+    nCivicoNnNorm = '';
+    comCartacee = 0;
+    comEmail = 0;
+    consensoRingrazia = 0;
+    consensoMaterialeInfo = 0;
+    consensoComEspresso = 0;
+    consensoMarketing = 0;
+    consensoSms = 0;
+    dataNascita = '';
+    tipoDonatore = 0;
+    recapitoGiveModel = RecapitoGiveModel.empty();
+  }
   StakeholderGiveModelSearch.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     nome = json['nome'] ?? '';
@@ -106,6 +172,13 @@ class RecapitoGiveModel {
   late final String citta;
   late final String prov;
 
+  RecapitoGiveModel.empty() {
+    indirizzo = '';
+    nCivico = '';
+    cap = '';
+    citta = '';
+    prov = '';
+  }
   RecapitoGiveModel.fromJson(Map<String, dynamic> json) {
     indirizzo = json['indirizzo'] ?? '';
     nCivico = json['n_civico'] ?? '';

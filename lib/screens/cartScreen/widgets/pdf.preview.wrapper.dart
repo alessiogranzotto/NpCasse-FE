@@ -1,13 +1,8 @@
-import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/home.notifier.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
@@ -65,20 +60,20 @@ class _PdfPreviewWrapperState extends State<PdfPreviewWrapper> {
     );
   }
 
-  Future<void> _saveAsFile(
-    BuildContext context,
-    LayoutCallback build,
-    PdfPageFormat pageFormat,
-  ) async {
-    final bytes = await build(pageFormat);
+  // Future<void> _saveAsFile(
+  //   BuildContext context,
+  //   LayoutCallback build,
+  //   PdfPageFormat pageFormat,
+  // ) async {
+  //   final bytes = await build(pageFormat);
 
-    final appDocDir = await getApplicationDocumentsDirectory();
-    final appDocPath = appDocDir.path;
-    final file = File('$appDocPath/document.pdf');
-    print('Save as file ${file.path} ...');
-    await file.writeAsBytes(bytes);
-    await OpenFile.open(file.path);
-  }
+  //   final appDocDir = await getApplicationDocumentsDirectory();
+  //   final appDocPath = appDocDir.path;
+  //   final file = File('$appDocPath/document.pdf');
+  //   print('Save as file ${file.path} ...');
+  //   await file.writeAsBytes(bytes);
+  //   await OpenFile.open(file.path);
+  // }
 
   @override
   Widget build(BuildContext context) {

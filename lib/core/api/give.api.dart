@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
 
@@ -16,13 +15,14 @@ class GiveAPI {
   Future findStakeholder({
     required String? token,
     required int idUserAppInstitution,
+    required int id,
     required String nameSurnameOrBusinessName,
     required String email,
     required String city,
     required String cf,
   }) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.giveURL}/Find-stakeholder?idUserAppInstitution=$idUserAppInstitution&NameSurnameOrBusinessName=$nameSurnameOrBusinessName&Email=$email&City=$city&Cf=$cf');
+        '${ApiRoutes.giveURL}/Find-stakeholder?idUserAppInstitution=$idUserAppInstitution&IdStakeholder=$id&NameSurnameOrBusinessName=$nameSurnameOrBusinessName&Email=$email&City=$city&Cf=$cf');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -67,7 +67,8 @@ class GiveAPI {
       required int com_email,
       required int consenso_materiale_info,
       required String datanascita,
-      required String tipo_donatore}) async {
+      required String tipo_donatore,
+      required int forza_duplicato}) async {
     final Uri uri = Uri.parse(
         '${ApiRoutes.giveURL}/Add-Stakeholder?IdUserAppInstitution=$idUserAppInstitution');
 
@@ -101,7 +102,8 @@ class GiveAPI {
           "com_email": com_email,
           "consenso_materiale_info": consenso_materiale_info,
           "datanascita": datanascita,
-          "tipo_donatore": tipo_donatore
+          "tipo_donatore": tipo_donatore,
+          "forza_duplicato": forza_duplicato
         }));
     if (response.statusCode == 200) {
       final dynamic body = response.body;
@@ -139,7 +141,8 @@ class GiveAPI {
       required int com_email,
       required int consenso_materiale_info,
       required String datanascita,
-      required String tipo_donatore}) async {
+      required String tipo_donatore,
+      required int forza_duplicato}) async {
     final Uri uri = Uri.parse(
         '${ApiRoutes.giveURL}/Update-stakeholder?IdUserAppInstitution=$idUserAppInstitution');
     final http.Response response = await client.put(uri,
@@ -173,35 +176,10 @@ class GiveAPI {
           "com_email": com_email,
           "consenso_materiale_info": consenso_materiale_info,
           "datanascita": datanascita,
-          "tipo_donatore": tipo_donatore
+          "tipo_donatore": tipo_donatore,
+          "forza_duplicato": forza_duplicato
         }));
 
-    var t = jsonEncode({
-      "nome": nome,
-      "cognome": cognome,
-      "ragionesociale": ragSoc,
-      "codfisc": codfisc,
-      "sesso": sesso,
-      "email": email,
-      "tel": tel,
-      "cell": cell,
-      "nazione_nn_norm": nazione_nn_norm,
-      "prov_nn_norm": prov_nn_norm,
-      "cap_nn_norm": cap_nn_norm,
-      "citta_nn_norm": citta_nn_norm,
-      "indirizzo_nn_norm": indirizzo_nn_norm,
-      "n_civico_nn_norm": n_civico_nn_norm,
-      "consenso_ringrazia": consenso_ringrazia,
-      "consenso_com_espresso": consenso_com_espresso,
-      "consenso_marketing": consenso_marketing,
-      "consenso_sms": consenso_sms,
-      "com_cartacee": com_cartacee,
-      "com_email": com_email,
-      "consenso_materiale_info": consenso_materiale_info,
-      "datanascita": datanascita,
-      "tipo_donatore": tipo_donatore
-    });
-    print(t);
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;

@@ -3,12 +3,16 @@ import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/notifiers/give.notifier.dart';
+import 'package:np_casse/core/notifiers/home.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/cartScreen/widgets/sh.search.textfield.dart';
 import 'package:np_casse/screens/cartScreen/widgets/show.GiveSh.data.dart';
-import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
+import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
+import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
@@ -34,10 +38,12 @@ class _ShManageScreenState extends State<ShManageScreen> {
   StakeholderGiveModelSearch? cStakeholderGiveModelSearch;
 
   void stakeholderSelected1(StakeholderGiveModelSearch? val) {
+    visibilityEdit.value = !visibilityEdit.value;
+    visibilityReceipt.value = !visibilityReceipt.value;
+    cStakeholderGiveModelSearch = val;
     if (val != null) {
       visibilityEdit.value = true;
       visibilityReceipt.value = true;
-      cStakeholderGiveModelSearch = val;
     } else {
       visibilityEdit.value = false;
       visibilityReceipt.value = false;
@@ -47,11 +53,20 @@ class _ShManageScreenState extends State<ShManageScreen> {
   @override
   void initState() {
     super.initState();
-    isExecuted = false;
+    GiveNotifier giveNotifier =
+        Provider.of<GiveNotifier>(context, listen: false);
+    var fromSaveUpdateStakeholder = giveNotifier.getStakeholder();
+    if (fromSaveUpdateStakeholder.id != 0) {
+      isExecuted = true;
+    } else {
+      isExecuted = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -140,6 +155,10 @@ class _ShManageScreenState extends State<ShManageScreen> {
                     ),
                     onPressed: () {
                       setState(() {
+                        GiveNotifier giveNotifier =
+                            Provider.of<GiveNotifier>(context, listen: false);
+                        giveNotifier
+                            .setStakeholder(StakeholderGiveModelSearch.empty());
                         isExecuted = true;
                       });
                     },
@@ -222,11 +241,10 @@ class _ShManageScreenState extends State<ShManageScreen> {
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackUtil.stylishSnackBar(
-                                text: 'Error Please Try Again , After a While',
-                                context: context,
-                              ),
-                            );
+                                SnackUtil.stylishSnackBar(
+                                    title: "Anagrafiche",
+                                    message: "Errore di connessione",
+                                    contentType: "failure"));
                           }
                         });
                       },
@@ -244,6 +262,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                 child: Container(
                     margin: const EdgeInsets.all(10),
                     child: FloatingActionButton(
+                      shape: const CircleBorder(eccentricity: 0.5),
                       tooltip:
                           "Modifica anagrafica donatore ${cStakeholderGiveModelSearch?.nome}",
                       heroTag: 'Edit',
@@ -251,7 +270,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                         PersistentNavBarNavigator.pushNewScreen(
                           context,
                           screen: ShNewEditScreen(
-                              cStakeholderGiveModelSearch:
+                              editStakeholderGiveModelSearch:
                                   cStakeholderGiveModelSearch),
                           withNavBar: true,
                           pageTransitionAnimation: PageTransitionAnimation.fade,
@@ -271,6 +290,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                 child: Container(
                     margin: const EdgeInsets.all(10),
                     child: FloatingActionButton(
+                      shape: const CircleBorder(eccentricity: 0.5),
                       tooltip: "Nuova anagrafica donatore",
                       heroTag: 'New',
                       onPressed: () {
@@ -287,6 +307,33 @@ class _ShManageScreenState extends State<ShManageScreen> {
             },
             valueListenable: visibilityNew,
           ),
+          Container(
+              margin: const EdgeInsets.all(10),
+              child: FloatingActionButton(
+                shape: const CircleBorder(eccentricity: 0.5),
+                tooltip: "Abbandona gestione donatori",
+                heroTag: 'Exit',
+                onPressed: () {
+                  Navigator.pop(context);
+                  PersistentNavBarNavigator.pushNewScreen(
+                    context,
+                    screen: const CartScreen(),
+                    withNavBar: true,
+                    pageTransitionAnimation: PageTransitionAnimation.fade,
+                  );
+
+                  // Navigator.of(context).pushAndRemoveUntil(
+                  //     MaterialPageRoute(
+                  //         builder: (context) => const WishlistScreen()),
+                  //     (Route route) => false);
+
+                  //               Navigator.pushNamedAndRemoveUntil(
+                  // ContextKeeper.buildContext, AppRouter.loginRoute, (_) => true);
+                  homeNotifier.setHomeIndex(0);
+                },
+                backgroundColor: Colors.redAccent,
+                child: const Icon(Icons.leave_bags_at_home),
+              )),
 
           // Add more buttons here
         ],

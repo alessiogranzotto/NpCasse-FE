@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
 import 'package:np_casse/core/models/project.model.dart';
@@ -37,7 +38,12 @@ class ProjectAPI {
       required int idUserAppInstitution,
       required ProjectModel projectModel}) async {
     int idProject = projectModel.idProject;
-
+    String x = jsonEncode(projectModel);
+    String y = jsonEncode(projectModel.giveIdsFlatStructureModel);
+    if (kDebugMode) {
+      print(x);
+      print(y);
+    }
     final http.Response response;
     if (idProject == 0) {
       final Uri uri = Uri.parse(

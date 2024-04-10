@@ -15,7 +15,8 @@ class AGTextFormField extends StatelessWidget {
       this.onEditingComplete,
       this.autofocus,
       this.focusNode,
-      this.onTap});
+      this.onTap,
+      this.enabled});
 
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
@@ -30,11 +31,14 @@ class AGTextFormField extends StatelessWidget {
   final FocusNode? focusNode;
   final void Function()? onEditingComplete;
   final void Function()? onTap;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      cursorColor: Theme.of(context).colorScheme.inversePrimary,
       controller: controller,
+      enabled: enabled ?? true,
       textInputAction: textInputAction ?? TextInputAction.next,
       keyboardType: keyboardType ?? TextInputType.text,
       focusNode: focusNode,
@@ -45,40 +49,56 @@ class AGTextFormField extends StatelessWidget {
       obscureText: obscureText ?? false,
       obscuringCharacter: '*',
       onEditingComplete: onEditingComplete,
+      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
       decoration: InputDecoration(
         suffixIcon: suffixIcon,
         labelText: labelText,
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        labelStyle: Theme.of(context)
-            .textTheme
-            .labelLarge!
-            .copyWith(color: Colors.blueGrey),
+        labelStyle: Theme.of(context).textTheme.labelLarge!
+        // .copyWith(color: Colors.blueGrey)
+        ,
         hintStyle: Theme.of(context)
             .textTheme
             .labelLarge!
             .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.grey, width: 1.0),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          borderSide: BorderSide(
+              color:
+                  Theme.of(context).colorScheme.inversePrimary.withOpacity(0.8),
+              // color: Colors.grey,
+              width: 1.0),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.blue, width: 1.0),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          borderSide: BorderSide(
+              color:
+                  Theme.of(context).colorScheme.inversePrimary.withOpacity(0.5),
+              // color: Colors.grey,
+              width: 1.0),
         ),
-        errorBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.red, width: 1.0),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.inversePrimary,
+              // color: Colors.blue,
+              width: 1.0),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+          borderSide:
+              BorderSide(color: Colors.red.withOpacity(0.5), width: 1.0),
         ),
         focusedErrorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.deepOrangeAccent, width: 1.0),
+          borderSide: BorderSide(color: Colors.red, width: 1.0),
         ),
       ),
       onTapOutside: (event) => FocusScope.of(context).unfocus(),
-      style: const TextStyle(
-        fontWeight: FontWeight.w500,
-        color: Colors.black,
-      ),
+      // style: const TextStyle(
+      //   fontWeight: FontWeight.w500,
+      // color: Colors.black,
+      //),
     );
   }
 }

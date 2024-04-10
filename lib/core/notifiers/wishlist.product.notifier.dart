@@ -37,8 +37,9 @@ class WishlistProductNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Lista preferiti",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           List<ProductModel> products = List.from(parseData['okResult'])
@@ -49,9 +50,12 @@ class WishlistProductNotifier with ChangeNotifier {
         }
       }
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-          text: 'Oops No You Need A Good Internet Connection',
-          context: context));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Lista preferiti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 
@@ -77,8 +81,9 @@ class WishlistProductNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    text: errorDescription, context: context));
-            // Navigator.pop(context);
+                    title: "Lista preferiti",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
         } else {
           // ProjectModel projectDetail =
@@ -89,11 +94,12 @@ class WishlistProductNotifier with ChangeNotifier {
       }
       return isOk;
     } on SocketException catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackUtil.stylishSnackBar(
-            text: 'Oops No You Need A Good Internet Connection',
-            context: context),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Lista preferiti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
     }
   }
 }

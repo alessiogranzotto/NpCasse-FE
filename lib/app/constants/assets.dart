@@ -1,7 +1,9 @@
 class AppAssets {
   static const String noImage = 'assets/images/noimages/photo_icon.png';
   static const String splashImage = 'assets/images/splash/Splash.jpg';
-  static const String leftHomeImage = 'assets/images/various/LeftHome.jpg';
+  static const String home1 = 'assets/images/various/home1.jpg';
+  static const String home2 = 'assets/images/various/home2.jpg';
+  static const String home3 = 'assets/images/various/home3.jpg';
 
   static const String onBoardingOne = 'assets/animations/onBoardingOne.json';
   static const String onBoardingTwo = 'assets/animations/onBoardingTwo.json';

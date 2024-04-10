@@ -94,12 +94,12 @@ class CartAPI {
     }
   }
 
-  Future finalizeCart(
+  Future setCartPayment(
       {String? token,
       required int idUserAppInstitution,
       required int idCart,
       required String typePayment}) async {
-    final Uri uri = Uri.parse('${ApiRoutes.cartURL}/finalize-cart');
+    final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Set-cart-payment');
 
     final http.Response response = await client.put(uri,
         headers: {
