@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -1829,7 +1828,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.blueAccent, // button text color
+                foregroundColor: Colors.blueAccent, // button text color
               ),
             ),
           ),

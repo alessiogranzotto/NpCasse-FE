@@ -49,6 +49,8 @@ class _ProductDetailState extends State<ProductDetailScreen> {
       TextEditingController();
   final TextEditingController textEditingControllerIdTipDonazione =
       TextEditingController();
+  final TextEditingController textEditingControllerIdCatalogo =
+      TextEditingController();
 
   @override
   void initState() {
@@ -104,6 +106,7 @@ class _ProductDetailState extends State<ProductDetailScreen> {
       } else {
         textEditingControllerIdComunicazioni.text = '';
       }
+
       if (widget.productModelArgument.giveIdsFlatStructureModel.idTipDonazione >
           0) {
         textEditingControllerIdTipDonazione.text = widget
@@ -111,6 +114,15 @@ class _ProductDetailState extends State<ProductDetailScreen> {
             .toString();
       } else {
         textEditingControllerIdTipDonazione.text = '';
+      }
+
+      if (widget.productModelArgument.giveIdsFlatStructureModel.idCatalogo >
+          0) {
+        textEditingControllerIdCatalogo.text = widget
+            .productModelArgument.giveIdsFlatStructureModel.idCatalogo
+            .toString();
+      } else {
+        textEditingControllerIdCatalogo.text = '';
       }
     } else {
       //tImageString = AppAssets.noImageString;
@@ -147,30 +159,33 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                     nameProduct: textEditingControllerNameProduct.text,
                     descriptionProduct:
                         textEditingControllerDescriptionProduct.text,
-                    priceProduct:
-                        double.tryParse(textEditingControllerPriceProduct.text) ??
-                            0,
+                    priceProduct: double.tryParse(
+                            textEditingControllerPriceProduct.text) ??
+                        0,
                     imageProduct: tImageString,
                     isWishlisted: ValueNotifier<bool>(false),
                     isFreePriceProduct: isFreePriceProduct.value,
                     giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
-                        idFinalizzazione:
-                            int.tryParse(textEditingControllerIdFinalizzazione.text) ??
-                                0,
-                        idEvento:
-                            int.tryParse(textEditingControllerIdEvento.text) ??
-                                0,
-                        idAttivita:
-                            int.tryParse(textEditingControllerIdAttivita.text) ??
-                                0,
-                        idAgenda:
-                            int.tryParse(textEditingControllerIdAgenda.text) ??
-                                0,
-                        idComunicazioni:
-                            int.tryParse(textEditingControllerIdComunicazioni.text) ??
-                                0,
-                        idTipDonazione:
-                            int.tryParse(textEditingControllerIdTipDonazione.text) ?? 0));
+                      idFinalizzazione: int.tryParse(
+                              textEditingControllerIdFinalizzazione.text) ??
+                          0,
+                      idEvento:
+                          int.tryParse(textEditingControllerIdEvento.text) ?? 0,
+                      idAttivita:
+                          int.tryParse(textEditingControllerIdAttivita.text) ??
+                              0,
+                      idAgenda:
+                          int.tryParse(textEditingControllerIdAgenda.text) ?? 0,
+                      idComunicazioni: int.tryParse(
+                              textEditingControllerIdComunicazioni.text) ??
+                          0,
+                      idTipDonazione: int.tryParse(
+                              textEditingControllerIdTipDonazione.text) ??
+                          0,
+                      idCatalogo:
+                          int.tryParse(textEditingControllerIdCatalogo.text) ??
+                              0,
+                    ));
 
                 productNotifier
                     .addOrUpdateProduct(

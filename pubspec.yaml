@@ -41,16 +41,16 @@ dependencies:
   shared_preferences: ^2.2.2
   image_picker: ^1.0.4
   persistent_bottom_nav_bar: ^5.0.2  
-  badges: ^2.0.2 
+  # badges: ^2.0.2 
   # intl: ^0.18.0
   printing: ^5.11.1   
   pdf: ^3.10.7
   path_provider: ^2.1.1
   open_file: ^3.3.2 
-  flutter_svg: ^1.0.3 
+  flutter_svg: ^2.0.10+1 
   currency_textfield: ^4.0.0
   collection: ^1.18.0
-  intl: ^0.18.1
+  # intl: ^0.18.1
   awesome_snackbar_content: ^0.1.2
   uuid: ^4.3.3
 
@@ -64,7 +64,8 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  
+  # flutter_lints: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

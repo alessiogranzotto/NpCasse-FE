@@ -43,6 +43,8 @@ class _StoreDetailState extends State<StoreDetailScreen> {
       TextEditingController();
   final TextEditingController textEditingControllerIdTipDonazione =
       TextEditingController();
+  final TextEditingController textEditingControllerIdCatalogo =
+      TextEditingController();
 
   @override
   void initState() {
@@ -91,6 +93,7 @@ class _StoreDetailState extends State<StoreDetailScreen> {
       } else {
         textEditingControllerIdComunicazioni.text = '';
       }
+
       if (widget.storeModelArgument.giveIdsFlatStructureModel.idTipDonazione >
           0) {
         textEditingControllerIdTipDonazione.text = widget
@@ -98,6 +101,14 @@ class _StoreDetailState extends State<StoreDetailScreen> {
             .toString();
       } else {
         textEditingControllerIdTipDonazione.text = '';
+      }
+
+      if (widget.storeModelArgument.giveIdsFlatStructureModel.idCatalogo > 0) {
+        textEditingControllerIdCatalogo.text = widget
+            .storeModelArgument.giveIdsFlatStructureModel.idCatalogo
+            .toString();
+      } else {
+        textEditingControllerIdCatalogo.text = '';
       }
     } else {
       //tImageString = AppAssets.noImageString;
@@ -108,7 +119,7 @@ class _StoreDetailState extends State<StoreDetailScreen> {
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context); 
+        Provider.of<AuthenticationNotifier>(context);
     StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
 
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -132,23 +143,26 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                         textEditingControllerDescriptionStore.text,
                     imageStore: tImageString,
                     giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
-                        idFinalizzazione: int.tryParse(
-                                textEditingControllerIdFinalizzazione.text) ??
-                            0,
-                        idEvento:
-                            int.tryParse(textEditingControllerIdEvento.text) ??
-                                0,
-                        idAttivita:
-                            int.tryParse(textEditingControllerIdAttivita.text) ??
-                                0,
-                        idAgenda:
-                            int.tryParse(textEditingControllerIdAgenda.text) ??
-                                0,
-                        idComunicazioni: int.tryParse(
-                                textEditingControllerIdComunicazioni.text) ??
-                            0,
-                        idTipDonazione:
-                            int.tryParse(textEditingControllerIdTipDonazione.text) ?? 0));
+                      idFinalizzazione: int.tryParse(
+                              textEditingControllerIdFinalizzazione.text) ??
+                          0,
+                      idEvento:
+                          int.tryParse(textEditingControllerIdEvento.text) ?? 0,
+                      idAttivita:
+                          int.tryParse(textEditingControllerIdAttivita.text) ??
+                              0,
+                      idAgenda:
+                          int.tryParse(textEditingControllerIdAgenda.text) ?? 0,
+                      idComunicazioni: int.tryParse(
+                              textEditingControllerIdComunicazioni.text) ??
+                          0,
+                      idTipDonazione: int.tryParse(
+                              textEditingControllerIdTipDonazione.text) ??
+                          0,
+                      idCatalogo:
+                          int.tryParse(textEditingControllerIdCatalogo.text) ??
+                              0,
+                    ));
                 storeNotifier
                     .addOrUpdateStore(
                         context: context,
