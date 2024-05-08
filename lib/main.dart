@@ -20,7 +20,7 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 class NpCasseApp extends StatelessWidget {
-  const NpCasseApp({Key? key}) : super(key: key);
+  const NpCasseApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,15 +31,15 @@ class NpCasseApp extends StatelessWidget {
 }
 
 class Core extends StatelessWidget {
-  const Core({Key? key}) : super(key: key);
+  const Core({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Np casse',
-      debugShowCheckedModeBanner: true,
+      debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRouter.generateRoute,
       initialRoute: AppRouter.splashRoute,
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
     );

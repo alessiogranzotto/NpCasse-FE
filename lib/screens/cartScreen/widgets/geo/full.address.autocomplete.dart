@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:np_casse/componenents/text.form.field.dart';
 import 'package:np_casse/core/api/geo.autocomplete.api.dart';
 import 'package:np_casse/core/models/geo.model.dart';
@@ -20,7 +21,7 @@ class FullAddressAutocomplete extends StatefulWidget {
   final bool enabled;
 
   const FullAddressAutocomplete(
-      {Key? key,
+      {super.key,
       required this.cTextEditingController,
       required this.focusNode,
       // this.onChanged,
@@ -28,8 +29,7 @@ class FullAddressAutocomplete extends StatefulWidget {
       this.validator,
       required this.labelText,
       required this.hintText,
-      required this.enabled})
-      : super(key: key);
+      required this.enabled});
 
   @override
   State<FullAddressAutocomplete> createState() =>
@@ -118,7 +118,9 @@ class FullAddressAutocompleteState extends State<FullAddressAutocomplete> {
           widget.onValueSelected!(selection);
         },
         displayStringForOption: (option) {
-          return option.fullAddressDesc;
+          return option.fullAddressDesc
+              .replaceAll('<b>', '')
+              .replaceAll('</b>', '');
         },
         fieldViewBuilder: (
           BuildContext context,
@@ -172,9 +174,8 @@ class FullAddressAutocompleteState extends State<FullAddressAutocomplete> {
                               children: [
                                 const Icon(Icons.gps_fixed),
                                 Expanded(
-                                  child: Text(' ${option.fullAddressDesc}',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis),
+                                  child:
+                                      Html(data: ' ${option.fullAddressDesc}'),
                                 ),
                               ],
                             ),

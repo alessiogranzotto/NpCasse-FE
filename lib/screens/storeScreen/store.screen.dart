@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -7,6 +8,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
 // import 'package:np_casse/core/notifiers/userInstitution.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:np_casse/screens/productScreen/product.screen.dart';
 import 'package:np_casse/screens/storeScreen/store.detail.screen.dart';
 import 'package:np_casse/screens/storeScreen/widget/store.card.dart';
@@ -29,31 +31,47 @@ class StoreScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
+    bool canAddStore = authenticationNotifier.canUserAddItem();
+
     return SafeArea(
         child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.background,
+            // drawer: const CustomDrawerWidget(),
             appBar: AppBar(
               title: Text('Negozi di ${projectNotifier.getNameProject}',
                   style: Theme.of(context).textTheme.headlineLarge),
               actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    PersistentNavBarNavigator.pushNewScreen(context,
-                        screen: StoreDetailScreen(
-                          storeModelArgument: StoreModel(
-                              idStore: 0,
-                              idProject: projectNotifier.getIdProject,
-                              nameStore: '',
-                              descriptionStore: '',
-                              imageStore: '',
-                              giveIdsFlatStructureModel:
-                                  GiveIdsFlatStructureModel.empty()),
-                        ),
-                        withNavBar: true,
-                        pageTransitionAnimation: PageTransitionAnimation.fade);
-                  },
-                ),
+                canAddStore
+                    ? IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            AppRouter.storeDetailRoute,
+                            arguments: StoreModel(
+                                idStore: 0,
+                                idProject: projectNotifier.getIdProject,
+                                nameStore: '',
+                                descriptionStore: '',
+                                imageStore: '',
+                                giveIdsFlatStructureModel:
+                                    GiveIdsFlatStructureModel.empty()),
+                          );
+                          // PersistentNavBarNavigator.pushNewScreen(context,
+                          //     screen: StoreDetailScreen(
+                          //       storeModelArgument: StoreModel(
+                          //           idStore: 0,
+                          //           idProject: projectNotifier.getIdProject,
+                          //           nameStore: '',
+                          //           descriptionStore: '',
+                          //           imageStore: '',
+                          //           giveIdsFlatStructureModel:
+                          //               GiveIdsFlatStructureModel.empty()),
+                          //     ),
+                          //     withNavBar: true,
+                          //     pageTransitionAnimation: PageTransitionAnimation.fade);
+                        },
+                      )
+                    : const SizedBox.shrink()
               ],
             ),
             body: SingleChildScrollView(
@@ -130,13 +148,15 @@ class StoreScreen extends StatelessWidget {
                                   return GestureDetector(
                                     onTap: () {
                                       storeNotifier.setStore(store);
-                                      PersistentNavBarNavigator.pushNewScreen(
-                                        context,
-                                        screen: const ProductScreen(),
-                                        withNavBar: true,
-                                        pageTransitionAnimation:
-                                            PageTransitionAnimation.fade,
-                                      );
+                                      Navigator.of(context)
+                                          .pushNamed(AppRouter.productRoute);
+                                      // PersistentNavBarNavigator.pushNewScreen(
+                                      //   context,
+                                      //   screen: const ProductScreen(),
+                                      //   withNavBar: true,
+                                      //   pageTransitionAnimation:
+                                      //       PageTransitionAnimation.fade,
+                                      // );
                                     },
                                     child: StoreCard(
                                       store: store,

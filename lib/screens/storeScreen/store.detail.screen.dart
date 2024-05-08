@@ -7,6 +7,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:provider/provider.dart';
 
 typedef OnPickImageCallback = void Function(
@@ -480,16 +481,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Fin",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Finalizzazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Fin",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -532,16 +551,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Ev",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Evento",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Ev",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -584,16 +621,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Att",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Attività",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Att",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -641,15 +696,33 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Ag",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Ag",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Agenda",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -693,16 +766,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Com",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Comunicazioni",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Com",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -745,16 +836,109 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Td",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Tipo Donazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Td",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdCatalogo,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Catalogo",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
+                                          ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Cat",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -903,16 +1087,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Fid",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Finalizzazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Fid",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -955,16 +1157,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Ev",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Evento",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Ev",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -1012,16 +1232,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Att",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Attività",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Att",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -1064,16 +1302,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Ag",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Agenda",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Ag",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -1121,16 +1377,34 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Com",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Comunicazioni",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Com",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},
@@ -1173,16 +1447,109 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: 24,
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme
-                                                .secondaryContainer,
-                                            child: Text("Td",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Tipo Donazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
                                           ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Td",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
+                                        ],
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Card(
+                                    color: Theme.of(context).cardColor,
+                                    elevation: 4,
+                                    child: ListTile(
+                                      subtitle: Row(
+                                        children: [
+                                          Expanded(
+                                            child: TextField(
+                                              controller:
+                                                  textEditingControllerIdCatalogo,
+                                              minLines: 1,
+                                              maxLines: 1,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
+                                              onTapOutside: (event) {
+                                                FocusManager
+                                                    .instance.primaryFocus
+                                                    ?.unfocus();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: const Icon(Icons.edit),
+                                      leading: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                12.0), //or 15.0
+                                            child: Container(
+                                              height: 48.0,
+                                              width: 140.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondaryContainer,
+                                              child: Center(
+                                                child: Text("Id Catalogo",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineMedium),
+                                              ),
+                                            ),
+                                          ),
+                                          // CircleAvatar(
+                                          //   radius: 24,
+                                          //   backgroundColor: Theme.of(context)
+                                          //       .colorScheme
+                                          //       .secondaryContainer,
+                                          //   child: Text("Cat",
+                                          //       style: Theme.of(context)
+                                          //           .textTheme
+                                          //           .headlineLarge),
+                                          // ),
                                         ],
                                       ),
                                       onTap: () {},

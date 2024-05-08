@@ -11,6 +11,9 @@ import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/cartScreen/widgets/sh.search.textfield.dart';
 import 'package:np_casse/screens/cartScreen/widgets/show.GiveSh.data.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
+import 'package:np_casse/screens/homeScreen/home.screen.Persistent.dart';
+import 'package:np_casse/screens/homeScreen/home.screen.responsive.menu.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -69,6 +72,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         title: Text("Gestione donatore",
             style: Theme.of(context).textTheme.headlineLarge),
@@ -307,33 +311,34 @@ class _ShManageScreenState extends State<ShManageScreen> {
             },
             valueListenable: visibilityNew,
           ),
-          Container(
-              margin: const EdgeInsets.all(10),
-              child: FloatingActionButton(
-                shape: const CircleBorder(eccentricity: 0.5),
-                tooltip: "Abbandona gestione donatori",
-                heroTag: 'Exit',
-                onPressed: () {
-                  Navigator.pop(context);
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: const CartScreen(),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
+          // Container(
+          //     margin: const EdgeInsets.all(10),
+          //     child:
+          //     FloatingActionButton(
+          //       shape: const CircleBorder(eccentricity: 0.5),
+          //       tooltip: "Abbandona gestione donatori",
+          //       heroTag: 'Exit',
+          //       onPressed: () {
+          //         Navigator.pop(context);
+          //         PersistentNavBarNavigator.pushNewScreen(
+          //           context,
+          //           screen: const WishlistScreen(),
+          //           withNavBar: true,
+          //           pageTransitionAnimation: PageTransitionAnimation.fade,
+          //         );
 
-                  // Navigator.of(context).pushAndRemoveUntil(
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const WishlistScreen()),
-                  //     (Route route) => false);
+          //         // Navigator.of(context).pushAndRemoveUntil(
+          //         //     MaterialPageRoute(
+          //         //         builder: (context) => const WishlistScreen()),
+          //         //     (Route route) => false);
 
-                  //               Navigator.pushNamedAndRemoveUntil(
-                  // ContextKeeper.buildContext, AppRouter.loginRoute, (_) => true);
-                  homeNotifier.setHomeIndex(0);
-                },
-                backgroundColor: Colors.redAccent,
-                child: const Icon(Icons.leave_bags_at_home),
-              )),
+          //         //               Navigator.pushNamedAndRemoveUntil(
+          //         // ContextKeeper.buildContext, AppRouter.loginRoute, (_) => true);
+          //         homeNotifier.setHomeIndex(0);
+          //       },
+          //       backgroundColor: Colors.redAccent,
+          //       child: const Icon(Icons.leave_bags_at_home),
+          //     )),
 
           // Add more buttons here
         ],

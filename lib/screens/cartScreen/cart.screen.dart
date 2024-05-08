@@ -6,6 +6,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/widgets/cart.checkout.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:provider/provider.dart';
 
 class RefreshCartController {
@@ -44,6 +45,7 @@ class _CartScreenState extends State<CartScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(

@@ -7,6 +7,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/productScreen/widgets/show.project.grant.dart';
 import 'package:provider/provider.dart';
 
 typedef OnPickImageCallback = void Function(
@@ -16,9 +17,9 @@ class ProjectDetailScreen extends StatefulWidget {
   final ProjectModel projectModelArgument;
   // final ProjectDetailsArgs projectDetailsArguments;
   const ProjectDetailScreen({
-    Key? key,
+    super.key,
     required this.projectModelArgument,
-  }) : super(key: key);
+  });
 
   @override
   State<ProjectDetailScreen> createState() => _ProjectDetailState();
@@ -133,6 +134,8 @@ class _ProjectDetailState extends State<ProjectDetailScreen> {
 
     UserAppInstitutionModel? cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
+    bool canAddProject =
+        cUserAppInstitutionModel.roleUserAppInstitution == "InstitutionAdmin";
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -1571,6 +1574,7 @@ class _ProjectDetailState extends State<ProjectDetailScreen> {
                     );
             },
           ),
+          // canAddProject ? ShowProjectGrant(snapshot: [],) : const SizedBox.shrink()
         ],
       ),
     );

@@ -51,11 +51,12 @@ dependencies:
   currency_textfield: ^4.0.0
   collection: ^1.18.0
   # intl: ^0.18.1
-  awesome_snackbar_content: ^0.1.2
-  uuid: ^4.3.3
-
+  awesome_snackbar_content: ^0.1.3
+  uuid: ^4.3.3 
+  flutter_html: ^3.0.0-beta.2
   
 dev_dependencies:
+  flutter_lints: ^3.0.2
   flutter_test:
     sdk: flutter
 

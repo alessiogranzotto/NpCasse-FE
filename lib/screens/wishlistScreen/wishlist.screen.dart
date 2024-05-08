@@ -5,6 +5,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/product.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:np_casse/screens/productScreen/widgets/product.card.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,7 @@ class WishlistScreen extends StatelessWidget {
     return SafeArea(
         child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.background,
+            drawer: const CustomDrawerWidget(),
             appBar: AppBar(
               title: Text(
                 'Preferiti di ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
