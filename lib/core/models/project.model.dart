@@ -1,4 +1,5 @@
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
+import 'package:np_casse/core/models/project.grant.structure.model.dart';
 
 class ProjectModel {
   ProjectModel(
@@ -14,6 +15,7 @@ class ProjectModel {
   late final String descriptionProject;
   late final String imageProject;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
+  late final List<ProjectGrantStructureModel> projectGrantStructure;
 
   ProjectModel.empty() {
     idProject = 0;
@@ -22,6 +24,7 @@ class ProjectModel {
     descriptionProject = "";
     imageProject = "";
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
+    projectGrantStructure = List.empty();
   }
   ProjectModel.fromJson(Map<String, dynamic> json) {
     idProject = json['idProject'];
@@ -31,6 +34,11 @@ class ProjectModel {
     imageProject = json['imageProject'];
     giveIdsFlatStructureModel =
         GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
+    if (json['projectGrantStructure'] != null) {
+      projectGrantStructure = List.from(json['projectGrantStructure'])
+          .map((e) => ProjectGrantStructureModel.fromJson(e))
+          .toList();
+    }
   }
 
   Map<String, dynamic> toJson() {

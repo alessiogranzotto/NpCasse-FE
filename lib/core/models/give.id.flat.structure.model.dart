@@ -5,13 +5,15 @@ class GiveIdsFlatStructureModel {
       required this.idAttivita,
       required this.idAgenda,
       required this.idComunicazioni,
-      required this.idTipDonazione});
+      required this.idTipDonazione,
+      required this.idCatalogo});
   late final int idFinalizzazione;
   late final int idEvento;
   late final int idAttivita;
   late final int idAgenda;
   late final int idComunicazioni;
   late final int idTipDonazione;
+  late final int idCatalogo;
 
   GiveIdsFlatStructureModel.empty() {
     idFinalizzazione = 0;
@@ -20,6 +22,7 @@ class GiveIdsFlatStructureModel {
     idAgenda = 0;
     idComunicazioni = 0;
     idTipDonazione = 0;
+    idCatalogo = 0;
   }
   GiveIdsFlatStructureModel.fromJson(Map<String, dynamic> json) {
     idFinalizzazione = json['idFinalizzazione'];
@@ -28,6 +31,7 @@ class GiveIdsFlatStructureModel {
     idAgenda = json['idAgenda'];
     idComunicazioni = json['idComunicazioni'];
     idTipDonazione = json['idTipDonazione'];
+    idCatalogo = json['idCatalogo'];
   }
 
   Map<String, dynamic> toJson() {
@@ -38,6 +42,7 @@ class GiveIdsFlatStructureModel {
     data['idAgenda'] = idAgenda;
     data['idComunicazioni'] = idComunicazioni;
     data['idTipDonazione'] = idTipDonazione;
+    data['idCatalogo'] = idCatalogo;
     return data;
   }
 }

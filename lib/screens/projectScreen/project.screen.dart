@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
 import 'package:np_casse/screens/projectScreen/widget/project.card.dart';
 import 'package:np_casse/screens/storeScreen/store.screen.dart';
@@ -26,6 +28,8 @@ class ProjectScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
+    bool canAddProject = authenticationNotifier.canUserAddItem();
+    //canAddProject = true;
     // // Set the default number of columns to 3.
     // int columnsCount = 3;
     // // Define the icon size based on the screen width
@@ -41,31 +45,46 @@ class ProjectScreen extends StatelessWidget {
     // }
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
+        drawer: const CustomDrawerWidget(),
         appBar: AppBar(
           title: Text(
             'Progetti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                PersistentNavBarNavigator.pushNewScreen(context,
-                    screen: ProjectDetailScreen(
-                      projectModelArgument: ProjectModel(
-                          idProject: 0,
-                          idUserAppInstitution:
-                              cUserAppInstitutionModel.idUserAppInstitution,
-                          nameProject: '',
-                          descriptionProject: '',
-                          imageProject: '',
-                          giveIdsFlatStructureModel:
-                              GiveIdsFlatStructureModel.empty()),
-                    ),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.fade);
-              },
-            ),
+            canAddProject
+                ? IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        AppRouter.projectDetailRoute,
+                        arguments: ProjectModel(
+                            idProject: 0,
+                            idUserAppInstitution:
+                                cUserAppInstitutionModel.idUserAppInstitution,
+                            nameProject: '',
+                            descriptionProject: '',
+                            imageProject: '',
+                            giveIdsFlatStructureModel:
+                                GiveIdsFlatStructureModel.empty()),
+                      );
+                      // PersistentNavBarNavigator.pushNewScreen(context,
+                      //     screen: ProjectDetailScreen(
+                      //       projectModelArgument: ProjectModel(
+                      //           idProject: 0,
+                      //           idUserAppInstitution:
+                      //               cUserAppInstitutionModel.idUserAppInstitution,
+                      //           nameProject: '',
+                      //           descriptionProject: '',
+                      //           imageProject: '',
+                      //           giveIdsFlatStructureModel:
+                      //               GiveIdsFlatStructureModel.empty()),
+                      //     ),
+                      //     withNavBar: true,
+                      //     pageTransitionAnimation: PageTransitionAnimation.fade);
+                    },
+                  )
+                : const SizedBox.shrink()
           ],
         ),
         body: SingleChildScrollView(
@@ -147,13 +166,15 @@ class ProjectScreen extends StatelessWidget {
                               return GestureDetector(
                                 onTap: () {
                                   projectNotifier.setProject(project);
-                                  PersistentNavBarNavigator.pushNewScreen(
-                                    context,
-                                    screen: const StoreScreen(),
-                                    withNavBar: true,
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade,
-                                  );
+                                  Navigator.of(context)
+                                      .pushNamed(AppRouter.storeRoute);
+                                  // PersistentNavBarNavigator.pushNewScreen(
+                                  //   context,
+                                  //   screen: const StoreScreen(),
+                                  //   withNavBar: true,
+                                  //   pageTransitionAnimation:
+                                  //       PageTransitionAnimation.fade,
+                                  // );
                                 },
                                 child: ProjectCard(
                                   project: project,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/core/notifiers/product.notifier.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 // import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
 import 'package:np_casse/screens/productScreen/widgets/product.card.dart';
@@ -82,10 +84,11 @@ class _ProductScreenState extends State<ProductScreen> {
     //     Provider.of<ProductCardNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-
+    bool canAddProduct = authenticationNotifier.canUserAddItem();
     return SafeArea(
         child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.background,
+            // drawer: const CustomDrawerWidget(),
             appBar: AppBar(
               title: Text('Prodotti di ${storeNotifier.getNameStore}',
                   style: Theme.of(context).textTheme.headlineLarge),
@@ -148,27 +151,43 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    PersistentNavBarNavigator.pushNewScreen(context,
-                        screen: ProductDetailScreen(
-                          productModelArgument: ProductModel(
-                              idProduct: 0,
-                              idStore: storeNotifier.getIdStore,
-                              nameProduct: '',
-                              descriptionProduct: '',
-                              priceProduct: 0,
-                              imageProduct: '',
-                              isWishlisted: ValueNotifier<bool>(false),
-                              isFreePriceProduct: false,
-                              giveIdsFlatStructureModel:
-                                  GiveIdsFlatStructureModel.empty()),
-                        ),
-                        withNavBar: true,
-                        pageTransitionAnimation: PageTransitionAnimation.fade);
-                  },
-                ),
+                canAddProduct
+                    ? IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            AppRouter.productDetailRoute,
+                            arguments: ProductModel(
+                                idProduct: 0,
+                                idStore: storeNotifier.getIdStore,
+                                nameProduct: '',
+                                descriptionProduct: '',
+                                priceProduct: 0,
+                                imageProduct: '',
+                                isWishlisted: ValueNotifier<bool>(false),
+                                isFreePriceProduct: false,
+                                giveIdsFlatStructureModel:
+                                    GiveIdsFlatStructureModel.empty()),
+                          );
+                          //   PersistentNavBarNavigator.pushNewScreen(context,
+                          //       screen: ProductDetailScreen(
+                          //         productModelArgument: ProductModel(
+                          //             idProduct: 0,
+                          //             idStore: storeNotifier.getIdStore,
+                          //             nameProduct: '',
+                          //             descriptionProduct: '',
+                          //             priceProduct: 0,
+                          //             imageProduct: '',
+                          //             isWishlisted: ValueNotifier<bool>(false),
+                          //             isFreePriceProduct: false,
+                          //             giveIdsFlatStructureModel:
+                          //                 GiveIdsFlatStructureModel.empty()),
+                          //       ),
+                          //       withNavBar: true,
+                          //       pageTransitionAnimation: PageTransitionAnimation.fade);
+                        },
+                      )
+                    : const SizedBox.shrink()
               ],
             ),
             body: SingleChildScrollView(

@@ -6,6 +6,8 @@ class UserModel {
   UserModel(
       {required this.idUser,
       required this.idUserAppInstitution,
+      required this.name,
+      required this.surname,
       required this.email,
       required this.token,
       required this.refreshToken,
@@ -14,6 +16,8 @@ class UserModel {
       required this.userAppInstitutionModelList});
   late int idUser;
   late int idUserAppInstitution;
+  late String name;
+  late String surname;
   late String email;
   late String token;
   late String refreshToken;
@@ -44,6 +48,8 @@ class UserModel {
   UserModel.fromJson(Map<String, dynamic> json) {
     idUser = json['idUser'];
     idUserAppInstitution = json['idUserAppInstitution'];
+    name = json['name'];
+    surname = json['surname'];
     email = json['email'];
     token = json['token'];
     refreshToken = json['refreshToken'];
@@ -65,6 +71,8 @@ class UserModel {
     final data = <String, dynamic>{};
     data['idUser'] = idUser;
     data['idUserAppInstitution'] = idUserAppInstitution;
+    data['name'] = name;
+    data['surname'] = surname;
     data['email'] = email;
     data['token'] = token;
     data['refreshToken'] = refreshToken;

@@ -13,7 +13,6 @@ class ProjectAPI {
     final Uri uri = Uri.parse(
         '${ApiRoutes.baseUserAppInstitutionURL}/$idUserAppInstitution/Project');
 
-    //https://localhost:7262/api/UserInstitution/1/Project'
     final http.Response response = await client.get(
       uri,
       headers: {

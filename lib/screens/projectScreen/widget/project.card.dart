@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -89,23 +90,36 @@ class ProjectCard extends StatelessWidget {
                       child: IconButton(
                           onPressed: () {
                             projectNotifier.setProject(project);
-                            PersistentNavBarNavigator.pushNewScreen(context,
-                                screen: ProjectDetailScreen(
-                                  projectModelArgument: ProjectModel(
-                                      idProject: project.idProject,
-                                      idUserAppInstitution:
-                                          cUserAppInstitutionModel
-                                              .idUserAppInstitution,
-                                      nameProject: project.nameProject,
-                                      descriptionProject:
-                                          project.descriptionProject,
-                                      imageProject: project.imageProject,
-                                      giveIdsFlatStructureModel:
-                                          project.giveIdsFlatStructureModel),
-                                ),
-                                withNavBar: true,
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.fade);
+                            Navigator.of(context).pushNamed(
+                              AppRouter.projectDetailRoute,
+                              arguments: ProjectModel(
+                                  idProject: project.idProject,
+                                  idUserAppInstitution: cUserAppInstitutionModel
+                                      .idUserAppInstitution,
+                                  nameProject: project.nameProject,
+                                  descriptionProject:
+                                      project.descriptionProject,
+                                  imageProject: project.imageProject,
+                                  giveIdsFlatStructureModel:
+                                      project.giveIdsFlatStructureModel),
+                            );
+                            // PersistentNavBarNavigator.pushNewScreen(context,
+                            //     screen: ProjectDetailScreen(
+                            //       projectModelArgument: ProjectModel(
+                            //           idProject: project.idProject,
+                            //           idUserAppInstitution:
+                            //               cUserAppInstitutionModel
+                            //                   .idUserAppInstitution,
+                            //           nameProject: project.nameProject,
+                            //           descriptionProject:
+                            //               project.descriptionProject,
+                            //           imageProject: project.imageProject,
+                            //           giveIdsFlatStructureModel:
+                            //               project.giveIdsFlatStructureModel),
+                            //     ),
+                            //     withNavBar: true,
+                            //     pageTransitionAnimation:
+                            //         PageTransitionAnimation.fade);
                           },
                           icon: const Icon(
                             Icons.edit,

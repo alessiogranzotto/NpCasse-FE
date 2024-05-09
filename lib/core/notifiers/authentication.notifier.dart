@@ -18,8 +18,24 @@ class AuthenticationNotifier with ChangeNotifier {
 
   UserModel currentUserModel = UserModel.empty();
 
+  late final SharedPreferences _preferences;
+
   setUser(UserModel userModel) {
     currentUserModel = userModel;
+  }
+
+  UserModel getUser() {
+    return currentUserModel;
+  }
+
+  bool canUserAddItem() {
+    return (getSelectedUserAppInstitution().roleUserAppInstitution == "Admin" ||
+        getSelectedUserAppInstitution().roleUserAppInstitution ==
+            "InstitutionAdmin");
+  }
+
+  Future getUserAppInstitution() async {
+    return currentUserModel.userAppInstitutionModelList;
   }
 
   bool get isAuth => currentUserModel.token.isNotEmpty;
@@ -34,12 +50,12 @@ class AuthenticationNotifier with ChangeNotifier {
   double? _passwordStrength = 0;
   double? get passwordStrength => _passwordStrength;
 
-  late final SharedPreferences _preferences;
   String _actualState = 'NoState';
   String get getactualState => _actualState;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
   Future init() async {
     try {
       _preferences = await SharedPreferences.getInstance();
@@ -97,6 +113,7 @@ class AuthenticationNotifier with ChangeNotifier {
 
         var response2 = await userAPI.getUserAppInstitution(
             token: userModel.token, idUser: userModel.idUser, appName: appName);
+        print(response2);
         final Map<String, dynamic> parseData2 = await jsonDecode(response2);
         bool isOk = parseData2['isOk'];
         if (!isOk) {
@@ -175,7 +192,19 @@ class AuthenticationNotifier with ChangeNotifier {
             _isLoading = false;
             await Future.delayed(const Duration(seconds: 1));
             notifyListeners();
-
+            var t = json.encode({
+              'idUser': userModel.idUser,
+              'idUserAppInstitution': userModel.idUserAppInstitution,
+              'email': userModel.email,
+              'token': userModel.token,
+              'refreshToken': userModel.refreshToken,
+              // 'role': userModel.role,
+              'expirationTime': userModel.expirationTime.toString(),
+              'userAppInstitutionModelList': jsonEncode(userModel
+                  .userAppInstitutionModelList
+                  .map((e) => e.toJson())
+                  .toList())
+            });
             WriteCache.setString(
                 key: AppKeys.userData,
                 value: json.encode({
@@ -192,7 +221,7 @@ class AuthenticationNotifier with ChangeNotifier {
                       .toList())
                 })).whenComplete(
               () => Navigator.of(context)
-                  .pushReplacementNamed(AppRouter.homeRoute),
+                  .pushReplacementNamed(AppRouter.wishListRoute),
             );
           } else {
             if (context.mounted) {
@@ -248,7 +277,8 @@ class AuthenticationNotifier with ChangeNotifier {
       if (isAuthenticated) {
         WriteCache.setString(key: AppKeys.userData, value: authData)
             .whenComplete(
-          () => Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute),
+          () => Navigator.of(context)
+              .pushReplacementNamed(AppRouter.wishListRoute),
         );
       } else {
         if (context.mounted) {
@@ -278,10 +308,6 @@ class AuthenticationNotifier with ChangeNotifier {
 
   int getNumberUserAppInstitution() {
     return currentUserModel.userAppInstitutionModelList.length;
-  }
-
-  Future getUserAppInstitution() async {
-    return currentUserModel.userAppInstitutionModelList;
   }
 
   void setSelectedUserAppInstitution(UserAppInstitutionModel? val) {

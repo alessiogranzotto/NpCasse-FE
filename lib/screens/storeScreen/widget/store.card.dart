@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
@@ -87,20 +88,31 @@ class StoreCard extends StatelessWidget {
                       child: IconButton(
                           onPressed: () {
                             storeNotifier.setStore(store);
-                            PersistentNavBarNavigator.pushNewScreen(context,
-                                screen: StoreDetailScreen(
-                                  storeModelArgument: StoreModel(
-                                      idStore: store.idStore,
-                                      idProject: store.idProject,
-                                      nameStore: store.nameStore,
-                                      descriptionStore: store.descriptionStore,
-                                      imageStore: store.imageStore,
-                                      giveIdsFlatStructureModel:
-                                          store.giveIdsFlatStructureModel),
-                                ),
-                                withNavBar: true,
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.fade);
+                            Navigator.of(context).pushNamed(
+                              AppRouter.storeDetailRoute,
+                              arguments: StoreModel(
+                                  idStore: store.idStore,
+                                  idProject: store.idProject,
+                                  nameStore: store.nameStore,
+                                  descriptionStore: store.descriptionStore,
+                                  imageStore: store.imageStore,
+                                  giveIdsFlatStructureModel:
+                                      store.giveIdsFlatStructureModel),
+                            );
+                            // PersistentNavBarNavigator.pushNewScreen(context,
+                            //     screen: StoreDetailScreen(
+                            //       storeModelArgument: StoreModel(
+                            //           idStore: store.idStore,
+                            //           idProject: store.idProject,
+                            //           nameStore: store.nameStore,
+                            //           descriptionStore: store.descriptionStore,
+                            //           imageStore: store.imageStore,
+                            //           giveIdsFlatStructureModel:
+                            //               store.giveIdsFlatStructureModel),
+                            //     ),
+                            //     withNavBar: true,
+                            //     pageTransitionAnimation:
+                            //         PageTransitionAnimation.fade);
                           },
                           icon: const Icon(
                             Icons.edit,

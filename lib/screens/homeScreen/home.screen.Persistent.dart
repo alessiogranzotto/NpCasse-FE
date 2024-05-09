@@ -14,48 +14,14 @@ import 'package:provider/provider.dart';
 
 import 'package:np_casse/app/utilities/initial_context.dart';
 
-// List<PersistentBottomNavBarItem> navBarsItems() {
-//   return [
-//     PersistentBottomNavBarItem(
-//         icon: const Icon(CupertinoIcons.list_dash),
-//         title: ("Scrivania"),
-//         activeColorPrimary: CupertinoColors.activeBlue,
-//         inactiveColorPrimary: CupertinoColors.systemGrey),
-//     PersistentBottomNavBarItem(
-//         icon: const Icon(CupertinoIcons.circle_grid_3x3),
-//         title: ("Progetti"),
-//         activeColorPrimary: CupertinoColors.activeBlue,
-//         inactiveColorPrimary: CupertinoColors.systemGrey),
-//     PersistentBottomNavBarItem(
-//       icon: const Icon(Icons.assignment),
-//       title: ("Associazioni"),
-//       activeColorPrimary: CupertinoColors.activeBlue,
-//       inactiveColorPrimary: CupertinoColors.systemGrey,
-//     ),
-//     PersistentBottomNavBarItem(
-//       // icon: const Icon(Icons.shopping_cart),
-//       icon: const Badge(label: Text('2'), child: Icon(Icons.shopping_cart)),
-//       title: ("Carrello"),
-//       activeColorPrimary: CupertinoColors.activeBlue,
-//       inactiveColorPrimary: CupertinoColors.systemGrey,
-//     ),
-//     PersistentBottomNavBarItem(
-//       icon: const Icon(Icons.logout),
-//       title: ("Uscita"),
-//       activeColorPrimary: CupertinoColors.activeBlue,
-//       inactiveColorPrimary: CupertinoColors.systemGrey,
-//     )
-//   ];
-// }
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreenPersistent extends StatefulWidget {
+  const HomeScreenPersistent({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreenPersistent> createState() => _HomeScreenPersistentState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenPersistentState extends State<HomeScreenPersistent> {
   final PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 

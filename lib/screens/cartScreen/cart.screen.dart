@@ -13,6 +13,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/widgets/cart.checkout.dart';
+import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:provider/provider.dart';
 
 class RefreshCartController {
@@ -54,18 +55,11 @@ class _CartScreenState extends State<CartScreen> {
   CartModel cCart = cartNotifier.getCart();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            CircleAvatar(
-                    radius: 20,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
-                    child: Text(cCart.idCart.toString(),
-                        style: Theme.of(context).textTheme.headlineLarge),
-            ),
-            
             Container(
               padding: const EdgeInsets.all(400.0),
               child: 
@@ -73,6 +67,13 @@ class _CartScreenState extends State<CartScreen> {
               'Il mio carrello',
               style: Theme.of(context).textTheme.headlineLarge,
             ),),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor:
+                  Theme.of(context).colorScheme.secondaryContainer,
+              child: Text(cCart.idCart.toString(),
+                  style: Theme.of(context).textTheme.headlineLarge),
+            ),
           ],
         ),
       ),
@@ -579,7 +580,7 @@ class _CartScreenState extends State<CartScreen> {
                                         padding: const EdgeInsets.all(15),
                                         decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10,),
-                                        border:Border.all(color: Colors.white)),
+                                        border:Border.all(color: Colors.black)),
                                         child: Row(
                                         children: [
                                         Text(

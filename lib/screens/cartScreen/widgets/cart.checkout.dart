@@ -1,5 +1,6 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -211,7 +212,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
               ),*/
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
                   children: [
@@ -295,11 +296,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   )
                 ]
               ),*/
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
+                  Column(
                     children: [
                       ToggleButtons(
                         direction: Axis.horizontal,
@@ -397,8 +394,6 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   ),
                 ],
               ),
-            ],
-          ),
           Visibility(
             maintainSize: true,
             maintainAnimation: true,
