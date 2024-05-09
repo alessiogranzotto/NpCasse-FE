@@ -1,12 +1,5 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
-import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -32,7 +25,6 @@ class _CartScreenState extends State<CartScreen> {
   // final ValueNotifier<double> totalPrice = ValueNotifier(0);
   bool _isButtonDisabled = false;
   bool cartHasData = true;
-  bool visible = true;
 
   final RefreshCartController refreshCartController = RefreshCartController();
 
@@ -42,7 +34,7 @@ class _CartScreenState extends State<CartScreen> {
     cartHasData = true;
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -50,30 +42,13 @@ class _CartScreenState extends State<CartScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-  CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
-  CartModel cCart = cartNotifier.getCart();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-                    radius: 20,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
-                    child: Text(cCart.idCart.toString(),
-                        style: Theme.of(context).textTheme.headlineLarge),
-            ),
-            
-            Container(
-              padding: const EdgeInsets.all(400.0),
-              child: 
-            Text(
-              'Il mio carrello',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),),
-          ],
+        centerTitle: true,
+        title: Text(
+          'Il mio carrello',
+          style: Theme.of(context).textTheme.headlineLarge,
         ),
       ),
       body: Column(
@@ -125,21 +100,18 @@ class _CartScreenState extends State<CartScreen> {
                             itemBuilder: (context, index) {
                               CartProductModel cartProductModel =
                                   tSnapshot[index];
-                              return Container(width: double.infinity,
-                                margin: const EdgeInsets.all(10),
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color:Color.fromARGB(255, 237, 208, 171),
-                                  borderRadius: BorderRadius.circular(20),),
+                              return Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.all(15),
                                 child: Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children:[
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
                                     Stack(children: [
                                       Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 0),
-                                        height: 100,
-                                        width: 100,
+                                        height: 150,
+                                        width: 150,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
@@ -155,13 +127,28 @@ class _CartScreenState extends State<CartScreen> {
                                               ),
                                         ),
                                       ),
+                                      CircleAvatar(
+                                        radius: 24,
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryContainer,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Text(
+                                              '${cartProductModel.productModel.priceProduct}€',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium),
+                                        ),
+                                      ),
                                     ]),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: SizedBox(
                                         width: 200,
                                         child: Column(
-                                          crossAxisAlignment:CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                                 cartProductModel
@@ -200,7 +187,8 @@ class _CartScreenState extends State<CartScreen> {
                                                       BorderRadius.circular(10),
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment:MainAxisAlignment.end,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
@@ -215,7 +203,9 @@ class _CartScreenState extends State<CartScreen> {
                                                             double value,
                                                             Widget? child) {
                                                           return Row(
-                                                            mainAxisAlignment:MainAxisAlignment.end,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
                                                             children: <Widget>[
                                                               Padding(
                                                                 padding:
@@ -321,7 +311,8 @@ class _CartScreenState extends State<CartScreen> {
                                                       BorderRadius.circular(10),
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment:MainAxisAlignment.end,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
@@ -408,7 +399,9 @@ class _CartScreenState extends State<CartScreen> {
                                                             int value,
                                                             Widget? child) {
                                                           return Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
                                                             children: <Widget>[
                                                               Padding(
                                                                 padding:
@@ -572,28 +565,13 @@ class _CartScreenState extends State<CartScreen> {
                                                   ],
                                                 ),
                                               ),
-                                  ]),
-                                  Column(
-                                      children: [ Container(
-                                        margin: const EdgeInsets.all(15),
-                                        padding: const EdgeInsets.all(15),
-                                        decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10,),
-                                        border:Border.all(color: Colors.white)),
-                                        child: Row(
-                                        children: [
-                                        Text(
-                                        '${cartProductModel.productModel.priceProduct}€',
-                                        style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium),],//prezzo
-                                      ),
-                                  ),
-                                  ],),
-                              ]));
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
                             },
                           ),
-                          
                         ),
                         Align(
                           alignment: Alignment.bottomCenter,

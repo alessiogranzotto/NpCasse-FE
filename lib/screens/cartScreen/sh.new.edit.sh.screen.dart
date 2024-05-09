@@ -1829,7 +1829,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: Colors.blueAccent, // button text color
+                foregroundColor: Colors.blueAccent, // button text color
               ),
             ),
           ),

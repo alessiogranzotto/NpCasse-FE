@@ -169,13 +169,19 @@ class _CheckoutCartState extends State<CheckoutCart> {
     }
 
     return Container(
-      margin: const EdgeInsets.all(20),
+      width: double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color:Color.fromARGB(255, 237, 208, 171),
+          borderRadius: BorderRadius.circular(20),),
+      /*margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.symmetric(
         vertical: 16,
         horizontal: 20,
-      ),
+      ),*/
       // height: 174,
-      decoration: BoxDecoration(
+      /*decoration: BoxDecoration(
         border: Border.all(color: Colors.white10),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
@@ -183,14 +189,14 @@ class _CheckoutCartState extends State<CheckoutCart> {
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
-      ),
+      ),*/
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Column(
+             /*Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -199,35 +205,20 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     backgroundColor:
                         Theme.of(context).colorScheme.secondaryContainer,
                     child: Text(cCart.idCart.toString(),
-                        style: Theme.of(context).textTheme.headlineLarge),
+                        style: Theme.of(context).textTheme.headlineLarge), 
                   ),
                 ],
-              ),
+              ),*/
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Prodotti:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Quantità:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Totale:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+                  Row(
+                  children: [
+                      Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Prodotti:',
+                        style: Theme.of(context).textTheme.titleSmall),),
                   ValueListenableBuilder<int>(
                     builder: (BuildContext context, int value, Widget? child) {
                       return Chip(
@@ -238,6 +229,14 @@ class _CheckoutCartState extends State<CheckoutCart> {
                       );
                     },
                     valueListenable: cartNotifier.totalCartProduct,
+                  ),
+                  ],),
+                  Row(
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Quantità:',
+                        style: Theme.of(context).textTheme.titleSmall),
                   ),
                   ValueListenableBuilder<int>(
                     builder: (BuildContext context, int value, Widget? child) {
@@ -253,6 +252,15 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     },
                     valueListenable: cartNotifier.totalCartProductType,
                   ),
+                  ],
+                  ),
+                  Row(
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Totale:',
+                        style: Theme.of(context).textTheme.titleSmall),
+                  ),
                   ValueListenableBuilder<double>(
                     builder:
                         (BuildContext context, double value, Widget? child) {
@@ -265,8 +273,28 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     },
                     valueListenable: cartNotifier.totalCartMoney,
                   ),
+                  ],
+                  ),
                 ],
               ),
+              /*Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  
+                  
+                  
+                ],
+              ),
+              Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+
+                  )
+                ]
+              ),*/
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -377,7 +405,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
             maintainState: true,
             visible: _isNumericPadVisible,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
