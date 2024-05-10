@@ -155,13 +155,13 @@ class _CustomDrawerWidgetState extends State<CustomDrawerWidget> {
                     top: MediaQuery.of(context).padding.top, bottom: 24),
                 child: Column(
                   children: [
-                    const CircleAvatar(
-                      radius: 52,
-                      backgroundImage: NetworkImage(
-                          'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHNtaWx5JTIwZmFjZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'
-                          // 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c21pbHklMjBmYWNlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60'
-                          ),
-                    ),
+                    // const CircleAvatar(
+                    //   radius: 52,
+                    //   backgroundImage: NetworkImage(
+                    //       'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHNtaWx5JTIwZmFjZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'
+                    //       // 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c21pbHklMjBmYWNlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60'
+                    //       ),
+                    // ),
                     const SizedBox(
                       height: 12,
                     ),
