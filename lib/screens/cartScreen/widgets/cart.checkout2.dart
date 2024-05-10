@@ -244,7 +244,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   ],
                   ),
                 ],
-              ),/*
+              ),
               Column(
                 children: [
                   ToggleButtons(
@@ -430,7 +430,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                 onPressed:
                     disabledFinalizeButton ? null : finalizeFunctionKnown,
                 child: const Text("Check Out (richiedi ricevuta)")),
-          ),*/
+          ),
         ],
       ),
     ],
