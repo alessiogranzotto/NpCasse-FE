@@ -221,7 +221,7 @@ class AuthenticationNotifier with ChangeNotifier {
                       .toList())
                 })).whenComplete(
               () => Navigator.of(context)
-                  .pushReplacementNamed(AppRouter.wishListRoute),
+                  .pushReplacementNamed(AppRouter.homeRoute),
             );
           } else {
             if (context.mounted) {
@@ -277,8 +277,7 @@ class AuthenticationNotifier with ChangeNotifier {
       if (isAuthenticated) {
         WriteCache.setString(key: AppKeys.userData, value: authData)
             .whenComplete(
-          () => Navigator.of(context)
-              .pushReplacementNamed(AppRouter.wishListRoute),
+          () => Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute),
         );
       } else {
         if (context.mounted) {

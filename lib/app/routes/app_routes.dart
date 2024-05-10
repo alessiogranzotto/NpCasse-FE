@@ -4,6 +4,7 @@ import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.Persistent.dart';
+import 'package:np_casse/screens/homeScreen/home.screen.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.responsive.menu.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
@@ -67,7 +68,7 @@ class AppRouter {
       case homeRoute:
         {
           return MaterialPageRoute(
-            builder: (_) => const WishlistScreen(),
+            builder: (_) => const HomeScreen(),
           );
           // return PageRouteBuilder(
           //   pageBuilder: (context, animation, secondaryAnimation) =>
