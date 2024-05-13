@@ -1,6 +1,8 @@
 import 'package:currency_textfield/currency_textfield.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -170,65 +172,27 @@ class _CheckoutCartState extends State<CheckoutCart> {
     }
 
     return Container(
-
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                  children: [
-                      Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Prodotti:',
-                        style: Theme.of(context).textTheme.titleSmall),),
-                  ValueListenableBuilder<int>(
-                    builder: (BuildContext context, int value, Widget? child) {
-                      return Chip(
-                        label: Text(
-                          value.toString(),
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                      );
-                    },
-                    valueListenable: cartNotifier.totalCartProduct,
-                  ),
-                  ],),
-                  Row(
+          Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color:Color.fromARGB(255, 237, 208, 171),
+                  borderRadius: BorderRadius.circular(20),),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Quantità:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  ValueListenableBuilder<int>(
-                    builder: (BuildContext context, int value, Widget? child) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Chip(
-                          label: Text(
-                            value.toString(),
-                          ),
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                      );
-                    },
-                    valueListenable: cartNotifier.totalCartProductType,
-                  ),
-                  ],
-                  ),
-                  Row(
-                  children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(left: 150),
                     child: Text('Totale:',
                         style: Theme.of(context).textTheme.titleSmall),
                   ),
+                  Column(
+                    children: [
+                      Padding(padding: EdgeInsets.only(right: 750)),
                   ValueListenableBuilder<double>(
                     builder:
                         (BuildContext context, double value, Widget? child) {
@@ -240,13 +204,11 @@ class _CheckoutCartState extends State<CheckoutCart> {
                       );
                     },
                     valueListenable: cartNotifier.totalCartMoney,
-                  ),
-                  ],
-                  ),
-                ],
-              ),/*
+                  ),]),
               Column(
+                //mainAxisSize: MainAxisSize.min,
                 children: [
+                  Padding(padding: EdgeInsets.only(left:500)),
                   ToggleButtons(
                     direction: Axis.horizontal,
                     onPressed: (int index) {
@@ -339,11 +301,18 @@ class _CheckoutCartState extends State<CheckoutCart> {
                       ),
                     ],
                   ),
-                ],
+              ],
               ),
             ],
-          ),
-      Visibility(
+          ),),
+      Container(
+        width: double.infinity,
+          margin: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color:Color.fromARGB(255, 237, 208, 171),
+            borderRadius: BorderRadius.circular(20),),
+        child: Visibility(
         maintainSize: true,
         maintainAnimation: true,
         maintainState: true,
@@ -397,13 +366,20 @@ class _CheckoutCartState extends State<CheckoutCart> {
             ),
           ],
         ),
-      ),
-      Row(
+      ),),
+      Container(
+        width: double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color:Color.fromARGB(255, 237, 208, 171),
+          borderRadius: BorderRadius.circular(20),),
+        child:Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 30, right: 320),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor:
@@ -420,7 +396,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                 )),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(left: 320,right: 30),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor:
@@ -430,8 +406,9 @@ class _CheckoutCartState extends State<CheckoutCart> {
                 onPressed:
                     disabledFinalizeButton ? null : finalizeFunctionKnown,
                 child: const Text("Check Out (richiedi ricevuta)")),
-          ),*/
+          ),
         ],
+      ),
       ),
     ],
   ),

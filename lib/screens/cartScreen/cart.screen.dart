@@ -591,42 +591,27 @@ class _CartScreenState extends State<CartScreen> {
                                       ),
                                   ),
                                   ],),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    children: [Container(
-                                      padding: EdgeInsets.all(15),
-                                      child: Row(
-                                        children: [
-                                      Visibility(visible: cartHasData,
-                                    child: CheckoutCart(
-                                    controller: refreshCartController),),]))],
-                                  )
                                 ]
                               )
                               );
                             },
                           ),
                         ),
-                        
-                        /*Align(
-                          alignment: Alignment.topRight,
+                        Align(
+                          alignment: Alignment.center,
                           child: Visibility(
                               visible: cartHasData,
                               child: CheckoutCart(
-                                  controller: refreshCartController)),
-                        ),*/
+                              controller: refreshCartController)),
+                        ),
                       ]);
                     }
-                    
                   },
-                  
                 );
-                
               },
             ),
           ),
         ],
-        
       ),
       // bottomNavigationBar: Visibility(
       //     visible: cartHasData,
