@@ -185,14 +185,8 @@ class _CheckoutCartState extends State<CheckoutCart> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 150),
-                    child: Text('Totale:',
+                    Text('Totale:',
                         style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  Column(
-                    children: [
-                      Padding(padding: EdgeInsets.only(right: 750)),
                   ValueListenableBuilder<double>(
                     builder:
                         (BuildContext context, double value, Widget? child) {
@@ -204,11 +198,8 @@ class _CheckoutCartState extends State<CheckoutCart> {
                       );
                     },
                     valueListenable: cartNotifier.totalCartMoney,
-                  ),]),
-              Column(
-                //mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(padding: EdgeInsets.only(left:500)),
+                  ),
+                  //Padding(padding: EdgeInsets.only(left:700)),
                   ToggleButtons(
                     direction: Axis.horizontal,
                     onPressed: (int index) {
@@ -235,8 +226,8 @@ class _CheckoutCartState extends State<CheckoutCart> {
                         height: 24,
                         width: 24,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          //crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.euro,
@@ -252,8 +243,8 @@ class _CheckoutCartState extends State<CheckoutCart> {
                         height: 24,
                         width: 24,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.end,
+                          //crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.card_giftcard,
@@ -269,8 +260,8 @@ class _CheckoutCartState extends State<CheckoutCart> {
                         height: 24,
                         width: 24,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          //crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.credit_card,
@@ -286,8 +277,8 @@ class _CheckoutCartState extends State<CheckoutCart> {
                         height: 24,
                         width: 24,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          //crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.fact_check,
@@ -297,13 +288,9 @@ class _CheckoutCartState extends State<CheckoutCart> {
                             //     style:
                             //         Theme.of(context).textTheme.bodyMedium),
                           ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-              ],
-              ),
-            ],
+              ])],
           ),),
       Container(
         width: double.infinity,
@@ -320,15 +307,9 @@ class _CheckoutCartState extends State<CheckoutCart> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 4, left: 4),
-              child: Text('Importo ricevuto:',
+           children:[Text('Importo ricevuto:',
                   style: Theme.of(context).textTheme.titleSmall),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 4, left: 4),
-              child: SizedBox(
+             SizedBox(
                 width: 100,
                 child: TextFormField(
                   maxLines: 1,
@@ -336,7 +317,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   controller: textEditingControllerCashInserted,
                   keyboardType: const TextInputType.numberWithOptions(
                       decimal: true, signed: false),
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: Theme.of(context).textTheme.titleSmall,
                   decoration: const InputDecoration(
                     suffixIcon: Icon(Icons.euro),
                     enabledBorder: OutlineInputBorder(
@@ -350,20 +331,13 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16, left: 16),
-              child: Text('Resto:',
+           ),
+              Text('Resto:',
                   style: Theme.of(context).textTheme.titleSmall),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16, left: 16),
-              child: Chip(
+             Chip(
                   label: Text(
                 _toBeReturned,
               )),
-            ),
           ],
         ),
       ),),
@@ -379,7 +353,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 30, right: 320),
+             padding: const EdgeInsets.only(left: 30, right: 320),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor:
