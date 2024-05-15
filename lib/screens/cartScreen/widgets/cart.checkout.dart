@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:np_casse/core/models/cart.model.dart';
@@ -199,7 +202,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     },
                     valueListenable: cartNotifier.totalCartMoney,
                   ),
-                  //Padding(padding: EdgeInsets.only(left:700)),
+                  const Padding(padding: EdgeInsets.only(right:450,left: 10)),
                   ToggleButtons(
                     direction: Axis.horizontal,
                     onPressed: (int index) {
@@ -307,10 +310,13 @@ class _CheckoutCartState extends State<CheckoutCart> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
-           children:[Text('Importo ricevuto:',
+           children:[
+            //const Padding(padding: EdgeInsets.only(right:420,left: 100)),
+            Text('Importo ricevuto:',
                   style: Theme.of(context).textTheme.titleSmall),
              SizedBox(
                 width: 100,
+                height: 35,
                 child: TextFormField(
                   maxLines: 1,
                   textAlignVertical: TextAlignVertical.top,
@@ -332,6 +338,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   ),
                 ),
            ),
+           const Padding(padding: EdgeInsets.only(right:250, left:270)),
               Text('Resto:',
                   style: Theme.of(context).textTheme.titleSmall),
              Chip(
@@ -370,7 +377,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                 )),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 320,right: 30),
+            padding: const EdgeInsets.only(left: 600,right: 40),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor:
