@@ -1,6 +1,4 @@
-import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/institution.model.dart';
-import 'package:np_casse/core/models/user.model.dart';
 
 class UserAppInstitutionModel {
   UserAppInstitutionModel(

@@ -128,7 +128,6 @@ class CartNotifier with ChangeNotifier {
             _nrProductInCart = cartModel.cartProducts.length;
 
             setCart(cartModel);
-
             return cartModel;
           } else {
             setCart(CartModel.empty());

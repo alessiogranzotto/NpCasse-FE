@@ -111,7 +111,7 @@ class _CustomDrawerWidgetState extends State<CustomDrawerWidget> {
     setState(() {
       selectedMenu = index;
     });
-    Navigator.pop(context);
+    // Navigator.pop(context);
     Navigator.of(context).pushNamed(destinations[index].screenRoute);
     // Navigator.push(
     //   context,

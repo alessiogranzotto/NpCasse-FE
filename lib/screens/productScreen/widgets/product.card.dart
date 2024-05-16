@@ -289,11 +289,11 @@ import 'package:provider/provider.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.areAllWithNoImage,
     required this.comeFromWishList,
-  }) : super(key: key);
+  });
   final ProductModel product;
   final bool areAllWithNoImage;
   final bool comeFromWishList;
@@ -369,23 +369,38 @@ class ProductCard extends StatelessWidget {
             color: Theme.of(context).cardColor),
 
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             areAllWithNoImage
-                ? const Divider(height: 0)
-                : Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 0),
-                    height: 150,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: (ImageUtils.getImageFromString(
-                                  stringImage: product.imageProduct)
-                              .image)
-                          // (project.imageProject as ImageProvider)
-                          ),
+                ? const SizedBox.shrink()
+                : Stack(children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 0),
+                      height: areAllWithNoImage ? 0 : 150,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: (ImageUtils.getImageFromString(
+                                    stringImage: product.imageProduct)
+                                .image)
+                            // (project.imageProject as ImageProvider)
+                            ),
+                      ),
                     ),
-                  ),
+                    product.isOutOfAssortment
+                        ? Align(
+                            alignment: Alignment.topRight,
+                            child: CircleAvatar(
+                              radius: 24,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.errorContainer,
+                              child: Text("OUT",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium),
+                            ),
+                          )
+                        : const SizedBox.shrink()
+                  ]),
             SizedBox(
               height: 60,
               child: Padding(
@@ -646,6 +661,9 @@ class ProductCard extends StatelessWidget {
                                           imageProduct: product.imageProduct,
                                           isWishlisted:
                                               ValueNotifier<bool>(false),
+                                          isDeleted: product.isDeleted,
+                                          isOutOfAssortment:
+                                              product.isOutOfAssortment,
                                           isFreePriceProduct:
                                               product.isFreePriceProduct,
                                           giveIdsFlatStructureModel: product

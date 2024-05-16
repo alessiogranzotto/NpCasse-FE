@@ -40,39 +40,39 @@ class StoreScreen extends StatelessWidget {
             appBar: AppBar(
               title: Text('Negozi di ${projectNotifier.getNameProject}',
                   style: Theme.of(context).textTheme.headlineLarge),
-              actions: <Widget>[
-                canAddStore
-                    ? IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            AppRouter.storeDetailRoute,
-                            arguments: StoreModel(
-                                idStore: 0,
-                                idProject: projectNotifier.getIdProject,
-                                nameStore: '',
-                                descriptionStore: '',
-                                imageStore: '',
-                                giveIdsFlatStructureModel:
-                                    GiveIdsFlatStructureModel.empty()),
-                          );
-                          // PersistentNavBarNavigator.pushNewScreen(context,
-                          //     screen: StoreDetailScreen(
-                          //       storeModelArgument: StoreModel(
-                          //           idStore: 0,
-                          //           idProject: projectNotifier.getIdProject,
-                          //           nameStore: '',
-                          //           descriptionStore: '',
-                          //           imageStore: '',
-                          //           giveIdsFlatStructureModel:
-                          //               GiveIdsFlatStructureModel.empty()),
-                          //     ),
-                          //     withNavBar: true,
-                          //     pageTransitionAnimation: PageTransitionAnimation.fade);
-                        },
-                      )
-                    : const SizedBox.shrink()
-              ],
+              // actions: <Widget>[
+              //   canAddStore
+              //       ? IconButton(
+              //           icon: const Icon(Icons.add),
+              //           onPressed: () {
+              //             Navigator.of(context).pushNamed(
+              //               AppRouter.storeDetailRoute,
+              //               arguments: StoreModel(
+              //                   idStore: 0,
+              //                   idProject: projectNotifier.getIdProject,
+              //                   nameStore: '',
+              //                   descriptionStore: '',
+              //                   imageStore: '',
+              //                   giveIdsFlatStructureModel:
+              //                       GiveIdsFlatStructureModel.empty()),
+              //             );
+              //             // PersistentNavBarNavigator.pushNewScreen(context,
+              //             //     screen: StoreDetailScreen(
+              //             //       storeModelArgument: StoreModel(
+              //             //           idStore: 0,
+              //             //           idProject: projectNotifier.getIdProject,
+              //             //           nameStore: '',
+              //             //           descriptionStore: '',
+              //             //           imageStore: '',
+              //             //           giveIdsFlatStructureModel:
+              //             //               GiveIdsFlatStructureModel.empty()),
+              //             //     ),
+              //             //     withNavBar: true,
+              //             //     pageTransitionAnimation: PageTransitionAnimation.fade);
+              //           },
+              //         )
+              //       : const SizedBox.shrink()
+              // ],
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -170,6 +170,30 @@ class StoreScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            )));
+            ),
+            floatingActionButton: canAddStore
+                ? Container(
+                    margin: const EdgeInsets.all(10),
+                    child: FloatingActionButton(
+                      shape: const CircleBorder(eccentricity: 0.5),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(
+                          AppRouter.storeDetailRoute,
+                          arguments: StoreModel(
+                              idStore: 0,
+                              idProject: projectNotifier.getIdProject,
+                              nameStore: '',
+                              descriptionStore: '',
+                              isDeleted: false,
+                              imageStore: '',
+                              giveIdsFlatStructureModel:
+                                  GiveIdsFlatStructureModel.empty()),
+                        );
+                      },
+                      //backgroundColor: Colors.deepOrangeAccent,
+                      child: const Icon(Icons.add),
+                    ),
+                  )
+                : const SizedBox.shrink()));
   }
 }

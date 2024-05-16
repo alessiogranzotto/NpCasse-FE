@@ -43,10 +43,11 @@ class _SplashScreenState extends State<SplashScreen> {
     //         });
     //   },
     // );
-
-    return authenticationNotifier.isAuth
-        ? Navigator.of(context).pushNamed(AppRouter.homeRoute)
-        : Navigator.of(context).pushReplacementNamed(AppRouter.loginRoute);
+    if (context.mounted) {
+      return authenticationNotifier.isAuth
+          ? Navigator.of(context).pushNamed(AppRouter.homeRoute)
+          : Navigator.of(context).pushReplacementNamed(AppRouter.loginRoute);
+    }
   }
 
   @override

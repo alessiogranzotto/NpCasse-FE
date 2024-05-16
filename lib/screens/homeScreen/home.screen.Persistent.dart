@@ -110,7 +110,7 @@ class _HomeScreenPersistentState extends State<HomeScreenPersistent> {
         activeColorPrimary: Theme.of(context).colorScheme.secondaryContainer,
         inactiveColorPrimary: Theme.of(context).hintColor,
         onPressed: (context) {
-          authenticationNotifier.userLogout();
+          authenticationNotifier.userLogout(context!);
         },
       ));
       return result;

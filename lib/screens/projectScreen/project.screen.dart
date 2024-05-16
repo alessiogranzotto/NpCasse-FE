@@ -6,11 +6,7 @@ import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
-import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
-import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
 import 'package:np_casse/screens/projectScreen/widget/project.card.dart';
-import 'package:np_casse/screens/storeScreen/store.screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class ProjectScreen extends StatelessWidget {
@@ -45,47 +41,12 @@ class ProjectScreen extends StatelessWidget {
     // }
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        drawer: const CustomDrawerWidget(),
+        //drawer: const CustomDrawerWidget(),
         appBar: AppBar(
           title: Text(
             'Progetti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
-            style: Theme.of(context).textTheme.headlineLarge,
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
-          actions: <Widget>[
-            canAddProject
-                ? IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        AppRouter.projectDetailRoute,
-                        arguments: ProjectModel(
-                            idProject: 0,
-                            idUserAppInstitution:
-                                cUserAppInstitutionModel.idUserAppInstitution,
-                            nameProject: '',
-                            descriptionProject: '',
-                            imageProject: '',
-                            giveIdsFlatStructureModel:
-                                GiveIdsFlatStructureModel.empty()),
-                      );
-                      // PersistentNavBarNavigator.pushNewScreen(context,
-                      //     screen: ProjectDetailScreen(
-                      //       projectModelArgument: ProjectModel(
-                      //           idProject: 0,
-                      //           idUserAppInstitution:
-                      //               cUserAppInstitutionModel.idUserAppInstitution,
-                      //           nameProject: '',
-                      //           descriptionProject: '',
-                      //           imageProject: '',
-                      //           giveIdsFlatStructureModel:
-                      //               GiveIdsFlatStructureModel.empty()),
-                      //     ),
-                      //     withNavBar: true,
-                      //     pageTransitionAnimation: PageTransitionAnimation.fade);
-                    },
-                  )
-                : const SizedBox.shrink()
-          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -188,6 +149,32 @@ class ProjectScreen extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        ),
+        floatingActionButton: canAddProject
+            ? Container(
+                margin: const EdgeInsets.all(10),
+                child: FloatingActionButton(
+                  shape: const CircleBorder(eccentricity: 0.5),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      AppRouter.projectDetailRoute,
+                      arguments: ProjectModel(
+                          idProject: 0,
+                          idUserAppInstitution:
+                              cUserAppInstitutionModel.idUserAppInstitution,
+                          nameProject: '',
+                          descriptionProject: '',
+                          isDeleted: false,
+                          imageProject: '',
+                          giveIdsFlatStructureModel:
+                              GiveIdsFlatStructureModel.empty(),
+                          projectGrantStructure: List.empty()),
+                    );
+                  },
+                  //backgroundColor: Colors.deepOrangeAccent,
+                  child: const Icon(Icons.add),
+                ),
+              )
+            : const SizedBox.shrink());
   }
 }

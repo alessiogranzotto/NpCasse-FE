@@ -73,6 +73,8 @@ class ProductModel {
       required this.imageProduct,
       required this.isWishlisted,
       required this.isFreePriceProduct,
+      required this.isDeleted,
+      required this.isOutOfAssortment,
       required this.giveIdsFlatStructureModel});
   late int idProduct;
   late int idStore;
@@ -82,6 +84,8 @@ class ProductModel {
   late String imageProduct;
   late ValueNotifier<bool> isWishlisted;
   late bool isFreePriceProduct;
+  late bool isDeleted;
+  late bool isOutOfAssortment;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
 
   ProductModel.empty() {
@@ -93,6 +97,8 @@ class ProductModel {
     imageProduct = '';
     isWishlisted = ValueNotifier<bool>(false);
     isFreePriceProduct = false;
+    isDeleted = false;
+    isOutOfAssortment = false;
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
   }
 
@@ -105,6 +111,8 @@ class ProductModel {
     imageProduct = json['imageProduct'] ?? '';
     isWishlisted = ValueNotifier<bool>(json['isWishlisted']);
     isFreePriceProduct = json['isFreePriceProduct'];
+    isDeleted = json['isDeleted'];
+    isOutOfAssortment = json['isOutOfAssortment'];
     if (json['giveIdsFlatStructure'] != null) {
       giveIdsFlatStructureModel =
           GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
@@ -122,6 +130,8 @@ class ProductModel {
     data['priceProduct'] = priceProduct;
     data['imageProduct'] = imageProduct;
     data['isFreePriceProduct'] = isFreePriceProduct;
+    data['isDeleted'] = isDeleted;
+    data['isOutOfAssortment'] = isOutOfAssortment;
     data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
   }
