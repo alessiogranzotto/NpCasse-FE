@@ -3,11 +3,8 @@ import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
-import 'package:np_casse/screens/homeScreen/home.screen.Persistent.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
-import 'package:np_casse/screens/homeScreen/home.screen.responsive.menu.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
-import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
 import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
@@ -68,7 +65,7 @@ class AppRouter {
       case homeRoute:
         {
           return MaterialPageRoute(
-            builder: (_) => const HomeScreen(),
+            builder: (_) => const MasterScreen(),
           );
           // return PageRouteBuilder(
           //   pageBuilder: (context, animation, secondaryAnimation) =>
@@ -148,14 +145,12 @@ class AppRouter {
             builder: (_) => const LoginScreen(),
           );
         }
-
       case storeRoute:
         {
           return MaterialPageRoute(
             builder: (_) => const StoreScreen(),
           );
         }
-
       case storeDetailRoute:
         {
           return MaterialPageRoute(
@@ -172,7 +167,6 @@ class AppRouter {
             builder: (_) => const ProductScreen(),
           );
         }
-
       case productDetailRoute:
         {
           return MaterialPageRoute(
@@ -195,7 +189,6 @@ class AppRouter {
       //       builder: (_) => const AppSettings(),
       //     );
       //   }
-
       case onBoardRoute:
         {
           return MaterialPageRoute(
@@ -208,7 +201,6 @@ class AppRouter {
       //       builder: (_) => const ProductScreen(),
       //     );
       //   }
-
       // case signUpRoute:
       //   {
       //     return MaterialPageRoute(

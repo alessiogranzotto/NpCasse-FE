@@ -28,7 +28,8 @@ class ProductNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int idProject,
       required int idStore,
-      required String searchedBy}) async {
+      required String searchedBy,
+      required bool viewOutOfAssortment}) async {
     try {
       var response = await productAPI.getProduct(
           token: token,
@@ -52,14 +53,18 @@ class ProductNotifier with ChangeNotifier {
               .map((e) => ProductModel.fromJson(e))
               .toList();
           if (searchedBy.isNotEmpty) {
-            List<ProductModel> productsFiltered = products
+            products = products
                 .where((element) =>
                     element.nameProduct.toLowerCase().contains(searchedBy) ||
                     element.descriptionProduct
                         .toLowerCase()
                         .contains(searchedBy))
                 .toList();
-            return productsFiltered;
+          }
+          if (!viewOutOfAssortment) {
+            products = products
+                .where((element) => !element.isOutOfAssortment)
+                .toList();
           }
           return products;
           // notifyListeners();

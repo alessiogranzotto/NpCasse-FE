@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/api/side_bar_toggler.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/api/side_navigation_bar_footer.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/api/side_navigation_bar_header.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/api/side_navigation_bar_item.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/api/side_navigation_bar_theme.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/core/bar_footer.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/core/bar_header.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/core/bar_item.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/core/bar_toggler.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_bar_toggler.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_header.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/core/bar_footer.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/core/bar_header.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/core/bar_item.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/core/bar_toggler.dart';
 
 /// The main widget for building a side navigation bar.
 ///

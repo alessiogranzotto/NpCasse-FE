@@ -95,6 +95,7 @@ class StoreCard extends StatelessWidget {
                                   idProject: store.idProject,
                                   nameStore: store.nameStore,
                                   descriptionStore: store.descriptionStore,
+                                  isDeleted: false,
                                   imageStore: store.imageStore,
                                   giveIdsFlatStructureModel:
                                       store.giveIdsFlatStructureModel),

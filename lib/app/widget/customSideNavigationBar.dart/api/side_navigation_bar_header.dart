@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Interface to provide information about the header widget of a [SideNavigationBar]
 class SideNavigationBarHeader {
   /// A widget to be displayed at the left side of the header
-  final Widget image;
+  final Widget? image;
 
   /// A title widget next to the header
   final Widget title;

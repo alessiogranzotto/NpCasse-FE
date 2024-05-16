@@ -7,12 +7,15 @@ class ProjectModel {
       required this.idUserAppInstitution,
       required this.nameProject,
       required this.descriptionProject,
+      required this.isDeleted,
       required this.imageProject,
-      required this.giveIdsFlatStructureModel});
+      required this.giveIdsFlatStructureModel,
+      required this.projectGrantStructure});
   late final int idProject;
   late final int idUserAppInstitution;
   late final String nameProject;
   late final String descriptionProject;
+  late final bool isDeleted;
   late final String imageProject;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
   late final List<ProjectGrantStructureModel> projectGrantStructure;
@@ -22,6 +25,7 @@ class ProjectModel {
     idUserAppInstitution = 0;
     nameProject = "";
     descriptionProject = "";
+    isDeleted = false;
     imageProject = "";
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
     projectGrantStructure = List.empty();
@@ -31,6 +35,7 @@ class ProjectModel {
     idUserAppInstitution = json['idUserAppInstitution'];
     nameProject = json['nameProject'];
     descriptionProject = json['descriptionProject'];
+    isDeleted = json['isDeleted'];
     imageProject = json['imageProject'];
     giveIdsFlatStructureModel =
         GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
@@ -47,8 +52,10 @@ class ProjectModel {
     data['idUserAppInstitution'] = idUserAppInstitution;
     data['nameProject'] = nameProject;
     data['descriptionProject'] = descriptionProject;
+    data['isDeleted'] = isDeleted;
     data['imageProject'] = imageProject;
     data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
+    data['projectGrantStructure'] = projectGrantStructure;
     return data;
   }
 }

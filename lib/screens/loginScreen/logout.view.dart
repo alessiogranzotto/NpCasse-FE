@@ -17,6 +17,6 @@ class _LogoutScreenState extends State<LogoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Text("Arrivederci");
   }
 }

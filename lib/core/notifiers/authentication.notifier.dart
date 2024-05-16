@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/app/utilities/initial_context.dart';
 import 'package:np_casse/core/api/authentication.api.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
@@ -194,7 +193,9 @@ class AuthenticationNotifier with ChangeNotifier {
             notifyListeners();
             var t = json.encode({
               'idUser': userModel.idUser,
-              'idUserAppInstitution': userModel.idUserAppInstitution,
+              // 'idUserAppInstitution': userModel.idUserAppInstitution,
+              'name': userModel.name,
+              'surname': userModel.surname,
               'email': userModel.email,
               'token': userModel.token,
               'refreshToken': userModel.refreshToken,
@@ -205,11 +206,14 @@ class AuthenticationNotifier with ChangeNotifier {
                   .map((e) => e.toJson())
                   .toList())
             });
+            print(t);
             WriteCache.setString(
                 key: AppKeys.userData,
                 value: json.encode({
                   'idUser': userModel.idUser,
-                  'idUserAppInstitution': userModel.idUserAppInstitution,
+                  // 'idUserAppInstitution': userModel.idUserAppInstitution,
+                  'name': userModel.name,
+                  'surname': userModel.surname,
                   'email': userModel.email,
                   'token': userModel.token,
                   'refreshToken': userModel.refreshToken,
@@ -371,18 +375,25 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
-  Future userLogout() async {
+  Future userLogout(BuildContext context) async {
     _actualState = 'LogoutState';
     notifyListeners();
 
-    Navigator.pushNamedAndRemoveUntil(
-        ContextKeeper.buildContext, AppRouter.loginRoute, (_) => true);
-
-    // _idUser = 0;
-    // _token = null;
-
     DeleteCache.deleteKey(AppKeys.userData).whenComplete(() async {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (context.mounted) {
+        Navigator.of(context).pushReplacementNamed(AppRouter.logoutRoute);
+
+        // Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+        //   MaterialPageRoute(
+        //     fullscreenDialog: true,
+        //     builder: (_) => const LoginScreen(),
+        //   ),
+        //   (_) => false,
+        // );
+      }
+
       _actualState = 'LoginState';
       notifyListeners();
     });

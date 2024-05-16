@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/constants/custom.colors.dart';
+import 'package:np_casse/app/constants/colors.dart';
 
 /// This class provides customizable styling of a [SideNavigationBar] and for [SideNavigationBarItem]
 class SideNavigationBarTheme {

@@ -99,27 +99,30 @@ class ProjectCard extends StatelessWidget {
                                   nameProject: project.nameProject,
                                   descriptionProject:
                                       project.descriptionProject,
+                                  isDeleted: project.isDeleted,
                                   imageProject: project.imageProject,
                                   giveIdsFlatStructureModel:
-                                      project.giveIdsFlatStructureModel),
+                                      project.giveIdsFlatStructureModel,
+                                  projectGrantStructure:
+                                      project.projectGrantStructure),
                             );
-                            // PersistentNavBarNavigator.pushNewScreen(context,
-                            //     screen: ProjectDetailScreen(
-                            //       projectModelArgument: ProjectModel(
-                            //           idProject: project.idProject,
-                            //           idUserAppInstitution:
-                            //               cUserAppInstitutionModel
-                            //                   .idUserAppInstitution,
-                            //           nameProject: project.nameProject,
-                            //           descriptionProject:
-                            //               project.descriptionProject,
-                            //           imageProject: project.imageProject,
-                            //           giveIdsFlatStructureModel:
-                            //               project.giveIdsFlatStructureModel),
-                            //     ),
-                            //     withNavBar: true,
-                            //     pageTransitionAnimation:
-                            //         PageTransitionAnimation.fade);
+                            //   PersistentNavBarNavigator.pushNewScreen(context,
+                            //       screen: ProjectDetailScreen(
+                            //         projectModelArgument: ProjectModel(
+                            //             idProject: project.idProject,
+                            //             idUserAppInstitution:
+                            //                 cUserAppInstitutionModel
+                            //                     .idUserAppInstitution,
+                            //             nameProject: project.nameProject,
+                            //             descriptionProject:
+                            //                 project.descriptionProject,
+                            //             imageProject: project.imageProject,
+                            //             giveIdsFlatStructureModel:
+                            //                 project.giveIdsFlatStructureModel),
+                            //       ),
+                            //       withNavBar: true,
+                            //       pageTransitionAnimation:
+                            //           PageTransitionAnimation.fade);
                           },
                           icon: const Icon(
                             Icons.edit,

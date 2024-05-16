@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/api/side_navigation_bar_header.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_header.dart';
 
 /// Represents the header widget which is rendered on the screen
 ///
@@ -73,7 +73,7 @@ class _ExpandedHeaderWidgetState extends State<_ExpandedHeaderWidget> {
       padding: const EdgeInsets.only(left: 8.0, top: 12.0),
       child: Row(
         children: [
-          widget.headerData.image,
+          widget.headerData.image ?? const SizedBox.shrink(),
           Expanded(
             child: Center(
               child: Padding(
@@ -97,10 +97,9 @@ class _ExpandedHeaderWidgetState extends State<_ExpandedHeaderWidget> {
 
 /// Internal widget to display data when [SideNavigationBar] is not expanded
 class _ShrinkedHeaderWidget extends StatefulWidget {
-  final Widget image;
+  final Widget? image;
 
-  const _ShrinkedHeaderWidget({Key? key, required this.image})
-      : super(key: key);
+  const _ShrinkedHeaderWidget({Key? key, this.image}) : super(key: key);
 
   @override
   _ShrinkedHeaderWidgetState createState() => _ShrinkedHeaderWidgetState();

@@ -5,7 +5,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 class UserModel {
   UserModel(
       {required this.idUser,
-      required this.idUserAppInstitution,
+      // required this.idUserAppInstitution,
       required this.name,
       required this.surname,
       required this.email,
@@ -15,7 +15,7 @@ class UserModel {
       required this.expirationTime,
       required this.userAppInstitutionModelList});
   late int idUser;
-  late int idUserAppInstitution;
+  // late int idUserAppInstitution;
   late String name;
   late String surname;
   late String email;
@@ -27,7 +27,7 @@ class UserModel {
 
   UserModel.empty() {
     idUser = 0;
-    idUserAppInstitution = 0;
+    // idUserAppInstitution = 0;
     email = "";
     token = "";
     refreshToken = "";
@@ -47,7 +47,7 @@ class UserModel {
   // }
   UserModel.fromJson(Map<String, dynamic> json) {
     idUser = json['idUser'];
-    idUserAppInstitution = json['idUserAppInstitution'];
+    // idUserAppInstitution = json['idUserAppInstitution'];
     name = json['name'];
     surname = json['surname'];
     email = json['email'];
@@ -70,7 +70,7 @@ class UserModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['idUser'] = idUser;
-    data['idUserAppInstitution'] = idUserAppInstitution;
+    // data['idUserAppInstitution'] = idUserAppInstitution;
     data['name'] = name;
     data['surname'] = surname;
     data['email'] = email;

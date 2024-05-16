@@ -1,11 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/app/widget/custom_side_navigation_bar.dart/custom.side.navigation.bar.dart';
-import 'package:np_casse/screens/cartScreen/cart.screen.dart';
+import 'package:np_casse/app/widget/customSideNavigationBar.dart/custom.side.navigation.bar.dart';
+import 'package:np_casse/core/models/user.app.institution.model.dart';
+import 'package:np_casse/core/models/user.model.dart';
+import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/notifiers/project.notifier.dart';
+import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
-import 'package:np_casse/screens/projectScreen/project.screen.dart';
+import 'package:np_casse/screens/projectScreen/project.navigator.dart';
 import 'package:np_casse/screens/userAppIinstitutionScreen/user.app.institution.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
+import 'package:provider/provider.dart';
 
 class MenuList {
   MenuList(
@@ -21,38 +30,75 @@ List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite), const WishlistScreen()),
   MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
-      const Icon(Icons.layers), const ProjectScreen()),
+      const Icon(Icons.layers), const ProjectNavigator()),
   MenuList(AppRouter.associazioniRoute, 'Associazioni', Icons.settings_outlined,
       const Icon(Icons.settings), const UserAppInstitutionScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
-      const Icon(Icons.shopping_cart), const CartScreen()),
+      const Icon(Icons.shopping_cart), const CartNavigator()),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
       const Icon(Icons.logout), const LogoutScreen()),
 ];
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class MasterScreen extends StatefulWidget {
+  const MasterScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<MasterScreen> createState() => _MasterScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  /// Views to display
-  List<Widget> views = const [
-    Center(
-      child: Text('Dashboard'),
-    ),
-    Center(
-      child: Text('Account'),
-    ),
-    Center(
-      child: Text('Settings'),
-    ),
+class _MasterScreenState extends State<MasterScreen> {
+  int _selectedIndex = 0;
+  int nrProductinCart = 0;
+  late UserModel cUserModel;
+  late UserAppInstitutionModel cSelectedUserAppInstitution;
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    projectNavigatorKey,
+    cartNavigatorKey
   ];
 
-  /// The currently selected index of the bar
-  int selectedIndex = 0;
+  void getUserData(BuildContext context) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context);
+
+    cUserModel = authenticationNotifier.getUser();
+
+    cSelectedUserAppInstitution =
+        authenticationNotifier.getSelectedUserAppInstitution();
+  }
+
+  void adjustMenu(BuildContext context) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context);
+
+    int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
+
+    if (nrAssociazioni == 1) {
+      destinations.removeWhere((element) => element.label == "Associazioni");
+    }
+  }
+
+  signOut(BuildContext context) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    authenticationNotifier.userLogout(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<bool> _systemBackButtonPressed() async {
+    if (_navigatorKeys[_selectedIndex].currentState?.canPop() == true) {
+      _navigatorKeys[_selectedIndex]
+          .currentState
+          ?.pop(_navigatorKeys[_selectedIndex].currentContext);
+      return false;
+    } else {
+      SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+      return true; // Indicate that the back action is handled
+    }
+  }
 
   List<SideNavigationBarItem> getSideNavigationBarItem() {
     List<SideNavigationBarItem> result = [];
@@ -63,47 +109,80 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Widget> getScreenNavigationBarItem() {
-    List<Widget> result = [];
-    result = destinations.map((e) => e.screen).toList();
-    return result;
+    return destinations.map((e) => e.screen).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      /// You can use an AppBar if you want to
-      // appBar: AppBar(
-      //   title: const Text('App'),
-      // ),
+    CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
+    ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
+    WishlistProductNotifier wishlistProductNotifier =
+        Provider.of<WishlistProductNotifier>(context);
 
-      // The row is needed to display the current view
+    adjustMenu(context);
+    getUserData(context);
+    // cartNotifier.refresh();
+    //nrProductinCart = cartNotifier.nrProductInCart;
+    return Scaffold(
       body: Row(
         children: [
-          /// Pretty similar to the BottomNavigationBar!
           SideNavigationBar(
             expandable: true,
             theme: SideNavigationBarTheme.blue(),
             // header: SideNavigationBarHeader(
-            //     image: Image.network(
-            //         width: 100,
-            //         height: 100,
-            //         'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fHNtaWx5JTIwZmFjZXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60'),
-            //     title: const Text("Title"),
-            //     subtitle: const Text("Subtitle")),
-            footer: const SideNavigationBarFooter(label: Text("label")),
-            selectedIndex: selectedIndex,
+            //     image: null,
+            //     title: Text(
+            //       '${cUserModel.name} ${cUserModel.surname}',
+            //       style: const TextStyle(fontSize: 14, color: Colors.white),
+            //     ),
+            //     subtitle: Column(
+            //       children: [
+            //         Text(cUserModel.email,
+            //             style:
+            //                 const TextStyle(fontSize: 14, color: Colors.white)),
+            //         Text(cSelectedUserAppInstitution.roleUserAppInstitution,
+            //             style:
+            //                 const TextStyle(fontSize: 14, color: Colors.white)),
+            //       ],
+            //     )),
+            footer: SideNavigationBarFooter(
+                label: Column(
+              children: [
+                Text(
+                  '${cUserModel.name} ${cUserModel.surname}',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                Text(
+                  cUserModel.email,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                Text(
+                  cSelectedUserAppInstitution.roleUserAppInstitution,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ],
+            )),
+            selectedIndex: _selectedIndex,
             items: getSideNavigationBarItem(),
             onTap: (index) {
               setState(() {
-                selectedIndex = index;
+                _selectedIndex = index;
               });
+              if (destinations.elementAt(index).label == "Preferiti") {
+                wishlistProductNotifier.refresh();
+              } else if (destinations.elementAt(index).label == "Progetti") {
+                projectNotifier.refresh();
+              } else if (destinations.elementAt(index).label == "Carrello") {
+                cartNotifier.refresh();
+              } else if (destinations.elementAt(index).label == "Uscita") {
+                signOut(context);
+              }
             },
           ),
-
-          /// Make it take the rest of the available width
           Expanded(
-            child: getScreenNavigationBarItem().elementAt(selectedIndex),
-          )
+            child: IndexedStack(
+                index: _selectedIndex, children: getScreenNavigationBarItem()),
+          ),
         ],
       ),
     );
