@@ -29,6 +29,7 @@ class WishlistScreen extends StatelessWidget {
             backgroundColor: Theme.of(context).colorScheme.background,
             // const CustomDrawerWidget(),
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               centerTitle: true,
               title: Text(
                 textAlign: TextAlign.right,
