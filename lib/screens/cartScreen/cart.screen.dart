@@ -58,10 +58,11 @@ class _CartScreenState extends State<CartScreen> {
       drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Container(
-              padding: const EdgeInsets.all(400.0),
+              //padding: const EdgeInsets.all(400.0),
               child: 
             Text(
               'Il mio carrello',
