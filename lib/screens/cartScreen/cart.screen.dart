@@ -140,8 +140,8 @@ class _CartScreenState extends State<CartScreen> {
                                       Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 0),
-                                        height: 80,
-                                        width: 80,
+                                        height: 90,
+                                        width: 90,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
@@ -161,7 +161,7 @@ class _CartScreenState extends State<CartScreen> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: SizedBox(
-                                        width: 130,
+                                        width: 120,
                                         child: Column(
                                           crossAxisAlignment:CrossAxisAlignment.start,
                                           children: [
@@ -207,8 +207,8 @@ class _CartScreenState extends State<CartScreen> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     SizedBox(
-                                                      width: 50,
-                                                      height: 40,
+                                                      width: 40,
+                                                      height: 30,
                                                       child:
                                                           ValueListenableBuilder<
                                                               double>(
