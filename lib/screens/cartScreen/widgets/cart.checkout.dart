@@ -208,7 +208,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     valueListenable: cartNotifier.totalCartProductType,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left:50),
+                    padding: const EdgeInsets.all(8.0),
                     child: Text('Quantità:',
                         style: Theme.of(context).textTheme.titleSmall),
                   ),

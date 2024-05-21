@@ -62,7 +62,7 @@ class _CartScreenState extends State<CartScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(40),
+              padding: const EdgeInsets.all(50),
               child: 
             Text(
               'Il mio carrello',
@@ -129,7 +129,7 @@ class _CartScreenState extends State<CartScreen> {
                                   tSnapshot[index];
                               return Container(width: double.infinity,
                                 margin: const EdgeInsets.all(10),
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10), 
                                 decoration: BoxDecoration(
                                   color:Color.fromARGB(255, 237, 208, 171),
                                   borderRadius: BorderRadius.circular(20),),
@@ -140,8 +140,8 @@ class _CartScreenState extends State<CartScreen> {
                                       Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 0),
-                                        height: 100,
-                                        width: 100,
+                                        height: 80,
+                                        width: 80,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
@@ -161,7 +161,7 @@ class _CartScreenState extends State<CartScreen> {
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: SizedBox(
-                                        width: 200,
+                                        width: 130,
                                         child: Column(
                                           crossAxisAlignment:CrossAxisAlignment.start,
                                           children: [
@@ -207,8 +207,8 @@ class _CartScreenState extends State<CartScreen> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     SizedBox(
-                                                      width: 120,
-                                                      height: 50,
+                                                      width: 50,
+                                                      height: 40,
                                                       child:
                                                           ValueListenableBuilder<
                                                               double>(
@@ -308,7 +308,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         icon: const Icon(
                                                             size: 30,
                                                             Icons
-                                                                .delete_outline)),
+                                                            .delete_outline)),
                                                   ],
                                                 ),
                                               )
@@ -400,7 +400,7 @@ class _CartScreenState extends State<CartScreen> {
                                                             size: 24,
                                                             Icons.remove)),
                                                     SizedBox(
-                                                      width: 40,
+                                                      width: 30,
                                                       height: 50,
                                                       child:
                                                           ValueListenableBuilder<
@@ -501,7 +501,7 @@ class _CartScreenState extends State<CartScreen> {
                                                           }
                                                         },
                                                         icon: const Icon(
-                                                            size: 24,
+                                                            size: 20,
                                                             Icons.add)),
                                                     IconButton(
                                                         onPressed: () {
@@ -568,7 +568,7 @@ class _CartScreenState extends State<CartScreen> {
                                                           }
                                                         },
                                                         icon: const Icon(
-                                                            size: 24,
+                                                            size: 20,
                                                             Icons
                                                                 .delete_outline)),
                                                   ],
@@ -577,10 +577,10 @@ class _CartScreenState extends State<CartScreen> {
                                   ]),
                                   Column(
                                       children: [ Container(
-                                        margin: const EdgeInsets.all(15),
+                                        margin: const EdgeInsets.all(10),
                                         padding: const EdgeInsets.all(15),
                                         decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10,),
+                                        borderRadius: BorderRadius.circular(8,),
                                         border:Border.all(color: Colors.black)),
                                         child: Row(
                                         children: [
