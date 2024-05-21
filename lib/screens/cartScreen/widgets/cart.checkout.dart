@@ -185,7 +185,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   color:Color.fromARGB(255, 237, 208, 171),
                   borderRadius: BorderRadius.circular(20),),
             child:Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                    Padding(
@@ -208,7 +208,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     valueListenable: cartNotifier.totalCartProductType,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left:20),
+                    padding: const EdgeInsets.only(left:50),
                     child: Text('Quantità:',
                         style: Theme.of(context).textTheme.titleSmall),
                   ),
@@ -329,7 +329,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
         maintainState: true,
         visible: _isNumericPadVisible,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
            children:[
             Text('Totale:',
@@ -391,7 +391,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
           color:Color.fromARGB(255, 237, 208, 171),
           borderRadius: BorderRadius.circular(20),),
         child:Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(

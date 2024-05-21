@@ -59,10 +59,10 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              //padding: const EdgeInsets.all(400.0),
+              padding: const EdgeInsets.all(40),
               child: 
             Text(
               'Il mio carrello',
