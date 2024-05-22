@@ -341,7 +341,7 @@ class _CheckoutCartState extends State<CheckoutCart> {
                   label: Text(
                     '${value.toStringAsFixed(2)} €',
                   ),
-                  backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).primaryColor,
                 );
               },
               valueListenable: cartNotifier.totalCartMoney,
