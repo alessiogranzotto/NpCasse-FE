@@ -128,9 +128,14 @@ class GiveAPI {
       required String tel,
       required String cell,
       required String nazione_nn_norm,
+      required String regione_nn_norm,
       required String prov_nn_norm,
+      required String statoFederale_nn_norm,
       required String cap_nn_norm,
       required String citta_nn_norm,
+      required String suddivisioneComune_2_nn_norm,
+      required String suddivisioneComune_3_nn_norm,
+      required String localita_nn_norm,
       required String indirizzo_nn_norm,
       required String n_civico_nn_norm,
       required int consenso_ringrazia,
@@ -163,9 +168,14 @@ class GiveAPI {
           "tel": tel,
           "cell": cell,
           "nazione_nn_norm": nazione_nn_norm,
+          "regione_nn_norm": regione_nn_norm,
           "prov_nn_norm": prov_nn_norm,
+          "statoFederale_nn_norm": statoFederale_nn_norm,
           "cap_nn_norm": cap_nn_norm,
           "citta_nn_norm": citta_nn_norm,
+          "suddivisioneComune_2_nn_norm": suddivisioneComune_2_nn_norm,
+          "suddivisioneComune_3_nn_norm": suddivisioneComune_3_nn_norm,
+          "localita_nn_norm": localita_nn_norm,
           "indirizzo_nn_norm": indirizzo_nn_norm,
           "n_civico_nn_norm": n_civico_nn_norm,
           "consenso_ringrazia": consenso_ringrazia,
@@ -179,7 +189,6 @@ class GiveAPI {
           "tipo_donatore": tipo_donatore,
           "forza_duplicato": forza_duplicato
         }));
-
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
