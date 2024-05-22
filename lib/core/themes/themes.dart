@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 
 class AppTheme {
   AppTheme._();
@@ -54,6 +55,7 @@ class AppTheme {
   static final Color _darkshadow = Colors.blueGrey.shade900;
   static const Color _darkonSurface = Colors.white70;
 
+  static final Color _bluePrimaryColor = Colors.blueGrey.shade900;
   static const Color _iconColor = Colors.white;
 
   // static const Color _accentColor = Color.fromRGBO(74, 217, 217, 1);
@@ -302,6 +304,37 @@ class AppTheme {
         onTertiaryContainer: _darkonTertiaryContainer,
         shadow: _darkshadow,
         onSurface: _darkonSurface,
+      ),
+      textTheme: _darkTextTheme,
+      textSelectionTheme: _textSelectionTheme);
+
+  static final ThemeData blueTheme = ThemeData(
+      scaffoldBackgroundColor: _bluePrimaryColor,
+      cardColor: _darkcardColor,
+      hintColor: _darkhintColor,
+      shadowColor: _darkshadow,
+      appBarTheme: const AppBarTheme(
+          color: CustomColors.darkBlue,
+          iconTheme: IconThemeData(color: _iconColor)),
+      // bottomAppBarColor: _appbarColorDark,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: CustomColors.darkBlue,
+        // background: _darkbackground,
+        // onBackground: _darkonBackground,
+        // primary: _darkprimary,
+        // onPrimary: _darkonPrimary,
+        // secondary: _darksecondary,
+        // onSecondary: _darkonSecondary,
+        // tertiary: _darktertiary,
+        // onTertiary: _darkonTertiary,
+        // primaryContainer: _darkprimaryContainer,
+        // onPrimaryContainer: _darkonPrimaryContainer,
+        // secondaryContainer: _darksecondaryContainer,
+        // onSecondaryContainer: _darkonSecondaryContainer,
+        // tertiaryContainer: _darktertiaryContainer,
+        // onTertiaryContainer: _darkonTertiaryContainer,
+        // shadow: _darkshadow,
+        // onSurface: _darkonSurface,
       ),
       textTheme: _darkTextTheme,
       textSelectionTheme: _textSelectionTheme);

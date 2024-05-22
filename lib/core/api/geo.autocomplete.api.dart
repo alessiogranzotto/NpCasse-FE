@@ -134,6 +134,7 @@ class GeoAutocompleteAPI {
       {String? token,
       required int idUserAppInstitution,
       required String iso3,
+      required String country,
       required String state,
       required String region,
       required String province,
@@ -145,7 +146,7 @@ class GeoAutocompleteAPI {
       required String streetName,
       required String streetNumber}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.geoSuggestionsURL}/Execute-normalization?IdUserAppInstitution=$idUserAppInstitution&Iso3=$iso3&State=$state&Province=$province&City=$city&District1=$district1&District2=$district2&District3=$district3&PostalCode=$postalCode&StreetName=$streetName&StreetNumber=$streetNumber');
+        '${ApiRoutes.geoSuggestionsURL}/Execute-normalization?IdUserAppInstitution=$idUserAppInstitution&Iso3=$iso3&Country=$country&State=$state&Province=$province&City=$city&District1=$district1&District2=$district2&District3=$district3&PostalCode=$postalCode&StreetName=$streetName&StreetNumber=$streetNumber');
     final http.Response response = await http.Client().get(
       uri,
       headers: {

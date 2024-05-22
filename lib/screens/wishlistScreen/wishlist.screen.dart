@@ -3,9 +3,7 @@ import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cro
 import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/product.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
-import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:np_casse/screens/productScreen/widgets/product.card.dart';
 import 'package:provider/provider.dart';
 
@@ -16,23 +14,27 @@ class WishlistScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
-    ProductNotifier productNotifier = Provider.of<ProductNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    double widgetWitdh = 300;
-    double widgetRatio = 1.1;
-    double widgetRatioHalf = 0.65;
+    double widgetWitdh = 320;
+    double widgetHeight = 350;
+    double widgetHeightHalf = 200;
+    // double widgetRatio = 1.1;
+    // double widgetRatioHalf = 0.65;
     double gridMainAxisSpacing = 10;
 
     return SafeArea(
         child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.background,
-            drawer: const CustomDrawerWidget(),
+            // const CustomDrawerWidget(),
             appBar: AppBar(
+              centerTitle: true,
+              automaticallyImplyLeading: false,
               title: Text(
+                textAlign: TextAlign.right,
                 'Preferiti di ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
-                style: Theme.of(context).textTheme.headlineLarge,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
             body: SingleChildScrollView(
@@ -82,11 +84,11 @@ class WishlistScreen extends StatelessWidget {
                             var t = tSnapshot.any(
                                 (element) => element.imageProduct.isNotEmpty);
                             bool areAllWithNoImage = !t;
-                            double cWidgetRatio = 0;
+                            double cHeight = 0;
                             if (areAllWithNoImage) {
-                              cWidgetRatio = widgetRatioHalf;
+                              cHeight = widgetHeightHalf;
                             } else {
-                              cWidgetRatio = widgetRatio;
+                              cHeight = widgetHeight;
                             }
                             return GridView.builder(
                                 gridDelegate:
@@ -106,7 +108,7 @@ class WishlistScreen extends StatelessWidget {
                                   //     ((MediaQuery.of(context).size.width) ~/
                                   //         widgetWitdh)),
                                   mainAxisSpacing: gridMainAxisSpacing,
-                                  height: 350,
+                                  height: cHeight,
                                 ),
                                 physics: const ScrollPhysics(),
                                 shrinkWrap: true,

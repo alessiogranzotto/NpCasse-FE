@@ -11,8 +11,8 @@ class ApiRoutes {
   static const String localWebAuthURL = "http://31.14.141.7:8084";
   static const String dnsWebAuthURL = "https://auth.giveapp.it";
 
-  static const String baseURL = dnsWebBaseURL;
-  static const String authURL = dnsWebAuthURL;
+  static const String baseURL = localDevBaseURL;
+  static const String authURL = localDevAuthURL;
 
   static const String loginURL = "$authURL/api/user/utility/authenticate";
   static const String registerURL = "$authURL/api/user/utility/registration";
@@ -29,6 +29,6 @@ class ApiRoutes {
   static const String wishlistProductURL = "$baseURL/api/Wishlist/utility";
   static const String geoSuggestionsURL = "$authURL/api/Geo/Utility";
 
-  static const String giveURL = "$authURL/api/Give/Utility";
+  static const String giveURL = "$baseURL/api/Give/Utility";
   // static const String storeURL = "$baseURL/api/Store";
 }

@@ -41,7 +41,7 @@ class Core extends StatelessWidget {
       initialRoute: AppRouter.splashRoute,
       themeMode: ThemeMode.light,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      darkTheme: AppTheme.blueTheme,
     );
   }
 }

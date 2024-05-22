@@ -6,16 +6,10 @@ import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/notifiers/home.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/cartScreen/widgets/sh.search.textfield.dart';
 import 'package:np_casse/screens/cartScreen/widgets/show.GiveSh.data.dart';
-import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
-import 'package:np_casse/screens/homeScreen/home.screen.Persistent.dart';
-import 'package:np_casse/screens/homeScreen/home.screen.responsive.menu.dart';
-import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
-import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
@@ -72,7 +66,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      drawer: const CustomDrawerWidget(),
+      //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         title: Text("Gestione donatore",
             style: Theme.of(context).textTheme.headlineLarge),

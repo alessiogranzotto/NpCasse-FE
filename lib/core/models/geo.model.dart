@@ -245,6 +245,7 @@ class GeoNormExactModel {
       required this.additionalInfo,
       required this.row4,
       required this.row5});
+  late String country;
   late String state;
   late String region;
   late String province;
@@ -280,6 +281,7 @@ class GeoNormExactModel {
   }
 
   GeoNormExactModel.fromJson(Map<String, dynamic> json) {
+    country = json['country'];
     state = json['state'];
     region = json['region'];
     province = json['province'];

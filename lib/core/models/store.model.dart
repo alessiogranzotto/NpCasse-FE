@@ -6,12 +6,14 @@ class StoreModel {
       required this.idProject,
       required this.nameStore,
       required this.descriptionStore,
+      required this.isDeleted,
       required this.imageStore,
       required this.giveIdsFlatStructureModel});
   late final int idStore;
   late final int idProject;
   late final String nameStore;
   late final String descriptionStore;
+  late final bool isDeleted;
   late final String imageStore;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
 
@@ -20,6 +22,7 @@ class StoreModel {
     idProject = 0;
     nameStore = '';
     descriptionStore = "";
+    isDeleted = false;
     imageStore = "";
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
   }
@@ -29,6 +32,7 @@ class StoreModel {
     idProject = json['idProject'];
     nameStore = json['nameStore'];
     descriptionStore = json['descriptionStore'];
+    isDeleted = json['isDeleted'];
     imageStore = json['imageStore'];
     giveIdsFlatStructureModel =
         GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
@@ -40,6 +44,7 @@ class StoreModel {
     data['idProject'] = idProject;
     data['nameStore'] = nameStore;
     data['descriptionStore'] = descriptionStore;
+    data['isDeleted'] = isDeleted;
     data['imageStore'] = imageStore;
     data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
