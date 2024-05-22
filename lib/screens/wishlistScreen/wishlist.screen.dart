@@ -31,6 +31,7 @@ class WishlistScreen extends StatelessWidget {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               centerTitle: true,
+              automaticallyImplyLeading: false,
               title: Text(
                 textAlign: TextAlign.right,
                 'Preferiti di ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',

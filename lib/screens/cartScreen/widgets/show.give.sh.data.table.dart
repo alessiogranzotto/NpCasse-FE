@@ -7,11 +7,10 @@ class ShowGiveShDataTable extends StatefulWidget {
   final Function callback2;
   // final ProductDetailsArgs productDetailsArguments;
   const ShowGiveShDataTable(
-      {Key? key,
+      {super.key,
       required this.snapshot,
       required this.width,
-      required this.callback2})
-      : super(key: key);
+      required this.callback2});
 
   @override
   State<ShowGiveShDataTable> createState() => _ShowGiveShDataTableState();
@@ -62,6 +61,11 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
       return [
         const DataColumn(
           label: Flexible(
+            child: Text(''),
+          ),
+        ),
+        const DataColumn(
+          label: Flexible(
             child: Text('Id'),
           ),
         ),
@@ -89,6 +93,11 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
       ];
     } else {
       return [
+        const DataColumn(
+          label: Flexible(
+            child: Text(''),
+          ),
+        ),
         DataColumn(
           label: SizedBox(
             width: width * 0.20,
@@ -137,6 +146,8 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
         snapshot.length,
         (index) {
           StakeholderGiveModelSearch cStakeholderGiveModel = snapshot[index];
+          bool haveContacts =
+              cStakeholderGiveModel.contattiGiveModel.isNotEmpty;
           String ragSocialeONomeCognome = cStakeholderGiveModel
                   .ragionesociale.isNotEmpty
               ? cStakeholderGiveModel.ragionesociale
@@ -161,6 +172,29 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
                 });
               },
               cells: [
+                DataCell(
+                  haveContacts
+                      ? CircleAvatar(
+                          radius: 16,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text('C',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 16,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text('SH',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ),
+                        ),
+                ),
                 DataCell(
                   Text(cStakeholderGiveModel.id.toString()),
                 ),
@@ -194,6 +228,8 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
         snapshot.length,
         (index) {
           StakeholderGiveModelSearch cStakeholderGiveModel = snapshot[index];
+          bool haveContacts =
+              cStakeholderGiveModel.contattiGiveModel.isNotEmpty;
           String ragSocialeONomeCognome = cStakeholderGiveModel
                   .ragionesociale.isNotEmpty
               ? cStakeholderGiveModel.ragionesociale
@@ -218,6 +254,29 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
                 });
               },
               cells: [
+                DataCell(
+                  haveContacts
+                      ? CircleAvatar(
+                          radius: 16,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text('C',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 16,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text('SH',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ),
+                        ),
+                ),
                 DataCell(
                   SizedBox(
                     width: width * 0.20,

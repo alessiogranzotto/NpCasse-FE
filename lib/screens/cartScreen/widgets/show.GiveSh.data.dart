@@ -8,14 +8,13 @@ import 'package:provider/provider.dart';
 
 class ShowGiveShData extends StatelessWidget {
   const ShowGiveShData(
-      {Key? key,
+      {super.key,
       required this.width,
       required this.nameSurnameOrBusinessName,
       required this.email,
       required this.city,
       required this.cf,
-      required this.callback1})
-      : super(key: key);
+      required this.callback1});
   final String nameSurnameOrBusinessName;
   final String email;
   final String city;
@@ -43,9 +42,9 @@ class ShowGiveShData extends StatelessWidget {
       callback1(val);
     }
 
-    return Row(
-      children: [
-        SizedBox(
+    return Expanded(
+      child: SingleChildScrollView(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.70,
           width: MediaQuery.of(context).size.width,
           child: Consumer<GiveNotifier>(
@@ -119,7 +118,7 @@ class ShowGiveShData extends StatelessWidget {
             },
           ),
         ),
-      ],
+      ),
     );
   }
 }
