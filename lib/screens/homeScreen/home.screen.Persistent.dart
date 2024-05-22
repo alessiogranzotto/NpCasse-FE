@@ -26,10 +26,11 @@ class _HomeScreenPersistentState extends State<HomeScreenPersistent> {
       PersistentTabController(initialIndex: 0);
 
   int nrProductinCart = 0;
+  
   @override
   void initState() {
     super.initState();
-    // int nrProductinCart = 0;
+    //int nrProductinCart = 0;
     ContextKeeper().init(context);
   }
 

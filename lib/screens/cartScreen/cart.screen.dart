@@ -1,5 +1,12 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -25,6 +32,7 @@ class _CartScreenState extends State<CartScreen> {
   // final ValueNotifier<double> totalPrice = ValueNotifier(0);
   bool _isButtonDisabled = false;
   bool cartHasData = true;
+  bool visible = true;
 
   final RefreshCartController refreshCartController = RefreshCartController();
 
@@ -34,7 +42,7 @@ class _CartScreenState extends State<CartScreen> {
     cartHasData = true;
     super.initState();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -42,14 +50,31 @@ class _CartScreenState extends State<CartScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
+  CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
+  CartModel cCart = cartNotifier.getCart();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Il mio carrello',
-          style: Theme.of(context).textTheme.headlineLarge,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(50),
+              child: 
+            Text(
+              'Il mio carrello',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor:
+                  Theme.of(context).colorScheme.secondaryContainer,
+              child: Text(cCart.idCart.toString(),
+                  style: Theme.of(context).textTheme.headlineLarge),
+            ),
+          ],
         ),
       ),
       body: Column(
@@ -101,18 +126,21 @@ class _CartScreenState extends State<CartScreen> {
                             itemBuilder: (context, index) {
                               CartProductModel cartProductModel =
                                   tSnapshot[index];
-                              return Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.all(15),
+                              return Container(width: double.infinity,
+                                margin: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10), 
+                                decoration: BoxDecoration(
+                                  color:Color.fromARGB(255, 237, 208, 171),
+                                  borderRadius: BorderRadius.circular(20),),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
+                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children:[
                                     Stack(children: [
                                       Container(
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 0),
-                                        height: 150,
-                                        width: 150,
+                                        height: 90,
+                                        width: 90,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
@@ -128,28 +156,13 @@ class _CartScreenState extends State<CartScreen> {
                                               ),
                                         ),
                                       ),
-                                      CircleAvatar(
-                                        radius: 24,
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .secondaryContainer,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                              '${cartProductModel.productModel.priceProduct}€',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium),
-                                        ),
-                                      ),
                                     ]),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: SizedBox(
-                                        width: 200,
+                                        width: 120,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment:CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                                 cartProductModel
@@ -188,14 +201,13 @@ class _CartScreenState extends State<CartScreen> {
                                                       BorderRadius.circular(10),
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                                  mainAxisAlignment:MainAxisAlignment.end,
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
                                                     SizedBox(
-                                                      width: 120,
-                                                      height: 50,
+                                                      width: 40,
+                                                      height: 30,
                                                       child:
                                                           ValueListenableBuilder<
                                                               double>(
@@ -204,9 +216,7 @@ class _CartScreenState extends State<CartScreen> {
                                                             double value,
                                                             Widget? child) {
                                                           return Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
+                                                            mainAxisAlignment:MainAxisAlignment.end,
                                                             children: <Widget>[
                                                               Padding(
                                                                 padding:
@@ -297,7 +307,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         icon: const Icon(
                                                             size: 30,
                                                             Icons
-                                                                .delete_outline)),
+                                                            .delete_outline)),
                                                   ],
                                                 ),
                                               )
@@ -312,8 +322,7 @@ class _CartScreenState extends State<CartScreen> {
                                                       BorderRadius.circular(10),
                                                 ),
                                                 child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
+                                                  mainAxisAlignment:MainAxisAlignment.end,
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
@@ -390,7 +399,7 @@ class _CartScreenState extends State<CartScreen> {
                                                             size: 24,
                                                             Icons.remove)),
                                                     SizedBox(
-                                                      width: 40,
+                                                      width: 30,
                                                       height: 50,
                                                       child:
                                                           ValueListenableBuilder<
@@ -400,9 +409,7 @@ class _CartScreenState extends State<CartScreen> {
                                                             int value,
                                                             Widget? child) {
                                                           return Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
+                                                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                                                             children: <Widget>[
                                                               Padding(
                                                                 padding:
@@ -493,7 +500,7 @@ class _CartScreenState extends State<CartScreen> {
                                                           }
                                                         },
                                                         icon: const Icon(
-                                                            size: 24,
+                                                            size: 20,
                                                             Icons.add)),
                                                     IconButton(
                                                         onPressed: () {
@@ -560,26 +567,42 @@ class _CartScreenState extends State<CartScreen> {
                                                           }
                                                         },
                                                         icon: const Icon(
-                                                            size: 24,
+                                                            size: 20,
                                                             Icons
                                                                 .delete_outline)),
                                                   ],
                                                 ),
                                               ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                  ]),
+                                  Column(
+                                      children: [ Container(
+                                        margin: const EdgeInsets.all(10),
+                                        padding: const EdgeInsets.all(15),
+                                        decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8,),
+                                        border:Border.all(color: Colors.black)),
+                                        child: Row(
+                                        children: [
+                                        Text(
+                                        '${cartProductModel.productModel.priceProduct}€',
+                                        style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium),],//prezzo
+                                      ),
+                                  ),
+                                  ],),
+                                ]
+                              )
                               );
                             },
                           ),
                         ),
                         Align(
-                          alignment: Alignment.bottomCenter,
+                          alignment: Alignment.center,
                           child: Visibility(
                               visible: cartHasData,
                               child: CheckoutCart(
-                                  controller: refreshCartController)),
+                              controller: refreshCartController)),
                         ),
                       ]);
                     }

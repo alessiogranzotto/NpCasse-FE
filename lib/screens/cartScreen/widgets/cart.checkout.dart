@@ -1,5 +1,11 @@
+import 'dart:math';
+
 import 'package:currency_textfield/currency_textfield.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -169,75 +175,23 @@ class _CheckoutCartState extends State<CheckoutCart> {
     }
 
     return Container(
-      margin: const EdgeInsets.all(20),
-      padding: const EdgeInsets.symmetric(
-        vertical: 16,
-        horizontal: 20,
-      ),
-      // height: 174,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white10),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
-                    child: Text(cCart.idCart.toString(),
-                        style: Theme.of(context).textTheme.headlineLarge),
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
+          Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color:Color.fromARGB(255, 237, 208, 171),
+                  borderRadius: BorderRadius.circular(20),),
+            child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text('Prodotti:',
                         style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Quantità:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Totale:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ValueListenableBuilder<int>(
-                    builder: (BuildContext context, int value, Widget? child) {
-                      return Chip(
-                        label: Text(
-                          value.toString(),
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                      );
-                    },
-                    valueListenable: cartNotifier.totalCartProduct,
                   ),
                   ValueListenableBuilder<int>(
                     builder: (BuildContext context, int value, Widget? child) {
@@ -253,216 +207,226 @@ class _CheckoutCartState extends State<CheckoutCart> {
                     },
                     valueListenable: cartNotifier.totalCartProductType,
                   ),
-                  ValueListenableBuilder<double>(
-                    builder:
-                        (BuildContext context, double value, Widget? child) {
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Quantità:',
+                        style: Theme.of(context).textTheme.titleSmall),
+                  ),
+                  ValueListenableBuilder<int>(
+                    builder: (BuildContext context, int value, Widget? child) {
                       return Chip(
                         label: Text(
-                          '${value.toStringAsFixed(2)} €',
+                          value.toString(),
                         ),
                         backgroundColor: Theme.of(context).primaryColor,
                       );
                     },
-                    valueListenable: cartNotifier.totalCartMoney,
+                    valueListenable: cartNotifier.totalCartProduct,
                   ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      ToggleButtons(
-                        direction: Axis.horizontal,
-                        onPressed: (int index) {
-                          setState(() {
-                            // The button that is tapped is set to true, and the others to false.
-                            for (int i = 0; i < _selectedPayment.length; i++) {
-                              _selectedPayment[i] = i == index;
-                            }
-                            if (index == 0) {
-                              _isNumericPadVisible = true;
-                            } else {
-                              _isNumericPadVisible = false;
-                            }
-                            checkImport(index);
-                          });
-                        },
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
-                        selectedColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                        isSelected: _selectedPayment,
-                        children: const [
-                          SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.euro,
-                                  size: 20,
-                                ),
-                                // Text('Contanti',
-                                //     style:
-                                //         Theme.of(context).textTheme.bodyMedium),
-                              ],
+                  const Padding(padding: EdgeInsets.all(8.0)),
+                  ToggleButtons(
+                    direction: Axis.horizontal,
+                    onPressed: (int index) {
+                      setState(() {
+                        // The button that is tapped is set to true, and the others to false.
+                        for (int i = 0; i < _selectedPayment.length; i++) {
+                          _selectedPayment[i] = i == index;
+                        }
+                        if (index == 0) {
+                          _isNumericPadVisible = true;
+                        } else {
+                          _isNumericPadVisible = false;
+                        }
+                        checkImport(index);
+                      });
+                    },
+                    borderRadius:
+                        const BorderRadius.all(Radius.circular(8)),
+                    selectedColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    isSelected: _selectedPayment,
+                    children: const [
+                      SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.euro,
+                              size: 20,
                             ),
-                          ),
-                          SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.card_giftcard,
-                                  size: 20,
-                                ),
-                                // Text('Bancomat',
-                                //     style:
-                                //         Theme.of(context).textTheme.bodyMedium),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.credit_card,
-                                  size: 20,
-                                ),
-                                // Text('Carta di credito',
-                                //     style:
-                                //         Theme.of(context).textTheme.bodyMedium),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.fact_check,
-                                  size: 20,
-                                ),
-                                // Text('Assegni',
-                                //     style:
-                                //         Theme.of(context).textTheme.bodyMedium),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Visibility(
-            maintainSize: true,
-            maintainAnimation: true,
-            maintainState: true,
-            visible: _isNumericPadVisible,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 4, left: 4),
-                  child: Text('Importo ricevuto:',
-                      style: Theme.of(context).textTheme.titleSmall),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 4, left: 4),
-                  child: SizedBox(
-                    width: 100,
-                    child: TextFormField(
-                      maxLines: 1,
-                      textAlignVertical: TextAlignVertical.top,
-                      controller: textEditingControllerCashInserted,
-                      keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true, signed: false),
-                      style: Theme.of(context).textTheme.titleMedium,
-                      decoration: const InputDecoration(
-                        suffixIcon: Icon(Icons.euro),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 0.2),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 0.2),
+                            // Text('Contanti',
+                            //     style:
+                            //         Theme.of(context).textTheme.bodyMedium),
+                          ],
                         ),
                       ),
+                      SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.card_giftcard,
+                              size: 20,
+                            ),
+                            // Text('Bancomat',
+                            //     style:
+                            //         Theme.of(context).textTheme.bodyMedium),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.credit_card,
+                              size: 20,
+                            ),
+                            // Text('Carta di credito',
+                            //     style:
+                            //         Theme.of(context).textTheme.bodyMedium),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.fact_check,
+                              size: 20,
+                            ),
+                            // Text('Assegni',
+                            //     style:
+                            //         Theme.of(context).textTheme.bodyMedium),
+                          ],
+                    ),
+                  ),
+              ])],
+          ),),
+      Container(
+        width: double.infinity,
+          margin: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color:Color.fromARGB(255, 237, 208, 171),
+            borderRadius: BorderRadius.circular(20),),
+        child: Visibility(
+        maintainSize: true,
+        maintainAnimation: true,
+        maintainState: true,
+        visible: _isNumericPadVisible,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+           children:[
+            Text('Totale:',
+                  style: Theme.of(context).textTheme.titleSmall),
+            ValueListenableBuilder<double>(
+              builder:
+                  (BuildContext context, double value, Widget? child) {
+                return Chip(
+                  label: Text(
+                    '${value.toStringAsFixed(2)} €',
+                  ),
+                backgroundColor: Theme.of(context).primaryColor,
+                );
+              },
+              valueListenable: cartNotifier.totalCartMoney,
+            ),
+            const Padding(padding: EdgeInsets.all(8.0)),
+            Text('Importo ricevuto:',
+                  style: Theme.of(context).textTheme.titleSmall),
+             SizedBox(
+                width: 100,
+                height: 35,
+                child: TextFormField(
+                  maxLines: 1,
+                  textAlignVertical: TextAlignVertical.top,
+                  controller: textEditingControllerCashInserted,
+                  keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true, signed: false),
+                  style: Theme.of(context).textTheme.titleSmall,
+                  decoration: const InputDecoration(
+                    suffixIcon: Icon(Icons.euro),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide:
+                          BorderSide(color: Colors.black, width: 0.2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.red, width: 0.2),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16, left: 16),
-                  child: Text('Resto:',
-                      style: Theme.of(context).textTheme.titleSmall),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16, left: 16),
-                  child: Chip(
-                      label: Text(
-                    _toBeReturned,
-                  )),
-                ),
-              ],
-            ),
+           ),
+           const Padding(padding: EdgeInsets.all(8.0)),
+              Text('Resto:',
+                  style: Theme.of(context).textTheme.titleSmall),
+             Chip(
+                  label: Text(
+                _toBeReturned,
+              )),
+          ],
+        ),
+      ),),
+      Container(
+        width: double.infinity,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color:Color.fromARGB(255, 237, 208, 171),
+          borderRadius: BorderRadius.circular(20),),
+        child:Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+             padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.inversePrimary,
+                    textStyle: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold)),
+                onPressed:
+                    disabledFinalizeButton ? null : finalizeFunctionUnknown,
+                child: const Column(
+                  children: [
+                    Text("Check Out"),
+                    Text("(donazione anonima)"),
+                  ],
+                )),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.inversePrimary,
-                        textStyle: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                    onPressed:
-                        disabledFinalizeButton ? null : finalizeFunctionUnknown,
-                    child: const Column(
-                      children: [
-                        Text("Check Out"),
-                        Text("(donazione anonima)"),
-                      ],
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.inversePrimary,
-                        textStyle: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                    onPressed:
-                        disabledFinalizeButton ? null : finalizeFunctionKnown,
-                    child: const Text("Check Out (richiedi ricevuta)")),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.inversePrimary,
+                    textStyle: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold)),
+                onPressed:
+                    disabledFinalizeButton ? null : finalizeFunctionKnown,
+                child: const Text("Check Out (richiedi ricevuta)")),
           ),
         ],
       ),
-    );
-  }
+      ),
+    ],
+  ),
+);}
 }
