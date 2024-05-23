@@ -3,7 +3,7 @@ import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
-import 'package:np_casse/screens/homeScreen/home.screen.dart';
+import 'package:np_casse/screens/homeScreen/master.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
@@ -28,13 +28,15 @@ class AppRouter {
   static const String storeDetailRoute = "/storeDetail";
   static const String productRoute = "/product";
   static const String productDetailRoute = "/productDetail";
+  static const String userRoute = "/user";
+  static const String settingRoute = "/setting";
 
   static const String logoutRoute = "/logout";
 
   // static const String appSettingsRoute = "/appSettings";
   static const String homeRoute = "/home";
   static const String wishListRoute = "/wishList";
-  static const String associazioniRoute = "/associazioni";
+  static const String institutionRoute = "/institution";
   static const String cartRoute = "/cart";
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";

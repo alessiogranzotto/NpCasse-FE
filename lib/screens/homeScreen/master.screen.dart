@@ -12,7 +12,9 @@ import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/projectScreen/project.navigator.dart';
+import 'package:np_casse/screens/signUpScreen/settingScreen/setting.screen.dart';
 import 'package:np_casse/screens/userAppIinstitutionScreen/user.app.institution.screen.dart';
+import 'package:np_casse/screens/userScreen/user.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
 
@@ -29,12 +31,16 @@ class MenuList {
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite), const WishlistScreen()),
+  MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
+      const Icon(Icons.account_circle), const UserScreeen()),
   MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
       const Icon(Icons.layers), const ProjectNavigator()),
-  MenuList(AppRouter.associazioniRoute, 'Associazioni', Icons.settings_outlined,
-      const Icon(Icons.settings), const UserAppInstitutionScreen()),
+  MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
+      const Icon(Icons.settings), const SettingScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
       const Icon(Icons.shopping_cart), const CartNavigator()),
+  MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
+      const Icon(Icons.settings), const SettingScreen()),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
       const Icon(Icons.logout), const LogoutScreen()),
 ];
@@ -51,10 +57,10 @@ class _MasterScreenState extends State<MasterScreen> {
   int nrProductinCart = 0;
   late UserModel cUserModel;
   late UserAppInstitutionModel cSelectedUserAppInstitution;
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    projectNavigatorKey,
-    cartNavigatorKey
-  ];
+  // final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+  //   projectNavigatorKey,
+  //   cartNavigatorKey
+  // ];
 
   void getUserData(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -75,6 +81,8 @@ class _MasterScreenState extends State<MasterScreen> {
     if (nrAssociazioni == 1) {
       destinations.removeWhere((element) => element.label == "Associazioni");
     }
+    // destinations.removeWhere((element) => element.label == "Impostazioni");
+    // destinations.removeWhere((element) => element.label == "Utente");
   }
 
   signOut(BuildContext context) {
@@ -88,17 +96,17 @@ class _MasterScreenState extends State<MasterScreen> {
     super.initState();
   }
 
-  Future<bool> _systemBackButtonPressed() async {
-    if (_navigatorKeys[_selectedIndex].currentState?.canPop() == true) {
-      _navigatorKeys[_selectedIndex]
-          .currentState
-          ?.pop(_navigatorKeys[_selectedIndex].currentContext);
-      return false;
-    } else {
-      SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
-      return true; // Indicate that the back action is handled
-    }
-  }
+  // Future<bool> _systemBackButtonPressed() async {
+  //   if (_navigatorKeys[_selectedIndex].currentState?.canPop() == true) {
+  //     _navigatorKeys[_selectedIndex]
+  //         .currentState
+  //         ?.pop(_navigatorKeys[_selectedIndex].currentContext);
+  //     return false;
+  //   } else {
+  //     SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+  //     return true; // Indicate that the back action is handled
+  //   }
+  // }
 
   List<SideNavigationBarItem> getSideNavigationBarItem() {
     List<SideNavigationBarItem> result = [];
