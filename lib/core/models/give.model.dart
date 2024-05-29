@@ -144,10 +144,19 @@ class StakeholderGiveModelSearch {
     consensoSms = json['consenso_sms'];
     dataNascita = json['datanascita'] ?? '';
     tipoDonatore = json['tipo_donatore'];
-    recapitoGiveModel = RecapitoGiveModel.fromJson(json['recapito']);
-    contattiGiveModel = List.from(json['contatti'])
-        .map((e) => ContattiGiveModel.fromJson(e))
-        .toList();
+    if (json['recapito'] != null) {
+      recapitoGiveModel = RecapitoGiveModel.fromJson(json['recapito']);
+    } else {
+      recapitoGiveModel = RecapitoGiveModel.empty();
+    }
+
+    if (json['contatti'] != null) {
+      contattiGiveModel = List.from(json['contatti'])
+          .map((e) => ContattiGiveModel.fromJson(e))
+          .toList();
+    } else {
+      contattiGiveModel = List.empty();
+    }
   }
 
   Map<String, dynamic> toJson() {

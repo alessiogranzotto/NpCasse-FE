@@ -31,7 +31,7 @@ class CityAutocomplete extends StatefulWidget {
       required this.country,
       // required this.onChanged,
       required this.onValueSelected,
-      required this.validator,
+      this.validator,
       required this.labelText,
       required this.hintText,
       required this.enabled})

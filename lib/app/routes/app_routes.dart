@@ -3,6 +3,7 @@ import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
+import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 import 'package:np_casse/screens/homeScreen/master.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
@@ -38,6 +39,9 @@ class AppRouter {
   static const String wishListRoute = "/wishList";
   static const String institutionRoute = "/institution";
   static const String cartRoute = "/cart";
+
+  static const String shManage = "/shManage";
+
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -226,6 +230,13 @@ class AppRouter {
             builder: (_) => const CartScreen(),
           );
         }
+      case shManage:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const ShManageScreen(),
+          );
+        }
+
       // case searchRoute:
       //   {
       //     return MaterialPageRoute(

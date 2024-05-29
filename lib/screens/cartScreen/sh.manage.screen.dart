@@ -62,7 +62,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
+    //HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,

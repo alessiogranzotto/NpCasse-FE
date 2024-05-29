@@ -224,13 +224,16 @@ class GeoNormItemModel {
       candidateList = List.from(json['candidateList'])
           .map((e) => GeoNormCandidateModel.fromJson(e))
           .toList();
+    } else {
+      candidateList = List.empty();
     }
   }
 }
 
 class GeoNormExactModel {
   GeoNormExactModel(
-      {required this.state,
+      {required this.country,
+      required this.state,
       required this.region,
       required this.province,
       required this.provinceSigle,
@@ -239,12 +242,16 @@ class GeoNormExactModel {
       required this.district2,
       required this.district3,
       required this.zipCode,
+      required this.address,
       required this.completeAddress,
       required this.houseNumberAndExponent,
       required this.co,
       required this.additionalInfo,
       required this.row4,
-      required this.row5});
+      required this.row5,
+      required this.cdxcnl,
+      required this.x,
+      required this.y});
   late String country;
   late String state;
   late String region;
@@ -255,12 +262,16 @@ class GeoNormExactModel {
   late String district2;
   late String district3;
   late String zipCode;
+  late String address;
   late String completeAddress;
   late String houseNumberAndExponent;
   late String co;
   late String additionalInfo;
   late String row4;
   late String row5;
+  late String cdxcnl;
+  late String x;
+  late String y;
 
   GeoNormExactModel.empty() {
     state = '';
@@ -272,12 +283,16 @@ class GeoNormExactModel {
     district2 = '';
     district3 = '';
     zipCode = '';
+    address = '';
     completeAddress = '';
     houseNumberAndExponent = '';
     co = '';
     additionalInfo = '';
     row4 = '';
     row5 = '';
+    cdxcnl = '';
+    x = '';
+    y = '';
   }
 
   GeoNormExactModel.fromJson(Map<String, dynamic> json) {
@@ -291,12 +306,16 @@ class GeoNormExactModel {
     district2 = json['district2'];
     district3 = json['district3'];
     zipCode = json['zipCode'];
+    address = json['address'];
     completeAddress = json['completeAddress'];
     houseNumberAndExponent = json['houseNumberAndExponent'];
     co = json['co'];
     additionalInfo = json['additionalInfo'];
     row4 = json['row4'];
     row5 = json['row5'];
+    cdxcnl = json['cdxcnl'];
+    x = json['x'];
+    y = json['y'];
   }
 }
 
@@ -310,6 +329,7 @@ class GeoNormCandidateModel {
       required this.candidateZipcode,
       required this.candidateItemDesc});
   late int candidateType;
+  late String candidateRegion;
   late String candidateProvince;
   late String candidateCity;
   late String candidateDistrict;
@@ -319,6 +339,7 @@ class GeoNormCandidateModel {
 
   GeoNormCandidateModel.fromJson(Map<String, dynamic> json) {
     candidateType = json['candidateType'];
+    candidateRegion = json['candidateRegion'];
     candidateProvince = json['candidateProvince'];
     candidateCity = json['candidateCity'];
     candidateDistrict = json['candidateDistrict'];

@@ -31,8 +31,6 @@ class MenuList {
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite), const WishlistScreen()),
-  MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
-      const Icon(Icons.account_circle), const UserScreeen()),
   MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
       const Icon(Icons.layers), const ProjectNavigator()),
   MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
@@ -41,6 +39,8 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.shopping_cart), const CartNavigator()),
   MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
       const Icon(Icons.settings), const SettingScreen()),
+  MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
+      const Icon(Icons.account_circle), const UserScreeen()),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
       const Icon(Icons.logout), const LogoutScreen()),
 ];

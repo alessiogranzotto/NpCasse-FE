@@ -54,11 +54,21 @@ class GiveAPI {
       required String tel,
       required String cell,
       required String nazione_nn_norm,
+      required String regione_nn_norm,
       required String prov_nn_norm,
+      required String statoFederale_nn_norm,
       required String cap_nn_norm,
       required String citta_nn_norm,
+      required String suddivisioneComune_2_nn_norm,
+      required String suddivisioneComune_3_nn_norm,
+      required String localita_nn_norm,
       required String indirizzo_nn_norm,
       required String n_civico_nn_norm,
+      required String row4,
+      required String row5,
+      required String cdxcnl,
+      required String x,
+      required String y,
       required int consenso_ringrazia,
       required int consenso_com_espresso,
       required int consenso_marketing,
@@ -72,6 +82,43 @@ class GiveAPI {
     final Uri uri = Uri.parse(
         '${ApiRoutes.giveURL}/Add-Stakeholder?IdUserAppInstitution=$idUserAppInstitution');
 
+    var t = jsonEncode({
+      "nome": nome,
+      "cognome": cognome,
+      "ragionesociale": ragSoc,
+      "codfisc": codfisc,
+      "sesso": sesso,
+      "email": email,
+      "tel": tel,
+      "cell": cell,
+      "nazione_nn_norm": nazione_nn_norm,
+      "regione_nn_norm": regione_nn_norm,
+      "prov_nn_norm": prov_nn_norm,
+      "statoFederale_nn_norm": statoFederale_nn_norm,
+      "cap_nn_norm": cap_nn_norm,
+      "citta_nn_norm": citta_nn_norm,
+      "suddivisioneComune_2_nn_norm": suddivisioneComune_2_nn_norm,
+      "suddivisioneComune_3_nn_norm": suddivisioneComune_3_nn_norm,
+      "localita_nn_norm": localita_nn_norm,
+      "indirizzo_nn_norm": indirizzo_nn_norm,
+      "n_civico_nn_norm": n_civico_nn_norm,
+      "row4": row4,
+      "row5": row5,
+      "cdxcnl": cdxcnl,
+      "x": x,
+      "y": y,
+      "consenso_ringrazia": consenso_ringrazia,
+      "consenso_com_espresso": consenso_com_espresso,
+      "consenso_marketing": consenso_marketing,
+      "consenso_sms": consenso_sms,
+      "com_cartacee": com_cartacee,
+      "com_email": com_email,
+      "consenso_materiale_info": consenso_materiale_info,
+      "datanascita": datanascita,
+      "tipo_donatore": tipo_donatore,
+      "forza_duplicato": forza_duplicato
+    });
+    print(t);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',
@@ -87,13 +134,23 @@ class GiveAPI {
           "sesso": sesso,
           "email": email,
           "tel": tel,
-          "cell": tel,
+          "cell": cell,
           "nazione_nn_norm": nazione_nn_norm,
+          "regione_nn_norm": regione_nn_norm,
           "prov_nn_norm": prov_nn_norm,
+          "statoFederale_nn_norm": statoFederale_nn_norm,
           "cap_nn_norm": cap_nn_norm,
           "citta_nn_norm": citta_nn_norm,
+          "suddivisioneComune_2_nn_norm": suddivisioneComune_2_nn_norm,
+          "suddivisioneComune_3_nn_norm": suddivisioneComune_3_nn_norm,
+          "localita_nn_norm": localita_nn_norm,
           "indirizzo_nn_norm": indirizzo_nn_norm,
           "n_civico_nn_norm": n_civico_nn_norm,
+          "row4": row4,
+          "row5": row5,
+          "cdxcnl": cdxcnl,
+          "x": x,
+          "y": y,
           "consenso_ringrazia": consenso_ringrazia,
           "consenso_com_espresso": consenso_com_espresso,
           "consenso_marketing": consenso_marketing,
@@ -105,6 +162,7 @@ class GiveAPI {
           "tipo_donatore": tipo_donatore,
           "forza_duplicato": forza_duplicato
         }));
+
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
@@ -138,6 +196,11 @@ class GiveAPI {
       required String localita_nn_norm,
       required String indirizzo_nn_norm,
       required String n_civico_nn_norm,
+      required String row4,
+      required String row5,
+      required String cdxcnl,
+      required String x,
+      required String y,
       required int consenso_ringrazia,
       required int consenso_com_espresso,
       required int consenso_marketing,
@@ -178,6 +241,11 @@ class GiveAPI {
           "localita_nn_norm": localita_nn_norm,
           "indirizzo_nn_norm": indirizzo_nn_norm,
           "n_civico_nn_norm": n_civico_nn_norm,
+          "row4": row4,
+          "row5": row5,
+          "cdxcnl": cdxcnl,
+          "x": x,
+          "y": y,
           "consenso_ringrazia": consenso_ringrazia,
           "consenso_com_espresso": consenso_com_espresso,
           "consenso_marketing": consenso_marketing,
@@ -189,6 +257,7 @@ class GiveAPI {
           "tipo_donatore": tipo_donatore,
           "forza_duplicato": forza_duplicato
         }));
+
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;

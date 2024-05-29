@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/text.form.field.dart';
 import 'package:np_casse/core/api/geo.autocomplete.api.dart';
 import 'package:np_casse/core/models/geo.model.dart';
@@ -223,14 +224,14 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
           Provider.of<AuthenticationNotifier>(context, listen: false);
       UserAppInstitutionModel cUserAppInstitutionModel =
           authenticationNotifier.getSelectedUserAppInstitution();
-      geoNormItemModelVisible = true;
+      geoNormItemModelVisible = false;
       //PERFORM NORMALIZATION
       GeoAutocompleteAPI.executeNormalization(
               token: authenticationNotifier.token,
               idUserAppInstitution:
                   cUserAppInstitutionModel.idUserAppInstitution,
               iso3: cGeoCountryItemModel.iso3,
-              country: cGeoCountryItemModel.countryEn,
+              country: countryController.text,
               state: stateController.text,
               region: regionController.text,
               province: provinceCodeController.text,
@@ -253,6 +254,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
               geoNormItemModelVisible = true;
             });
           } else if (geoNormItemModel.type == "E") {
+            onGeoNormExactModel(geoNormItemModel.exact);
             if (editMode) {
               result = giveNotifier
                   .updateStakeholder(
@@ -282,6 +284,11 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                       indirizzo_nn_norm: streetController.text,
                       localita_nn_norm: district1Controller.text,
                       n_civico_nn_norm: streetNumberController.text,
+                      row4: geoNormItemModel.exact.row4,
+                      row5: geoNormItemModel.exact.row5,
+                      cdxcnl: geoNormItemModel.exact.cdxcnl,
+                      x: geoNormItemModel.exact.x,
+                      y: geoNormItemModel.exact.y,
                       com_cartacee: comCartacee ? 1 : 0,
                       com_email: comEmail ? 1 : 0,
                       consenso_ringrazia: consensoRingrazia ? 1 : 0,
@@ -371,11 +378,21 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                       tel: phoneNumberController.text,
                       cell: mobileNumberController.text,
                       nazione_nn_norm: countryController.text,
+                      regione_nn_norm: regionController.text,
+                      statoFederale_nn_norm: stateController.text,
                       prov_nn_norm: provinceCodeController.text,
                       cap_nn_norm: zipCodeController.text,
                       citta_nn_norm: cityController.text,
+                      suddivisioneComune_2_nn_norm: district2Controller.text,
+                      suddivisioneComune_3_nn_norm: district3Controller.text,
                       indirizzo_nn_norm: streetController.text,
+                      localita_nn_norm: district1Controller.text,
                       n_civico_nn_norm: streetNumberController.text,
+                      row4: geoNormItemModel.exact.row4,
+                      row5: geoNormItemModel.exact.row5,
+                      cdxcnl: geoNormItemModel.exact.cdxcnl,
+                      x: geoNormItemModel.exact.x,
+                      y: geoNormItemModel.exact.y,
                       com_cartacee: comCartacee ? 1 : 0,
                       com_email: comEmail ? 1 : 0,
                       consenso_ringrazia: consensoRingrazia ? 1 : 0,
@@ -447,6 +464,12 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
               });
             }
           }
+        } else {
+          String errorDescription = parseData['errorDescription'];
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Anagrafiche",
+              message: errorDescription,
+              contentType: "failure"));
         }
       });
     }
@@ -503,12 +526,13 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                       onDeduplicaSelectedStakeholderGiveModelSearch ??
                           StakeholderGiveModelSearch.empty());
                   Navigator.pop(context);
-                  PersistentNavBarNavigator.pushNewScreen(
-                    context,
-                    screen: const ShManageScreen(),
-                    withNavBar: true,
-                    pageTransitionAnimation: PageTransitionAnimation.fade,
-                  );
+                  Navigator.of(context).pushNamed(AppRouter.shManage);
+                  // PersistentNavBarNavigator.pushNewScreen(
+                  //   context,
+                  //   screen: const ShManageScreen(),
+                  //   withNavBar: true,
+                  //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                  // );
                 },
               ),
               ListTile(
@@ -579,11 +603,28 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
 
   void onGeoNormCandidateModel(GeoNormCandidateModel? cGeoNormCandidateModel) {
     if (cGeoNormCandidateModel != null) {
+      regionController.text = cGeoNormCandidateModel.candidateRegion;
       provinceCodeController.text = cGeoNormCandidateModel.candidateProvince;
       cityController.text = cGeoNormCandidateModel.candidateCity;
       district1Controller.text = cGeoNormCandidateModel.candidateDistrict;
       zipCodeController.text = cGeoNormCandidateModel.candidateZipcode;
       streetController.text = cGeoNormCandidateModel.candidateStreet;
+    }
+  }
+
+  void onGeoNormExactModel(GeoNormExactModel? cGeoNormExactModel) {
+    if (cGeoNormExactModel != null) {
+      countryController.text = cGeoNormExactModel.country;
+      stateController.text = cGeoNormExactModel.state;
+      regionController.text = cGeoNormExactModel.region;
+      provinceCodeController.text = cGeoNormExactModel.provinceSigle;
+      district1Controller.text = cGeoNormExactModel.district1;
+      district2Controller.text = cGeoNormExactModel.district2;
+      district3Controller.text = cGeoNormExactModel.district3;
+      cityController.text = cGeoNormExactModel.city;
+      streetController.text = cGeoNormExactModel.address;
+      streetNumberController.text = cGeoNormExactModel.houseNumberAndExponent;
+      zipCodeController.text = cGeoNormExactModel.zipCode;
     }
   }
 
@@ -1141,10 +1182,10 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               },
                                               hintText: 'Comune',
                                               labelText: 'Comune',
-                                              validator: (value) =>
-                                                  value!.toString().isEmpty
-                                                      ? "inserire il comune"
-                                                      : null,
+                                              // validator: (value) =>
+                                              //     value!.toString().isEmpty
+                                              //         ? "inserire il comune"
+                                              //         : null,
                                             ),
                                           ),
                                         ],
@@ -1178,10 +1219,10 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                             },
                                             hintText: 'Indirizzo',
                                             labelText: 'Indirizzo',
-                                            validator: (value) =>
-                                                value!.toString().isEmpty
-                                                    ? "inserire l'indirizzo"
-                                                    : null,
+                                            // validator: (value) =>
+                                            //     value!.toString().isEmpty
+                                            //         ? "inserire l'indirizzo"
+                                            //         : null,
                                           ),
                                         ),
                                       ],
@@ -1201,11 +1242,11 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               enabled: stepValidation >= 0,
                                               controller:
                                                   streetNumberController,
-                                              validator: (value) => value!
-                                                      .toString()
-                                                      .isEmpty
-                                                  ? "Inserire il numero civico"
-                                                  : null,
+                                              // validator: (value) => value!
+                                              //         .toString()
+                                              //         .isEmpty
+                                              //     ? "Inserire il numero civico"
+                                              //     : null,
                                               onChanged: (String value) {
                                                 if (_timer?.isActive ?? false) {
                                                   _timer!.cancel();
@@ -1500,9 +1541,10 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                         GeoNormCandidateModel>>(
                                                 (GeoNormCandidateModel item) {
                                           return DropdownMenuEntry<
-                                                  GeoNormCandidateModel>(
-                                              value: item,
-                                              label: item.candidateItemDesc);
+                                              GeoNormCandidateModel>(
+                                            value: item,
+                                            label: item.candidateItemDesc,
+                                          );
                                         }).toList()),
                                   ],
                                 ),

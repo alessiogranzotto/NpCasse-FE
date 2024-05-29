@@ -33,7 +33,7 @@ class StreetAutocomplete extends StatefulWidget {
       required this.city,
       // required this.onChanged,
       required this.onValueSelected,
-      required this.validator,
+      this.validator,
       required this.labelText,
       required this.hintText,
       required this.enabled})
