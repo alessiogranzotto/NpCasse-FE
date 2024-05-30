@@ -12,7 +12,7 @@ import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/projectScreen/project.navigator.dart';
-import 'package:np_casse/screens/signUpScreen/settingScreen/setting.screen.dart';
+import 'package:np_casse/screens/settingScreen/setting.screen.dart';
 import 'package:np_casse/screens/userAppIinstitutionScreen/user.app.institution.screen.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
