@@ -24,62 +24,67 @@ class _SettingScreenState extends State<SettingScreen> {
           style: Theme.of(context).textTheme.headlineLarge,)),
       ]),
     ),
-    body: Column(
+    body: ListView(
         children: [
-          Expanded(
-            child:  ListView.builder(
-      itemCount: 4,
-      itemBuilder: (context, index) {
-        return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            side: const BorderSide(
-              color: Colors.black,
-              width: 0.4,
-            ),
+          const ExpansionTile(
+          title: Text('Gestione Account'),
+          children: [
+            Wrap(
+              spacing: 4.0,
+              runSpacing: 4.0,
+              children: [
+              CustomTextField(label: 'Nome'),
+              CustomTextField(label: 'Cognome'),
+              CustomTextField(label: 'Lingua'),
+          ]),
+            Wrap(
+              spacing: 4.0,
+              runSpacing: 4.0,
+              children: [
+              CustomTextField(label: 'Nazione'),
+              CustomTextField(label: 'E-mail'),
+              CustomTextField(label: 'Telefono'),
+            ]),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              //child: ElevatedButton(onPressed: onPressed, child: Text('Salva')),
+            )
+          ],
+        ),
+        ExpansionTile(
+          title: const Text('Personalizzazione'),
           ),
-          child: ExpansionTile(
-            leading: const Icon(Icons.check),
-            title: Text('Gestione Account'),
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        dense: true,
-                        horizontalTitleGap: 0,
-                        visualDensity:
-                            VisualDensity(vertical: -4, horizontal: 0),
-                        contentPadding: EdgeInsets.zero,
-                        title: Text('Your Title $index'),
-                        subtitle: Text('Your Description $index'),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Icon(Icons.edit),
-                          Icon(Icons.bookmark),
-                          Icon(Icons.delete),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              ],
-              
-            ),
-            );
-            },
-          ),
+        ExpansionTile(
+          title: const Text('Password e Privacy'),
           ),
         ],
+      /*Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: const [
+              Icon(Icons.edit),
+              Icon(Icons.bookmark),
+              Icon(Icons.delete),
+            ],*/
       ),
     );
   }
 }
+class CustomTextField extends StatelessWidget {
+  final String label;
+  const CustomTextField({Key?key,required this.label}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context){
+    return Container(
+      width: MediaQuery.of(context).size.width / 4 - 16,
+      margin: EdgeInsets.all(4.0),
+      child: TextField(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+}
+
