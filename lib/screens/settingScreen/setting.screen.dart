@@ -48,7 +48,13 @@ class _SettingScreenState extends State<SettingScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               //child: ElevatedButton(onPressed: onPressed, child: Text('Salva')),
-            )
+            ),
+            Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: const [
+              Icon(Icons.edit),
+              Icon(Icons.bookmark),
+            ],),
           ],
         ),
         ExpansionTile(
@@ -56,15 +62,23 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
         ExpansionTile(
           title: const Text('Password e Privacy'),
-          ),
-        ],
-      /*Row(
+          children: [
+            Wrap(
+              spacing: 4.0,
+              runSpacing: 4.0,
+              children: [
+              CustomTextField(label: 'Password'),
+              CustomTextField(label: 'Privacy'),
+          ]),
+          Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: const [
               Icon(Icons.edit),
               Icon(Icons.bookmark),
-              Icon(Icons.delete),
-            ],*/
+            ],),
+          ],
+          ),
+        ],
       ),
     );
   }
