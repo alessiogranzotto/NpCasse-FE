@@ -25,9 +25,17 @@ class _SettingScreenState extends State<SettingScreen> {
       ]),
     ),
     body: ListView(
+      padding: EdgeInsets.all(10),
         children: [
           const ExpansionTile(
+            shape:BeveledRectangleBorder(
+              side: BorderSide(color: Colors.lightBlue)
+            ),
+          leading: Icon(Icons.account_circle_outlined),
+          iconColor: Colors.lightBlue,
           title: Text('Gestione Account'),
+          collapsedShape: BeveledRectangleBorder(
+            side: BorderSide(color: Colors.lightBlue)),
           children: [
             Wrap(
               spacing: 4.0,
@@ -58,10 +66,24 @@ class _SettingScreenState extends State<SettingScreen> {
           ],
         ),
         ExpansionTile(
+          shape:BeveledRectangleBorder(
+              side: BorderSide(color: Colors.lightBlue)
+          ),
+          leading: Icon(Icons.build_circle_outlined),
+          iconColor: Colors.lightBlue,
           title: const Text('Personalizzazione'),
+          collapsedShape: BeveledRectangleBorder(
+            side: BorderSide(color: Colors.lightBlue)),
           ),
         ExpansionTile(
+          shape:BeveledRectangleBorder(
+              side: BorderSide(color: Colors.lightBlue)
+          ),
+          leading: Icon(Icons.password_rounded),
+          iconColor: Colors.lightBlue,
           title: const Text('Password e Privacy'),
+          collapsedShape: BeveledRectangleBorder(
+            side: BorderSide(color: Colors.lightBlue)),
           children: [
             Wrap(
               spacing: 4.0,
