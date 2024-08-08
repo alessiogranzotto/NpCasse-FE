@@ -1,4 +1,3 @@
-import 'package:expandable_datatable/expandable_datatable.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 
@@ -130,33 +129,6 @@ class _ShowProductAttributeDataState extends State<ShowProductAttributeData> {
             ]);
       },
     ).toList();
-  }
-
-  List<ExpandableColumn<dynamic>> headers = [
-    ExpandableColumn<int>(columnTitle: "ID", columnFlex: 1),
-    ExpandableColumn<int>(columnTitle: "ID", columnFlex: 1),
-    ExpandableColumn<String>(columnTitle: "First name", columnFlex: 2),
-    ExpandableColumn<String>(columnTitle: "Last name", columnFlex: 2),
-    ExpandableColumn<String>(columnTitle: "Maiden name", columnFlex: 2),
-    ExpandableColumn<int>(columnTitle: "Age", columnFlex: 1),
-    ExpandableColumn<String>(columnTitle: "Gender", columnFlex: 2),
-    ExpandableColumn<String>(columnTitle: "Email", columnFlex: 4),
-  ];
-
-  List<ExpandableRow> createRows(List<ProductAttributeModel> data) {
-    return widget.snapshot.data.map<ExpandableRow>((e) {
-      return ExpandableRow(cells: [
-        // ExpandableCell<int>(columnTitle: "ID", value: e.idInstitution),
-        // ExpandableCell<int>(columnTitle: "ID", value: e.idInstitution),
-        ExpandableCell<String>(columnTitle: "First name", value: e.name),
-        ExpandableCell<String>(columnTitle: "Last name", value: e.description),
-        ExpandableCell<String>(
-            columnTitle: "Maiden name", value: e.description),
-        ExpandableCell<int>(columnTitle: "Age", value: e.idProductAttribute),
-        ExpandableCell<String>(columnTitle: "Gender", value: e.name),
-        ExpandableCell<String>(columnTitle: "Email", value: e.description),
-      ]);
-    }).toList();
   }
 
   @override
@@ -300,38 +272,4 @@ class DataSource extends DataTableSource {
 
   @override
   int get selectedRowCount => 0;
-}
-
-Widget _buildEditDialog(ExpandableRow row, Function(ExpandableRow) onSuccess,
-    BuildContext context) {
-  onSuccess(row);
-  return Text('Ok');
-  // Navigator.of(context).pushNamed(
-  //   AppRouter.productDetailRoute,
-  //   arguments: ProductModel(
-  //       idProduct: 0,
-  //       idStore: 0,
-  //       nameProduct: '',
-  //       descriptionProduct: '',
-  //       priceProduct: 0,
-  //       imageProduct: '',
-  //       isWishlisted: ValueNotifier<bool>(false),
-  //       isFreePriceProduct: false,
-  //       isDeleted: false,
-  //       isOutOfAssortment: false,
-  //       giveIdsFlatStructureModel: GiveIdsFlatStructureModel.empty()),
-  // );
-  //return NewEditProductAttribute();
-  // return AlertDialog(
-  //   title: SizedBox(
-  //     height: 300,
-  //     child: TextButton(
-  //       child: const Text("Change name"),
-  //       onPressed: () {
-  //         row.cells[1].value = "x3";
-  //         onSuccess(row);
-  //       },
-  //     ),
-  //   ),
-  // );
 }
