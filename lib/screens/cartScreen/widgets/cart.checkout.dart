@@ -1,11 +1,5 @@
-import 'dart:math';
-
 import 'package:currency_textfield/currency_textfield.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -178,53 +172,54 @@ class _CheckoutCartState extends State<CheckoutCart> {
       child: Column(
         children: [
           Container(
-                width: double.infinity,
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color:Color.fromARGB(255, 237, 208, 171),
-                  borderRadius: BorderRadius.circular(20),),
-            child:Row(
+            width: double.infinity,
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 237, 208, 171),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Prodotti:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  ValueListenableBuilder<int>(
-                    builder: (BuildContext context, int value, Widget? child) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Chip(
-                          label: Text(
-                            value.toString(),
-                          ),
-                          backgroundColor: Theme.of(context).primaryColor,
-                        ),
-                      );
-                    },
-                    valueListenable: cartNotifier.totalCartProductType,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Quantità:',
-                        style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  ValueListenableBuilder<int>(
-                    builder: (BuildContext context, int value, Widget? child) {
-                      return Chip(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Prodotti:',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ValueListenableBuilder<int>(
+                  builder: (BuildContext context, int value, Widget? child) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Chip(
                         label: Text(
                           value.toString(),
                         ),
                         backgroundColor: Theme.of(context).primaryColor,
-                      );
-                    },
-                    valueListenable: cartNotifier.totalCartProduct,
-                  ),
-                  const Padding(padding: EdgeInsets.all(8.0)),
-                  ToggleButtons(
+                      ),
+                    );
+                  },
+                  valueListenable: cartNotifier.totalCartProductType,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Quantità:',
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ValueListenableBuilder<int>(
+                  builder: (BuildContext context, int value, Widget? child) {
+                    return Chip(
+                      label: Text(
+                        value.toString(),
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
+                    );
+                  },
+                  valueListenable: cartNotifier.totalCartProduct,
+                ),
+                const Padding(padding: EdgeInsets.all(8.0)),
+                ToggleButtons(
                     direction: Axis.horizontal,
                     onPressed: (int index) {
                       setState(() {
@@ -240,193 +235,210 @@ class _CheckoutCartState extends State<CheckoutCart> {
                         checkImport(index);
                       });
                     },
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(8)),
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
                     selectedColor:
                         Theme.of(context).colorScheme.secondaryContainer,
                     isSelected: _selectedPayment,
                     children: const [
-                      SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.euro,
-                              size: 20,
-                            ),
-                            // Text('Contanti',
-                            //     style:
-                            //         Theme.of(context).textTheme.bodyMedium),
-                          ],
+                      Tooltip(
+                        message: 'Contanti',
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.euro,
+                                size: 20,
+                              ),
+                              // Text('Contanti',
+                              //     style:
+                              //         Theme.of(context).textTheme.bodyMedium),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.card_giftcard,
-                              size: 20,
-                            ),
-                            // Text('Bancomat',
-                            //     style:
-                            //         Theme.of(context).textTheme.bodyMedium),
-                          ],
+                      Tooltip(
+                        message: 'Bancomat',
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.card_giftcard,
+                                size: 20,
+                              ),
+                              // Text('Bancomat',
+                              //     style:
+                              //         Theme.of(context).textTheme.bodyMedium),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.credit_card,
-                              size: 20,
-                            ),
-                            // Text('Carta di credito',
-                            //     style:
-                            //         Theme.of(context).textTheme.bodyMedium),
-                          ],
+                      Tooltip(
+                        message: 'Carte di credito',
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.credit_card,
+                                size: 20,
+                              ),
+                              // Text('Carta di credito',
+                              //     style:
+                              //         Theme.of(context).textTheme.bodyMedium),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.fact_check,
-                              size: 20,
-                            ),
-                            // Text('Assegni',
-                            //     style:
-                            //         Theme.of(context).textTheme.bodyMedium),
-                          ],
-                    ),
-                  ),
-              ])],
-          ),),
-      Container(
-        width: double.infinity,
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color:Color.fromARGB(255, 237, 208, 171),
-            borderRadius: BorderRadius.circular(20),),
-        child: Visibility(
-        maintainSize: true,
-        maintainAnimation: true,
-        maintainState: true,
-        visible: _isNumericPadVisible,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-           children:[
-            Text('Totale:',
-                  style: Theme.of(context).textTheme.titleSmall),
-            ValueListenableBuilder<double>(
-              builder:
-                  (BuildContext context, double value, Widget? child) {
-                return Chip(
-                  label: Text(
-                    '${value.toStringAsFixed(2)} €',
-                  ),
-                backgroundColor: Theme.of(context).primaryColor,
-                );
-              },
-              valueListenable: cartNotifier.totalCartMoney,
+                      Tooltip(
+                        message: 'Assegni',
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.fact_check,
+                                size: 20,
+                              ),
+                              // Text('Assegni',
+                              //     style:
+                              //         Theme.of(context).textTheme.bodyMedium),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ])
+              ],
             ),
-            const Padding(padding: EdgeInsets.all(8.0)),
-            Text('Importo ricevuto:',
-                  style: Theme.of(context).textTheme.titleSmall),
-             SizedBox(
-                width: 100,
-                height: 35,
-                child: TextFormField(
-                  maxLines: 1,
-                  textAlignVertical: TextAlignVertical.top,
-                  controller: textEditingControllerCashInserted,
-                  keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true, signed: false),
-                  style: Theme.of(context).textTheme.titleSmall,
-                  decoration: const InputDecoration(
-                    suffixIcon: Icon(Icons.euro),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide:
-                          BorderSide(color: Colors.black, width: 0.2),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.red, width: 0.2),
+          ),
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 237, 208, 171),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Visibility(
+              maintainSize: true,
+              maintainAnimation: true,
+              maintainState: true,
+              visible: _isNumericPadVisible,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('Totale:',
+                      style: Theme.of(context).textTheme.titleSmall),
+                  ValueListenableBuilder<double>(
+                    builder:
+                        (BuildContext context, double value, Widget? child) {
+                      return Chip(
+                        label: Text(
+                          '${value.toStringAsFixed(2)} €',
+                        ),
+                        backgroundColor: Theme.of(context).primaryColor,
+                      );
+                    },
+                    valueListenable: cartNotifier.totalCartMoney,
+                  ),
+                  const Padding(padding: EdgeInsets.all(8.0)),
+                  Text('Importo ricevuto:',
+                      style: Theme.of(context).textTheme.titleSmall),
+                  SizedBox(
+                    width: 100,
+                    height: 35,
+                    child: TextFormField(
+                      maxLines: 1,
+                      textAlignVertical: TextAlignVertical.top,
+                      controller: textEditingControllerCashInserted,
+                      keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true, signed: false),
+                      style: Theme.of(context).textTheme.titleSmall,
+                      decoration: const InputDecoration(
+                        suffixIcon: Icon(Icons.euro),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 0.2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(color: Colors.red, width: 0.2),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-           ),
-           const Padding(padding: EdgeInsets.all(8.0)),
-              Text('Resto:',
-                  style: Theme.of(context).textTheme.titleSmall),
-             Chip(
-                  label: Text(
-                _toBeReturned,
-              )),
-          ],
-        ),
-      ),),
-      Container(
-        width: double.infinity,
-        margin: const EdgeInsets.all(10),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color:Color.fromARGB(255, 237, 208, 171),
-          borderRadius: BorderRadius.circular(20),),
-        child:Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-             padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.inversePrimary,
-                    textStyle: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold)),
-                onPressed:
-                    disabledFinalizeButton ? null : finalizeFunctionUnknown,
-                child: const Column(
-                  children: [
-                    Text("Check Out"),
-                    Text("(donazione anonima)"),
-                  ],
-                )),
+                  const Padding(padding: EdgeInsets.all(8.0)),
+                  Text('Resto:', style: Theme.of(context).textTheme.titleSmall),
+                  Chip(
+                      label: Text(
+                    _toBeReturned,
+                  )),
+                ],
+              ),
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.inversePrimary,
-                    textStyle: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold)),
-                onPressed:
-                    disabledFinalizeButton ? null : finalizeFunctionKnown,
-                child: const Text("Check Out (richiedi ricevuta)")),
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 237, 208, 171),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                          textStyle: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                      onPressed: disabledFinalizeButton
+                          ? null
+                          : finalizeFunctionUnknown,
+                      child: const Column(
+                        children: [
+                          Text("Check Out"),
+                          Text("(donazione anonima)"),
+                        ],
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                          textStyle: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                      onPressed:
+                          disabledFinalizeButton ? null : finalizeFunctionKnown,
+                      child: const Text("Check Out (richiedi ricevuta)")),
+                ),
+              ],
+            ),
           ),
         ],
       ),
-      ),
-    ],
-  ),
-);}
+    );
+  }
 }

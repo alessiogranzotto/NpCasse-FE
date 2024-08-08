@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar.dart';
-import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
-import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
 
 /// This widget uses information obtained from [SideNavigationBarItem]
 /// to generate the widget which provides an [onTap] callback while

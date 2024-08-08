@@ -81,6 +81,7 @@ class _ProductScreenState extends State<ProductScreen> {
             backgroundColor: Theme.of(context).colorScheme.background,
             // drawer: const CustomDrawerWidget(),
             appBar: AppBar(
+              centerTitle: true,
               title: Text('Prodotti di ${storeNotifier.getNameStore}',
                   style: Theme.of(context).textTheme.headlineLarge),
               actions: <Widget>[

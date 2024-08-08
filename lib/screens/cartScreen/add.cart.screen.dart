@@ -38,7 +38,8 @@ class _AddCartState extends State<AddCartScreen> {
     // ProductNotifier productNotifier = Provider.of<ProductNotifier>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Dettaglio negozioooooo')),
+      appBar: AppBar(
+          centerTitle: true, title: const Text('Dettaglio negozioooooo')),
       body: SingleChildScrollView(
         child: Column(
           children: [

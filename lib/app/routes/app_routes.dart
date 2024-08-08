@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/models/product.attribute.model.dart';
+import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
+import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.detail.dart';
+import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.dart';
 import 'package:np_casse/screens/homeScreen/master.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
+import 'package:np_casse/screens/productAttributeScreen/product.attribute.detail.screen.dart';
+import 'package:np_casse/screens/productAttributeScreen/productAttribute.screen.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.screen.dart';
 import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
 import 'package:np_casse/screens/productScreen/product.screen.dart';
 import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
@@ -41,6 +50,15 @@ class AppRouter {
   static const String cartRoute = "/cart";
 
   static const String shManage = "/shManage";
+
+  static const String productAttributeRoute = "/productAttribute";
+  static const String productAttributeDetailRoute = "/productAttributeDetail";
+
+  static const String productCatalogRoute = "/productCatalog";
+  static const String productCatalogDetailRoute = "/productCatalogDetail";
+
+  static const String categoryCatalogRoute = "/categoryCatalog";
+  static const String categoryCatalogDetailRoute = "/categoryCatalogDetail";
 
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
@@ -179,6 +197,61 @@ class AppRouter {
             builder: (context) => ProductDetailScreen(
               productModelArgument:
                   ModalRoute.of(context)!.settings.arguments as ProductModel,
+            ),
+            settings: settings,
+          );
+        }
+
+      case productAttributeRoute:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const ProductAttributeScreen(),
+          );
+        }
+      case productAttributeDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => ProductAttributeDetailScreen(
+              productAttributeModelArgument: ModalRoute.of(context)!
+                  .settings
+                  .arguments as ProductAttributeModel,
+            ),
+            settings: settings,
+          );
+        }
+
+      case productCatalogRoute:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const ProductCatalogScreen(),
+          );
+        }
+      case productCatalogDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => ProductCatalogDetailScreen(
+              productCatalogModelArgument: ModalRoute.of(context)!
+                  .settings
+                  .arguments as ProductCatalogModel,
+            ),
+            settings: settings,
+          );
+        }
+
+      case categoryCatalogRoute:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const CategoryCatalogScreen(),
+          );
+        }
+
+      case categoryCatalogDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => CategoryCatalogDetailScreen(
+              categoryCatalogModelArgument: ModalRoute.of(context)!
+                  .settings
+                  .arguments as CategoryCatalogModel,
             ),
             settings: settings,
           );

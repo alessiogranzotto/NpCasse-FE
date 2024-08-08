@@ -35,6 +35,7 @@ class UserAppInstitutionScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
               'Associazione: ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
               style: Theme.of(context).textTheme.headlineLarge),

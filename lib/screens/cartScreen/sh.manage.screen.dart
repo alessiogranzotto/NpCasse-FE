@@ -4,7 +4,6 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
-import 'package:np_casse/core/notifiers/home.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
@@ -68,6 +67,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
+        centerTitle: true,
         title: Text("Gestione donatore",
             style: Theme.of(context).textTheme.headlineLarge),
       ),

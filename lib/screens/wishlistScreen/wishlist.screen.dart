@@ -29,10 +29,9 @@ class WishlistScreen extends StatelessWidget {
             backgroundColor: Theme.of(context).colorScheme.background,
             // const CustomDrawerWidget(),
             appBar: AppBar(
-              automaticallyImplyLeading: false,
               centerTitle: true,
+              automaticallyImplyLeading: false, 
               title: Text(
-                textAlign: TextAlign.right,
                 'Preferiti di ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),

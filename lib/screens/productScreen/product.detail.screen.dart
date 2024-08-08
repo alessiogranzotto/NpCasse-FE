@@ -1,9 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
-import 'package:np_casse/app/widget/custom.alert.dialog.dart';
+import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -153,6 +151,7 @@ class _ProductDetailState extends State<ProductDetailScreen> {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'Dettaglio prodotto: ${productNotifier.getNameProduct}',
             style: Theme.of(context).textTheme.headlineLarge,
@@ -194,11 +193,11 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                                               .colorScheme
                                               .onSurface,
                                           image: DecorationImage(
-                                            image:
-                                                ImageUtils.getImageFromString(
+                                            image: ImageUtils
+                                                    .getImageFromStringBase64(
                                                         stringImage:
                                                             tImageString)
-                                                    .image,
+                                                .image,
                                           )),
                                     );
                                   },
@@ -210,9 +209,10 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
-                                      image: ImageUtils.getImageFromString(
-                                              stringImage: tImageString)
-                                          .image,
+                                      image:
+                                          ImageUtils.getImageFromStringBase64(
+                                                  stringImage: tImageString)
+                                              .image,
                                       fit: BoxFit.contain),
                                 ),
                               )),
@@ -470,7 +470,7 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                                                     title: const SizedBox(
                                                         width: 100,
                                                         child: Text(
-                                                            "Importo variabile")),
+                                                            "Prezzo variabile")),
                                                     value: isFreePriceProduct
                                                         .value,
                                                     onChanged: (bool? value) {
@@ -1217,7 +1217,7 @@ class _ProductDetailState extends State<ProductDetailScreen> {
                                                     title: const SizedBox(
                                                         width: 100,
                                                         child: Text(
-                                                            "Importo variabile")),
+                                                            "Prezzo variabile")),
                                                     value: isFreePriceProduct
                                                         .value,
                                                     onChanged: (bool? value) {

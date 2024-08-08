@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
-import 'package:np_casse/app/widget/custom.alert.dialog.dart';
+import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
 import 'package:provider/provider.dart';
 
 typedef OnPickImageCallback = void Function(
@@ -133,6 +132,7 @@ class _StoreDetailState extends State<StoreDetailScreen> {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'Dettaglio negozi di ${storeNotifier.getNameStore}',
             style: Theme.of(context).textTheme.headlineLarge,
@@ -235,11 +235,11 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                               .colorScheme
                                               .onSurface,
                                           image: DecorationImage(
-                                            image:
-                                                ImageUtils.getImageFromString(
+                                            image: ImageUtils
+                                                    .getImageFromStringBase64(
                                                         stringImage:
                                                             tImageString)
-                                                    .image,
+                                                .image,
                                           )),
                                     );
                                   },
@@ -251,9 +251,10 @@ class _StoreDetailState extends State<StoreDetailScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
-                                      image: ImageUtils.getImageFromString(
-                                              stringImage: tImageString)
-                                          .image,
+                                      image:
+                                          ImageUtils.getImageFromStringBase64(
+                                                  stringImage: tImageString)
+                                              .image,
                                       fit: BoxFit.contain),
                                 ),
                               )

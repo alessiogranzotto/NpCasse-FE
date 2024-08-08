@@ -379,7 +379,7 @@ class ProductCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: (ImageUtils.getImageFromString(
+                            image: (ImageUtils.getImageFromStringBase64(
                                     stringImage: product.imageProduct)
                                 .image)
                             // (project.imageProject as ImageProvider)

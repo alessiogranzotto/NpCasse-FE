@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/widget/customSideNavigationBar.dart/api/side_navigation_bar_header.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_header.dart';
 
 /// Represents the header widget which is rendered on the screen
 ///

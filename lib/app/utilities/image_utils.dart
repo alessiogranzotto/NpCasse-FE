@@ -64,7 +64,7 @@ class ImageUtils {
     return base64Result;
   }
 
-  static Image getImageFromString({required String stringImage}) {
+  static Image getImageFromStringBase64({required String stringImage}) {
     String strImage = stringImage != '' ? stringImage : setFakeImage();
     return Image.memory(base64Decode(strImage));
   }

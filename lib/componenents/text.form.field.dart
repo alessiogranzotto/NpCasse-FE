@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AGTextFormField extends StatelessWidget {
   const AGTextFormField(
@@ -16,7 +17,9 @@ class AGTextFormField extends StatelessWidget {
       this.autofocus,
       this.focusNode,
       this.onTap,
-      this.enabled});
+      this.enabled,
+      this.maxLength,
+      this.inputFormatter});
 
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
@@ -32,6 +35,8 @@ class AGTextFormField extends StatelessWidget {
   final void Function()? onEditingComplete;
   final void Function()? onTap;
   final bool? enabled;
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatter;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +44,9 @@ class AGTextFormField extends StatelessWidget {
       cursorColor: Theme.of(context).colorScheme.inversePrimary,
       controller: controller,
       enabled: enabled ?? true,
+      maxLength: maxLength ?? maxLength,
+      inputFormatters:
+          inputFormatter ?? [LengthLimitingTextInputFormatter(500)],
       textInputAction: textInputAction ?? TextInputAction.next,
       keyboardType: keyboardType ?? TextInputType.text,
       focusNode: focusNode,

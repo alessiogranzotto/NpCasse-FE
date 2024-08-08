@@ -654,6 +654,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(widget.editStakeholderGiveModelSearch == null
             ? "Nuova anagrafica"
             : "Modifica anagrafica (id: ${widget.editStakeholderGiveModelSearch?.id})"),
@@ -1778,7 +1779,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                         FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
-                          heroTag: 'Deduplication',
+                          heroTag: 'Deduplication1',
                           onPressed: () {
                             setState(() {
                               visibilityDeduplicationScreen.value = true;
@@ -1790,7 +1791,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                         FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
-                          heroTag: 'Deduplication',
+                          heroTag: 'Deduplication2',
                           onPressed: () {
                             setState(() {
                               visibilityDeduplicationScreen.value = true;

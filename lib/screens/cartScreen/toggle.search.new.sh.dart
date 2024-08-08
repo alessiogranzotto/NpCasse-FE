@@ -20,7 +20,7 @@
 //       initialIndex: 0,
 //       length: 2,
 //       child: Scaffold(
-//         appBar: AppBar(
+//                 appBar: AppBar( 
 //             title: Text('Ricerca anagrafica ed inserimento nuova anagrafica',
 //                 style: Theme.of(context).textTheme.headlineLarge),
 //             bottom: TabBar(

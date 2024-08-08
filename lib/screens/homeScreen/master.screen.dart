@@ -1,19 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/app/widget/customSideNavigationBar.dart/custom.side.navigation.bar.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
+import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
+import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
+import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
+import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/projectScreen/project.navigator.dart';
-import 'package:np_casse/screens/signUpScreen/settingScreen/setting.screen.dart';
-import 'package:np_casse/screens/userAppIinstitutionScreen/user.app.institution.screen.dart';
+import 'package:np_casse/screens/settingScreen/setting.screen.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +43,12 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.settings), const SettingScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
       const Icon(Icons.shopping_cart), const CartNavigator()),
+  MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
+      const Icon(Icons.settings), const ProductAttributeNavigator()),
+  MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,
+      const Icon(Icons.settings), const CategoryCatalogNavigator()),
+  MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.book,
+      const Icon(Icons.settings), const ProductCatalogNavigator()),
   MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
       const Icon(Icons.settings), const SettingScreen()),
   MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
@@ -126,6 +138,12 @@ class _MasterScreenState extends State<MasterScreen> {
     ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
     WishlistProductNotifier wishlistProductNotifier =
         Provider.of<WishlistProductNotifier>(context);
+    ProductAttributeNotifier productAttributeNotifier =
+        Provider.of<ProductAttributeNotifier>(context);
+    ProductCatalogNotifier productCatalogNotifier =
+        Provider.of<ProductCatalogNotifier>(context);
+    CategoryCatalogNotifier categoryCatalogNotifier =
+        Provider.of<CategoryCatalogNotifier>(context);
 
     adjustMenu(context);
     getUserData(context);
@@ -182,6 +200,15 @@ class _MasterScreenState extends State<MasterScreen> {
                 projectNotifier.refresh();
               } else if (destinations.elementAt(index).label == "Carrello") {
                 cartNotifier.refresh();
+              } else if (destinations.elementAt(index).label ==
+                  "Attributi prodotti") {
+                productAttributeNotifier.refresh();
+              } else if (destinations.elementAt(index).label ==
+                  "Catalogo prodotti") {
+                productCatalogNotifier.refresh();
+              } else if (destinations.elementAt(index).label ==
+                  "Catalogo categorie") {
+                categoryCatalogNotifier.refresh();
               } else if (destinations.elementAt(index).label == "Uscita") {
                 signOut(context);
               }

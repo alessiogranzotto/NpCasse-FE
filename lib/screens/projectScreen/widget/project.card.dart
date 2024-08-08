@@ -3,8 +3,6 @@ import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
@@ -49,7 +47,7 @@ class ProjectCard extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: (ImageUtils.getImageFromString(
+                    image: (ImageUtils.getImageFromStringBase64(
                             stringImage: project.imageProject)
                         .image)),
               ),

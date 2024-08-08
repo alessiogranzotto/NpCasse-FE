@@ -3,8 +3,6 @@ import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
-import 'package:np_casse/screens/storeScreen/store.detail.screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class StoreCard extends StatelessWidget {
@@ -45,7 +43,7 @@ class StoreCard extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: (ImageUtils.getImageFromString(
+                    image: (ImageUtils.getImageFromStringBase64(
                             stringImage: store.imageStore)
                         .image)
                     // (project.imageProject as ImageProvider)

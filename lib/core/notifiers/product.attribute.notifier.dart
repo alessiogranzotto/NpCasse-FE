@@ -1,0 +1,88 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:np_casse/core/api/product.attribute.api.dart';
+import 'package:np_casse/core/models/product.attribute.model.dart';
+import 'package:np_casse/core/utils/snackbar.util.dart';
+
+class ProductAttributeNotifier with ChangeNotifier {
+  final ProductAttributeAPI productAttributeAPI = ProductAttributeAPI();
+
+  void refresh() {
+    notifyListeners();
+  }
+
+  Future getProductAttributes(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution}) async {
+    try {
+      var response = await productAttributeAPI.getProductAttribute(
+          token: token, idUserAppInstitution: idUserAppInstitution);
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          ProductAttributeDataModel productAttributes =
+              ProductAttributeDataModel.fromJson(parseData['okResult'] ?? '');
+          return productAttributes;
+          // notifyListeners();
+        }
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Prodotti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future addOrUpdateProductAttribute(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required ProductAttributeModel productAttributeModel}) async {
+    try {
+      bool isOk = false;
+      var response = await productAttributeAPI.addOrUpdateProductAttribute(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          productAttributeModel: productAttributeModel);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Attributi prodotto",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {}
+      }
+      return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Attributi prodotto",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+}

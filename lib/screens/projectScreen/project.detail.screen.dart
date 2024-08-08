@@ -1,8 +1,7 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
-import 'package:np_casse/app/widget/custom.alert.dialog.dart';
+import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/project.grant.structure.model.dart';
 import 'package:np_casse/core/models/project.model.dart';
@@ -18,7 +17,6 @@ typedef OnPickImageCallback = void Function(
 
 class ProjectDetailScreen extends StatefulWidget {
   final ProjectModel projectModelArgument;
-  // final ProjectDetailsArgs projectDetailsArguments;
   const ProjectDetailScreen({
     super.key,
     required this.projectModelArgument,
@@ -146,6 +144,7 @@ class _ProjectDetailState extends State<ProjectDetailScreen> {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'Dettaglio progetto: ${projectNotifier.getNameProject}',
             style: Theme.of(context).textTheme.headlineLarge,
@@ -185,11 +184,11 @@ class _ProjectDetailState extends State<ProjectDetailScreen> {
                                               .colorScheme
                                               .onSurface,
                                           image: DecorationImage(
-                                            image:
-                                                ImageUtils.getImageFromString(
+                                            image: ImageUtils
+                                                    .getImageFromStringBase64(
                                                         stringImage:
                                                             tImageString)
-                                                    .image,
+                                                .image,
                                           )),
                                     );
                                   },
@@ -201,9 +200,10 @@ class _ProjectDetailState extends State<ProjectDetailScreen> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
-                                      image: ImageUtils.getImageFromString(
-                                              stringImage: tImageString)
-                                          .image,
+                                      image:
+                                          ImageUtils.getImageFromStringBase64(
+                                                  stringImage: tImageString)
+                                              .image,
                                       fit: BoxFit.contain),
                                 ),
                               )

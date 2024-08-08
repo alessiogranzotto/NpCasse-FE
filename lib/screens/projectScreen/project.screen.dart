@@ -43,6 +43,7 @@ class ProjectScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.background,
         //drawer: const CustomDrawerWidget(),
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'Progetti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
             style: Theme.of(context).textTheme.headlineMedium,

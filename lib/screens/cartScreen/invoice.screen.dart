@@ -15,7 +15,7 @@
 //     return SafeArea(
 //       child: Scaffold(
 //         backgroundColor: Theme.of(context).colorScheme.background,
-//         appBar: AppBar(
+//                 appBar: AppBar( 
 //           title: Text('Pagamento del carrello',
 //               style: Theme.of(context).textTheme.headlineMedium),
 //         ),

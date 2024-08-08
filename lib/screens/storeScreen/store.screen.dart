@@ -6,13 +6,8 @@ import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
-// import 'package:np_casse/core/notifiers/userInstitution.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
-import 'package:np_casse/screens/homeScreen/custom.drawer.dart';
-import 'package:np_casse/screens/productScreen/product.screen.dart';
-import 'package:np_casse/screens/storeScreen/store.detail.screen.dart';
 import 'package:np_casse/screens/storeScreen/widget/store.card.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class StoreScreen extends StatelessWidget {
@@ -38,6 +33,7 @@ class StoreScreen extends StatelessWidget {
             backgroundColor: Theme.of(context).colorScheme.background,
             // drawer: const CustomDrawerWidget(),
             appBar: AppBar(
+              centerTitle: true,
               title: Text('Negozi di ${projectNotifier.getNameProject}',
                   style: Theme.of(context).textTheme.headlineLarge),
               // actions: <Widget>[

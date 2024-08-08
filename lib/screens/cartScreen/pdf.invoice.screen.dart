@@ -102,6 +102,7 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Ricevuta acquisto',
             style: Theme.of(context).textTheme.headlineLarge),
       ),
