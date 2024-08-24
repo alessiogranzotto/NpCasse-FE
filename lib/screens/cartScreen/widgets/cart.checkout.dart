@@ -7,8 +7,6 @@ import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/home.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
-import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 enum PaymentType { contanti, bancomat, cartaCredito, assegni }
@@ -124,12 +122,12 @@ class _CheckoutCartState extends State<CheckoutCart> {
           .then((value) {
         if (value > 0) {
           Navigator.pop(context);
-          PersistentNavBarNavigator.pushNewScreen(
-            context,
-            screen: const ShManageScreen(),
-            withNavBar: true,
-            pageTransitionAnimation: PageTransitionAnimation.fade,
-          );
+          // PersistentNavBarNavigator.pushNewScreen(
+          //   context,
+          //   screen: const ShManageScreen(),
+          //   withNavBar: true,
+          //   pageTransitionAnimation: PageTransitionAnimation.fade,
+          // );
         } else {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(

@@ -92,6 +92,7 @@ class ProjectScreen extends StatelessWidget {
                         );
                       } else {
                         var tSnapshot = snapshot.data as List;
+
                         return GridView.builder(
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AGTextFormField extends StatelessWidget {
-  const AGTextFormField(
+class CustomTextFormField extends StatelessWidget {
+  const CustomTextFormField(
       {this.textInputAction,
       required this.labelText,
       this.keyboardType,
@@ -10,6 +10,7 @@ class AGTextFormField extends StatelessWidget {
       super.key,
       this.hintText,
       this.onChanged,
+      this.onFieldSubmitted,
       this.validator,
       this.obscureText,
       this.suffixIcon,
@@ -22,6 +23,7 @@ class AGTextFormField extends StatelessWidget {
       this.inputFormatter});
 
   final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
   final String? Function(String?)? validator;
   final TextInputAction? textInputAction;
   final String? hintText;
@@ -51,12 +53,14 @@ class AGTextFormField extends StatelessWidget {
       keyboardType: keyboardType ?? TextInputType.text,
       focusNode: focusNode,
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
       onTap: onTap,
       autofocus: autofocus ?? false,
       validator: validator,
       obscureText: obscureText ?? false,
       obscuringCharacter: '*',
       onEditingComplete: onEditingComplete,
+
       style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
       decoration: InputDecoration(
         suffixIcon: suffixIcon,

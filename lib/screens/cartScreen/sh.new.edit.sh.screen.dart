@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/componenents/text.form.field.dart';
+import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/api/geo.autocomplete.api.dart';
 import 'package:np_casse/core/models/geo.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
@@ -12,13 +12,11 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 import 'package:np_casse/screens/cartScreen/widgets/geo/city.autocomplete.dart';
 import 'package:np_casse/screens/cartScreen/widgets/geo/country.autocomplete.dart';
 import 'package:np_casse/screens/cartScreen/widgets/geo/full.address.autocomplete.dart';
 import 'package:np_casse/screens/cartScreen/widgets/geo/street.autocomplete.dart';
 import 'package:np_casse/screens/cartScreen/widgets/show.give.sh.data.table.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class ShNewEditScreen extends StatefulWidget {
@@ -322,12 +320,12 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                     giveNotifier.setStakeholder(typedValue.donatoriOk ??
                         StakeholderGiveModelSearch.empty());
                     Navigator.pop(context);
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: const ShManageScreen(),
-                      withNavBar: true,
-                      pageTransitionAnimation: PageTransitionAnimation.fade,
-                    );
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: const ShManageScreen(),
+                    //   withNavBar: true,
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
                   } else if (typedValue.operationResult == "Errore deduplica") {
                     if (forcingId > 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -426,12 +424,12 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                     giveNotifier.setStakeholder(typedValue.donatoriOk ??
                         StakeholderGiveModelSearch.empty());
                     Navigator.pop(context);
-                    PersistentNavBarNavigator.pushNewScreen(
-                      context,
-                      screen: const ShManageScreen(),
-                      withNavBar: true,
-                      pageTransitionAnimation: PageTransitionAnimation.fade,
-                    );
+                    // PersistentNavBarNavigator.pushNewScreen(
+                    //   context,
+                    //   screen: const ShManageScreen(),
+                    //   withNavBar: true,
+                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                    // );
                   } else if (typedValue.operationResult == "Errore deduplica") {
                     if (forcingId > 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -796,7 +794,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                 left: 10,
                                                 right: 10,
                                                 bottom: 10),
-                                            child: AGTextFormField(
+                                            child: CustomTextFormField(
                                                 controller: nameController,
                                                 validator: (value) =>
                                                     value!.toString().isEmpty
@@ -820,7 +818,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                           Padding(
                                             padding: const EdgeInsets.only(
                                                 left: 10, right: 10),
-                                            child: AGTextFormField(
+                                            child: CustomTextFormField(
                                                 controller: surnameController,
                                                 validator: (value) =>
                                                     value!.toString().isEmpty
@@ -846,7 +844,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                 left: 10,
                                                 right: 10,
                                                 bottom: 10),
-                                            child: AGTextFormField(
+                                            child: CustomTextFormField(
                                                 controller: ragSocController,
                                                 validator: (value) => value!
                                                         .toString()
@@ -868,7 +866,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               left: 10, right: 10, bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               controller: borndateController,
                                               onTap: () {
                                                 _selectDate(context);
@@ -997,7 +995,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               right: 10,
                                               top: 10,
                                               bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               controller: cFController,
                                               // validator: (value) => value!
                                               //         .toString()
@@ -1020,7 +1018,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               right: 10,
                                               top: 10,
                                               bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               controller: emailController,
                                               validator: (value) {
                                                 const pattern =
@@ -1055,7 +1053,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               right: 10,
                                               top: 10,
                                               bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               controller: phoneNumberController,
                                               validator: (value) {
                                                 // const pattern =
@@ -1092,7 +1090,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               right: 10,
                                               top: 10,
                                               bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               controller:
                                                   mobileNumberController,
                                               // validator: (value) {
@@ -1239,7 +1237,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               right: 10,
                                               top: 10,
                                               bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               enabled: stepValidation >= 0,
                                               controller:
                                                   streetNumberController,
@@ -1287,7 +1285,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                 right: 10,
                                                 top: 10,
                                                 bottom: 10),
-                                            child: AGTextFormField(
+                                            child: CustomTextFormField(
                                                 enabled: false,
                                                 controller: stateController,
                                                 // validator: (value) =>
@@ -1317,7 +1315,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                   right: 10,
                                                   top: 10,
                                                   bottom: 10),
-                                              child: AGTextFormField(
+                                              child: CustomTextFormField(
                                                   enabled: false,
                                                   controller: regionController,
                                                   // validator: (value) =>
@@ -1346,7 +1344,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                   right: 10,
                                                   top: 10,
                                                   bottom: 10),
-                                              child: AGTextFormField(
+                                              child: CustomTextFormField(
                                                   enabled: false,
                                                   controller:
                                                       provinceCodeController,
@@ -1376,7 +1374,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                   right: 10,
                                                   top: 10,
                                                   bottom: 10),
-                                              child: AGTextFormField(
+                                              child: CustomTextFormField(
                                                   enabled: false,
                                                   controller:
                                                       district1Controller,
@@ -1406,7 +1404,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                   right: 10,
                                                   top: 10,
                                                   bottom: 10),
-                                              child: AGTextFormField(
+                                              child: CustomTextFormField(
                                                   enabled: false,
                                                   controller:
                                                       district2Controller,
@@ -1436,7 +1434,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                   right: 10,
                                                   top: 10,
                                                   bottom: 10),
-                                              child: AGTextFormField(
+                                              child: CustomTextFormField(
                                                   enabled: false,
                                                   controller:
                                                       district3Controller,
@@ -1463,7 +1461,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                               right: 10,
                                               top: 10,
                                               bottom: 10),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                               enabled: true,
                                               controller: zipCodeController,
                                               // validator: (value) {
@@ -1779,7 +1777,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                         FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
-                          heroTag: 'Deduplication1',
+                          // heroTag: 'Deduplication1',
                           onPressed: () {
                             setState(() {
                               visibilityDeduplicationScreen.value = true;
@@ -1791,7 +1789,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                         FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
-                          heroTag: 'Deduplication2',
+                          // heroTag: 'Deduplication2',
                           onPressed: () {
                             setState(() {
                               visibilityDeduplicationScreen.value = true;
@@ -1815,7 +1813,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                   child: FloatingActionButton(
                     shape: const CircleBorder(eccentricity: 0.5),
                     tooltip: "Salva",
-                    heroTag: 'Salva',
+                    // heroTag: 'Salva',
                     onPressed: () {
                       visibilityDeduplicationButton.value = false;
                       // visibilitySaveButton.value = false;
@@ -1839,7 +1837,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                   margin: const EdgeInsets.all(10),
                   child: FloatingActionButton(
                     shape: const CircleBorder(eccentricity: 0.5),
-                    heroTag: 'ForceSave',
+                    // heroTag: 'ForceSave',
                     tooltip: "Forza salvataggio",
                     onPressed: () {
                       setState(() {

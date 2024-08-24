@@ -1,31 +1,33 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
-import 'package:np_casse/core/models/product.model.dart';
+import 'package:np_casse/core/models/product.catalog.model.dart';
 
 class ProductCatalogAPI {
   final client = http.Client();
 
-  Future getProducts({
-    required String? token,
-    required int idUserAppInstitution,
-    bool readAlsoDeleted = false,
-    bool readImageData = false,
-    int idCategory = 0,
-    int pageNumber = 0,
-    int pageSize = 0,
-  }) async {
-    final Uri uri = Uri.parse(
-        '${ApiRoutes.baseWhProductURL}?IdUserAppInstitution=$idUserAppInstitution' +
-            '&ReadAlsoDeleted=$readAlsoDeleted' +
-            '&ReadImageData=$readImageData' +
-            '&IdCategory=$idCategory' +
-            '&PageNumber=$pageNumber' +
-            '&PageSize=$pageSize');
+  Future getProducts(
+      {required String? token,
+      required int idUserAppInstitution,
+      int idCategory = 0,
+      bool readAlsoDeleted = false,
+      String numberResult = '',
+      String nameDescSearch = '',
+      bool readImageData = false,
+      String orderBy = '',
+      bool showVariant = false}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
+        '?IdUserAppInstitution=$idUserAppInstitution' +
+        '&IdCategory=$idCategory' +
+        '&ReadAlsoDeleted=$readAlsoDeleted' +
+        '&NumberResult=$numberResult' +
+        '&NameDescSearch=$nameDescSearch' +
+        '&ReadImageData=$readImageData' +
+        '&OrderBy=$orderBy' +
+        '&ShowVariant=$showVariant');
     print(uri);
-    //https://localhost:7264/api/Product?IdUserAppInstitution=5&ReadAlsoDeleted=false&ReadImageData=false&IdCategory=0&PageNumber=1&PageSize=1
-    //https://localhost:7264/api/Product?IdUserAppInstitution=5&ReadAlsoDeleted=true &ReadImageData= true&IdCategory=1&PageNumber=12&PageSize=12
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -45,20 +47,56 @@ class ProductCatalogAPI {
     }
   }
 
-  Future addOrUpdateProductCatalog(
+  Future getProductPrice(
       {required String? token,
       required int idUserAppInstitution,
-      required int idProject,
-      required int idStore,
-      required ProductModel productModel}) async {
-    int idProduct = productModel.idProduct;
+      required int idProduct,
+      required List<String?> parameters}) async {
+    String paramEncode = '';
+    for (int i = 0; i < parameters.length; i++) {
+      String p = parameters[i] ?? '';
+      paramEncode = paramEncode + '&Parameters' + '=' + p;
+    }
+    final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
+        '/$idProduct/GetProductPrice?IdUserAppInstitution=$idUserAppInstitution' +
+        paramEncode);
+    print(uri);
+    String x = jsonEncode(parameters);
+    print(x);
+    //https://localhost:7264/api/Product/1/GetProductPrice?IdUserAppInstitution=5&Parameters=1&Parameters=2&Parameters=3'\
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
 
+  Future addOrUpdateProduct(
+      {required String? token,
+      required ProductCatalogModel productCatalogModel}) async {
+    int idProduct = productCatalogModel.idProduct;
+    String x = jsonEncode(productCatalogModel);
+    String y = jsonEncode(productCatalogModel.giveIdsFlatStructureModel);
+    if (kDebugMode) {
+      print(x);
+      print(y);
+      print(jsonEncode(productCatalogModel));
+    }
     final http.Response response;
-
     if (idProduct == 0) {
-      final Uri uri = Uri.parse(
-          '${ApiRoutes.baseUserAppInstitutionURL}/$idUserAppInstitution/Project/$idProject/Store/$idStore/Product');
-
+      final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}');
       response = await client.post(uri,
           headers: {
             'Content-Type': 'application/json',
@@ -66,11 +104,9 @@ class ProductCatalogAPI {
             'Access-Control-Allow-Origin': "*",
             "Authorization": token ?? ''
           },
-          body: jsonEncode(productModel));
+          body: jsonEncode(productCatalogModel));
     } else {
-      final Uri uri = Uri.parse(
-          '${ApiRoutes.baseUserAppInstitutionURL}/$idUserAppInstitution/Project/$idProject/Store/$idStore/Product/$idProduct');
-
+      final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}/$idProduct');
       response = await client.put(uri,
           headers: {
             'Content-Type': 'application/json',
@@ -78,9 +114,8 @@ class ProductCatalogAPI {
             'Access-Control-Allow-Origin': "*",
             "Authorization": token ?? ''
           },
-          body: jsonEncode(productModel));
+          body: jsonEncode(productCatalogModel));
     }
-
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;

@@ -1,7 +1,8 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:np_casse/componenents/text.form.field.dart';
+import 'package:np_casse/componenents/custom.text.form.field.dart';
+import 'package:np_casse/core/models/predefined.product.attribute.value.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -22,12 +23,12 @@ class TempPredefinedAttributeListModel {
   });
 }
 
-class EditableListTile extends StatefulWidget {
+class PredefinedAttributeEditableListTile extends StatefulWidget {
   final TempPredefinedAttributeListModel model;
   final Function(TempPredefinedAttributeListModel listModel) onChanged;
   final Function(TempPredefinedAttributeListModel listModel) onRemove;
 
-  const EditableListTile({
+  const PredefinedAttributeEditableListTile({
     super.key,
     required this.model,
     required this.onChanged,
@@ -38,7 +39,8 @@ class EditableListTile extends StatefulWidget {
   _EditableListTileState createState() => _EditableListTileState();
 }
 
-class _EditableListTileState extends State<EditableListTile> {
+class _EditableListTileState
+    extends State<PredefinedAttributeEditableListTile> {
   late TempPredefinedAttributeListModel model;
 
   late bool isEditingMode;
@@ -96,7 +98,7 @@ class _EditableListTileState extends State<EditableListTile> {
   Widget get nameWidget {
     nameEditingController =
         TextEditingController(text: model.namePredefinedAttribute);
-    return AGTextFormField(
+    return CustomTextFormField(
       enabled: isEditingMode,
       labelText: 'Nome attributo predefinito (ad es. S, M, L, ..)',
       controller: nameEditingController,
@@ -106,7 +108,7 @@ class _EditableListTileState extends State<EditableListTile> {
   Widget get displayOrderWidget {
     displayOrderEditingController = TextEditingController(
         text: model.displayOrderPredefinedAttribute.toString());
-    return AGTextFormField(
+    return CustomTextFormField(
       enabled: isEditingMode,
       // maxLength: 2,
       inputFormatter: <TextInputFormatter>[
@@ -128,7 +130,7 @@ class _EditableListTileState extends State<EditableListTile> {
         maxDigits: 8,
         initDoubleValue: model.priceAdjustmentPredefinedAttribute);
 
-    return AGTextFormField(
+    return CustomTextFormField(
       enabled: isEditingMode,
       // maxLength: 2,
       labelText: 'Regolazione prezzo (+/- rispetto al prezzo)',
@@ -429,7 +431,7 @@ class _ProductAttributeDetailState extends State<ProductAttributeDetailScreen> {
                   ),
                   itemBuilder: (BuildContext context, int index) {
                     final item = listPredefinedAttributeListModel[index];
-                    return EditableListTile(
+                    return PredefinedAttributeEditableListTile(
                       key: ObjectKey(item),
                       model: listPredefinedAttributeListModel[index],
                       onChanged:

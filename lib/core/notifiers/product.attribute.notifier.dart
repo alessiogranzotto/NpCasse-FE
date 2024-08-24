@@ -16,10 +16,19 @@ class ProductAttributeNotifier with ChangeNotifier {
   Future getProductAttributes(
       {required BuildContext context,
       required String? token,
-      required int idUserAppInstitution}) async {
+      required int idUserAppInstitution,
+      required bool readAlsoDeleted,
+      required String numberResult,
+      required String nameDescSearch,
+      required String orderBy}) async {
     try {
       var response = await productAttributeAPI.getProductAttribute(
-          token: token, idUserAppInstitution: idUserAppInstitution);
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          readAlsoDeleted: readAlsoDeleted,
+          numberResult: numberResult,
+          nameDescSearch: nameDescSearch,
+          orderBy: orderBy);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
@@ -33,8 +42,10 @@ class ProductAttributeNotifier with ChangeNotifier {
                     contentType: "failure"));
           }
         } else {
-          ProductAttributeDataModel productAttributes =
-              ProductAttributeDataModel.fromJson(parseData['okResult'] ?? '');
+          List<ProductAttributeModel> productAttributes =
+              List.from(parseData['okResult'])
+                  .map((e) => ProductAttributeModel.fromJson(e))
+                  .toList();
           return productAttributes;
           // notifyListeners();
         }

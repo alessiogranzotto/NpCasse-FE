@@ -1,52 +1,52 @@
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 
-class CategoryCatalogDataModel {
-  CategoryCatalogDataModel(
-      {required this.currentPage,
-      required this.totalPages,
-      required this.pageSize,
-      required this.totalCount,
-      required this.hasPrevious,
-      required this.hasNext,
-      required this.data});
-  late final int currentPage;
-  late final int totalPages;
-  late final int pageSize;
-  late final int totalCount;
-  late final bool hasPrevious;
-  late final bool hasNext;
-  late final List<CategoryCatalogModel> data;
+// class CategoryCatalogDataModel {
+//   CategoryCatalogDataModel(
+//       {required this.currentPage,
+//       required this.totalPages,
+//       required this.pageSize,
+//       required this.totalCount,
+//       required this.hasPrevious,
+//       required this.hasNext,
+//       required this.data});
+//   late final int currentPage;
+//   late final int totalPages;
+//   late final int pageSize;
+//   late final int totalCount;
+//   late final bool hasPrevious;
+//   late final bool hasNext;
+//   late final List<CategoryCatalogModel> data;
 
-  CategoryCatalogDataModel.fromJson(Map<String, dynamic> json) {
-    currentPage = json['currentPage'];
-    totalPages = json['totalPages'];
-    pageSize = json['pageSize'];
-    totalCount = json['totalCount'];
-    hasPrevious = json['hasPrevious'];
-    hasNext = json['hasNext'];
+//   CategoryCatalogDataModel.fromJson(Map<String, dynamic> json) {
+//     currentPage = json['currentPage'];
+//     totalPages = json['totalPages'];
+//     pageSize = json['pageSize'];
+//     totalCount = json['totalCount'];
+//     hasPrevious = json['hasPrevious'];
+//     hasNext = json['hasNext'];
 
-    if (json['data'] != null) {
-      data = List.from(json['data'])
-          .map((e) => CategoryCatalogModel.fromJson(e))
-          .toList();
-    } else {
-      data = List.empty();
-    }
-  }
+//     if (json['data'] != null) {
+//       data = List.from(json['data'])
+//           .map((e) => CategoryCatalogModel.fromJson(e))
+//           .toList();
+//     } else {
+//       data = List.empty();
+//     }
+//   }
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['currentPage'] = currentPage;
-    data['totalPages'] = totalPages;
-    data['pageSize'] = pageSize;
-    data['totalCount'] = totalCount;
-    data['hasPrevious'] = hasPrevious;
-    data['hasNext'] = hasNext;
-    data['data'] = data;
-    return data;
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     final data = <String, dynamic>{};
+//     data['currentPage'] = currentPage;
+//     data['totalPages'] = totalPages;
+//     data['pageSize'] = pageSize;
+//     data['totalCount'] = totalCount;
+//     data['hasPrevious'] = hasPrevious;
+//     data['hasNext'] = hasNext;
+//     data['data'] = data;
+//     return data;
+//   }
+// }
 
 class CategoryCatalogModel {
   CategoryCatalogModel({
@@ -62,11 +62,8 @@ class CategoryCatalogModel {
     this.updatedOnUtc,
     this.updatedByUserAppInstitution,
     required this.imageData,
-    this.parentCategoryName,
+    required this.parentCategoryName,
     required this.giveIdsFlatStructureModel,
-
-    //CUSTOM
-    this.isSelected,
   });
   late final int idCategory;
   late final String nameCategory;
@@ -80,10 +77,8 @@ class CategoryCatalogModel {
   DateTime? updatedOnUtc;
   int? updatedByUserAppInstitution;
   late final String imageData;
-  late String? parentCategoryName;
+  late String parentCategoryName;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
-  //CUSTOM
-  late bool? isSelected = false;
 
   CategoryCatalogModel.empty() {
     idCategory = 0;
@@ -94,7 +89,6 @@ class CategoryCatalogModel {
     deleted = false;
     imageData = '';
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
-    isSelected = false;
   }
 
   CategoryCatalogModel.fromJson(Map<String, dynamic> json) {
@@ -122,6 +116,8 @@ class CategoryCatalogModel {
     updatedOnUtc = dateLocalU;
     updatedByUserAppInstitution = json['updatedByUserAppInstitution'];
     imageData = json['imageData'] ?? '';
+    giveIdsFlatStructureModel =
+        GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
   }
 
   Map<String, dynamic> toJson() {
@@ -133,6 +129,8 @@ class CategoryCatalogModel {
     data['displayOrder'] = displayOrder;
     data['deleted'] = deleted;
     data['idUserAppInstitution'] = idUserAppInstitution;
+    data['imageData'] = imageData;
+    data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
   }
 }

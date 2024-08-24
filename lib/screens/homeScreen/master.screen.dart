@@ -12,6 +12,7 @@ import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
@@ -20,6 +21,7 @@ import 'package:np_casse/screens/productAttributeScreen/product.attribute.naviga
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/projectScreen/project.navigator.dart';
 import 'package:np_casse/screens/settingScreen/setting.screen.dart';
+import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +41,8 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.favorite), const WishlistScreen()),
   MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
       const Icon(Icons.layers), const ProjectNavigator()),
+  MenuList(AppRouter.projectRoute, 'Shop', Icons.shop, const Icon(Icons.layers),
+      const ShopNavigator()),
   MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
       const Icon(Icons.settings), const SettingScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
@@ -47,7 +51,7 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.settings), const ProductAttributeNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,
       const Icon(Icons.settings), const CategoryCatalogNavigator()),
-  MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.book,
+  MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
       const Icon(Icons.settings), const ProductCatalogNavigator()),
   MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
       const Icon(Icons.settings), const SettingScreen()),
@@ -144,6 +148,8 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<ProductCatalogNotifier>(context);
     CategoryCatalogNotifier categoryCatalogNotifier =
         Provider.of<CategoryCatalogNotifier>(context);
+    ShopCategoryNotifier shopCategoryNotifier =
+        Provider.of<ShopCategoryNotifier>(context);
 
     adjustMenu(context);
     getUserData(context);
@@ -198,6 +204,8 @@ class _MasterScreenState extends State<MasterScreen> {
                 wishlistProductNotifier.refresh();
               } else if (destinations.elementAt(index).label == "Progetti") {
                 projectNotifier.refresh();
+              } else if (destinations.elementAt(index).label == "Shop") {
+                shopCategoryNotifier.refresh();
               } else if (destinations.elementAt(index).label == "Carrello") {
                 cartNotifier.refresh();
               } else if (destinations.elementAt(index).label ==

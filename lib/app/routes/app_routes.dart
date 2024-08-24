@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/product.model.dart';
@@ -15,16 +16,30 @@ import 'package:np_casse/screens/loginScreen/register.view.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.detail.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/productAttribute.screen.dart';
-import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.dart';
-import 'package:np_casse/screens/productCatalogScreen/product.catalog.screen.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.attribute.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.data.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.dart';
 import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
 import 'package:np_casse/screens/productScreen/product.screen.dart';
 import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
 import 'package:np_casse/screens/projectScreen/project.screen.dart';
+import 'package:np_casse/screens/shopScreen/category.one.shop.screen.dart';
+import 'package:np_casse/screens/shopScreen/category.two.shop.screen.dart';
+import 'package:np_casse/screens/shopScreen/product.three.shop.screen.dart';
 import 'package:np_casse/screens/splashScreen/splash.screen.dart';
 import 'package:np_casse/screens/storeScreen/store.detail.screen.dart';
 import 'package:np_casse/screens/storeScreen/store.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
+
+class ProductCatalogDetailAttributeMultipleArgument {
+  final ProductCatalogModel product;
+  final List<ProductAttributeMappingModel> productAttributeMappingModelList;
+
+  ProductCatalogDetailAttributeMultipleArgument({
+    required this.product,
+    required this.productAttributeMappingModelList,
+  });
+}
 
 class AppRouter {
   static const String splashRoute = "/splash"; //
@@ -55,10 +70,17 @@ class AppRouter {
   static const String productAttributeDetailRoute = "/productAttributeDetail";
 
   static const String productCatalogRoute = "/productCatalog";
-  static const String productCatalogDetailRoute = "/productCatalogDetail";
+  static const String productCatalogDetailDataRoute =
+      "/productCatalogDetailData";
+  static const String productCatalogDetailAttributeRoute =
+      "/productCatalogDetailAttribute";
 
   static const String categoryCatalogRoute = "/categoryCatalog";
   static const String categoryCatalogDetailRoute = "/categoryCatalogDetail";
+
+  static const String categoryOneShopRoute = "/categoryoneshop";
+  static const String categoryTwoShopRoute = "/categorytwoshop";
+  static const String categoryProductShopRoute = "/categoryproductshop";
 
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
@@ -226,13 +248,26 @@ class AppRouter {
             builder: (_) => const ProductCatalogScreen(),
           );
         }
-      case productCatalogDetailRoute:
+      case productCatalogDetailDataRoute:
         {
           return MaterialPageRoute(
-            builder: (context) => ProductCatalogDetailScreen(
+            builder: (context) => ProductCatalogDetailDataScreen(
               productCatalogModelArgument: ModalRoute.of(context)!
                   .settings
                   .arguments as ProductCatalogModel,
+            ),
+            settings: settings,
+          );
+        }
+      case productCatalogDetailAttributeRoute:
+        {
+          final args = settings.arguments
+              as ProductCatalogDetailAttributeMultipleArgument;
+          return MaterialPageRoute(
+            builder: (context) => ProductCatalogDetailAttributeScreen(
+              productAttributeMappingModel:
+                  args.productAttributeMappingModelList,
+              product: args.product,
             ),
             settings: settings,
           );
@@ -256,18 +291,28 @@ class AppRouter {
             settings: settings,
           );
         }
-      // case editProfileRoute:
-      //   {
-      //     return MaterialPageRoute(
-      //       builder: (_) => EditProfileScreen(),
-      //     );
-      //   }
-      // case appSettingsRoute:
-      //   {
-      //     return MaterialPageRoute(
-      //       builder: (_) => const AppSettings(),
-      //     );
-      //   }
+      case categoryTwoShopRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => CategoryTwoShopScreen(
+              masterCategoryCatalogModel: ModalRoute.of(context)!
+                  .settings
+                  .arguments as CategoryCatalogModel,
+            ),
+            settings: settings,
+          );
+        }
+      case categoryProductShopRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => ProductThreeShopScreen(
+              childCategoryCatalogModel: ModalRoute.of(context)!
+                  .settings
+                  .arguments as CategoryCatalogModel,
+            ),
+            settings: settings,
+          );
+        }
       case onBoardRoute:
         {
           return MaterialPageRoute(

@@ -1,165 +1,80 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
+import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
-import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.card.dart';
 import 'package:provider/provider.dart';
-
-class _DataSource extends DataTableSource {
-  final List<CategoryCatalogModel> data;
-  final Function onRowSelected;
-  final double width;
-  _DataSource(
-      {required this.data, required this.onRowSelected, required this.width});
-
-  int idRowSelected = 0;
-
-  @override
-  DataRow? getRow(int index) {
-    if (index >= data.length) {
-      return null;
-    }
-
-    final item = data[index];
-
-    return DataRow(
-        color: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) {
-          if (states.contains(MaterialState.selected)) {
-            return Colors.blueAccent[100];
-          } else if (states.contains(MaterialState.hovered)) {
-            return Color.fromARGB(255, 222, 226, 231);
-          }
-          return Colors.transparent; // Use the default value.
-        }),
-        selected: item.isSelected ?? false,
-        onSelectChanged: (bool? selected) {
-          data.forEach((f) => f.isSelected = false);
-          if (selected != null && selected) {
-            data[index].isSelected = selected;
-            onRowSelected(data[index]);
-          } else {
-            onRowSelected(null);
-          }
-          notifyListeners();
-        },
-        cells: [
-          DataCell(Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-                // decoration: BoxDecoration(
-                //     image: DecorationImage(
-                //   fit: BoxFit.cover,
-                //   image: ImageUtils.getImageFromStringBase64(
-                //           stringImage: item.imageData)
-                //       .image,
-                // )),
-                ),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text(item.nameCategory),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text(item.descriptionCategory,
-                maxLines: 2, overflow: TextOverflow.ellipsis),
-          )),
-          DataCell(Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text(item.parentCategoryName ?? '',
-                maxLines: 2, overflow: TextOverflow.ellipsis),
-          )),
-          DataCell(Checkbox(
-            value: item.deleted,
-            onChanged: (value) {},
-          )),
-        ]);
-  }
-
-  @override
-  bool get isRowCountApproximate => true;
-
-  @override
-  int get rowCount => data.length;
-
-  @override
-  int get selectedRowCount => 0;
-}
 
 class CategoryCatalogScreen extends StatefulWidget {
   const CategoryCatalogScreen({super.key});
+
   @override
   State<CategoryCatalogScreen> createState() => _CategoryCatalogScreenState();
 }
 
 class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
-  int currentPage = 1;
-  int pageSize = 10;
-  int pageNumber = 1;
-  bool isLoading = false;
-  ValueNotifier<bool> isRowSelected = ValueNotifier<bool>(false);
-  ProductCatalogModel? cProductCatalogModel = null;
-  CategoryCatalogModel? cCategoryCatalogModel = null;
+  final double widgetWitdh = 300;
+  final double widgetRatio = 1;
+  final double gridMainAxisSpacing = 10;
+  final double widgetHeight = 350;
+  final double widgetHeightHalf = 200;
+  Timer? _timer;
 
-  List<CategoryCatalogModel> availableCategory = [];
-  bool firstLevelCategory = false;
-  bool secondLevelCategory = false;
-  bool allCategory = true;
+  TextEditingController nameDescSearchController = TextEditingController();
+  bool readImageData = false;
+  bool readAlsoDeleted = false;
+
   String levelCategory = 'AllCategory';
+  List<DropdownMenuItem<String>> availableLevelCategory = [
+    DropdownMenuItem(
+        child: Text("Mostra tutte le categorie"), value: "AllCategory"),
+    DropdownMenuItem(
+        child: Text("Mostra solo categorie di primo livello"),
+        value: "FirstLevelCategory"),
+    DropdownMenuItem(
+        child: Text("Mostra solo categorie di secondo livello"),
+        value: "SecondLevelCategory"),
+  ];
 
-  List<DataColumn> _createColumns(double width) {
-    return [
-      const DataColumn(
-        label: Flexible(
-          child: Text(
-            '',
-          ),
-        ),
-      ),
-      const DataColumn(
-        label: Flexible(
-          child: Text('Nome categoria',
-              maxLines: 2, overflow: TextOverflow.ellipsis),
-        ),
-      ),
-      const DataColumn(
-        label: Flexible(
-          child: Text('Descrizione categoria',
-              maxLines: 2, overflow: TextOverflow.ellipsis),
-        ),
-      ),
-      const DataColumn(
-        label: Flexible(
-          child: Text('Nome categoria padre',
-              maxLines: 2, overflow: TextOverflow.ellipsis),
-        ),
-      ),
-      const DataColumn(
-        label: Flexible(
-          child:
-              Text('Cancellata', maxLines: 2, overflow: TextOverflow.ellipsis),
-        ),
-      ),
-    ];
-  }
+  String numberResult = '25';
+  List<DropdownMenuItem<String>> availableNumberResult = [
+    DropdownMenuItem(child: Text("Tutti"), value: "All"),
+    DropdownMenuItem(child: Text("10"), value: "10"),
+    DropdownMenuItem(child: Text("25"), value: "25"),
+    DropdownMenuItem(child: Text("50"), value: "50"),
+  ];
 
-  void rowSelected(CategoryCatalogModel? fCategoryCatalogModel) {
-    if (fCategoryCatalogModel != null) {
-      cCategoryCatalogModel = fCategoryCatalogModel;
-      isRowSelected.value = true;
-    } else {
-      cCategoryCatalogModel = fCategoryCatalogModel;
-      isRowSelected.value = false;
-    }
-  }
+  String orderBy = 'NameCategory';
+  List<DropdownMenuItem<String>> availableOrderBy = [
+    DropdownMenuItem(child: Text("Nome"), value: "NameCategory"),
+    DropdownMenuItem(child: Text("Descrizione"), value: "DescriptionCategory"),
+    DropdownMenuItem(
+        child: Text("Ordine di visualizzazione"), value: "DisplayOrder"),
+  ];
+  Icon iconaNameDescSearch = const Icon(Icons.search);
 
-  onCategoryChanged(CategoryCatalogModel? category) {
+  void onChangeLevelCategory(value) {
     setState(() {
-      cCategoryCatalogModel = category;
+      levelCategory = value!;
+    });
+  }
+
+  void onChangeNumberResult(value) {
+    setState(() {
+      numberResult = value!;
+    });
+  }
+
+  void onChangeOrderBy(value) {
+    setState(() {
+      orderBy = value!;
     });
   }
 
@@ -173,7 +88,6 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -187,76 +101,157 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
             Row(
               children: [
                 Expanded(
+                    flex: 2,
+                    child: CustomDropDownButtonFormField(
+                      actualValue: levelCategory,
+                      labelText: 'Mostra livelli categorie',
+                      listOfValue: availableLevelCategory,
+                      onItemChanged: (String value) {
+                        onChangeLevelCategory(value);
+                      },
+                    )),
+                Expanded(
+                    flex: 1,
+                    child: CustomDropDownButtonFormField(
+                      actualValue: numberResult,
+                      labelText: 'Mostra numero risultati',
+                      listOfValue: availableNumberResult,
+                      onItemChanged: (String value) {
+                        onChangeNumberResult(value);
+                      },
+                    )),
+                Expanded(
+                    flex: 2,
+                    child: CustomDropDownButtonFormField(
+                      actualValue: orderBy,
+                      labelText: 'Ordinamento',
+                      listOfValue: availableOrderBy,
+                      onItemChanged: (String value) {
+                        onChangeOrderBy(value);
+                      },
+                    )),
+                Expanded(
+                  flex: 1,
                   child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueAccent),
+                    side: const BorderSide(color: Colors.blueGrey),
                     checkColor: Colors.blueAccent,
                     checkboxShape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     activeColor: Colors.blueAccent,
 
                     controlAffinity: ListTileControlAffinity.leading,
-                    value: firstLevelCategory,
+                    value: readAlsoDeleted,
                     onChanged: (bool? value) {
                       setState(() {
-                        if (value!) {
-                          firstLevelCategory = true;
-                          secondLevelCategory = false;
-                          allCategory = false;
-                          levelCategory = 'FirstLevelCategory';
-                        }
+                        readAlsoDeleted = value!;
                       });
                     },
-                    title: const Text('Mostra solo categorie di primo livello'),
+                    title: Text(
+                      'Mostra anche cancellate',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(color: Colors.blueGrey),
+                    ),
                     // subtitle: const Text(""),
                   ),
                 ),
                 Expanded(
+                  flex: 1,
                   child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueAccent),
+                    side: const BorderSide(color: Colors.blueGrey),
                     checkColor: Colors.blueAccent,
                     checkboxShape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     activeColor: Colors.blueAccent,
 
                     controlAffinity: ListTileControlAffinity.leading,
-                    value: secondLevelCategory,
+                    value: readImageData,
                     onChanged: (bool? value) {
                       setState(() {
-                        if (value!) {
-                          firstLevelCategory = false;
-                          secondLevelCategory = true;
-                          allCategory = false;
-                          levelCategory = 'SecondLevelCategory';
-                        }
+                        readImageData = value!;
                       });
                     },
-                    title:
-                        const Text('Mostra solo categorie di secondo livello'),
+                    title: Text(
+                      'Visualizza immagine',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(color: Colors.blueGrey),
+                    ),
                     // subtitle: const Text(""),
                   ),
                 ),
                 Expanded(
-                  child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueAccent),
-                    checkColor: Colors.blueAccent,
-                    checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    activeColor: Colors.blueAccent,
-
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: allCategory,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value!) {
-                          firstLevelCategory = false;
-                          secondLevelCategory = false;
-                          allCategory = true;
-                          levelCategory = 'AllCategory';
-                        }
+                  flex: 1,
+                  child: TextFormField(
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: Colors.blueGrey),
+                    onChanged: (String value) {
+                      if (_timer?.isActive ?? false) {
+                        _timer!.cancel();
+                      }
+                      _timer = Timer(const Duration(milliseconds: 1000), () {
+                        setState(() {
+                          iconaNameDescSearch = const Icon(Icons.cancel);
+                          if (value.isEmpty) {
+                            iconaNameDescSearch = const Icon(Icons.search);
+                          }
+                        });
                       });
                     },
-                    title: const Text('Mostra tutte le categorie'),
-                    // subtitle: const Text(""),
+                    controller: nameDescSearchController,
+                    decoration: InputDecoration(
+                      labelText: "Ricerca per nome o descrizione",
+                      labelStyle: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(color: Colors.blueGrey),
+                      hintText: "Ricerca per nome o descrizione",
+                      hintStyle: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(
+                              color:
+                                  Theme.of(context).hintColor.withOpacity(0.3)),
+                      suffixIcon: IconButton(
+                        icon: iconaNameDescSearch,
+                        onPressed: () {
+                          setState(() {
+                            if (iconaNameDescSearch.icon == Icons.search) {
+                              iconaNameDescSearch = const Icon(Icons.cancel);
+                            } else {
+                              iconaNameDescSearch = const Icon(Icons.search);
+                              nameDescSearchController.text = "";
+                            }
+                          });
+                        },
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                      ),
+                      errorBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(color: Colors.red, width: 1.0),
+                      ),
+                      focusedErrorBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                            color: Colors.deepOrangeAccent, width: 1.0),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -274,10 +269,11 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                             cUserAppInstitutionModel.idUserAppInstitution,
                         idCategory: 0,
                         levelCategory: levelCategory,
-                        readAlsoDeleted: true,
-                        readImageData: false,
-                        pageSize: pageSize,
-                        pageNumber: pageNumber),
+                        readAlsoDeleted: readAlsoDeleted,
+                        numberResult: numberResult,
+                        nameDescSearch: nameDescSearchController.text,
+                        readImageData: readImageData,
+                        orderBy: orderBy),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -306,34 +302,41 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                           ),
                         );
                       } else {
-                        CategoryCatalogDataModel tSnapshot =
-                            snapshot.data as CategoryCatalogDataModel;
-                        List<CategoryCatalogModel> tSnapshotData =
-                            tSnapshot.data;
+                        var tSnapshot =
+                            snapshot.data as List<CategoryCatalogModel>;
 
-                        return SingleChildScrollView(
-                          child: PaginatedDataTable(
-                            showCheckboxColumn: false,
-                            showFirstLastButtons: true,
-                            rowsPerPage: pageSize,
-                            availableRowsPerPage: const [10, 25, 50],
-                            onPageChanged: (value) {
-                              setState(() {
-                                pageNumber = value;
-                              });
-                            },
-                            onRowsPerPageChanged: (value) {
-                              setState(() {
-                                pageSize = value!;
-                              });
-                            },
-                            columns: _createColumns(
-                                MediaQuery.of(context).size.width),
-                            source: _DataSource(
-                                data: tSnapshotData,
-                                onRowSelected: rowSelected,
-                                width: MediaQuery.of(context).size.width),
-                          ),
+                        double cHeight = 0;
+                        if (readImageData) {
+                          cHeight = widgetHeight;
+                        } else {
+                          cHeight = widgetHeightHalf;
+                        }
+
+                        return Column(
+                          children: [
+                            GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+                                  crossAxisCount:
+                                      (MediaQuery.of(context).size.width) ~/
+                                          widgetWitdh,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: gridMainAxisSpacing,
+                                  height: cHeight,
+                                ),
+                                physics: const ScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: tSnapshot.length,
+                                // scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  CategoryCatalogModel category =
+                                      tSnapshot[index];
+                                  return CategoryCatalogCard(
+                                    category: category,
+                                    readImageData: readImageData,
+                                  );
+                                }),
+                          ],
                         );
                       }
                     },
@@ -344,47 +347,10 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Wrap(
         direction: Axis.vertical,
         children: <Widget>[
-          ValueListenableBuilder<bool>(
-            builder: (BuildContext context, bool value, Widget? child) {
-              return Visibility(
-                visible: isRowSelected.value,
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(eccentricity: 0.5),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        AppRouter.categoryCatalogDetailRoute,
-                        arguments: CategoryCatalogModel(
-                            idCategory: cCategoryCatalogModel!.idCategory,
-                            nameCategory: cCategoryCatalogModel!.nameCategory,
-                            descriptionCategory:
-                                cCategoryCatalogModel!.descriptionCategory,
-                            parentIdCategory:
-                                cCategoryCatalogModel!.parentIdCategory,
-                            displayOrder: cCategoryCatalogModel!.displayOrder,
-                            deleted: cCategoryCatalogModel!.deleted,
-                            idUserAppInstitution:
-                                cUserAppInstitutionModel.idUserAppInstitution,
-                            imageData: cCategoryCatalogModel!.imageData,
-                            parentCategoryName:
-                                cCategoryCatalogModel!.parentCategoryName,
-                            giveIdsFlatStructureModel:
-                                GiveIdsFlatStructureModel.empty()),
-                      );
-                    },
-                    backgroundColor: Colors.deepOrangeAccent,
-                    child: const Icon(Icons.edit),
-                  ),
-                ),
-              );
-            },
-            valueListenable: isRowSelected,
-          ),
           Container(
             margin: const EdgeInsets.all(10),
             child: FloatingActionButton(

@@ -7,13 +7,20 @@ import 'package:np_casse/core/models/product.attribute.model.dart';
 class ProductAttributeAPI {
   final client = http.Client();
 
-  Future getProductAttribute({
-    required String? token,
-    required int idUserAppInstitution,
-  }) async {
-    final Uri uri = Uri.parse(
-        '${ApiRoutes.baseProductAttributeURL}?IdUserAppInstitution=$idUserAppInstitution');
-
+  Future getProductAttribute(
+      {required String? token,
+      required int idUserAppInstitution,
+      bool readAlsoDeleted = false,
+      String numberResult = '',
+      String nameDescSearch = '',
+      String orderBy = ''}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.baseProductAttributeURL}' +
+        '?IdUserAppInstitution=$idUserAppInstitution' +
+        '&ReadAlsoDeleted=$readAlsoDeleted' +
+        '&NumberResult=$numberResult' +
+        '&NameDescSearch=$nameDescSearch' +
+        '&OrderBy=$orderBy');
+    print(uri);
     final http.Response response = await client.get(
       uri,
       headers: {

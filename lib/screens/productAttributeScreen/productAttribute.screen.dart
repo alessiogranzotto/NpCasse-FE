@@ -5,7 +5,7 @@ import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
-import 'package:np_casse/screens/productAttributeScreen/widget/product.attribute.card.dart';
+import 'package:np_casse/screens/productAttributeScreen/product.attribute.card.dart';
 import 'package:provider/provider.dart';
 
 class ProductAttributeScreen extends StatefulWidget {
@@ -22,6 +22,11 @@ class _ProductAttributeScreenState extends State<ProductAttributeScreen> {
   final double widgetWitdh = 200;
   final double widgetRatio = 1;
   final double gridMainAxisSpacing = 10;
+
+  TextEditingController nameDescSearchController = TextEditingController();
+  bool readAlsoDeleted = false;
+  String numberResult = 'All';
+  String orderBy = '';
 
   @override
   void initState() {
@@ -94,7 +99,11 @@ class _ProductAttributeScreenState extends State<ProductAttributeScreen> {
                         context: context,
                         token: authenticationNotifier.token,
                         idUserAppInstitution:
-                            cUserAppInstitutionModel.idUserAppInstitution),
+                            cUserAppInstitutionModel.idUserAppInstitution,
+                        readAlsoDeleted: readAlsoDeleted,
+                        numberResult: numberResult,
+                        nameDescSearch: nameDescSearchController.text,
+                        orderBy: orderBy),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -123,10 +132,8 @@ class _ProductAttributeScreenState extends State<ProductAttributeScreen> {
                           ),
                         );
                       } else {
-                        ProductAttributeDataModel tSnapshot =
-                            snapshot.data as ProductAttributeDataModel;
-                        List<ProductAttributeModel> tSnapshotData =
-                            tSnapshot.data;
+                        List<ProductAttributeModel> tSnapshot =
+                            snapshot.data as List<ProductAttributeModel>;
                         return GridView.builder(
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
@@ -139,11 +146,11 @@ class _ProductAttributeScreenState extends State<ProductAttributeScreen> {
                             ),
                             physics: const ScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: tSnapshotData.length,
+                            itemCount: tSnapshot.length,
                             // scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) {
                               ProductAttributeModel productAttributeModel =
-                                  tSnapshotData[index];
+                                  tSnapshot[index];
                               return ProductAttributeCard(
                                 productAttributeModel: productAttributeModel,
                               );

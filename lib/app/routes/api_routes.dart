@@ -37,9 +37,7 @@ class ApiRoutes {
   static const String giveURL = "$casseURL/api/Give/Utility";
   // static const String storeURL = "$baseURL/api/Store";
 
-  static const String baseProductAttributeURL =
-      "$whURL/api/ProductAttributeValue";
-
-  static const String baseWhProductURL = "$whURL/api/Product";
+  static const String baseProductURL = "$whURL/api/Product";
   static const String baseCategoryURL = "$whURL/api/Category";
+  static const String baseProductAttributeURL = "$whURL/api/ProductAttribute";
 }

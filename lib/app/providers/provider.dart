@@ -3,9 +3,12 @@ import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/notifiers/home.notifier.dart';
+import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.dart';
+import 'package:np_casse/core/notifiers/product.attribute.mapping.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.notifier.dart';
 import 'package:np_casse/core/notifiers/project.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
 import 'package:np_casse/core/notifiers/store.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
@@ -29,7 +32,11 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => GiveNotifier()),
     ChangeNotifierProvider(create: (_) => WishlistProductNotifier()),
     ChangeNotifierProvider(create: (_) => ProductAttributeNotifier()),
+    ChangeNotifierProvider(create: (_) => ProductAttributeMappingNotifier()),
+    ChangeNotifierProvider(
+        create: (_) => ProductAttributeCombinationNotifier()),
     ChangeNotifierProvider(create: (_) => HomeNotifier()),
     ChangeNotifierProvider(create: (_) => CategoryCatalogNotifier()),
+    ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];
 }

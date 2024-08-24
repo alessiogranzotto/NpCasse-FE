@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/screens/productCatalogScreen/product.catalog.screen.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.dart';
 
 class ProductCatalogNavigator extends StatefulWidget {
   const ProductCatalogNavigator({super.key});

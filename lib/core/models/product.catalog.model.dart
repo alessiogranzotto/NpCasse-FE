@@ -1,66 +1,66 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
+import 'package:np_casse/core/models/product.attribute.combination.model.dart';
 
-class ProductCatalogDataModel {
-  ProductCatalogDataModel(
-      {required this.currentPage,
-      required this.totalPages,
-      required this.pageSize,
-      required this.totalCount,
-      required this.hasPrevious,
-      required this.hasNext,
-      required this.data});
-  late final int currentPage;
-  late final int totalPages;
-  late final int pageSize;
-  late final int totalCount;
-  late final bool hasPrevious;
-  late final bool hasNext;
-  late final List<ProductCatalogModel> data;
+// class ProductCatalogDataModel {
+//   ProductCatalogDataModel(
+//       {required this.currentPage,
+//       required this.totalPages,
+//       required this.pageSize,
+//       required this.totalCount,
+//       required this.hasPrevious,
+//       required this.hasNext,
+//       required this.data});
+//   late final int currentPage;
+//   late final int totalPages;
+//   late final int pageSize;
+//   late final int totalCount;
+//   late final bool hasPrevious;
+//   late final bool hasNext;
+//   late final List<ProductCatalogModel> data;
 
-  ProductCatalogDataModel.fromJson(Map<String, dynamic> json) {
-    currentPage = json['currentPage'];
-    totalPages = json['totalPages'];
-    pageSize = json['pageSize'];
-    totalCount = json['totalCount'];
-    hasPrevious = json['hasPrevious'];
-    hasNext = json['hasNext'];
+//   ProductCatalogDataModel.fromJson(Map<String, dynamic> json) {
+//     currentPage = json['currentPage'];
+//     totalPages = json['totalPages'];
+//     pageSize = json['pageSize'];
+//     totalCount = json['totalCount'];
+//     hasPrevious = json['hasPrevious'];
+//     hasNext = json['hasNext'];
 
-    if (json['data'] != null) {
-      data = List.from(json['data'])
-          .map((e) => ProductCatalogModel.fromJson(e))
-          .toList();
-    } else {
-      data = List.empty();
-    }
-  }
+//     if (json['data'] != null) {
+//       data = List.from(json['data'])
+//           .map((e) => ProductCatalogModel.fromJson(e))
+//           .toList();
+//     } else {
+//       data = List.empty();
+//     }
+//   }
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['currentPage'] = currentPage;
-    data['totalPages'] = totalPages;
-    data['pageSize'] = pageSize;
-    data['totalCount'] = totalCount;
-    data['hasPrevious'] = hasPrevious;
-    data['hasNext'] = hasNext;
-    data['data'] = data;
-    return data;
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     final data = <String, dynamic>{};
+//     data['currentPage'] = currentPage;
+//     data['totalPages'] = totalPages;
+//     data['pageSize'] = pageSize;
+//     data['totalCount'] = totalCount;
+//     data['hasPrevious'] = hasPrevious;
+//     data['hasNext'] = hasNext;
+//     data['data'] = data;
+//     return data;
+//   }
+// }
 
 class ProductCatalogModel {
   ProductCatalogModel(
       {required this.idProduct,
       required this.idCategory,
       required this.nameProduct,
+      required this.displayOrder,
       required this.descriptionProduct,
       required this.priceProduct,
       required this.freePriceProduct,
       required this.outOfAssortment,
       required this.barcode,
-      // required this.idWarehouse,
-      // required this.stockQuantity,
-      // required this.minStockQuantity,
       required this.deleted,
       required this.idUserAppInstitution,
       this.createdOnUtc,
@@ -68,23 +68,21 @@ class ProductCatalogModel {
       this.updatedOnUtc,
       this.updatedByUserAppInstitution,
       required this.imageData,
+      required this.categoryName,
       required this.giveIdsFlatStructureModel,
-
-      //CUSTOM
-      this.isSelected});
+      required this.productAttributeCombination,
+      required this.smartProductAttributeJson,
+      required this.isWishlisted});
 
   late final int idProduct;
   late final int idCategory;
   late final String nameProduct;
+  late final int displayOrder;
   late final String descriptionProduct;
   late final double priceProduct;
   late final bool freePriceProduct;
   late final bool outOfAssortment;
-  late final bool wishlisted;
   late final String barcode;
-  // late final int idWarehouse;
-  // late final double stockQuantity;
-  // late final double minStockQuantity;
   late final bool deleted;
   late final int idUserAppInstitution;
   DateTime? createdOnUtc;
@@ -92,15 +90,18 @@ class ProductCatalogModel {
   DateTime? updatedOnUtc;
   int? updatedByUserAppInstitution;
   late final String imageData;
+  late String categoryName;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
-
-  //CUSTOM
-  late bool? isSelected = false;
+  late final List<ProductAttributeCombinationModel> productAttributeCombination;
+  late final List<SmartProductAttributeJson> smartProductAttributeJson;
+//CUSTOM
+  late ValueNotifier<bool> isWishlisted;
 
   ProductCatalogModel.empty() {
     idProduct = 0;
     idCategory = 0;
     nameProduct = '';
+    displayOrder = 0;
     descriptionProduct = '';
     priceProduct = 0;
     freePriceProduct = false;
@@ -112,13 +113,15 @@ class ProductCatalogModel {
     deleted = false;
     imageData = '';
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
-    isSelected = false;
+    productAttributeCombination = List.empty();
+    smartProductAttributeJson = List.empty();
   }
 
   ProductCatalogModel.fromJson(Map<String, dynamic> json) {
     idProduct = json['idProduct'];
     idCategory = json['idCategory'];
     nameProduct = json['nameProduct'];
+    displayOrder = json['displayOrder'];
     descriptionProduct = json['descriptionProduct'];
     priceProduct = json['priceProduct'];
     freePriceProduct = json['freePriceProduct'];
@@ -127,8 +130,13 @@ class ProductCatalogModel {
     // idWarehouse = json['idWarehouse'];
     // stockQuantity = json['stockQuantity'];
     // minStockQuantity = json['minStockQuantity'];
+    isWishlisted = ValueNotifier<bool>(false);
     deleted = json['deleted'];
-
+    if (json['categoryName'] != null) {
+      categoryName = json['categoryName'];
+    } else {
+      categoryName = '';
+    }
     var dateTimeC =
         DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['createdOnUtc'], true);
     var dateLocalC = dateTimeC.toLocal();
@@ -142,6 +150,23 @@ class ProductCatalogModel {
     updatedOnUtc = dateLocalU;
     updatedByUserAppInstitution = json['updatedByUserAppInstitution'];
     imageData = json['imageData'] ?? '';
+    giveIdsFlatStructureModel =
+        GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
+    if (json['productAttributeCombinations'] != null) {
+      productAttributeCombination =
+          List.from(json['productAttributeCombinations'])
+              .map((e) => ProductAttributeCombinationModel.fromJson(e))
+              .toList();
+    } else {
+      productAttributeCombination = List.empty();
+    }
+    if (json['smartProductAttributeJson'] != null) {
+      smartProductAttributeJson = List.from(json['smartProductAttributeJson'])
+          .map((e) => SmartProductAttributeJson.fromJson(e))
+          .toList();
+    } else {
+      smartProductAttributeJson = List.empty();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -149,6 +174,7 @@ class ProductCatalogModel {
     data['idProduct'] = idProduct;
     data['idCategory'] = idCategory;
     data['nameProduct'] = nameProduct;
+    data['displayOrder'] = displayOrder;
     data['descriptionProduct'] = descriptionProduct;
     data['priceProduct'] = priceProduct;
     data['freePriceProduct'] = freePriceProduct;
@@ -158,8 +184,9 @@ class ProductCatalogModel {
     // data['stockQuantity'] = stockQuantity;
     // data['minStockQuantity'] = minStockQuantity;
     data['deleted'] = deleted;
-    data['createdByUserAppInstitution'] = createdByUserAppInstitution;
+    data['idUserAppInstitution'] = idUserAppInstitution;
     data['imageData'] = imageData;
+    data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     return data;
   }
 }

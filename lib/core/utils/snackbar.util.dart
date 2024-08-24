@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:np_casse/componenents/custom.snackbar/custom.snackbar.content.dart';
+import 'package:np_casse/componenents/custom.snackbar/src/content_type.dart';
 
 class SnackUtil {
   static stylishSnackBar(
@@ -63,7 +64,7 @@ class SnackUtil {
       elevation: 0,
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.transparent,
-      content: AwesomeSnackbarContent(
+      content: CustomSnackbarContent(
           title: title,
           message: message,
 

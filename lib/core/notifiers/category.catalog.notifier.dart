@@ -19,10 +19,6 @@ class CategoryCatalogNotifier with ChangeNotifier {
     currentCategoryCatalogModel = CategoryCatalogModel;
   }
 
-  void refresh() {
-    notifyListeners();
-  }
-
   Future getCategories(
       {required BuildContext context,
       required String? token,
@@ -30,9 +26,10 @@ class CategoryCatalogNotifier with ChangeNotifier {
       required int idCategory,
       required String levelCategory,
       required bool readAlsoDeleted,
+      required String numberResult,
+      required String nameDescSearch,
       required bool readImageData,
-      required int pageSize,
-      required int pageNumber}) async {
+      required String orderBy}) async {
     try {
       var response = await categoryCatalogAPI.getCategories(
           token: token,
@@ -40,9 +37,10 @@ class CategoryCatalogNotifier with ChangeNotifier {
           idCategory: idCategory,
           levelCategory: levelCategory,
           readAlsoDeleted: readAlsoDeleted,
+          numberResult: numberResult,
+          nameDescSearch: nameDescSearch,
           readImageData: readImageData,
-          pageSize: pageSize,
-          pageNumber: pageNumber);
+          orderBy: orderBy);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
@@ -56,8 +54,10 @@ class CategoryCatalogNotifier with ChangeNotifier {
                     contentType: "failure"));
           }
         } else {
-          CategoryCatalogDataModel categories =
-              CategoryCatalogDataModel.fromJson(parseData['okResult'] ?? '');
+          List<CategoryCatalogModel> categories =
+              List.from(parseData['okResult'])
+                  .map((e) => CategoryCatalogModel.fromJson(e))
+                  .toList();
           return categories;
           // notifyListeners();
         }
@@ -65,10 +65,58 @@ class CategoryCatalogNotifier with ChangeNotifier {
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Prodotti",
+            title: "Categorie",
             message: "Errore di connessione",
             contentType: "failure"));
       }
     }
+  }
+
+  Future addOrUpdateCategory(
+      {required BuildContext context,
+      required String? token,
+      required CategoryCatalogModel categoryCatalogModel}) async {
+    try {
+      bool isOk = false;
+      //SVUOTO SE IMMAGINE NON IMPOSTATA
+      // if (projectModel.imageProject == AppAssets.noImageString) {
+      //   projectModel.imageProject = '';
+      // }
+      var response = await categoryCatalogAPI.addOrUpdateCategory(
+          token: token, categoryCatalogModel: categoryCatalogModel);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Categorie",
+                    message: errorDescription,
+                    contentType: "failure"));
+            // Navigator.pop(context);
+          }
+        } else {
+          // ProjectModel projectDetail =
+          //     ProjectModel.fromJson(parseData['okResult']);
+          //return projectDetail;
+          // notifyListeners();
+        }
+      }
+      return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "progetti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  void refresh() {
+    notifyListeners();
   }
 }

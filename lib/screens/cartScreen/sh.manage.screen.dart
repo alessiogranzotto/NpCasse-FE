@@ -5,11 +5,8 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
-import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/cartScreen/widgets/sh.search.textfield.dart';
 import 'package:np_casse/screens/cartScreen/widgets/show.GiveSh.data.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class ShManageScreen extends StatefulWidget {
@@ -207,7 +204,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       shape: const CircleBorder(eccentricity: 0.5),
                       tooltip:
                           "Emissione ricevuta a favore di ${cStakeholderGiveModelSearch?.nome}",
-                      heroTag: 'Receipt',
+                      // heroTag: 'Receipt',
                       onPressed: () {
                         CartNotifier cartNotifier =
                             Provider.of<CartNotifier>(context, listen: false);
@@ -230,13 +227,13 @@ class _ShManageScreenState extends State<ShManageScreen> {
                             .then((value) {
                           if (value) {
                             Navigator.pop(context);
-                            PersistentNavBarNavigator.pushNewScreen(
-                              context,
-                              screen: const PdfInvoiceScreen(),
-                              withNavBar: true,
-                              pageTransitionAnimation:
-                                  PageTransitionAnimation.fade,
-                            );
+                            // PersistentNavBarNavigator.pushNewScreen(
+                            //   context,
+                            //   screen: const PdfInvoiceScreen(),
+                            //   withNavBar: true,
+                            //   pageTransitionAnimation:
+                            //       PageTransitionAnimation.fade,
+                            // );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackUtil.stylishSnackBar(
@@ -263,16 +260,16 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       shape: const CircleBorder(eccentricity: 0.5),
                       tooltip:
                           "Modifica anagrafica donatore ${cStakeholderGiveModelSearch?.nome}",
-                      heroTag: 'Edit',
+                      // heroTag: 'Edit',
                       onPressed: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: ShNewEditScreen(
-                              editStakeholderGiveModelSearch:
-                                  cStakeholderGiveModelSearch),
-                          withNavBar: true,
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
+                        // PersistentNavBarNavigator.pushNewScreen(
+                        //   context,
+                        //   screen: ShNewEditScreen(
+                        //       editStakeholderGiveModelSearch:
+                        //           cStakeholderGiveModelSearch),
+                        //   withNavBar: true,
+                        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                        // );
                       },
                       backgroundColor: Colors.deepPurpleAccent,
                       child: const Icon(Icons.edit),
@@ -290,14 +287,14 @@ class _ShManageScreenState extends State<ShManageScreen> {
                     child: FloatingActionButton(
                       shape: const CircleBorder(eccentricity: 0.5),
                       tooltip: "Nuova anagrafica donatore",
-                      heroTag: 'New',
+                      // heroTag: 'New',
                       onPressed: () {
-                        PersistentNavBarNavigator.pushNewScreen(
-                          context,
-                          screen: const ShNewEditScreen(),
-                          withNavBar: true,
-                          pageTransitionAnimation: PageTransitionAnimation.fade,
-                        );
+                        // PersistentNavBarNavigator.pushNewScreen(
+                        //   context,
+                        //   screen: const ShNewEditScreen(),
+                        //   withNavBar: true,
+                        //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                        // );
                       },
                       child: const Icon(Icons.add),
                     )),

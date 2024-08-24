@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:np_casse/app/constants/assets.dart';
 import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/componenents/text.form.field.dart';
+import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/helpers/snackbar.helper.dart';
 import 'package:provider/provider.dart';
@@ -26,8 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController = TextEditingController()..addListener(controllerListener);
     passwordController = TextEditingController()
       ..addListener(controllerListener);
-    // emailController.text = "meyer@meyer.it";
-    // passwordController.text = "sT!rme4yer";
+    emailController.text = "meyer@meyer.it";
+    passwordController.text = "sT!rme4yer";
   }
 
   void disposeControllers() {
@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  AGTextFormField(
+                                  CustomTextFormField(
                                     controller: emailController,
                                     labelText: AppStrings.email,
                                     keyboardType: TextInputType.emailAddress,
@@ -129,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return Padding(
                                         padding: const EdgeInsets.only(
                                             top: 20, bottom: 20),
-                                        child: AGTextFormField(
+                                        child: CustomTextFormField(
                                           obscureText: passwordObscure,
                                           controller: passwordController,
                                           labelText: AppStrings.password,
@@ -319,7 +319,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  AGTextFormField(
+                                  CustomTextFormField(
                                     controller: emailController,
                                     labelText: AppStrings.email,
                                     keyboardType: TextInputType.emailAddress,
@@ -341,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return Padding(
                                         padding: const EdgeInsets.only(
                                             top: 20, bottom: 20),
-                                        child: AGTextFormField(
+                                        child: CustomTextFormField(
                                           obscureText: passwordObscure,
                                           controller: passwordController,
                                           labelText: AppStrings.password,
@@ -535,7 +535,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    AGTextFormField(
+                                    CustomTextFormField(
                                       controller: emailController,
                                       labelText: AppStrings.email,
                                       keyboardType: TextInputType.emailAddress,
@@ -557,7 +557,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         return Padding(
                                           padding: const EdgeInsets.only(
                                               top: 20, bottom: 20),
-                                          child: AGTextFormField(
+                                          child: CustomTextFormField(
                                             obscureText: passwordObscure,
                                             controller: passwordController,
                                             labelText: AppStrings.password,

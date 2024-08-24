@@ -118,10 +118,8 @@ class _SideNavigationBarState extends State<SideNavigationBar> {
               _evaluateHeaderDivider(),
               // Navigation content
               Expanded(
-                child: Scrollbar(
-                  child: ListView(
-                    children: _generateItems(),
-                  ),
+                child: ListView(
+                  children: _generateItems(),
                 ),
               ),
               _evaluateFooterDivider(),

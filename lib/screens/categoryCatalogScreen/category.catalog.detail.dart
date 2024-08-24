@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
+import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
 typedef OnPickImageCallback = void Function(
@@ -28,11 +31,10 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
   final ValueNotifier<bool> isFreePriceProduct = ValueNotifier<bool>(false);
   String tImageString = '';
   bool isEdit = false;
+  bool deleted = false;
   bool panelIdsGiveExpanded = false;
   bool panelOtherExpanded = false;
 
-  final TextEditingController textEditingControllerIdCategory =
-      TextEditingController();
   final TextEditingController textEditingControllerNameCategory =
       TextEditingController();
   final TextEditingController textEditingControllerDescriptionCategory =
@@ -55,7 +57,11 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
   final TextEditingController textEditingControllerIdCatalogo =
       TextEditingController();
 
-  Future<List<CategoryCatalogModel>> getAvailableCategories() async {
+  int parentIdCategory = 0;
+  int idCategory = 0;
+  List<DropdownMenuItem<String>> availableCategory = [];
+
+  Future<void> getAvailableCategories(int cIdCategory) async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -63,24 +69,50 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
 
     CategoryCatalogNotifier categoryCatalogNotifier =
         Provider.of<CategoryCatalogNotifier>(context, listen: false);
-    var r = await categoryCatalogNotifier.getCategories(
-        context: context,
-        token: authenticationNotifier.token,
-        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-        idCategory: 0,
-        levelCategory: 'AllCategory',
-        readAlsoDeleted: false,
-        readImageData: false,
-        pageSize: -1 >>> 1,
-        pageNumber: 1);
-    print(r);
-    return r;
+    List<DropdownMenuItem<String>> tAvailableLevelCategory = [];
+    tAvailableLevelCategory.add(DropdownMenuItem(
+        child: Text('Categoria di primo livello'), value: '0'));
+    await categoryCatalogNotifier
+        .getCategories(
+            context: context,
+            token: authenticationNotifier.token,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+            idCategory: 0,
+            levelCategory: 'FirstLevelCategory',
+            readAlsoDeleted: false,
+            numberResult: 'All',
+            nameDescSearch: '',
+            readImageData: false,
+            orderBy: '')
+        .then((value) {
+      for (int i = 0; i < value.length; i++) {
+        //ESCLUDO SE STESSA
+        if (value[i].idCategory != cIdCategory) {
+          tAvailableLevelCategory.add(
+            DropdownMenuItem(
+                child: Text(value[i].nameCategory),
+                value: value[i].idCategory.toString()),
+          );
+        }
+      }
+      setState(() {
+        availableCategory = tAvailableLevelCategory;
+      });
+    });
+  }
+
+  void onChangeParentCategory(String value) {
+    parentIdCategory = int.tryParse(value) ?? 0;
   }
 
   @override
   void initState() {
-    getAvailableCategories();
-    isEdit = widget.categoryCatalogModelArgument.idCategory != 0;
+    parentIdCategory = widget.categoryCatalogModelArgument.parentIdCategory;
+    idCategory = widget.categoryCatalogModelArgument.idCategory;
+    isEdit = idCategory != 0;
+    getAvailableCategories(idCategory);
+    print(availableCategory);
+
     if (widget.categoryCatalogModelArgument.idCategory != 0) {
       textEditingControllerNameCategory.text =
           widget.categoryCatalogModelArgument.nameCategory.toString();
@@ -89,6 +121,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       textEditingControllerDisplayOrderCategory.text =
           widget.categoryCatalogModelArgument.displayOrder.toString();
 
+      deleted = widget.categoryCatalogModelArgument.deleted;
       tImageString = widget.categoryCatalogModelArgument.imageData;
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idFinalizzazione >
@@ -174,11 +207,8 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
-    // UserAppInstitutionNotifier userAppInstitutionNotifier =
-    //     Provider.of<UserAppInstitutionNotifier>(context);
-    // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
-    // StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
-    // ProductNotifier productNotifier = Provider.of<ProductNotifier>(context);
+    CategoryCatalogNotifier categoryCatalogNotifier =
+        Provider.of<CategoryCatalogNotifier>(context);
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
@@ -192,9 +222,6 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
             'Dettaglio categoria: ${widget.categoryCatalogModelArgument.nameCategory}',
             style: Theme.of(context).textTheme.headlineLarge,
           ),
-          // actions: [
-          //   IconButton(onPressed: () {}, icon: const Icon(Icons.check)),
-          // ],
         ),
         body: ListView(
           children: [
@@ -353,6 +380,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
+                      flex: 5,
                       child: Column(
                         children: [
                           Tooltip(
@@ -372,7 +400,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                         //onChanged: ,
                                         controller:
                                             textEditingControllerNameCategory,
-                                        minLines: 3,
+                                        minLines: 1,
                                         maxLines: 3,
                                         //maxLength: 300,
                                         //keyboardType: ,
@@ -398,6 +426,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                       ),
                     ),
                     Expanded(
+                      flex: 5,
                       child: Column(
                         children: [
                           Tooltip(
@@ -417,7 +446,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                         //onChanged: ,
                                         controller:
                                             textEditingControllerDescriptionCategory,
-                                        minLines: 3,
+                                        minLines: 1,
                                         maxLines: 3,
 
                                         //maxLength: 300,
@@ -443,55 +472,8 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                         ],
                       ),
                     ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
                     Expanded(
-                      child: Column(
-                        children: [
-                          Tooltip(
-                            message: 'Categoria padre',
-                            child: Card(
-                              color: Theme.of(context).cardColor,
-                              elevation: 4,
-                              child: ListTile(
-                                // title: Text(
-                                //   'qui ci va la descrizione del progetto',
-                                //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
-                                // ),
-                                subtitle: Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextField(
-                                        //onChanged: ,
-                                        controller:
-                                            textEditingControllerDisplayOrderCategory,
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(),
-
-                                        minLines: 1,
-                                        maxLines: 1,
-
-                                        onTapOutside: (event) {
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                trailing: const Icon(Icons.edit),
-                                leading: const Icon(Icons.sort),
-                                onTap: () {},
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
+                      flex: 3,
                       child: Column(
                         children: [
                           Tooltip(
@@ -534,46 +516,632 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                         ],
                       ),
                     ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          Tooltip(
+                            message: 'Prodotto cancellato',
+                            child: Card(
+                              color: Theme.of(context).cardColor,
+                              elevation: 4,
+                              child: ListTile(
+                                subtitle: Row(children: [
+                                  Expanded(
+                                    child: CheckboxListTile(
+                                        title: const SizedBox(
+                                            width: 100,
+                                            child: Text("Cancellato")),
+                                        value: deleted,
+                                        onChanged: (bool? value) {
+                                          // setState(() {
+                                          //   deleted = value!;
+                                          // });
+                                        },
+                                        controlAffinity:
+                                            ListTileControlAffinity.leading),
+                                  )
+                                ]),
+                                // trailing: const Icon(Icons.edit),
+                                leading: const Icon(Icons.delete_rounded),
+                                onTap: () {},
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-                ExpansionPanelList(
-                  expansionCallback: (panelIndex, isExpanded) {
-                    print(panelIndex);
-                    print(isExpanded);
-                    setState(() {
-                      if (panelIndex == 0) {
-                        panelIdsGiveExpanded = isExpanded;
-                      } else if (panelIndex == 1) {
-                        panelOtherExpanded = isExpanded;
-                      }
-                    });
-                    print(panelIdsGiveExpanded);
-                    print(panelOtherExpanded);
-                  },
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ExpansionPanel(
-                      headerBuilder: (BuildContext context, bool isExpanded) {
-                        return ListTile(
-                          title: Text('ID Give'),
-                          subtitle:
-                              Text('Inserire i dettagli degli Id di Give'),
-                        );
-                      },
-                      body: Text('IDs Give'),
-                      isExpanded: panelIdsGiveExpanded,
-                    ),
-                    ExpansionPanel(
-                      headerBuilder: (BuildContext context, bool isExpanded) {
-                        return ListTile(
-                          title: Text('Attributi prodotto'),
-                          subtitle: Text(
-                              'Inserire i dettagli degli attributo prodotto'),
-                        );
-                      },
-                      body: Text(''),
-                      isExpanded: panelOtherExpanded,
+                    Expanded(
+                      flex: 10,
+                      child: Column(
+                        children: [
+                          Tooltip(
+                            message: 'Categoria padre',
+                            child: Card(
+                              color: Theme.of(context).cardColor,
+                              elevation: 4,
+                              child: ListTile(
+                                // title: Text(
+                                //   'qui ci va la descrizione del progetto',
+                                //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
+                                // ),
+                                subtitle: Row(
+                                  children: [
+                                    Expanded(
+                                        child: CustomDropDownButtonFormField(
+                                      actualValue: parentIdCategory.toString(),
+                                      labelText: '',
+                                      listOfValue: availableCategory,
+                                      onItemChanged: (String value) {
+                                        onChangeParentCategory(value);
+                                      },
+                                    )),
+                                  ],
+                                ),
+                                trailing: const Icon(Icons.edit),
+                                leading: const Icon(Icons.book),
+                                onTap: () {},
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
+                ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ExpansionPanelList(
+                    expansionCallback: (panelIndex, isExpanded) {
+                      print(panelIndex);
+                      print(isExpanded);
+                      setState(() {
+                        panelIdsGiveExpanded = isExpanded;
+                      });
+                      print(panelIdsGiveExpanded);
+                      print(panelOtherExpanded);
+                    },
+                    children: [
+                      ExpansionPanel(
+                        headerBuilder: (BuildContext context, bool isExpanded) {
+                          return ListTile(
+                            title: Text('ID Give'),
+                            subtitle: Text('Inserire i dettagli degli Id Give'),
+                          );
+                        },
+                        body: Column(children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdFinalizzazione,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text(
+                                                      "Id Finalizzazione",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Fin",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdEvento,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text("Id Evento",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Ev",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdAttivita,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text("Id Attività",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Att",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdAgenda,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Ag",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text("Id Agenda",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdComunicazioni,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text(
+                                                      "Id Comunicazioni",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Com",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdTipDonazione,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text("Tipo Donazione",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Td",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdCatalogo,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      12.0), //or 15.0
+                                              child: Container(
+                                                height: 48.0,
+                                                width: 140.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                child: Center(
+                                                  child: Text("Id Catalogo",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headlineMedium),
+                                                ),
+                                              ),
+                                            ),
+                                            // CircleAvatar(
+                                            //   radius: 24,
+                                            //   backgroundColor: Theme.of(context)
+                                            //       .colorScheme
+                                            //       .secondaryContainer,
+                                            //   child: Text("Cat",
+                                            //       style: Theme.of(context)
+                                            //           .textTheme
+                                            //           .headlineLarge),
+                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ]),
+                        isExpanded: panelIdsGiveExpanded,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             )
@@ -594,12 +1162,13 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                   textEditingControllerNameCategory.text,
                               descriptionCategory:
                                   textEditingControllerDescriptionCategory.text,
-                              parentIdCategory: 0,
+                              parentIdCategory: parentIdCategory,
+                              parentCategoryName: '',
                               displayOrder: int.tryParse(
                                       textEditingControllerDisplayOrderCategory
                                           .text) ??
                                   0,
-                              deleted: false,
+                              deleted: deleted,
                               idUserAppInstitution:
                                   cUserAppInstitutionModel.idUserAppInstitution,
                               imageData: tImageString,
@@ -631,33 +1200,29 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                     0,
                               ));
 
-                      // productNotifier
-                      //     .addOrUpdateProduct(
-                      //         context: context,
-                      //         token: authenticationNotifier.token,
-                      //         idUserAppInstitution:
-                      //             cUserAppInstitutionModel.idUserAppInstitution,
-                      //         idProject: projectNotifier.getIdProject,
-                      //         idStore: storeNotifier.getIdStore,
-                      //         CategoryCatalogDataModel: CategoryCatalogDataModel)
-                      //     .then((value) {
-                      //   if (value) {
-                      //     ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackUtil.stylishSnackBar(
-                      //             title: "Prodotti",
-                      //             message: "Informazioni aggiornate",
-                      //             contentType: "success"));
-                      //     Navigator.of(context).pop();
-                      //     productNotifier.refresh();
-                      //   } else {
-                      //     ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackUtil.stylishSnackBar(
-                      //             title: "Prodotti",
-                      //             message: "Errore di connessione",
-                      //             contentType: "failure"));
-                      //     Navigator.of(context).pop();
-                      //   }
-                      // });
+                      categoryCatalogNotifier
+                          .addOrUpdateCategory(
+                              context: context,
+                              token: authenticationNotifier.token,
+                              categoryCatalogModel: categoryCatalogModel)
+                          .then((value) {
+                        if (value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackUtil.stylishSnackBar(
+                                  title: "Categorie",
+                                  message: "Informazioni aggiornate",
+                                  contentType: "success"));
+                          Navigator.of(context).pop();
+                          categoryCatalogNotifier.refresh();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackUtil.stylishSnackBar(
+                                  title: "Categorie",
+                                  message: "Errore di connessione",
+                                  contentType: "failure"));
+                          Navigator.of(context).pop();
+                        }
+                      });
                     },
                     //backgroundColor: Colors.deepOrangeAccent,
                     child: const Icon(Icons.check),
@@ -671,90 +1236,84 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                     shape: const CircleBorder(eccentricity: 0.5),
                     onPressed: () {
                       var dialog = CustomAlertDialog(
-                        title: "Eliminazione prodotto",
+                        title: "Eliminazione categoria",
                         content: "Si desidera procedere alla cancellazione?",
                         yesCallBack: () {
-                          // CategoryCatalogDataModel CategoryCatalogDataModel =
-                          //     CategoryCatalogDataModel(
-                          //         idProduct: widget
-                          //             .categoryCatalogModelArgument
-                          //             .idProduct,
-                          //         idStore: widget
-                          //             .categoryCatalogModelArgument.idStore,
-                          //         nameProduct:
-                          //             textEditingControllerNameProduct.text,
-                          //         descriptionProduct:
-                          //             textEditingControllerDescriptionProduct
-                          //                 .text,
-                          //         priceProduct: double.tryParse(
-                          //                 textEditingControllerPriceProduct
-                          //                     .text) ??
-                          //             0,
-                          //         imageProduct: tImageString,
-                          //         isWishlisted: ValueNotifier<bool>(false),
-                          //         isFreePriceProduct: isFreePriceProduct.value,
-                          //         isDeleted: true,
-                          //         isOutOfAssortment: isOutOfAssortment,
-                          //         giveIdsFlatStructureModel:
-                          //             GiveIdsFlatStructureModel(
-                          //           idFinalizzazione: int.tryParse(
-                          //                   textEditingControllerIdFinalizzazione
-                          //                       .text) ??
-                          //               0,
-                          //           idEvento: int.tryParse(
-                          //                   textEditingControllerIdEvento
-                          //                       .text) ??
-                          //               0,
-                          //           idAttivita: int.tryParse(
-                          //                   textEditingControllerIdAttivita
-                          //                       .text) ??
-                          //               0,
-                          //           idAgenda: int.tryParse(
-                          //                   textEditingControllerIdAgenda
-                          //                       .text) ??
-                          //               0,
-                          //           idComunicazioni: int.tryParse(
-                          //                   textEditingControllerIdComunicazioni
-                          //                       .text) ??
-                          //               0,
-                          //           idTipDonazione: int.tryParse(
-                          //                   textEditingControllerIdTipDonazione
-                          //                       .text) ??
-                          //               0,
-                          //           idCatalogo: int.tryParse(
-                          //                   textEditingControllerIdCatalogo
-                          //                       .text) ??
-                          //               0,
-                          //         ));
+                          deleted = true;
+                          CategoryCatalogModel categoryCatalogModel =
+                              CategoryCatalogModel(
+                                  idCategory: widget
+                                      .categoryCatalogModelArgument.idCategory,
+                                  nameCategory:
+                                      textEditingControllerNameCategory.text,
+                                  descriptionCategory:
+                                      textEditingControllerDescriptionCategory
+                                          .text,
+                                  parentIdCategory: parentIdCategory,
+                                  parentCategoryName: '',
+                                  displayOrder: int.tryParse(
+                                          textEditingControllerDisplayOrderCategory
+                                              .text) ??
+                                      0,
+                                  deleted: deleted,
+                                  idUserAppInstitution: cUserAppInstitutionModel
+                                      .idUserAppInstitution,
+                                  imageData: tImageString,
+                                  giveIdsFlatStructureModel:
+                                      GiveIdsFlatStructureModel(
+                                    idFinalizzazione: int.tryParse(
+                                            textEditingControllerIdFinalizzazione
+                                                .text) ??
+                                        0,
+                                    idEvento: int.tryParse(
+                                            textEditingControllerIdEvento
+                                                .text) ??
+                                        0,
+                                    idAttivita: int.tryParse(
+                                            textEditingControllerIdAttivita
+                                                .text) ??
+                                        0,
+                                    idAgenda: int.tryParse(
+                                            textEditingControllerIdAgenda
+                                                .text) ??
+                                        0,
+                                    idComunicazioni: int.tryParse(
+                                            textEditingControllerIdComunicazioni
+                                                .text) ??
+                                        0,
+                                    idTipDonazione: int.tryParse(
+                                            textEditingControllerIdTipDonazione
+                                                .text) ??
+                                        0,
+                                    idCatalogo: int.tryParse(
+                                            textEditingControllerIdCatalogo
+                                                .text) ??
+                                        0,
+                                  ));
 
-                          // productNotifier
-                          //     .addOrUpdateProduct(
-                          //         context: context,
-                          //         token: authenticationNotifier.token,
-                          //         idUserAppInstitution: cUserAppInstitutionModel
-                          //             .idUserAppInstitution,
-                          //         idProject: projectNotifier.getIdProject,
-                          //         idStore: storeNotifier.getIdStore,
-                          //         CategoryCatalogDataModel:
-                          //             CategoryCatalogDataModel)
-                          //     .then((value) {
-                          //   if (value) {
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //         SnackUtil.stylishSnackBar(
-                          //             title: "Prodotti",
-                          //             message: "Informazioni aggiornate",
-                          //             contentType: "success"));
-                          //     Navigator.of(context).pop();
-                          //     productNotifier.refresh();
-                          //   } else {
-                          //     ScaffoldMessenger.of(context).showSnackBar(
-                          //         SnackUtil.stylishSnackBar(
-                          //             title: "Prodotti",
-                          //             message: "Errore di connessione",
-                          //             contentType: "failure"));
-                          //     Navigator.of(context).pop();
-                          //   }
-                          // });
+                          categoryCatalogNotifier
+                              .addOrUpdateCategory(
+                                  context: context,
+                                  token: authenticationNotifier.token,
+                                  categoryCatalogModel: categoryCatalogModel)
+                              .then((value) {
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackUtil.stylishSnackBar(
+                                      title: "Categorie",
+                                      message: "Informazioni aggiornate",
+                                      contentType: "success"));
+                              Navigator.of(context).pop();
+                              categoryCatalogNotifier.refresh();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackUtil.stylishSnackBar(
+                                      title: "Categorie",
+                                      message: "Errore di connessione",
+                                      contentType: "failure"));
+                              Navigator.of(context).pop();
+                            }
+                          });
                         },
                         noCallBack: () {},
                       );

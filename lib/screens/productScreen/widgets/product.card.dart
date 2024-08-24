@@ -1,278 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:np_casse/app/routes/app_routes.dart';
-// import 'package:np_casse/app/utilities/image_utils.dart';
-// import 'package:np_casse/core/models/user.app.institution.model.dart';
-// import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-// import 'package:np_casse/core/notifiers/cart.notifier.dart';
-// import 'package:np_casse/core/notifiers/product.card.notifier.dart';
-// import 'package:np_casse/core/notifiers/userAppInstitution.notifier.dart';
-// import 'package:np_casse/core/utils/snackbar.util.dart';
-// import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
-// import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
-// import 'package:provider/provider.dart';
-// import 'package:np_casse/core/models/product.model.dart';
-// import 'package:np_casse/core/notifiers/product.notifier.dart';
-
-// class ProductCard extends StatefulWidget {
-//   const ProductCard({Key? key, required this.product}) : super(key: key);
-//   final ProductModel product;
-
-//   @override
-//   State<ProductCard> createState() => _ProductCardState();
-// }
-
-// class _ProductCardState extends State<ProductCard> {
-//   @override
-//   Widget build(BuildContext context) {
-//     // UserAppInstitutionNotifier userAppInstitutionNotifier =
-//     //     Provider.of<UserAppInstitutionNotifier>(context);
-//     AuthenticationNotifier authenticationNotifier =
-//         Provider.of<AuthenticationNotifier>(context);
-//     ProductNotifier productNotifier = Provider.of<ProductNotifier>(context);
-//     CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
-//     ProductCardNotifier productCardNotifier =
-//         Provider.of<ProductCardNotifier>(context);
-
-//     UserAppInstitutionModel cUserAppInstitutionModel =
-//         authenticationNotifier.getSelectedUserAppInstitution();
-
-//     productCardNotifier.setInitialQuantity(widget.product.idProduct);
-
-//     return StatefulBuilder(
-//       builder: (BuildContext context, StateSetter setState) {
-//         return Card(
-//           elevation: 8,
-//           child: Container(
-//             //margin: const EdgeInsets.all(2),
-//             decoration: BoxDecoration(
-//                 boxShadow: [
-//                   BoxShadow(
-//                       color: Theme.of(context).shadowColor.withOpacity(0.6),
-//                       offset: const Offset(0.0, 0.0), //(x,y)
-//                       blurRadius: 4.0,
-//                       blurStyle: BlurStyle.solid)
-//                 ],
-//                 //color: Colors.white,
-//                 color: Theme.of(context).cardColor),
-
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Container(
-//                   height: 150,
-//                   decoration: BoxDecoration(
-//                     image: DecorationImage(
-//                         fit: BoxFit.fitHeight,
-//                         image: (ImageUtils.getImageFromString(
-//                                 stringImage: widget.product.imageProduct)
-//                             .image)
-//                         // (product.imageProduct as ImageProvider)
-//                         ),
-//                   ),
-//                 ),
-//                 Row(
-//                   children: [
-//                     Column(
-//                       children: [
-//                         Padding(
-//                           padding: const EdgeInsets.all(8.0),
-//                           child: Text(
-//                             widget.product.nameProduct, //
-//                             maxLines: 2,
-//                             overflow: TextOverflow.ellipsis,
-//                             style: Theme.of(context).textTheme.titleSmall,
-//                           ),
-//                         ),
-//                         Padding(
-//                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-//                           child: Text(
-//                             widget.product.descriptionProduct,
-//                             maxLines: 3,
-//                             overflow: TextOverflow.ellipsis,
-//                             style: Theme.of(context).textTheme.bodyMedium,
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                     Expanded(
-//                       child: Container(
-//                         alignment: Alignment.topRight,
-//                         child: Padding(
-//                           padding: const EdgeInsets.all(20.0),
-//                           child: Text(
-//                             '€ ${widget.product.priceProduct.toString()}',
-//                             style: Theme.of(context).textTheme.titleMedium,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//                 const SizedBox(
-//                   height: 10,
-//                 ),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.start,
-//                   children: [
-//                     Row(
-//                       mainAxisSize: MainAxisSize.min,
-//                       children: [
-//                         SizedBox(
-//                           height: 30,
-//                           width: 130,
-//                           child: Row(
-//                             children: [
-//                               IconButton(
-//                                   onPressed: () {
-//                                     setState(() =>
-//                                         productCardNotifier.subtractQuantity(
-//                                             widget.product.idProduct));
-//                                   },
-//                                   icon: const Icon(Icons.remove)),
-//                               Text(
-//                                 productCardNotifier
-//                                     .getQuantity(widget.product.idProduct),
-//                                 style: Theme.of(context).textTheme.titleMedium,
-//                               ),
-//                               IconButton(
-//                                   onPressed: () {
-//                                     setState(() => productCardNotifier
-//                                         .addQuantity(widget.product.idProduct));
-//                                   },
-//                                   icon: const Icon(Icons.add)),
-//                             ],
-//                           ),
-//                         ),
-//                         const SizedBox(
-//                           width: 1,
-//                         ),
-//                         SizedBox(
-//                           height: 30,
-//                           width: 110,
-//                           child: ElevatedButton(
-//                             style: ButtonStyle(
-//                                 foregroundColor:
-//                                     MaterialStateProperty.all<Color>(
-//                                         Colors.white),
-//                                 backgroundColor:
-//                                     MaterialStateProperty.all<Color>(
-//                                         Colors.red),
-//                                 shape: MaterialStateProperty.all<
-//                                         RoundedRectangleBorder>(
-//                                     RoundedRectangleBorder(
-//                                         borderRadius:
-//                                             BorderRadius.circular(18.0),
-//                                         side: const BorderSide(
-//                                             color: Colors.red)))),
-//                             child: const Icon(Icons.shopping_cart),
-//                             onPressed: () {
-//                               cartNotifier
-//                                   .addToCart(
-//                                       context: context,
-//                                       token: authenticationNotifier.token,
-//                                       idUserAppInstitution:
-//                                           cUserAppInstitutionModel
-//                                               .idUserAppInstitution,
-//                                       idProduct: widget.product.idProduct,
-//                                       quantity: int.tryParse(
-//                                               productCardNotifier.getQuantity(
-//                                                   widget.product.idProduct)) ??
-//                                           1)
-//                                   .then((value) {
-//                                 if (value) {
-//                                   ScaffoldMessenger.of(context).showSnackBar(
-//                                     SnackUtil.stylishSnackBar(
-//                                       text: 'Added To Cart',
-//                                       context: context,
-//                                     ),
-//                                   );
-//                                   Navigator.of(context)
-//                                       .pushNamed(AppRouter.homeRoute);
-//                                 } else {
-//                                   ScaffoldMessenger.of(context).showSnackBar(
-//                                     SnackUtil.stylishSnackBar(
-//                                       text: 'Oops Something Went Wrong',
-//                                       context: context,
-//                                     ),
-//                                   );
-//                                 }
-//                               });
-//                             },
-//                           ),
-//                         ),
-//                       ],
-//                     )
-//                   ],
-//                 ),
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.end,
-//                   children: [
-//                     Padding(
-//                       padding: const EdgeInsets.all(8.0),
-//                       child: Row(
-//                         mainAxisSize: MainAxisSize.max,
-//                         children: [
-//                           SizedBox(
-//                             height: 30,
-//                             width: 30,
-//                             child: IconButton(
-//                                 onPressed: () {
-//                                   // projectNotifier.wishlistingProject(
-//                                   //     context: context,
-//                                   //     token: authenticationNotifier.token,
-//                                   //     idUserAppInstitution:
-//                                   //         UserAppInstitutionNotifier.getidUserAppInstitution,
-//                                   //     projectModel: project);
-//                                 },
-//                                 icon: const Icon(
-//                                   Icons.favorite_border,
-//                                   size: 20,
-//                                 )),
-//                           ),
-//                           SizedBox(
-//                             height: 30,
-//                             width: 30,
-//                             child: IconButton(
-//                                 onPressed: () async {
-//                                   productNotifier.setProduct(widget.product);
-//                                   PersistentNavBarNavigator.pushNewScreen(
-//                                       context,
-//                                       screen: ProductDetailScreen(
-//                                         productModelArgument: ProductModel(
-//                                             idProduct: widget.product.idProduct,
-//                                             idStore: widget.product.idStore,
-//                                             nameProduct:
-//                                                 widget.product.nameProduct,
-//                                             descriptionProduct: widget
-//                                                 .product.descriptionProduct,
-//                                             priceProduct:
-//                                                 widget.product.priceProduct,
-//                                             imageProduct:
-//                                                 widget.product.imageProduct),
-//                                       ),
-//                                       withNavBar: true,
-//                                       pageTransitionAnimation:
-//                                           PageTransitionAnimation.fade);
-//                                 },
-//                                 icon: const Icon(
-//                                   Icons.edit,
-//                                   size: 20,
-//                                 )),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
@@ -283,8 +8,6 @@ import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/product.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:provider/provider.dart';
 
 class ProductCard extends StatelessWidget {
@@ -649,29 +372,29 @@ class ProductCard extends StatelessWidget {
                           child: IconButton(
                               onPressed: () {
                                 productNotifier.setProduct(product);
-                                PersistentNavBarNavigator.pushNewScreen(context,
-                                    screen: ProductDetailScreen(
-                                      productModelArgument: ProductModel(
-                                          idProduct: product.idProduct,
-                                          idStore: product.idStore,
-                                          nameProduct: product.nameProduct,
-                                          descriptionProduct:
-                                              product.descriptionProduct,
-                                          priceProduct: product.priceProduct,
-                                          imageProduct: product.imageProduct,
-                                          isWishlisted:
-                                              ValueNotifier<bool>(false),
-                                          isDeleted: product.isDeleted,
-                                          isOutOfAssortment:
-                                              product.isOutOfAssortment,
-                                          isFreePriceProduct:
-                                              product.isFreePriceProduct,
-                                          giveIdsFlatStructureModel: product
-                                              .giveIdsFlatStructureModel),
-                                    ),
-                                    withNavBar: true,
-                                    pageTransitionAnimation:
-                                        PageTransitionAnimation.fade);
+                                // PersistentNavBarNavigator.pushNewScreen(context,
+                                //     screen: ProductDetailScreen(
+                                //       productModelArgument: ProductModel(
+                                //           idProduct: product.idProduct,
+                                //           idStore: product.idStore,
+                                //           nameProduct: product.nameProduct,
+                                //           descriptionProduct:
+                                //               product.descriptionProduct,
+                                //           priceProduct: product.priceProduct,
+                                //           imageProduct: product.imageProduct,
+                                //           isWishlisted:
+                                //               ValueNotifier<bool>(false),
+                                //           isDeleted: product.isDeleted,
+                                //           isOutOfAssortment:
+                                //               product.isOutOfAssortment,
+                                //           isFreePriceProduct:
+                                //               product.isFreePriceProduct,
+                                //           giveIdsFlatStructureModel: product
+                                //               .giveIdsFlatStructureModel),
+                                //     ),
+                                //     withNavBar: true,
+                                //     pageTransitionAnimation:
+                                //         PageTransitionAnimation.fade);
                               },
                               icon: const Icon(
                                 Icons.edit,
