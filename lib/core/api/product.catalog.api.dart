@@ -17,7 +17,8 @@ class ProductCatalogAPI {
       String nameDescSearch = '',
       bool readImageData = false,
       String orderBy = '',
-      bool showVariant = false}) async {
+      bool showVariant = false,
+      bool viewOutOfAssortment = false}) async {
     final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
         '?IdUserAppInstitution=$idUserAppInstitution' +
         '&IdCategory=$idCategory' +
@@ -26,7 +27,8 @@ class ProductCatalogAPI {
         '&NameDescSearch=$nameDescSearch' +
         '&ReadImageData=$readImageData' +
         '&OrderBy=$orderBy' +
-        '&ShowVariant=$showVariant');
+        '&ShowVariant=$showVariant' +
+        '&viewOutOfAssortment=$viewOutOfAssortment');
     print(uri);
     final http.Response response = await client.get(
       uri,

@@ -75,7 +75,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
   int idCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
 
-  Future<void> getAvailableCategories() async {
+  Future<void> getAvailableCategories(int cIdCategory) async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -91,7 +91,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
             context: context,
             token: authenticationNotifier.token,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-            idCategory: 0,
+            idCategory: cIdCategory,
             levelCategory: 'SecondLevelCategory',
             readAlsoDeleted: false,
             numberResult: 'All',
@@ -115,15 +115,15 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
     });
   }
 
-  void onChangeCategory(String value) {
-    idCategory = int.tryParse(value) ?? 0;
+  void onChangeCategory(String? value) {
+    idCategory = value == null ? 0 : int.tryParse(value) ?? 0;
   }
 
   @override
   void initState() {
     idCategory = widget.productCatalogModelArgument.idCategory;
     isEdit = widget.productCatalogModelArgument.idProduct != 0;
-    getAvailableCategories();
+    getAvailableCategories(0);
     print(availableCategory);
 
     if (widget.productCatalogModelArgument.idCategory != 0) {
@@ -565,14 +565,15 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   children: [
                                     Expanded(
                                         child: CustomDropDownButtonFormField(
+                                      enabled: true,
                                       validator: (value) =>
                                           value!.toString().isEmpty
-                                              ? "Inserire la nazione"
+                                              ? "Inserire la categoria"
                                               : null,
                                       actualValue: idCategory.toString(),
                                       labelText: '',
                                       listOfValue: availableCategory,
-                                      onItemChanged: (String value) {
+                                      onItemChanged: (String? value) {
                                         onChangeCategory(value);
                                       },
                                     )),
@@ -1369,7 +1370,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                         0,
                     freePriceProduct: freePriceProduct.value,
                     outOfAssortment: outOfAssortment.value,
-                    isWishlisted: ValueNotifier<bool>(false),
+                    wishlisted: false,
                     barcode: textEditingControllerBarcodeProduct.text,
                     deleted: deleted,
                     idUserAppInstitution:
@@ -1462,7 +1463,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           0,
                                   freePriceProduct: freePriceProduct.value,
                                   outOfAssortment: outOfAssortment.value,
-                                  isWishlisted: ValueNotifier<bool>(false),
+                                  wishlisted: false,
                                   barcode:
                                       textEditingControllerBarcodeProduct.text,
                                   deleted: deleted,

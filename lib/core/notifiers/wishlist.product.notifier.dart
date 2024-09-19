@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/wishlist.product.api.dart';
-import 'package:np_casse/core/models/product.model.dart';
+import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class WishlistProductNotifier with ChangeNotifier {
@@ -42,8 +42,8 @@ class WishlistProductNotifier with ChangeNotifier {
                     contentType: "failure"));
           }
         } else {
-          List<ProductModel> products = List.from(parseData['okResult'])
-              .map((e) => ProductModel.fromJson(e))
+          List<ProductCatalogModel> products = List.from(parseData['okResult'])
+              .map((e) => ProductCatalogModel.fromJson(e))
               .toList();
           return products;
           // notifyListeners();

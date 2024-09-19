@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/home.notifier.dart';
 import 'package:np_casse/screens/userAppIinstitutionScreen/widget/show.user.app.institution.dart';
 import 'package:provider/provider.dart';
 //import 'package:np_casse/core/notifiers/user.notifier.dart';
@@ -15,7 +14,7 @@ class UserAppInstitutionScreen extends StatelessWidget {
         Provider.of<AuthenticationNotifier>(context);
     // UserAppInstitutionNotifier userAppInstitutionNotifier =
     //     Provider.of<UserAppInstitutionNotifier>(context);
-    HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
+    // HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
     // UserInstitutionModel? selectedUserInstitution;
     // InstitutionModel? selectedInstitution;
     // String nameInstitution = 'Prova';
@@ -28,7 +27,7 @@ class UserAppInstitutionScreen extends StatelessWidget {
 
     void userAppInstitutionSelected(UserAppInstitutionModel? val) {
       authenticationNotifier.setSelectedUserAppInstitution(val);
-      homeNotifier.setStateManagementFalse();
+      // homeNotifier.setStateManagementFalse();
     }
 
     return SafeArea(

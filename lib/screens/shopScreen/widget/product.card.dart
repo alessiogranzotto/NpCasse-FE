@@ -1,32 +1,26 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
-import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
-import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/models/cart.model.dart';
+import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
-import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/product.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/disable.focus.node.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
 class ProductCard extends StatefulWidget {
-  const ProductCard({
-    super.key,
-    required this.productCatalog,
-    required this.areAllWithNoImage,
-    required this.comeFromWishList,
-  });
+  const ProductCard(
+      {super.key,
+      required this.productCatalog,
+      required this.areAllWithNoImage});
   final ProductCatalogModel productCatalog;
   final bool areAllWithNoImage;
-  final bool comeFromWishList;
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -36,11 +30,46 @@ class _ProductCardState extends State<ProductCard> {
   ProductCatalogModel productCatalog = ProductCatalogModel.empty();
   List<String?> selectedValueVariant = [];
 
+  ValueNotifier<double> priceNotifier = ValueNotifier<double>(0);
+  ValueNotifier<int> quantityForProductNotifier = ValueNotifier<int>(1);
+  ValueNotifier<double> freePriceProductNotifier = ValueNotifier<double>(0);
+  ValueNotifier<bool> wishListedNotifier = ValueNotifier<bool>(false);
+  bool enableQuantity = false;
+  bool enableVariants = false;
+  bool enablePrice = false;
+  ValueNotifier<bool> addToCartButtonEnabled = ValueNotifier<bool>(false);
+
+  CurrencyTextFieldController textEditingControllerFreePriceProduct =
+      CurrencyTextFieldController();
+
+  TextEditingController textEditingControllerNoteProduct =
+      TextEditingController();
+  bool checkEnableButton() {
+    return enableQuantity && enablePrice && enableVariants;
+  }
+
+  void freePriceOnChange() {
+    bool enablePrice = false;
+    //final text = textEditingControllerFreePriceProduct.text;
+    var value = double.tryParse(
+        textEditingControllerFreePriceProduct.text.replaceAll(',', '.'));
+    //var value = double.tryParse(text);
+    if (value != null) {
+      freePriceProductNotifier.value = value;
+    } else {
+      freePriceProductNotifier.value = 0;
+    }
+    if (freePriceProductNotifier.value > 0) {
+      enablePrice = true;
+    } else {
+      enablePrice = false;
+    }
+    addToCartButtonEnabled.value = enablePrice && enableVariants;
+  }
+
   void variantChanged(int index, String? value) {
-    int totalNrVariant = productCatalog.smartProductAttributeJson.length;
     selectedValueVariant[index] = value!;
 
-//DELLA COMBO SELEZIONATA RECUPERO GLI INDICI CHE SI ABBINANO
     List<int> machingInt = [];
     for (int i = 0;
         i < productCatalog.smartProductAttributeJson[index].value.length;
@@ -67,13 +96,22 @@ class _ProductCardState extends State<ProductCard> {
         }
       }
     }
+
+    enableVariants = true;
+    if (selectedValueVariant.length > 0) {
+      for (int i = 0; i < selectedValueVariant.length; i++) {
+        if (selectedValueVariant[i]?.isEmpty ?? true) {
+          enableVariants = false;
+        }
+      }
+    }
+    addToCartButtonEnabled.value = checkEnableButton();
+    getProductPrice();
   }
 
-  Future<String> getProductPrice() async {
-    String result = productCatalog.priceProduct.toString();
-
+  getProductPrice() {
+    double result = priceNotifier.value;
     bool guard = selectedValueVariant.any((element) => element != null);
-
     if (guard) {
       List<String> parameters = [];
       for (int i = 0;
@@ -93,9 +131,7 @@ class _ProductCardState extends State<ProductCard> {
       ProductCatalogNotifier productCatalogNotifier =
           Provider.of<ProductCatalogNotifier>(context, listen: false);
 
-      List<DropdownMenuItem<String>> tAvailableLevelCategory = [];
-
-      await productCatalogNotifier
+      productCatalogNotifier
           .getProductPrice(
               context: context,
               token: authenticationNotifier.token,
@@ -104,49 +140,60 @@ class _ProductCardState extends State<ProductCard> {
               idProduct: productCatalog.idProduct,
               parameters: parameters)
           .then((value) {
-        var t = value as List<CategoryCatalogModel>;
-        result = t.first.nameCategory;
-        tAvailableLevelCategory.add(
-          DropdownMenuItem(child: Text('Selezionare la categoria'), value: '0'),
-        );
-        for (int i = 0; i < value.length; i++) {
-          tAvailableLevelCategory.add(
-            DropdownMenuItem(
-                child: Text(value[i].nameCategory),
-                value: value[i].idCategory.toString()),
-          );
-        }
+        result = value;
+        priceNotifier.value = result;
+        textEditingControllerFreePriceProduct.text = result.toStringAsFixed(2);
       });
     }
-
-    return result;
   }
 
   @override
   void initState() {
     super.initState();
     productCatalog = widget.productCatalog;
+    wishListedNotifier = ValueNotifier<bool>(productCatalog.wishlisted);
+    priceNotifier = ValueNotifier<double>(productCatalog.priceProduct);
+
+    if (widget.productCatalog.freePriceProduct) {
+      freePriceProductNotifier = ValueNotifier(productCatalog.priceProduct);
+    }
+
+    textEditingControllerFreePriceProduct = CurrencyTextFieldController(
+        decimalSymbol: ',',
+        thousandSymbol: '',
+        currencySeparator: '',
+        currencySymbol: '',
+        enableNegative: false,
+        numberOfDecimals: 2,
+        initDoubleValue: productCatalog.priceProduct,
+        maxDigits: 8);
+
+    textEditingControllerFreePriceProduct.addListener(freePriceOnChange);
     selectedValueVariant = List.generate(
         productCatalog.smartProductAttributeJson.length, (index) => null);
-    // selectedProductAttributeJson =
-    //     List<List<ProductAttributeJson>>.empty(growable: true);
-    // for (int i = 0;
-    //     i < productCatalog.productAttributeCombination.length;
-    //     i++) {
-    //   for (int j = 0;
-    //       i <
-    //           productCatalog
-    //               .productAttributeCombination[i].productAttributeJson.length;
-    //       j++) {
-    //     ProductAttributeJson cProductAttributeJson = ProductAttributeJson(
-    //         idProductAttribute: productCatalog.productAttributeCombination[i]
-    //             .productAttributeJson[j].idProductAttribute,
-    //         value: productCatalog
-    //             .productAttributeCombination[i].productAttributeJson[j].value);
+    for (int i = 0; i < selectedValueVariant.length; i++) {
+      var itemSelectedFromBarcode = productCatalog
+          .smartProductAttributeJson[i].value
+          .where((element) => element.selectedFromBarcode == true);
+      if (itemSelectedFromBarcode.length > 0) {
+        selectedValueVariant[i] = itemSelectedFromBarcode.first.value;
+      }
+    }
 
-    //     selectedProductAttributeJson[j].add(cProductAttributeJson);
-    //   }
-    // }
+    enableQuantity = enablePrice = quantityForProductNotifier.value > 0;
+    (productCatalog.priceProduct > 0 && productCatalog.freePriceProduct) ||
+        (!productCatalog.freePriceProduct &&
+            quantityForProductNotifier.value > 0);
+    enableVariants = selectedValueVariant.length == 0;
+    if (selectedValueVariant.length > 0) {
+      enableVariants = true;
+      for (int i = 0; i < selectedValueVariant.length; i++) {
+        if (selectedValueVariant[i]?.isEmpty ?? true) {
+          enableVariants = false;
+        }
+      }
+    }
+    addToCartButtonEnabled = ValueNotifier(checkEnableButton());
   }
 
   @override
@@ -159,49 +206,6 @@ class _ProductCardState extends State<ProductCard> {
 
     UserAppInstitutionModel? cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-
-    ValueNotifier<int> quantityForProduct = ValueNotifier(1);
-
-    ValueNotifier<double> freePriceProduct = ValueNotifier(0);
-    if (widget.productCatalog.freePriceProduct) {
-      freePriceProduct = ValueNotifier(productCatalog.priceProduct);
-    }
-    ValueNotifier<bool> addToCartButtonEnabled = ValueNotifier(
-        (productCatalog.priceProduct > 0 && productCatalog.freePriceProduct) ||
-            (!productCatalog.freePriceProduct && quantityForProduct.value > 0));
-
-    CurrencyTextFieldController textEditingControllerFreePriceProduct =
-        CurrencyTextFieldController(
-            decimalSymbol: ',',
-            thousandSymbol: '',
-            currencySeparator: '',
-            currencySymbol: '',
-            enableNegative: false,
-            numberOfDecimals: 2,
-            initDoubleValue: productCatalog.priceProduct,
-            maxDigits: 8);
-
-    void freePriceOnChange() {
-      //final text = textEditingControllerFreePriceProduct.text;
-      var value = double.tryParse(
-          textEditingControllerFreePriceProduct.text.replaceAll(',', '.'));
-      //var value = double.tryParse(text);
-      if (value != null) {
-        freePriceProduct.value = value;
-      } else {
-        freePriceProduct.value = 0;
-      }
-      if (freePriceProduct.value > 0) {
-        addToCartButtonEnabled.value = true;
-      } else {
-        addToCartButtonEnabled.value = false;
-        // if (textEditingControllerFreePriceProduct.text == "") {
-        //   textEditingControllerFreePriceProduct.text = "0";
-        // }
-      }
-    }
-
-    textEditingControllerFreePriceProduct.addListener(freePriceOnChange);
 
     return Card(
       elevation: 8,
@@ -276,8 +280,7 @@ class _ProductCardState extends State<ProductCard> {
               ),
             ),
             Container(
-              color: Colors.amber[600],
-              height: 200,
+              height: 150,
               child: GridView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: productCatalog.smartProductAttributeJson.length,
@@ -285,7 +288,7 @@ class _ProductCardState extends State<ProductCard> {
                   crossAxisCount: 1,
                   childAspectRatio: 4,
                   mainAxisSpacing: 2.0,
-                  crossAxisSpacing: 5.0,
+                  crossAxisSpacing: 2.0,
                 ),
                 itemBuilder: (BuildContext context, int index) {
                   var cSmartProductAttributeJson =
@@ -354,18 +357,20 @@ class _ProductCardState extends State<ProductCard> {
 
                       onChanged: (String? value) {
                         variantChanged(index, value);
+
                         setState(() {});
                       },
                       items: cSmartProductAttributeJson.value
                           .where((element) => element.selectable)
+                          .map<String>((SmartProductAttributeJsonValue e) {
+                            return e.value ?? '';
+                          })
                           .toSet()
-                          .map<DropdownMenuItem<String>>(
-                              (SmartProductAttributeJsonValue value) {
-                        var text =
-                            (value.value ?? '') + (value.descPrice ?? '');
-                        return DropdownMenuItem<String>(
-                            value: value.value, child: Text(text));
-                      }).toList(),
+                          .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                                value: value, child: Text(value));
+                          })
+                          .toList(),
                     ),
                   );
                   // Text(selectedProductAttributeModel[i]
@@ -373,28 +378,6 @@ class _ProductCardState extends State<ProductCard> {
                   //     .name);
                 },
               ),
-            ),
-            FutureBuilder<String>(
-              future: getProductPrice(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(
-                    radius: 32,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text("${snapshot.data!.toString()}€",
-                          style: Theme.of(context).textTheme.headlineMedium),
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-
-                // By default, show a loading spinner.
-                return const CircularProgressIndicator();
-              },
             ),
             Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
               Row(
@@ -452,7 +435,7 @@ class _ProductCardState extends State<ProductCard> {
                                         ),
                                       );
                                     },
-                                    valueListenable: freePriceProduct,
+                                    valueListenable: freePriceProductNotifier,
                                   ),
                                 ),
                               ],
@@ -465,19 +448,25 @@ class _ProductCardState extends State<ProductCard> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(right: 8.0),
-                              child: CircleAvatar(
-                                radius: 32,
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Text(
-                                      "${productCatalog.priceProduct.toStringAsFixed(2)}€",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium),
-                                ),
+                              child: ValueListenableBuilder<double>(
+                                builder: (BuildContext context, double value,
+                                    Widget? child) {
+                                  return CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                          "${priceNotifier.value.toStringAsFixed(2).replaceAll('.', ',')}€",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium),
+                                    ),
+                                  );
+                                },
+                                valueListenable: priceNotifier,
                               ),
                             ),
                             Padding(
@@ -498,16 +487,21 @@ class _ProductCardState extends State<ProductCard> {
                                     SizedBox(
                                       child: IconButton(
                                           onPressed: () {
-                                            if (quantityForProduct.value > 0) {
-                                              quantityForProduct.value--;
+                                            if (quantityForProductNotifier
+                                                    .value >
+                                                0) {
+                                              quantityForProductNotifier
+                                                  .value--;
                                             }
-                                            if (quantityForProduct.value > 0) {
-                                              addToCartButtonEnabled.value =
-                                                  true;
+                                            if (quantityForProductNotifier
+                                                    .value >
+                                                0) {
+                                              enableQuantity = true;
                                             } else {
-                                              addToCartButtonEnabled.value =
-                                                  false;
+                                              enableQuantity = false;
                                             }
+                                            addToCartButtonEnabled.value =
+                                                checkEnableButton();
                                           },
                                           icon: const Icon(
                                               size: 20, Icons.remove)),
@@ -524,20 +518,23 @@ class _ProductCardState extends State<ProductCard> {
                                                       fontWeight:
                                                           FontWeight.w900));
                                         },
-                                        valueListenable: quantityForProduct,
+                                        valueListenable:
+                                            quantityForProductNotifier,
                                       ),
                                     ),
                                     SizedBox(
                                       child: IconButton(
                                           onPressed: () {
-                                            quantityForProduct.value++;
-                                            if (quantityForProduct.value > 0) {
-                                              addToCartButtonEnabled.value =
-                                                  true;
+                                            quantityForProductNotifier.value++;
+                                            if (quantityForProductNotifier
+                                                    .value >
+                                                0) {
+                                              enableQuantity = true;
                                             } else {
-                                              addToCartButtonEnabled.value =
-                                                  false;
+                                              enableQuantity = false;
                                             }
+                                            addToCartButtonEnabled.value =
+                                                checkEnableButton();
                                           },
                                           icon:
                                               const Icon(size: 20, Icons.add)),
@@ -560,6 +557,8 @@ class _ProductCardState extends State<ProductCard> {
                           (BuildContext context, bool value, Widget? child) {
                         return IconButton(
                           onPressed: () async {
+                            productCatalog.wishlisted =
+                                !productCatalog.wishlisted;
                             wishlistProductNotifier
                                 .updateWishlistedProductState(
                                     context: context,
@@ -568,10 +567,10 @@ class _ProductCardState extends State<ProductCard> {
                                         cUserAppInstitutionModel
                                             .idUserAppInstitution,
                                     idProduct: productCatalog.idProduct,
-                                    state: !productCatalog.isWishlisted.value)
+                                    state: productCatalog.wishlisted)
                                 .then((value) {
                               if (value) {
-                                if (productCatalog.isWishlisted.value) {
+                                if (!productCatalog.wishlisted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackUtil.stylishSnackBar(
                                           title: "Prodotti",
@@ -586,8 +585,8 @@ class _ProductCardState extends State<ProductCard> {
                                               '${productCatalog.nameProduct} aggiunto ai preferiti',
                                           contentType: "success"));
                                 }
-                                productCatalog.isWishlisted.value =
-                                    !productCatalog.isWishlisted.value;
+                                wishListedNotifier.value =
+                                    productCatalog.wishlisted;
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackUtil.stylishSnackBar(
@@ -597,7 +596,7 @@ class _ProductCardState extends State<ProductCard> {
                               }
                             });
                           },
-                          icon: productCatalog.isWishlisted.value
+                          icon: productCatalog.wishlisted
                               ? const Icon(
                                   Icons.favorite,
                                   color: Colors.red,
@@ -609,7 +608,7 @@ class _ProductCardState extends State<ProductCard> {
                                 ),
                         );
                       },
-                      valueListenable: productCatalog.isWishlisted,
+                      valueListenable: wishListedNotifier,
                     ),
                   ),
                   SizedBox(
@@ -624,10 +623,29 @@ class _ProductCardState extends State<ProductCard> {
                               : Colors.grey,
                           onPressed: () {
                             int quantity = 0;
-                            quantity = quantityForProduct.value;
+                            quantity = quantityForProductNotifier.value;
                             if (addToCartButtonEnabled.value) {
                               if (productCatalog.freePriceProduct) {
                                 quantity = 1;
+                              }
+                              List<CartProductVariants> cartProductVariants =
+                                  [];
+                              for (int i = 0;
+                                  i <
+                                      productCatalog
+                                          .smartProductAttributeJson.length;
+                                  i++) {
+                                CartProductVariants v = CartProductVariants(
+                                    idProductAttribute: productCatalog
+                                        .smartProductAttributeJson[i]
+                                        .idProductAttribute,
+                                    nameProductAttribute: productCatalog
+                                        .smartProductAttributeJson[i]
+                                        .nameProductAttribute,
+                                    valueVariant:
+                                        selectedValueVariant[i] ?? '');
+
+                                cartProductVariants.add(v);
                               }
                               cartNotifier
                                   .addToCart(
@@ -638,7 +656,12 @@ class _ProductCardState extends State<ProductCard> {
                                               .idUserAppInstitution,
                                       idProduct: productCatalog.idProduct,
                                       quantity: quantity,
-                                      freePrice: freePriceProduct.value)
+                                      price: productCatalog.freePriceProduct
+                                          ? freePriceProductNotifier.value
+                                          : priceNotifier.value,
+                                      cartProductVariants: cartProductVariants,
+                                      notes:
+                                          textEditingControllerNoteProduct.text)
                                   .then((value) {
                                 if (value) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -655,7 +678,7 @@ class _ProductCardState extends State<ProductCard> {
                                       SnackUtil.stylishSnackBar(
                                           title: "Prodotti",
                                           message: "Errore di connessione",
-                                          contentType: "success"));
+                                          contentType: "failure"));
                                 }
                               });
                             } else {
@@ -671,6 +694,50 @@ class _ProductCardState extends State<ProductCard> {
                 ],
               ),
             ]),
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 16.0, bottom: 0.0, left: 4.0, right: 4.0),
+              child: SizedBox(
+                height: 120,
+                child: Column(
+                  children: [
+                    Tooltip(
+                      message: 'Note prodotto',
+                      child: Card(
+                        color: Theme.of(context).cardColor,
+                        elevation: 4,
+                        child: ListTile(
+                          title: Text(
+                            'Note prodotto',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          subtitle: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: textEditingControllerNoteProduct,
+                                  minLines: 2,
+                                  maxLines: 2,
+                                  onTapOutside: (event) {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: const Icon(Icons.edit),
+                          onTap: () {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),

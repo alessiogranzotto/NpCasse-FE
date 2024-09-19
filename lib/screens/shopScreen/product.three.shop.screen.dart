@@ -8,10 +8,8 @@ import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/screens/shopScreen/widget/product.card.dart';
 import 'package:provider/provider.dart';
-import 'package:np_casse/core/notifiers/store.notifier.dart';
 
 class ProductThreeShopScreen extends StatefulWidget {
   const ProductThreeShopScreen({
@@ -26,15 +24,15 @@ class ProductThreeShopScreen extends StatefulWidget {
 
 class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
   double widgetWitdh = 320;
-  double widgetHeight = 650;
-  double widgetHeightHalf = 300;
+  double widgetHeight = 620;
+  double widgetHeightHalf = 470;
   double gridMainAxisSpacing = 10;
 
   Timer? _timer;
   Icon icona = const Icon(Icons.search);
   TextEditingController nameDescSearchController = TextEditingController();
   bool viewOutOfAssortment = false;
-  bool readImageData = false;
+  bool readImageData = true;
   bool readAlsoDeleted = false;
   int selectedCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
@@ -86,11 +84,11 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
 
-    ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
-    StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
+    // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
+    // StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    bool canAddProduct = authenticationNotifier.canUserAddItem();
+    // bool canAddProduct = authenticationNotifier.canUserAddItem();
 
     return SafeArea(
         child: Scaffold(
@@ -100,117 +98,31 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
         centerTitle: true,
         title: Text(widget.childCategoryCatalogModel.nameCategory,
             style: Theme.of(context).textTheme.headlineLarge),
-        actions: <Widget>[
-          Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 250,
-                child: CheckboxListTile(
-                    title: SizedBox(
-                        width: 200,
-                        child: Text("Visualizza fuori assortimento",
-                            style: Theme.of(context).textTheme.headlineSmall)),
-                    value: viewOutOfAssortment,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        viewOutOfAssortment = value ?? false;
-                      });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading),
-              )),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: 250,
-              child: TextField(
-                onChanged: (String value) {
-                  if (_timer?.isActive ?? false) {
-                    _timer!.cancel();
-                  }
-                  _timer = Timer(const Duration(milliseconds: 1000), () {
-                    setState(() {
-                      icona = const Icon(Icons.cancel);
-                      if (value.isEmpty) {
-                        icona = const Icon(Icons.search);
-                      }
-                    });
-                  });
-                },
-                textAlignVertical: TextAlignVertical.bottom,
-                style: Theme.of(context).textTheme.headlineMedium,
-                controller: nameDescSearchController,
-                decoration: InputDecoration(
-                  labelText: "Ricerca prodotto",
-                  labelStyle: Theme.of(context)
-                      .textTheme
-                      .labelLarge!
-                      .copyWith(color: Colors.white),
-                  hintText: "Ricerca prodotto",
-                  hintStyle: Theme.of(context)
-                      .textTheme
-                      .labelLarge!
-                      .copyWith(color: Colors.white.withOpacity(0.3)),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(
-                        color: Colors.white.withOpacity(0.3), width: 2.0),
-                  ),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide: BorderSide(color: Colors.white, width: 2.0),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: icona,
-                    onPressed: () {
-                      setState(() {
-                        if (icona.icon == Icons.search) {
-                          icona = const Icon(Icons.cancel);
-                        } else {
-                          icona = const Icon(Icons.search);
-                          nameDescSearchController.text = "";
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Row(
               children: [
-                // Expanded(
-                //     flex: 2,
-                //     child: CustomDropDownButtonFormField(
-                //       actualValue: selectedCategory.toString(),
-                //       labelText: 'Categoria',
-                //       listOfValue: availableCategory,
-                //       onItemChanged: (String value) {
-                //         onChangeCategory(value);
-                //       },
-                //     )),
                 Expanded(
                     flex: 1,
                     child: CustomDropDownButtonFormField(
+                      enabled: true,
                       actualValue: numberResult,
                       labelText: 'Mostra numero risultati',
                       listOfValue: availableNumberResult,
-                      onItemChanged: (String value) {
+                      onItemChanged: (String? value) {
                         onChangeNumberResult(value);
                       },
                     )),
                 Expanded(
                     flex: 2,
                     child: CustomDropDownButtonFormField(
+                      enabled: true,
                       actualValue: orderBy,
                       labelText: 'Ordinamento',
                       listOfValue: availableOrderBy,
-                      onItemChanged: (String value) {
+                      onItemChanged: (String? value) {
                         onChangeOrderBy(value);
                       },
                     )),
@@ -224,14 +136,14 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                     activeColor: Colors.blueAccent,
 
                     controlAffinity: ListTileControlAffinity.leading,
-                    value: readAlsoDeleted,
+                    value: viewOutOfAssortment,
                     onChanged: (bool? value) {
                       setState(() {
-                        readAlsoDeleted = value!;
+                        viewOutOfAssortment = value!;
                       });
                     },
                     title: Text(
-                      'Mostra anche cancellati',
+                      'Visualizza fuori assortimento',
                       style: Theme.of(context)
                           .textTheme
                           .labelMedium!
@@ -357,12 +269,12 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                           idCategory:
                               widget.childCategoryCatalogModel.idCategory,
                           readAlsoDeleted: false,
-                          numberResult: "All",
-                          nameDescSearch:
-                              nameDescSearchController.text.toLowerCase(),
-                          orderBy: "NameProduct",
-                          readImageData: true,
-                          shoWVariant: true),
+                          numberResult: numberResult,
+                          nameDescSearch: nameDescSearchController.text,
+                          orderBy: orderBy,
+                          readImageData: readImageData,
+                          shoWVariant: true,
+                          viewOutOfAssortment: viewOutOfAssortment),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -421,10 +333,8 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                                 ProductCatalogModel productCatalog =
                                     tSnapshot[index];
                                 return ProductCard(
-                                  productCatalog: productCatalog,
-                                  areAllWithNoImage: areAllWithNoImage,
-                                  comeFromWishList: false,
-                                );
+                                    productCatalog: productCatalog,
+                                    areAllWithNoImage: areAllWithNoImage);
                               });
                         }
                       },

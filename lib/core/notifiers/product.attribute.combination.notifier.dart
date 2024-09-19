@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/product.attribute.Combination.api.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
-import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.attribute.dart';
 
 class ProductAttributeCombinationNotifier with ChangeNotifier {
   final ProductAttributeCombinationAPI productAttributeCombinationAPI =

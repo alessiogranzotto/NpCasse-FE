@@ -3,7 +3,7 @@ import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/home.notifier.dart';
+import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/widgets/pdf.preview.wrapper.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
@@ -26,19 +26,31 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
     LayoutCallback build,
     PdfPageFormat pageFormat,
   ) async {
-    HomeNotifier homeNotifier =
-        Provider.of<HomeNotifier>(context, listen: false);
+    // HomeNotifier homeNotifier =
+    //     Provider.of<HomeNotifier>(context, listen: false);
 
+    // // homeNotifier.setHomeIndex(0);
+    // // Navigator.of(context).popUntil((route) => route.isFirst);
+    // Navigator.pop(context);
+    // // PersistentNavBarNavigator.pushNewScreen(
+    // //   context,
+    // //   screen: const CartScreen(),
+    // //   withNavBar: true,
+    // //   pageTransitionAnimation: PageTransitionAnimation.fade,
+    // // );
     // homeNotifier.setHomeIndex(0);
-    // Navigator.of(context).popUntil((route) => route.isFirst);
-    Navigator.pop(context);
-    // PersistentNavBarNavigator.pushNewScreen(
-    //   context,
-    //   screen: const CartScreen(),
-    //   withNavBar: true,
-    //   pageTransitionAnimation: PageTransitionAnimation.fade,
-    // );
-    homeNotifier.setHomeIndex(0);
+    CartNotifier cartNotifier =
+        Provider.of<CartNotifier>(context, listen: false);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+          title: "Carrello",
+          message: "Carrello chiuso correttamente",
+          contentType: "success"));
+    }
+    // homeNotifier.setHomeIndex(0);
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    cartNotifier.refresh();
   }
 
   @override

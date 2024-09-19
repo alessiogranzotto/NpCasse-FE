@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/screens/projectScreen/project.screen.dart';
 import 'package:np_casse/screens/shopScreen/category.one.shop.screen.dart';
-import 'package:np_casse/screens/storeScreen/store.screen.dart';
 
 class ShopNavigator extends StatefulWidget {
   const ShopNavigator({super.key});

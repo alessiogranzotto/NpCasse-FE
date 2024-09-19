@@ -72,7 +72,7 @@ class ProductCatalogModel {
       required this.giveIdsFlatStructureModel,
       required this.productAttributeCombination,
       required this.smartProductAttributeJson,
-      required this.isWishlisted});
+      required this.wishlisted});
 
   late final int idProduct;
   late final int idCategory;
@@ -95,7 +95,7 @@ class ProductCatalogModel {
   late final List<ProductAttributeCombinationModel> productAttributeCombination;
   late final List<SmartProductAttributeJson> smartProductAttributeJson;
 //CUSTOM
-  late ValueNotifier<bool> isWishlisted;
+  late bool wishlisted;
 
   ProductCatalogModel.empty() {
     idProduct = 0;
@@ -115,6 +115,7 @@ class ProductCatalogModel {
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
     productAttributeCombination = List.empty();
     smartProductAttributeJson = List.empty();
+    wishlisted = false;
   }
 
   ProductCatalogModel.fromJson(Map<String, dynamic> json) {
@@ -130,7 +131,7 @@ class ProductCatalogModel {
     // idWarehouse = json['idWarehouse'];
     // stockQuantity = json['stockQuantity'];
     // minStockQuantity = json['minStockQuantity'];
-    isWishlisted = ValueNotifier<bool>(false);
+    wishlisted = json['wishlisted'];
     deleted = json['deleted'];
     if (json['categoryName'] != null) {
       categoryName = json['categoryName'];

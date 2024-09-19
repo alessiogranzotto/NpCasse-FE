@@ -4,6 +4,7 @@ import 'package:np_casse/core/utils/disable.focus.node.dart';
 class CustomDropDownButtonFormField extends StatefulWidget {
   const CustomDropDownButtonFormField(
       {super.key,
+      required this.enabled,
       this.hintText,
       this.labelText,
       required this.onItemChanged,
@@ -11,7 +12,7 @@ class CustomDropDownButtonFormField extends StatefulWidget {
       this.actualValue,
       this.prefixIcon,
       this.validator});
-
+  final bool enabled;
   final List<DropdownMenuItem> listOfValue;
   final Icon? prefixIcon;
   final String? hintText;
@@ -37,6 +38,7 @@ class _CustomDropDownButtonFormField
 
   @override
   Widget build(BuildContext context) {
+    _selectedValue = widget.actualValue;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField(
@@ -49,6 +51,14 @@ class _CustomDropDownButtonFormField
           decoration: InputDecoration(
             prefixIcon: widget.prefixIcon,
             labelText: widget.labelText,
+            // suffixIcon: (widget.actualValue == null || !widget.haveClearButton)
+            //     ? null
+            //     : IconButton(
+            //         icon: const Icon(Icons.clear_rounded),
+            //         onPressed: () => setState(() {
+            //               _selectedValue = null;
+            //               widget.onItemChanged('0');
+            //             })),
             labelStyle: Theme.of(context)
                 .textTheme
                 .labelMedium!
@@ -85,9 +95,22 @@ class _CustomDropDownButtonFormField
           //   widget.hintText,
           // ),
           isExpanded: true,
+          // onChanged: widget.enabled
+          //     ? (dynamic value) => {_selectedValue = widget.actualValue;
+          //     widget.onItemChanged(value ?? '');}
+          //     : null,
           onChanged: (value) {
+            // _selectedValue = widget.actualValue;
             widget.onItemChanged(value ?? '');
           },
+          // onChanged: (value) {
+          //   if (widget.enabled) {
+          //     _selectedValue = widget.actualValue;
+          //     widget.onItemChanged(value ?? '');
+          //   } else {
+          //     null;
+          //   }
+          // },
           validator: (value) => value == null ? 'field required' : null,
           items: widget.listOfValue),
     );

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
-import 'package:np_casse/core/models/product.model.dart';
-import 'package:np_casse/core/models/project.model.dart';
-import 'package:np_casse/core/models/store.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
+import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
+import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.detail.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.dart';
 import 'package:np_casse/screens/homeScreen/master.screen.dart';
@@ -19,17 +19,9 @@ import 'package:np_casse/screens/productAttributeScreen/productAttribute.screen.
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.attribute.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.data.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.dart';
-import 'package:np_casse/screens/productScreen/product.detail.screen.dart';
-import 'package:np_casse/screens/productScreen/product.screen.dart';
-import 'package:np_casse/screens/projectScreen/project.detail.screen.dart';
-import 'package:np_casse/screens/projectScreen/project.screen.dart';
-import 'package:np_casse/screens/shopScreen/category.one.shop.screen.dart';
 import 'package:np_casse/screens/shopScreen/category.two.shop.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.three.shop.screen.dart';
 import 'package:np_casse/screens/splashScreen/splash.screen.dart';
-import 'package:np_casse/screens/storeScreen/store.detail.screen.dart';
-import 'package:np_casse/screens/storeScreen/store.screen.dart';
-import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 
 class ProductCatalogDetailAttributeMultipleArgument {
   final ProductCatalogModel product;
@@ -47,12 +39,14 @@ class AppRouter {
   static const String loginRoute = "/login";
   static const String registerRoute = "/register";
   static const String signUpRoute = "/signup";
-  static const String projectRoute = "/project";
-  static const String projectDetailRoute = "/projectDetail";
-  static const String storeRoute = "/store";
-  static const String storeDetailRoute = "/storeDetail";
-  static const String productRoute = "/product";
-  static const String productDetailRoute = "/productDetail";
+
+  // static const String projectRoute = "/project";
+  // static const String projectDetailRoute = "/projectDetail";
+  // static const String storeRoute = "/store";
+  // static const String storeDetailRoute = "/storeDetail";
+  // static const String productRoute = "/product";
+  // static const String productDetailRoute = "/productDetail";
+
   static const String userRoute = "/user";
   static const String settingRoute = "/setting";
 
@@ -65,6 +59,8 @@ class AppRouter {
   static const String cartRoute = "/cart";
 
   static const String shManage = "/shManage";
+  static const String shManageNewEdit = "/shManageNewEdit";
+  static const String shPdfInvoice = "/shPdfInvoice";
 
   static const String productAttributeRoute = "/productAttribute";
   static const String productAttributeDetailRoute = "/productAttributeDetail";
@@ -162,28 +158,28 @@ class AppRouter {
             builder: (_) => RegisterScreen(),
           );
         }
-      case wishListRoute:
-        {
-          return MaterialPageRoute(
-            builder: (_) => const WishlistScreen(),
-          );
-        }
-      case projectRoute:
-        {
-          return MaterialPageRoute(
-            builder: (_) => const ProjectScreen(),
-          );
-        }
-      case projectDetailRoute:
-        {
-          return MaterialPageRoute(
-            builder: (context) => ProjectDetailScreen(
-              projectModelArgument:
-                  ModalRoute.of(context)!.settings.arguments as ProjectModel,
-            ),
-            settings: settings,
-          );
-        }
+      // case wishListRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (_) => const WishlistScreen(),
+      //     );
+      //   }
+      // case projectRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (_) => const ProjectScreen(),
+      //     );
+      //   }
+      // case projectDetailRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (context) => ProjectDetailScreen(
+      //         projectModelArgument:
+      //             ModalRoute.of(context)!.settings.arguments as ProjectModel,
+      //       ),
+      //       settings: settings,
+      //     );
+      //   }
       case logoutRoute: //
         {
           return MaterialPageRoute(
@@ -191,38 +187,38 @@ class AppRouter {
             builder: (_) => const LoginScreen(),
           );
         }
-      case storeRoute:
-        {
-          return MaterialPageRoute(
-            builder: (_) => const StoreScreen(),
-          );
-        }
-      case storeDetailRoute:
-        {
-          return MaterialPageRoute(
-            builder: (context) => StoreDetailScreen(
-              storeModelArgument:
-                  ModalRoute.of(context)!.settings.arguments as StoreModel,
-            ),
-            settings: settings,
-          );
-        }
-      case productRoute:
-        {
-          return MaterialPageRoute(
-            builder: (_) => const ProductScreen(),
-          );
-        }
-      case productDetailRoute:
-        {
-          return MaterialPageRoute(
-            builder: (context) => ProductDetailScreen(
-              productModelArgument:
-                  ModalRoute.of(context)!.settings.arguments as ProductModel,
-            ),
-            settings: settings,
-          );
-        }
+      // case storeRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (_) => const StoreScreen(),
+      //     );
+      //   }
+      // case storeDetailRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (context) => StoreDetailScreen(
+      //         storeModelArgument:
+      //             ModalRoute.of(context)!.settings.arguments as StoreModel,
+      //       ),
+      //       settings: settings,
+      //     );
+      //   }
+      // case productRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (_) => const ProductScreen(),
+      //     );
+      //   }
+      // case productDetailRoute:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (context) => ProductDetailScreen(
+      //         productModelArgument:
+      //             ModalRoute.of(context)!.settings.arguments as ProductModel,
+      //       ),
+      //       settings: settings,
+      //     );
+      //   }
 
       case productAttributeRoute:
         {
@@ -352,6 +348,23 @@ class AppRouter {
         {
           return MaterialPageRoute(
             builder: (_) => const ShManageScreen(),
+          );
+        }
+      case shManageNewEdit:
+        {
+          return MaterialPageRoute(
+            builder: (context) => ShNewEditScreen(
+              editStakeholderGiveModelSearch: ModalRoute.of(context)!
+                  .settings
+                  .arguments as StakeholderGiveModelSearch?,
+            ),
+            settings: settings,
+          );
+        }
+      case shPdfInvoice:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const PdfInvoiceScreen(),
           );
         }
 

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
-import 'package:np_casse/core/models/product.model.dart';
+import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
-import 'package:np_casse/screens/productScreen/widgets/product.card.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.catalog.card.dart';
+import 'package:np_casse/screens/shopScreen/widget/product.card.dart';
 import 'package:provider/provider.dart';
 
 class WishlistScreen extends StatelessWidget {
@@ -18,10 +19,8 @@ class WishlistScreen extends StatelessWidget {
         authenticationNotifier.getSelectedUserAppInstitution();
 
     double widgetWitdh = 320;
-    double widgetHeight = 350;
-    double widgetHeightHalf = 200;
-    // double widgetRatio = 1.1;
-    // double widgetRatioHalf = 0.65;
+    double widgetHeight = 620;
+    double widgetHeightHalf = 470;
     double gridMainAxisSpacing = 10;
 
     return SafeArea(
@@ -30,7 +29,7 @@ class WishlistScreen extends StatelessWidget {
             // const CustomDrawerWidget(),
             appBar: AppBar(
               centerTitle: true,
-              automaticallyImplyLeading: false, 
+              automaticallyImplyLeading: false,
               title: Text(
                 'Preferiti di ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -79,9 +78,10 @@ class WishlistScreen extends StatelessWidget {
                               ),
                             );
                           } else {
-                            var tSnapshot = snapshot.data as List<ProductModel>;
-                            var t = tSnapshot.any(
-                                (element) => element.imageProduct.isNotEmpty);
+                            var tSnapshot =
+                                snapshot.data as List<ProductCatalogModel>;
+                            var t = tSnapshot
+                                .any((element) => element.imageData.isNotEmpty);
                             bool areAllWithNoImage = !t;
                             double cHeight = 0;
                             if (areAllWithNoImage) {
@@ -114,12 +114,11 @@ class WishlistScreen extends StatelessWidget {
                                 itemCount: tSnapshot.length,
                                 // scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
-                                  ProductModel product = tSnapshot[index];
+                                  ProductCatalogModel product =
+                                      tSnapshot[index];
                                   return ProductCard(
-                                    product: product,
-                                    areAllWithNoImage: areAllWithNoImage,
-                                    comeFromWishList: true,
-                                  );
+                                      productCatalog: product,
+                                      areAllWithNoImage: areAllWithNoImage);
                                 });
                           }
                         },

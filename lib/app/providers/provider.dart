@@ -2,14 +2,10 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
-import 'package:np_casse/core/notifiers/home.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.mapping.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
-import 'package:np_casse/core/notifiers/product.notifier.dart';
-import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
-import 'package:np_casse/core/notifiers/store.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +17,10 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => AuthenticationNotifier()),
     // ChangeNotifierProvider(create: (_) => UserNotifier()),
     // ChangeNotifierProvider(create: (_) => UserAppInstitutionNotifier()),
-    ChangeNotifierProvider(create: (_) => ProjectNotifier()),
-    ChangeNotifierProvider(create: (_) => ProductNotifier()),
+    // ChangeNotifierProvider(create: (_) => ProjectNotifier()),
+    // ChangeNotifierProvider(create: (_) => ProductNotifier()),
     ChangeNotifierProvider(create: (_) => ProductCatalogNotifier()),
-    ChangeNotifierProvider(create: (_) => StoreNotifier()),
+    // ChangeNotifierProvider(create: (_) => StoreNotifier()),
     // ChangeNotifierProvider(create: (_) => SizeNotifier()),
     ChangeNotifierProvider(create: (_) => CartNotifier()),
     // ChangeNotifierProvider(create: (_) => PaymentService()),
@@ -35,7 +31,7 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => ProductAttributeMappingNotifier()),
     ChangeNotifierProvider(
         create: (_) => ProductAttributeCombinationNotifier()),
-    ChangeNotifierProvider(create: (_) => HomeNotifier()),
+    // ChangeNotifierProvider(create: (_) => HomeNotifier()),
     ChangeNotifierProvider(create: (_) => CategoryCatalogNotifier()),
     ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];

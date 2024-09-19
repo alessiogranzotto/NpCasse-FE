@@ -10,7 +10,6 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
-import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
@@ -19,7 +18,6 @@ import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigato
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
-import 'package:np_casse/screens/projectScreen/project.navigator.dart';
 import 'package:np_casse/screens/settingScreen/setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
@@ -39,10 +37,10 @@ class MenuList {
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite), const WishlistScreen()),
-  MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
-      const Icon(Icons.layers), const ProjectNavigator()),
-  MenuList(AppRouter.projectRoute, 'Shop', Icons.shop, const Icon(Icons.layers),
-      const ShopNavigator()),
+  // MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
+  //     const Icon(Icons.layers), const ProjectNavigator()),
+  MenuList(AppRouter.categoryOneShopRoute, 'Shop', Icons.shop,
+      const Icon(Icons.layers), const ShopNavigator()),
   MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
       const Icon(Icons.settings), const SettingScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
@@ -139,7 +137,7 @@ class _MasterScreenState extends State<MasterScreen> {
   @override
   Widget build(BuildContext context) {
     CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
-    ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
+    // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
     WishlistProductNotifier wishlistProductNotifier =
         Provider.of<WishlistProductNotifier>(context);
     ProductAttributeNotifier productAttributeNotifier =
@@ -202,8 +200,9 @@ class _MasterScreenState extends State<MasterScreen> {
               });
               if (destinations.elementAt(index).label == "Preferiti") {
                 wishlistProductNotifier.refresh();
-              } else if (destinations.elementAt(index).label == "Progetti") {
-                projectNotifier.refresh();
+                // } else if (destinations.elementAt(index).label == "Progetti") {
+                //   projectNotifier.refresh();
+                // } else
               } else if (destinations.elementAt(index).label == "Shop") {
                 shopCategoryNotifier.refresh();
               } else if (destinations.elementAt(index).label == "Carrello") {

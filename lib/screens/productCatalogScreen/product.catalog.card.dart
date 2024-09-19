@@ -12,9 +12,13 @@ class ProductCatalogCard extends StatelessWidget {
     Key? key,
     required this.product,
     required this.readImageData,
+    required this.areAllWithNoImage,
+    required this.comeFromWishList,
   }) : super(key: key);
   final ProductCatalogModel product;
   final bool readImageData;
+  final bool areAllWithNoImage;
+  final bool comeFromWishList;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +125,7 @@ class ProductCatalogCard extends StatelessWidget {
                                     priceProduct: product.priceProduct,
                                     freePriceProduct: product.freePriceProduct,
                                     outOfAssortment: product.outOfAssortment,
-                                    isWishlisted: product.isWishlisted,
+                                    wishlisted: product.wishlisted,
                                     barcode: product.barcode,
                                     deleted: product.deleted,
                                     idUserAppInstitution:

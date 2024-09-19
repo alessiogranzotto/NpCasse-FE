@@ -51,7 +51,8 @@ dependencies:
   collection: ^1.18.0
    
   # uuid: ^4.3.3 
-  flutter_html: ^3.0.0-beta.2 
+  flutter_html: ^3.0.0-beta.2  
+  currency_formatter: ^2.2.0
  
  
 
@@ -82,7 +83,9 @@ flutter:
   assets:
     - assets/images/splash/
     - assets/images/various/
+    - assets/images/snackbar/
     - assets/vectors/
+    # - assets/images/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

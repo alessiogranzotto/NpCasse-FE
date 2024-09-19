@@ -109,14 +109,14 @@ class CustomSnackbarContent extends StatelessWidget {
                 width: size.width * 0.05,
                 colorFilter:
                     _getColorFilter(hslDark.toColor(), ui.BlendMode.srcIn),
-                package: 'awesome_snackbar_content',
+                //package: 'awesome_snackbar_content',
               ),
             ),
           ),
 
           // Bubble Icon
           Positioned(
-            top: -size.height * 0.02,
+            top: -size.height * 0.01,
             left: !isRTL
                 ? leftSpace -
                     8 -
@@ -135,14 +135,14 @@ class CustomSnackbarContent extends StatelessWidget {
                   height: size.height * 0.06,
                   colorFilter:
                       _getColorFilter(hslDark.toColor(), ui.BlendMode.srcIn),
-                  package: 'awesome_snackbar_content',
+                  //package: 'awesome_snackbar_content',
                 ),
                 Positioned(
                   top: size.height * 0.015,
                   child: SvgPicture.asset(
                     assetSVG(contentType),
                     height: size.height * 0.022,
-                    package: 'awesome_snackbar_content',
+                    //package: 'awesome_snackbar_content',
                   ),
                 )
               ],
@@ -191,7 +191,7 @@ class CustomSnackbarContent extends StatelessWidget {
                       child: SvgPicture.asset(
                         AssetsPath.failure,
                         height: size.height * 0.022,
-                        package: 'awesome_snackbar_content',
+                        // package: 'awesome_snackbar_content',
                       ),
                     ),
                   ],

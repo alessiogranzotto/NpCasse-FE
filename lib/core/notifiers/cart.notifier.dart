@@ -5,42 +5,40 @@ import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/initial_context.dart';
 import 'package:np_casse/core/api/cart.api.dart';
 import 'package:np_casse/core/models/cart.model.dart';
+import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class CartNotifier with ChangeNotifier {
   final CartAPI cartAPI = CartAPI();
 
   CartModel currentCartModel = CartModel.empty();
-  int _nrProductInCart = 0;
-  int _nrProductTypeInCart = 0;
-  int get nrProductInCart => _nrProductInCart;
-  int get nrProductTypeInCart => _nrProductTypeInCart;
+  // int _nrProductInCart = 0;
+  // int _nrProductTypeInCart = 0;
+  // double _totalCartMoney = 0;
+  // int get nrProductInCart => _nrProductInCart;
+  // int get nrProductTypeInCart => _nrProductTypeInCart;
 
+  late ValueNotifier<double> subTotalCartMoney = ValueNotifier(0);
   late ValueNotifier<double> totalCartMoney = ValueNotifier(0);
   late ValueNotifier<int> totalCartProduct = ValueNotifier(0);
   late ValueNotifier<int> totalCartProductType = ValueNotifier(0);
 
   setCart(CartModel cartModel) {
-    _nrProductInCart = 0;
-    _nrProductTypeInCart = 0;
-    totalCartMoney.value = 0;
+    int _nrProductInCart = 0;
+    int _nrProductTypeInCart = 0;
+    double _subTotalCartMoney = 0;
     currentCartModel = cartModel;
+    _nrProductTypeInCart = cartModel.cartProducts.length;
     for (var element in cartModel.cartProducts) {
-      if (element.freePriceCartProduct.value > 0) {
-        totalCartMoney.value =
-            totalCartMoney.value + element.freePriceCartProduct.value;
-        _nrProductInCart = _nrProductInCart + 1;
-      } else {
-        totalCartMoney.value = totalCartMoney.value +
-            (element.productModel.priceProduct *
-                element.quantityCartProduct.value);
-        _nrProductInCart = _nrProductInCart + element.quantityCartProduct.value;
-      }
+      _subTotalCartMoney = _subTotalCartMoney +
+          (element.priceCartProduct * element.quantityCartProduct.value);
+      _nrProductInCart = _nrProductInCart + element.quantityCartProduct.value;
     }
 
-    _nrProductTypeInCart = cartModel.cartProducts.length;
+    totalCartProductType.value = _nrProductTypeInCart;
     totalCartProduct.value = _nrProductInCart;
-    totalCartProductType.value = nrProductTypeInCart;
+    subTotalCartMoney.value = _subTotalCartMoney;
+    totalCartMoney.value = _subTotalCartMoney;
   }
 
   getCart() {
@@ -53,7 +51,8 @@ class CartNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int idProduct,
       required int quantity,
-      double? freePrice,
+      double? price,
+      required List<CartProductVariants?> cartProductVariants,
       String? notes}) async {
     try {
       bool isOk = false;
@@ -63,7 +62,8 @@ class CartNotifier with ChangeNotifier {
           idUserAppInstitution: idUserAppInstitution,
           idProduct: idProduct,
           quantity: quantity,
-          freePrice: freePrice,
+          price: price,
+          cartProductVariants: cartProductVariants,
           notes: notes);
 
       if (response != null) {
@@ -123,10 +123,7 @@ class CartNotifier with ChangeNotifier {
           }
         } else {
           if (parseData['okResult'] != null) {
-            CartModel cartModel =
-                CartModel.fromJson(parseData['okResult'] ?? '');
-            _nrProductInCart = cartModel.cartProducts.length;
-
+            CartModel cartModel = CartModel.fromJson(parseData['okResult']);
             setCart(cartModel);
             return cartModel;
           } else {
@@ -175,7 +172,6 @@ class CartNotifier with ChangeNotifier {
           }
         } else {
           CartModel cartModel = CartModel.fromJson(parseData['okResult'] ?? '');
-          _nrProductInCart = cartModel.cartProducts.length;
           setCart(cartModel);
           if (quantityCartProduct == 0) {
             notifyListeners();
@@ -196,19 +192,21 @@ class CartNotifier with ChangeNotifier {
     }
   }
 
-  Future setCartPayment(
+  Future setCartCheckout(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
       required int idCart,
-      required String typePayment}) async {
+      required String typePayment,
+      required double totalPriceCart}) async {
     try {
       bool isOk = false;
       int savedIdCart = 0;
-      var response = await cartAPI.setCartPayment(
+      var response = await cartAPI.setCartCheckout(
           token: token,
           idCart: idCart,
           idUserAppInstitution: idUserAppInstitution,
+          totalPriceCart: totalPriceCart,
           typePayment: typePayment);
 
       if (response != null) {

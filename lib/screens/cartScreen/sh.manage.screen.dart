@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -226,7 +227,9 @@ class _ShManageScreenState extends State<ShManageScreen> {
                                 idStakeholder: cStakeholderGiveModelSearch!.id)
                             .then((value) {
                           if (value) {
-                            Navigator.pop(context);
+                            Navigator.of(context).pushNamed(
+                                AppRouter.shPdfInvoice,
+                                arguments: cStakeholderGiveModelSearch);
                             // PersistentNavBarNavigator.pushNewScreen(
                             //   context,
                             //   screen: const PdfInvoiceScreen(),
@@ -262,6 +265,10 @@ class _ShManageScreenState extends State<ShManageScreen> {
                           "Modifica anagrafica donatore ${cStakeholderGiveModelSearch?.nome}",
                       // heroTag: 'Edit',
                       onPressed: () {
+                        Navigator.of(context).pushNamed(
+                            AppRouter.shManageNewEdit,
+                            arguments: cStakeholderGiveModelSearch);
+                        //           cStakeholderGiveModelSearch );
                         // PersistentNavBarNavigator.pushNewScreen(
                         //   context,
                         //   screen: ShNewEditScreen(
@@ -289,6 +296,8 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       tooltip: "Nuova anagrafica donatore",
                       // heroTag: 'New',
                       onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(AppRouter.shManageNewEdit);
                         // PersistentNavBarNavigator.pushNewScreen(
                         //   context,
                         //   screen: const ShNewEditScreen(),

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
+import 'package:np_casse/core/models/cart.model.dart';
+import 'package:np_casse/core/models/cart.product.model.dart';
 
 class CartAPI {
   final client = http.Client();
@@ -35,10 +37,19 @@ class CartAPI {
       required int idUserAppInstitution,
       required int idProduct,
       required int quantity,
-      double? freePrice,
+      double? price,
+      required List<CartProductVariants?> cartProductVariants,
       String? notes}) async {
     final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Add-to-cart');
-
+    var p = jsonEncode({
+      "idUserAppInstitution": idUserAppInstitution,
+      "idProduct": idProduct,
+      "quantityCartProduct": quantity,
+      "priceCartProduct": price,
+      "notesCartProduct": notes,
+      "cartProductVariants": cartProductVariants
+    });
+    print(p);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',
@@ -50,9 +61,11 @@ class CartAPI {
           "idUserAppInstitution": idUserAppInstitution,
           "idProduct": idProduct,
           "quantityCartProduct": quantity,
-          "freePriceCartProduct": freePrice,
-          "notesCartProduct": notes
+          "priceCartProduct": price,
+          "notesCartProduct": notes,
+          "cartProductVariants": cartProductVariants
         }));
+
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
@@ -94,12 +107,13 @@ class CartAPI {
     }
   }
 
-  Future setCartPayment(
+  Future setCartCheckout(
       {String? token,
       required int idUserAppInstitution,
       required int idCart,
-      required String typePayment}) async {
-    final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Set-cart-payment');
+      required String typePayment,
+      required double totalPriceCart}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Set-cart-checkout');
 
     final http.Response response = await client.put(uri,
         headers: {
@@ -111,7 +125,8 @@ class CartAPI {
         body: jsonEncode({
           "idCart": idCart,
           "idUserAppInstitution": idUserAppInstitution,
-          "typePayment": typePayment
+          "typePayment": typePayment,
+          "totalPriceCart": totalPriceCart
         }));
 
     if (response.statusCode == 200) {

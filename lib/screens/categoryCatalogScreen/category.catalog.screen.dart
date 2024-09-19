@@ -103,6 +103,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                 Expanded(
                     flex: 2,
                     child: CustomDropDownButtonFormField(
+                      enabled: true,
                       actualValue: levelCategory,
                       labelText: 'Mostra livelli categorie',
                       listOfValue: availableLevelCategory,
@@ -113,6 +114,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                 Expanded(
                     flex: 1,
                     child: CustomDropDownButtonFormField(
+                      enabled: true,
                       actualValue: numberResult,
                       labelText: 'Mostra numero risultati',
                       listOfValue: availableNumberResult,
@@ -123,6 +125,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                 Expanded(
                     flex: 2,
                     child: CustomDropDownButtonFormField(
+                      enabled: true,
                       actualValue: orderBy,
                       labelText: 'Ordinamento',
                       listOfValue: availableOrderBy,

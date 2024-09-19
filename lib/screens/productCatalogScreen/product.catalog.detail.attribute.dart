@@ -328,9 +328,14 @@ class _ProductAttributeValueEditableListTile
   void saveChange() {
     this.model.barcode = barcodeEditingController.text;
     this.model.sku = skuEditingController.text;
-    this.model.overriddenPrice = double.tryParse(
-            overriddenPriceEditingController.text.replaceAll(',', '.')) ??
-        0;
+    if (overriddenPriceEditingController.text.isNotEmpty) {
+      this.model.overriddenPrice = double.tryParse(
+              overriddenPriceEditingController.text.replaceAll(',', '.')) ??
+          0;
+    } else {
+      this.model.overriddenPrice = null;
+    }
+
     // this.model.customStringInserted = customStringInserted;
     this.model.productAttributeJson = customProductAttributeJson;
     _toggleMode();

@@ -15,9 +15,9 @@ class ApiRoutes {
   // static const String localWebAuthURL = "http://31.14.141.7:8084";
   // static const String testBaseURL = "http://31.14.141.7:8443";
 
-  static const String casseURL = devCasseURL;
-  static const String authURL = devAuthURL;
-  static const String whURL = devWhURL;
+  static const String authURL = prodAuthURL;
+  static const String casseURL = prodCasseURL;
+  static const String whURL = prodWhURL;
 
   static const String loginURL = "$authURL/api/user/utility/authenticate";
   static const String registerURL = "$authURL/api/user/utility/registration";
@@ -31,7 +31,6 @@ class ApiRoutes {
       "$casseURL/api/UserAppInstitution";
 
   static const String cartURL = "$casseURL/api/Cart/Utility";
-  static const String wishlistProductURL = "$casseURL/api/Wishlist/utility";
   static const String geoSuggestionsURL = "$authURL/api/Geo/Utility";
 
   static const String giveURL = "$casseURL/api/Give/Utility";
@@ -40,4 +39,5 @@ class ApiRoutes {
   static const String baseProductURL = "$whURL/api/Product";
   static const String baseCategoryURL = "$whURL/api/Category";
   static const String baseProductAttributeURL = "$whURL/api/ProductAttribute";
+  static const String wishlistProductURL = "$whURL/api/Wishlist/utility";
 }

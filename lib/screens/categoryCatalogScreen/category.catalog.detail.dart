@@ -77,7 +77,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
             context: context,
             token: authenticationNotifier.token,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-            idCategory: 0,
+            idCategory: cIdCategory,
             levelCategory: 'FirstLevelCategory',
             readAlsoDeleted: false,
             numberResult: 'All',
@@ -87,13 +87,11 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         .then((value) {
       for (int i = 0; i < value.length; i++) {
         //ESCLUDO SE STESSA
-        if (value[i].idCategory != cIdCategory) {
-          tAvailableLevelCategory.add(
-            DropdownMenuItem(
-                child: Text(value[i].nameCategory),
-                value: value[i].idCategory.toString()),
-          );
-        }
+        tAvailableLevelCategory.add(
+          DropdownMenuItem(
+              child: Text(value[i].nameCategory),
+              value: value[i].idCategory.toString()),
+        );
       }
       setState(() {
         availableCategory = tAvailableLevelCategory;
@@ -110,7 +108,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
     parentIdCategory = widget.categoryCatalogModelArgument.parentIdCategory;
     idCategory = widget.categoryCatalogModelArgument.idCategory;
     isEdit = idCategory != 0;
-    getAvailableCategories(idCategory);
+    getAvailableCategories(0);
     print(availableCategory);
 
     if (widget.categoryCatalogModelArgument.idCategory != 0) {
@@ -574,6 +572,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                   children: [
                                     Expanded(
                                         child: CustomDropDownButtonFormField(
+                                      enabled: true,
                                       actualValue: parentIdCategory.toString(),
                                       labelText: '',
                                       listOfValue: availableCategory,

@@ -4,20 +4,19 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/product.catalog.api.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
-import 'package:np_casse/core/models/product.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class ProductCatalogNotifier with ChangeNotifier {
   final ProductCatalogAPI productCatalogAPI = ProductCatalogAPI();
-  ProductModel currentProductModel = ProductModel.empty();
-  int get getIdProduct => currentProductModel.idProduct;
-  int get getIdStore => currentProductModel.idStore;
-  String get getNameProduct => currentProductModel.nameProduct;
-  double get getPriceProduct => currentProductModel.priceProduct;
+  // ProductModel currentProductModel = ProductModel.empty();
+  // int get getIdProduct => currentProductModel.idProduct;
+  // int get getIdStore => currentProductModel.idStore;
+  // String get getNameProduct => currentProductModel.nameProduct;
+  // double get getPriceProduct => currentProductModel.priceProduct;
 
-  setProduct(ProductModel productModel) {
-    currentProductModel = productModel;
-  }
+  // setProduct(ProductModel productModel) {
+  //   currentProductModel = productModel;
+  // }
 
   Future getProducts(
       {required BuildContext context,
@@ -29,7 +28,8 @@ class ProductCatalogNotifier with ChangeNotifier {
       required String nameDescSearch,
       required bool readImageData,
       required String orderBy,
-      required bool shoWVariant}) async {
+      required bool shoWVariant,
+      required bool viewOutOfAssortment}) async {
     try {
       var response = await productCatalogAPI.getProducts(
           token: token,
@@ -40,7 +40,8 @@ class ProductCatalogNotifier with ChangeNotifier {
           nameDescSearch: nameDescSearch,
           readImageData: readImageData,
           orderBy: orderBy,
-          showVariant: shoWVariant);
+          showVariant: shoWVariant,
+          viewOutOfAssortment: viewOutOfAssortment);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
@@ -96,11 +97,8 @@ class ProductCatalogNotifier with ChangeNotifier {
                     contentType: "failure"));
           }
         } else {
-          List<ProductCatalogModel> products = List.from(parseData['okResult'])
-              .map((e) => ProductCatalogModel.fromJson(e))
-              .toList();
-          return products;
-          // notifyListeners();
+          double productPrice = parseData['okResult'];
+          return productPrice;
         }
       }
     } on SocketException catch (_) {

@@ -1,50 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/core/models/product.model.dart';
 
 class CartProductModel {
   CartProductModel(
       {required this.idCartProduct,
       required this.idCart,
       required this.idProduct,
+      required this.nameProduct,
+      required this.descriptionProduct,
+      required this.freePriceProduct,
+      required this.productAttributeJson,
+      required this.productAttributeExplicit,
       required this.quantityCartProduct,
-      required this.freePriceCartProduct,
-      required this.notesCartProduct,
-      required this.productModel});
+      required this.priceCartProduct,
+      required this.imageData,
+      required this.notesCartProduct});
   late final int idCartProduct;
   late final int idCart;
   late final int idProduct;
+  late final String nameProduct;
+  late final String descriptionProduct;
+  late final bool freePriceProduct;
+  late final String productAttributeJson;
+  late final String productAttributeExplicit;
   // late final int quantityCartProduct;
   late ValueNotifier<int> quantityCartProduct;
-  late final ValueNotifier<double> freePriceCartProduct;
-  late final String? notesCartProduct;
-  late final ProductModel productModel;
-
-  String getIndex(int index) {
-    switch (index) {
-      case 0:
-        return idProduct.toString();
-      case 1:
-        return productModel.nameProduct;
-      case 2:
-        return quantityCartProduct.toString();
-      case 3:
-        return productModel.priceProduct.toString();
-      case 4:
-        return (quantityCartProduct.value * productModel.priceProduct)
-            .toString();
-    }
-    return '';
-  }
+  late final double priceCartProduct;
+  late final String imageData;
+  late final String notesCartProduct;
 
   CartProductModel.fromJson(Map<String, dynamic> json) {
     idCartProduct = json['idCartProduct'];
     idCart = json['idCart'];
     idProduct = json['idProduct'];
+    nameProduct = json['nameProduct'];
+    descriptionProduct = json['descriptionProduct'];
+    freePriceProduct = json['freePriceProduct'];
+    productAttributeJson = json['productAttributeJson'];
+    productAttributeExplicit = json['productAttributeExplicit'];
     quantityCartProduct = ValueNotifier<int>(json['quantityCartProduct']);
-    freePriceCartProduct =
-        ValueNotifier<double>(json['freePriceCartProduct'] ?? 0);
+    priceCartProduct = json['priceCartProduct'];
+    imageData = json['imageData'];
     notesCartProduct = json['notesCartProduct'];
-    productModel = ProductModel.fromJson(json['idProductNavigation']);
   }
 
   Map<String, dynamic> toJson() {
@@ -53,9 +49,32 @@ class CartProductModel {
     data['idCart'] = idCart;
     data['idProduct'] = idProduct;
     data['quantityCartProduct'] = quantityCartProduct;
-    data['freePriceCartProduct'] = freePriceCartProduct;
+    data['priceCartProduct'] = priceCartProduct;
     data['notesCartProduct'] = notesCartProduct;
-    data['productModel'] = productModel.toJson();
+    return data;
+  }
+}
+
+class CartProductVariants {
+  CartProductVariants(
+      {required this.idProductAttribute,
+      required this.nameProductAttribute,
+      required this.valueVariant});
+  late final int idProductAttribute;
+  late final String nameProductAttribute;
+  late final String valueVariant;
+
+  CartProductVariants.fromJson(Map<String, dynamic> json) {
+    idProductAttribute = json['idProductAttribute'];
+    nameProductAttribute = json['nameProductAttribute'];
+    valueVariant = json['valueVariant'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['idProductAttribute'] = idProductAttribute;
+    data['nameProductAttribute'] = nameProductAttribute;
+    data['valueVariant'] = valueVariant;
     return data;
   }
 }

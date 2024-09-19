@@ -113,6 +113,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  currency_formatter:
+    dependency: "direct main"
+    description:
+      name: currency_formatter
+      sha256: "73df6323b25bfe7ecfc45eb7d73ca4c47b54c29677b5e93ea091cca7c1c37fef"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   currency_textfield:
     dependency: "direct main"
     description:

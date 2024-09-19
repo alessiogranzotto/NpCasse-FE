@@ -39,13 +39,15 @@ class SmartProductAttributeJson {
 class SmartProductAttributeJsonValue {
   late String? value;
   late bool selectable;
+  late bool selectedFromBarcode;
   late String? descPrice;
   SmartProductAttributeJsonValue(
       {required this.value, required this.selectable, this.descPrice});
   SmartProductAttributeJsonValue.fromJson(Map<String, dynamic> json) {
     value = json['value'];
     selectable = json['selectable'];
-    descPrice = '(+0.50)';
+    selectedFromBarcode = json['selectedFromBarcode'];
+    descPrice = '';
   }
 }
 

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
-import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.attribute.dart';
 
 class ProductAttributeCombinationAPI {
   final client = http.Client();

@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
-import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
-import 'package:np_casse/core/models/project.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/project.notifier.dart';
 import 'package:np_casse/screens/shopScreen/widget/category.card.dart';
 import 'package:provider/provider.dart';
 
@@ -30,8 +27,7 @@ class CategoryTwoShopScreen extends StatelessWidget {
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    ProductCatalogNotifier productCatalogNotifier =
-        Provider.of<ProductCatalogNotifier>(context);
+
     bool canAddProject = authenticationNotifier.canUserAddItem();
 
     return Scaffold(
