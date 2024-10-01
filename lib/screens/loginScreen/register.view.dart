@@ -18,10 +18,10 @@ class RegisterScreen extends StatelessWidget {
 
     registerAccount() {
       if (_formKey.currentState!.validate()) {
-        authNotifier(false).userRegister(
-            context: context,
-            email: emailController.text,
-            password: passwordController.text);
+        // authNotifier(false).userRegister(
+        //     context: context,
+        //     email: emailController.text,
+        //     password: passwordController.text);
       }
     }
 

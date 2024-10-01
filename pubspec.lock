@@ -198,6 +198,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0-beta.2"
+  flutter_lazy_indexed_stack:
+    dependency: "direct main"
+    description:
+      name: flutter_lazy_indexed_stack
+      sha256: e5529b516890475465c8c34b23d611e9c46b23c745c08edf471d1b6f899f5c9f
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.6"
+  flutter_otp_text_field:
+    dependency: "direct main"
+    description:
+      name: flutter_otp_text_field
+      sha256: "77e5ca5af01d2adf79757ffab4ad5ca29d5c710b3edf29e590fa5db7551d760e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

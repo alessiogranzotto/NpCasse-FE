@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/product.catalog.api.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
+import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:provider/provider.dart';
 
 class ProductCatalogNotifier with ChangeNotifier {
   final ProductCatalogAPI productCatalogAPI = ProductCatalogAPI();
@@ -61,6 +63,10 @@ class ProductCatalogNotifier with ChangeNotifier {
           return products;
           // notifyListeners();
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
     } on SocketException catch (_) {
       if (context.mounted) {

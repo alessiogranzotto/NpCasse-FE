@@ -6,7 +6,11 @@ import 'package:np_casse/app/utilities/initial_context.dart';
 import 'package:np_casse/core/api/cart.api.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
+import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/loginScreen/login.view.dart';
+import 'package:np_casse/screens/loginScreen/logout.view.dart';
+import 'package:provider/provider.dart';
 
 class CartNotifier with ChangeNotifier {
   final CartAPI cartAPI = CartAPI();
@@ -131,6 +135,10 @@ class CartNotifier with ChangeNotifier {
             return null;
           }
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
     } on SocketException catch (_) {
       if (context.mounted) {
@@ -180,6 +188,10 @@ class CartNotifier with ChangeNotifier {
           //     ProjectModel.fromJson(parseData['okResult']);
           //return projectDetail;
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
       return isOk;
     } on SocketException catch (_) {
@@ -226,6 +238,10 @@ class CartNotifier with ChangeNotifier {
           savedIdCart = cartModelDetail.idCart;
           // notifyListeners();
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
       return savedIdCart;
     } on SocketException catch (_) {
@@ -265,11 +281,14 @@ class CartNotifier with ChangeNotifier {
             invoiceTypeModel = List.from(parseData['okResult'])
                 .map((e) => InvoiceTypeModel.fromJson(e))
                 .toList();
+            return invoiceTypeModel;
           }
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
-
-      return invoiceTypeModel;
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
@@ -301,7 +320,9 @@ class CartNotifier with ChangeNotifier {
         return response;
         // return file.path;
       } else {
-        return null;
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
     } on SocketException catch (_) {
       if (context.mounted) {
@@ -342,8 +363,12 @@ class CartNotifier with ChangeNotifier {
         } else {
           //notifyListeners();
         }
+        return isOk;
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
-      return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
@@ -356,10 +381,5 @@ class CartNotifier with ChangeNotifier {
 
   void refresh() {
     notifyListeners();
-  }
-
-  void setFirstRoute() {
-    Navigator.pushNamedAndRemoveUntil(
-        ContextKeeper.buildContext, AppRouter.cartRoute, (_) => true);
   }
 }

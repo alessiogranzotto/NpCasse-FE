@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/category.catalog.api.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:provider/provider.dart';
 
 class ShopCategoryNotifier with ChangeNotifier {
   final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
@@ -61,6 +63,10 @@ class ShopCategoryNotifier with ChangeNotifier {
           return categories;
           // notifyListeners();
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
     } on SocketException catch (_) {
       if (context.mounted) {

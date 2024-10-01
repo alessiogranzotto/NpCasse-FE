@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';

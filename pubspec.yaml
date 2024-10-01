@@ -53,6 +53,8 @@ dependencies:
   # uuid: ^4.3.3 
   flutter_html: ^3.0.0-beta.2  
   currency_formatter: ^2.2.0
+  flutter_otp_text_field: ^1.2.0
+  flutter_lazy_indexed_stack: ^0.0.6
  
  
 

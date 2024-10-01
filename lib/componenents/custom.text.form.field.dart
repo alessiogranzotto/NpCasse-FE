@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField(
       {this.textInputAction,
-      required this.labelText,
+      this.labelText,
+      this.textAlign,
       this.keyboardType,
       required this.controller,
       super.key,
@@ -31,7 +32,8 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final bool? obscureText;
   final Widget? suffixIcon;
-  final String labelText;
+  final String? labelText;
+  final TextAlign? textAlign;
   final bool? autofocus;
   final FocusNode? focusNode;
   final void Function()? onEditingComplete;
@@ -60,7 +62,7 @@ class CustomTextFormField extends StatelessWidget {
       obscureText: obscureText ?? false,
       obscuringCharacter: '*',
       onEditingComplete: onEditingComplete,
-
+      textAlign: textAlign ?? TextAlign.start,
       style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
       decoration: InputDecoration(
         suffixIcon: suffixIcon,

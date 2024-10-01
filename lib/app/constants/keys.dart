@@ -40,7 +40,10 @@ class AppStrings {
   static const String loginAndRegister = 'Login and Register UI';
   static const String uhOhPageNotFound = 'uh-oh!\nPage not found';
   static const String register = 'Register';
+  static const String sendOtp = 'Send OTP';
+  static const String confirmOtp = 'Confirm OTP';
   static const String login = 'Login';
+  static const String back = 'Back';
   static const String createYourAccount = 'Create your account';
   static const String doNotHaveAnAccount = "Don't have an account?";
   static const String facebook = 'Facebook';

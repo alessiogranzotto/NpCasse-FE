@@ -1236,7 +1236,8 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                     onPressed: () {
                       var dialog = CustomAlertDialog(
                         title: "Eliminazione categoria",
-                        content: "Si desidera procedere alla cancellazione?",
+                        content:
+                            Text("Si desidera procedere alla cancellazione?"),
                         yesCallBack: () {
                           deleted = true;
                           CategoryCatalogModel categoryCatalogModel =

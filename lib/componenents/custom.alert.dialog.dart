@@ -10,7 +10,7 @@ class CustomAlertDialog extends StatelessWidget {
       required this.yesCallBack,
       required this.noCallBack});
   final String title;
-  final String content;
+  final Widget content;
   final Function yesCallBack;
   final Function noCallBack;
 
@@ -21,9 +21,7 @@ class CustomAlertDialog extends StatelessWidget {
             ImageFilter.blur(sigmaX: 3, sigmaY: 3, tileMode: TileMode.mirror),
         child: AlertDialog(
           title: Text(title, style: const TextStyle(color: Colors.black)),
-          content: Text(
-            content,
-          ),
+          content: content,
           actions: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(

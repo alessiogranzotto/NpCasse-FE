@@ -320,12 +320,6 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                     giveNotifier.setStakeholder(typedValue.donatoriOk ??
                         StakeholderGiveModelSearch.empty());
                     Navigator.pop(context);
-                    // PersistentNavBarNavigator.pushNewScreen(
-                    //   context,
-                    //   screen: const ShManageScreen(),
-                    //   withNavBar: true,
-                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                    // );
                   } else if (typedValue.operationResult == "Errore deduplica") {
                     if (forcingId > 0) {
                       ScaffoldMessenger.of(context).showSnackBar(

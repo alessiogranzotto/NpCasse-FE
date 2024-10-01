@@ -6,10 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
+import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/core/api/authentication.api.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationNotifier with ChangeNotifier {
@@ -49,11 +51,14 @@ class AuthenticationNotifier with ChangeNotifier {
   double? _passwordStrength = 0;
   double? get passwordStrength => _passwordStrength;
 
-  String _actualState = 'NoState';
-  String get getactualState => _actualState;
+  // String _actualState = 'NoState';
+  // String get getactualState => _actualState;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  String _stepLoading = "user";
+  String get stepLoading => _stepLoading;
 
   Future init() async {
     try {
@@ -71,7 +76,13 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
-  Future userAuthenticate({
+  void backFromOtp() {
+    _isLoading = false;
+    _stepLoading = "user";
+    notifyListeners();
+  }
+
+  Future authenticateAccount({
     required BuildContext context,
     required String email,
     required String password,
@@ -79,19 +90,125 @@ class AuthenticationNotifier with ChangeNotifier {
     // required int idUserAppInstitution
   }) async {
     try {
-      _actualState = 'LoadingState';
+      // _actualState = 'LoadingState';
       _isLoading = true;
       notifyListeners();
+      await Future.delayed(const Duration(seconds: 1));
       UserModel userModel = UserModel.empty();
 
-      // await Future.delayed(const Duration(seconds: 1));
-      var response1 = await userAPI.userAuthenticate(
+      //await Future.delayed(const Duration(seconds: 3));
+      var response = await userAPI.authenticateAccount(
         email: email,
         password: password,
-        // appName: appName,
-        // idUserAppInstitution: idUserAppInstitution
       );
 
+      final Map<String, dynamic> parseData = await jsonDecode(response);
+      bool isOk = parseData['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Autenticazione",
+              message: errorDescription,
+              contentType: "failure"));
+          _isLoading = false;
+          notifyListeners();
+        }
+      } else {
+        userModel = UserModel.fromJson(parseData['okResult']);
+        _stepLoading = "otp";
+        _isLoading = false;
+        setUser(userModel);
+        notifyListeners();
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future checkOtp({
+    required BuildContext context,
+    required String email,
+    required String otpCode,
+    // required int idUserAppInstitution
+  }) async {
+    bool result = false;
+    try {
+      _isLoading = true;
+      notifyListeners();
+      await Future.delayed(const Duration(seconds: 1));
+      UserModel userModel = getUser();
+
+      var response = await userAPI.checkOtp(
+          token: userModel.token, email: email, otpCode: otpCode);
+
+      final Map<String, dynamic> parseData = await jsonDecode(response);
+      bool isOk = parseData['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Autenticazione",
+              message: errorDescription,
+              contentType: "failure"));
+          _isLoading = false;
+          notifyListeners();
+        }
+      } else {}
+      return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+    return result;
+  }
+
+  Future initAccount(
+      {required BuildContext context,
+      required String email,
+      required String password,
+      required String appName}) async {
+    try {
+      // _actualState = 'LoadingState';
+      _isLoading = true;
+      notifyListeners();
+      UserModel userModel = getUser();
+
+      var response1 = await userAPI.getUserAppInstitution(
+          token: userModel.token, idUser: userModel.idUser, appName: appName);
       final Map<String, dynamic> parseData1 = await jsonDecode(response1);
       bool isOk = parseData1['isOk'];
       if (!isOk) {
@@ -101,20 +218,44 @@ class AuthenticationNotifier with ChangeNotifier {
               title: "Autenticazione",
               message: errorDescription,
               contentType: "failure"));
-          _actualState = 'ErrorState';
+
           _isLoading = false;
-          // await Future.delayed(const Duration(seconds: 1));
           notifyListeners();
-          // Navigator.pop(context);
         }
       } else {
-        userModel = UserModel.fromJson(parseData1['okResult']);
+        List<UserAppInstitutionModel> userAppInstitutionModelList =
+            List.from(parseData1['okResult'])
+                .map((e) => UserAppInstitutionModel.fromJson(e))
+                .toList();
 
-        var response2 = await userAPI.getUserAppInstitution(
-            token: userModel.token, idUser: userModel.idUser, appName: appName);
-        print(response2);
+        userModel.userAppInstitutionModelList = userAppInstitutionModelList;
+        if (userAppInstitutionModelList.length == 1) {
+          userModel.userAppInstitutionModelList.first.selected = true;
+        } else if (userAppInstitutionModelList.length > 1) {
+          userModel.userAppInstitutionModelList.last.selected = true;
+        } else {
+          String errorDescription =
+              'Nessuna associazione configurata per l' 'utente';
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Autenticazione",
+                    message: errorDescription,
+                    contentType: "failure"));
+            // _actualState = 'ErrorState';
+            _isLoading = false;
+            notifyListeners();
+          }
+        }
+
+        setUser(userModel);
+        //CHIAMO API PER GRANT
+        var response2 = await userAPI.getUserAppInstitutionGrant(
+            token: userModel.token,
+            idUser: userModel.idUser,
+            idUserAppInstitution:
+                getSelectedUserAppInstitution().idUserAppInstitution);
         final Map<String, dynamic> parseData2 = await jsonDecode(response2);
-        bool isOk = parseData2['isOk'];
         if (!isOk) {
           String errorDescription = parseData2['errorDescription'];
           if (context.mounted) {
@@ -123,122 +264,57 @@ class AuthenticationNotifier with ChangeNotifier {
                     title: "Autenticazione",
                     message: errorDescription,
                     contentType: "failure"));
-            _actualState = 'ErrorState';
+            // _actualState = 'ErrorState';
+
             _isLoading = false;
-            // await Future.delayed(const Duration(seconds: 1));
             notifyListeners();
             // Navigator.pop(context);
           }
         } else {
-          List<UserAppInstitutionModel> userAppInstitutionModelList =
-              List.from(parseData2['okResult'])
-                  .map((e) => UserAppInstitutionModel.fromJson(e))
-                  .toList();
+          userModel.token = parseData2['okResult']['token'];
+          userModel.refreshToken = parseData2['okResult']['refreshToken'];
+          userModel.expirationTime =
+              DateTime.parse(parseData2['okResult']['expirationTime']);
+        }
 
-          userModel.userAppInstitutionModelList = userAppInstitutionModelList;
-          if (userAppInstitutionModelList.length == 1) {
-            userModel.userAppInstitutionModelList.first.selected = true;
-          } else if (userAppInstitutionModelList.length > 1) {
-            userModel.userAppInstitutionModelList.last.selected = true;
-          } else {
-            String errorDescription =
-                'Nessuna associazione configurata per l' 'utente';
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackUtil.stylishSnackBar(
-                      title: "Autenticazione",
-                      message: errorDescription,
-                      contentType: "failure"));
-              _actualState = 'ErrorState';
+        bool isAuthenticated = userModel.token.isNotEmpty;
+        if (isAuthenticated) {
+          WriteCache.setString(
+              key: AppKeys.userData,
+              value: json.encode({
+                'idUser': userModel.idUser,
+                // 'idUserAppInstitution': userModel.idUserAppInstitution,
+                'name': userModel.name,
+                'surname': userModel.surname,
+                'email': userModel.email,
+                'token': userModel.token,
+                'refreshToken': userModel.refreshToken,
+                // 'role': userModel.role,
+                'expirationTime': userModel.expirationTime.toString(),
+                'userAppInstitutionModelList': jsonEncode(userModel
+                    .userAppInstitutionModelList
+                    .map((e) => e.toJson())
+                    .toList())
+              })).whenComplete(
+            () {
               _isLoading = false;
-              // await Future.delayed(const Duration(seconds: 1));
-              notifyListeners();
-            }
-          }
+              _stepLoading = "user";
+              // notifyListeners();
+              Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute);
+            },
+          );
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Autenticazione",
+                    message: "Errore di connessione",
+                    contentType: "failure"));
+            // await Future.delayed(const Duration(seconds: 1));
+            // _actualState = 'ErrorState';
 
-          setUser(userModel);
-          //CHIAMO API PER GRANT
-          var response3 = await userAPI.getUserAppInstitutionGrant(
-              token: userModel.token,
-              idUser: userModel.idUser,
-              idUserAppInstitution:
-                  getSelectedUserAppInstitution().idUserAppInstitution);
-          final Map<String, dynamic> parseData3 = await jsonDecode(response3);
-          if (!isOk) {
-            String errorDescription = parseData3['errorDescription'];
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackUtil.stylishSnackBar(
-                      title: "Autenticazione",
-                      message: errorDescription,
-                      contentType: "failure"));
-              _actualState = 'ErrorState';
-              _isLoading = false;
-              // await Future.delayed(const Duration(seconds: 1));
-              notifyListeners();
-              // Navigator.pop(context);
-            }
-          } else {
-            userModel.token = parseData3['okResult']['token'];
-            userModel.refreshToken = parseData3['okResult']['refreshToken'];
-            userModel.expirationTime =
-                DateTime.parse(parseData3['okResult']['expirationTime']);
-          }
-
-          bool isAuthenticated = userModel.token.isNotEmpty;
-          if (isAuthenticated) {
-            _actualState = 'LoadedState';
             _isLoading = false;
-            await Future.delayed(const Duration(seconds: 1));
             notifyListeners();
-            var t = json.encode({
-              'idUser': userModel.idUser,
-              // 'idUserAppInstitution': userModel.idUserAppInstitution,
-              'name': userModel.name,
-              'surname': userModel.surname,
-              'email': userModel.email,
-              'token': userModel.token,
-              'refreshToken': userModel.refreshToken,
-              // 'role': userModel.role,
-              'expirationTime': userModel.expirationTime.toString(),
-              'userAppInstitutionModelList': jsonEncode(userModel
-                  .userAppInstitutionModelList
-                  .map((e) => e.toJson())
-                  .toList())
-            });
-            print(t);
-            WriteCache.setString(
-                key: AppKeys.userData,
-                value: json.encode({
-                  'idUser': userModel.idUser,
-                  // 'idUserAppInstitution': userModel.idUserAppInstitution,
-                  'name': userModel.name,
-                  'surname': userModel.surname,
-                  'email': userModel.email,
-                  'token': userModel.token,
-                  'refreshToken': userModel.refreshToken,
-                  // 'role': userModel.role,
-                  'expirationTime': userModel.expirationTime.toString(),
-                  'userAppInstitutionModelList': jsonEncode(userModel
-                      .userAppInstitutionModelList
-                      .map((e) => e.toJson())
-                      .toList())
-                })).whenComplete(
-              () => Navigator.of(context)
-                  .pushReplacementNamed(AppRouter.homeRoute),
-            );
-          } else {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackUtil.stylishSnackBar(
-                      title: "Autenticazione",
-                      message: "Errore di connessione",
-                      contentType: "failure"));
-              // await Future.delayed(const Duration(seconds: 1));
-              _actualState = 'ErrorState';
-              _isLoading = false;
-              notifyListeners();
-            }
           }
         }
       }
@@ -248,6 +324,7 @@ class AuthenticationNotifier with ChangeNotifier {
             title: "Autenticazione",
             message: "Errore di connessione",
             contentType: "failure"));
+
         _isLoading = false;
         notifyListeners();
       }
@@ -257,57 +334,60 @@ class AuthenticationNotifier with ChangeNotifier {
             title: "Autenticazione",
             message: "Errore di connessione",
             contentType: "failure"));
+
         _isLoading = false;
         notifyListeners();
       }
     }
   }
 
-  Future userRegister(
-      {required BuildContext context,
-      required String email,
-      required String password}) async {
-    try {
-      var userData =
-          await userAPI.userRegister(email: email, password: password);
-      if (kDebugMode) {
-        print(userData);
-      }
+  // Future userRegister(
+  //     {required BuildContext context,
+  //     required String email,
+  //     required String password}) async {
+  //   try {
+  //     var userData =
+  //         await userAPI.userRegister(email: email, password: password);
+  //     if (kDebugMode) {
+  //       print(userData);
+  //     }
 
-      final Map<String, dynamic> parseData = await jsonDecode(userData);
-      bool isAuthenticated = parseData['authentication'];
-      dynamic authData = parseData['data'];
+  //     final Map<String, dynamic> parseData = await jsonDecode(userData);
+  //     bool isAuthenticated = parseData['authentication'];
+  //     dynamic authData = parseData['data'];
 
-      if (isAuthenticated) {
-        WriteCache.setString(key: AppKeys.userData, value: authData)
-            .whenComplete(
-          () => Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute),
-        );
-      } else {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Autenticazione",
-              message: "Errore di connessione",
-              contentType: "failure"));
-          _isLoading = false;
-          notifyListeners();
-        }
-      }
-    } on SocketException catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Autenticazione",
-            message: "Errore di connessione",
-            contentType: "failure"));
-        _isLoading = false;
-        notifyListeners();
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
+  //     if (isAuthenticated) {
+  //       WriteCache.setString(key: AppKeys.userData, value: authData)
+  //           .whenComplete(
+  //         () => Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute),
+  //       );
+  //     } else {
+  //       if (context.mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+  //             title: "Autenticazione",
+  //             message: "Errore di connessione",
+  //             contentType: "failure"));
+
+  //         _isLoading = false;
+  //         notifyListeners();
+  //       }
+  //     }
+  //   } on SocketException catch (_) {
+  //     if (context.mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+  //           title: "Autenticazione",
+  //           message: "Errore di connessione",
+  //           contentType: "failure"));
+
+  //       _isLoading = false;
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print(e);
+  //     }
+  //   }
+  // }
 
   int getNumberUserAppInstitution() {
     return currentUserModel.userAppInstitutionModelList.length;
@@ -376,26 +456,32 @@ class AuthenticationNotifier with ChangeNotifier {
   }
 
   Future userLogout(BuildContext context) async {
-    _actualState = 'LogoutState';
-    notifyListeners();
-
     DeleteCache.deleteKey(AppKeys.userData).whenComplete(() async {
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 3));
 
       if (context.mounted) {
-        Navigator.of(context).pushReplacementNamed(AppRouter.logoutRoute);
-
-        // Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
-        //   MaterialPageRoute(
-        //     fullscreenDialog: true,
-        //     builder: (_) => const LoginScreen(),
-        //   ),
-        //   (_) => false,
-        // );
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (_) => const LoginScreen(),
+          ),
+          (_) => false,
+        );
       }
+    });
+  }
 
-      _actualState = 'LoginState';
-      notifyListeners();
+  Future exit(BuildContext context) async {
+    DeleteCache.deleteKey(AppKeys.userData).whenComplete(() async {
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (_) => const LoginScreen(),
+          ),
+          (_) => false,
+        );
+      }
     });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lazy_indexed_stack/flutter_lazy_indexed_stack.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
@@ -222,7 +223,7 @@ class _MasterScreenState extends State<MasterScreen> {
             },
           ),
           Expanded(
-            child: IndexedStack(
+            child: LazyIndexedStack(
                 index: _selectedIndex, children: getScreenNavigationBarItem()),
           ),
         ],

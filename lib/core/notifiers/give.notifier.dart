@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/give.api.dart';
 import 'package:np_casse/core/models/give.model.dart';
+import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:provider/provider.dart';
 
 class GiveNotifier with ChangeNotifier {
   final GiveAPI giveAPI = GiveAPI();
@@ -71,6 +73,10 @@ class GiveNotifier with ChangeNotifier {
             return null;
           }
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
     } on SocketException catch (_) {
       if (context.mounted) {
@@ -167,8 +173,12 @@ class GiveNotifier with ChangeNotifier {
             StakeholderGiveModelWithRulesSearch.fromJson(parseData['okResult']);
         cStakeholderGiveModelWithRulesSearch.operationResult =
             parseData['errorDescription'] ?? 'Ok';
-      } else {}
-      return cStakeholderGiveModelWithRulesSearch;
+        return cStakeholderGiveModelWithRulesSearch;
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
@@ -289,6 +299,9 @@ class GiveNotifier with ChangeNotifier {
             StakeholderGiveModelWithRulesSearch.empty();
         cStakeholderGiveModelWithRulesSearch.operationResult =
             'Errore di connessione';
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
       return cStakeholderGiveModelWithRulesSearch;
     } on SocketException catch (_) {
