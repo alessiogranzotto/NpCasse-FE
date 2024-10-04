@@ -56,10 +56,25 @@ class AppStrings {
 
   static const String loggedIn = 'Logged In!';
   static const String registrationComplete = 'Registration Complete!';
+  static const String cancel = 'Cancel';
+  static const String update = 'Update';
+  static const String changePassword = 'Change Password';
 
   static const String name = 'Name';
   static const String pleaseEnterName = 'Please, Enter Name';
   static const String invalidName = 'Invalid Name';
+
+  static const String firstName = 'First Name';
+  static const String pleaseEnterFirstName = 'Please, Enter First Name';
+  static const String invalidFirstName = 'Invalid First Name';
+
+  static const String lastName = 'Last Name';
+  static const String pleaseEnterLastName = 'Please, Enter Last Name';
+  static const String invalidLastName = 'Invalid Last Name';
+
+  static const String telephoneNumber = 'Telephone Number';
+  static const String pleaseEnterTelephoneNumber = 'Please, Enter Telephone Number';
+  static const String invalidTelephoneNumber = 'Invalid Telephone Number';
 
   static const String email = 'Email';
   static const String pleaseEnterEmailAddress = 'Please, Enter Email Address';

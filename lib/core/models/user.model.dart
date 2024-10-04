@@ -9,6 +9,7 @@ class UserModel {
       required this.name,
       required this.surname,
       required this.email,
+      required this.phone,
       required this.token,
       required this.refreshToken,
       // required this.role,
@@ -19,6 +20,7 @@ class UserModel {
   late String name;
   late String surname;
   late String email;
+  late String phone;
   late String token;
   late String refreshToken;
   // late final String role;
@@ -29,6 +31,7 @@ class UserModel {
     idUser = 0;
     // idUserAppInstitution = 0;
     email = "";
+    phone = "";
     token = "";
     refreshToken = "";
     // role = "";
@@ -42,6 +45,7 @@ class UserModel {
     name = json['name'];
     surname = json['surname'];
     email = json['email'];
+    phone = json['phone'];
     token = json['token'];
     refreshToken = json['refreshToken'];
     // role = json['role'];
@@ -65,6 +69,7 @@ class UserModel {
     data['name'] = name;
     data['surname'] = surname;
     data['email'] = email;
+    data['phone'] = phone;
     data['token'] = token;
     data['refreshToken'] = refreshToken;
     // data['role'] = role;

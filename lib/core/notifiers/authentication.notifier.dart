@@ -8,6 +8,7 @@ import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/core/api/authentication.api.dart';
+import 'package:np_casse/core/api/user.api.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -16,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationNotifier with ChangeNotifier {
   final AuthenticationAPI userAPI = AuthenticationAPI();
+  final UserAPI userDetailAPI = UserAPI();
 
   UserModel currentUserModel = UserModel.empty();
 
@@ -484,4 +486,134 @@ class AuthenticationNotifier with ChangeNotifier {
       }
     });
   }
+
+   Future updateUserDetails({
+    required BuildContext context,
+    required String? token,
+    required int idUser,
+    required String name,
+    required String surname,
+    required String email,
+    required String phone,
+    
+  }) async {
+    try {
+      // _actualState = 'LoadingState';
+      _isLoading = true;
+      notifyListeners();
+      UserModel userModel = UserModel.empty();
+
+      //await Future.delayed(const Duration(seconds: 3));
+      var response = await userDetailAPI.updateUserDetails(
+        token: token,
+        idUser: idUser,
+        userName: name,
+        userSurname: surname,
+        userEmail: email,
+        userPhoneNo: phone,
+      );
+
+      final Map<String, dynamic> parseData = await jsonDecode(response);
+      bool isOk = parseData['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Update user detail",
+              message: errorDescription,
+              contentType: "failure"));
+          _isLoading = false;
+          notifyListeners();
+        }
+      } else {
+        userModel = UserModel.fromJson(parseData['okResult']);
+        _stepLoading = "otp";
+        _isLoading = false;
+        setUser(userModel);
+        notifyListeners();
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Update user detail",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Update user detail",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+    Future changeUserPassword({
+    required BuildContext context,
+    required String? token,
+    required int idUser,
+    required String password,
+    required String confirmPassword
+  }) async {
+    try {
+      // _actualState = 'LoadingState';
+      _isLoading = true;
+      notifyListeners();
+      UserModel userModel = UserModel.empty();
+
+      //await Future.delayed(const Duration(seconds: 3));
+      var response = await userDetailAPI.changePassword(
+        token: token,
+        idUser: idUser,
+        password: password,
+        confirmPassword: confirmPassword
+      );
+
+      final Map<String, dynamic> parseData = await jsonDecode(response);
+      bool isOk = parseData['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Change password",
+              message: errorDescription,
+              contentType: "failure"));
+          _isLoading = false;
+          notifyListeners();
+        }
+      } else {
+        userModel = UserModel.fromJson(parseData['okResult']);
+        _stepLoading = "otp";
+        _isLoading = false;
+        setUser(userModel);
+        notifyListeners();
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Change password",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Change password",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
 }

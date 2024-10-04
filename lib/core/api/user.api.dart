@@ -1,10 +1,10 @@
-// import 'dart:convert';
+import 'dart:convert';
 
-// import 'package:http/http.dart' as http;
-// import 'package:np_casse/app/routes/api_routes.dart';
+import 'package:http/http.dart' as http;
+import 'package:np_casse/app/routes/api_routes.dart';
 
-// class UserAPI {
-//   final client = http.Client();
+class UserAPI {
+  final client = http.Client();
 
 //   Future getUserData({required String token}) async {
 //     final Uri uri = Uri.parse(ApiRoutes.userDataURL);
@@ -28,66 +28,86 @@
 //     }
 //   }
 
-//   Future getUserDetails({required String userEmail}) async {
-//     var subUrl = '/info/$userEmail';
-//     final Uri uri = Uri.parse(ApiRoutes.baseURL + subUrl);
-//     final http.Response response = await client.get(
-//       uri,
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Accept': 'application/json',
-//         'Access-Control-Allow-Origin': "*",
-//       },
-//     );
-//     final dynamic body = response.body;
-//     return body;
-//   }
-
-//   Future updateUserDetails(
-//       {required String userEmail,
-//       required String userAddress,
-//       required String userPhoneNo}) async {
-//     const subUrl = '/info/add-user-info';
-//     final Uri uri = Uri.parse(ApiRoutes.baseURL + subUrl);
-//     final http.Response response = await client.post(uri,
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Accept': 'application/json',
-//           'Access-Control-Allow-Origin': "*",
-//         },
-//         body: jsonEncode({
-//           "useremail": userEmail,
-//           "user_address": userAddress,
-//           "user_phone_no": userPhoneNo,
-//         }));
-//     final dynamic body = response.body;
-//     return body;
-//   }
-
-//   Future changePassword(
-//       {required String userEmail,
-//       required String oluserpassword,
-//       required String newuserpassword}) async {
-//     const subUrl = '/auth/change-password';
-//     final Uri uri = Uri.parse(ApiRoutes.baseURL + subUrl);
-//     final http.Response response = await client.post(uri,
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Accept': 'application/json',
-//           'Access-Control-Allow-Origin': "*",
-//         },
-//         body: jsonEncode({
-//           "oluserpassword": oluserpassword,
-//           "useremail": userEmail,
-//           "newuserpassword": newuserpassword
-//         }));
-//     final dynamic body = response.body;
-//     return body;
-//   }
-
-//   final headers = {
-//     'Content-Type': 'application/json',
-//     // 'Accept': 'application/json',
-//     // 'Access-Control-Allow-Origin': "*",
-//   };
+// Future getUserDetails({required String userEmail}) async {
+//   var subUrl = '/info/$userEmail';
+//   final Uri uri = Uri.parse(ApiRoutes.userDetailsURL + subUrl);
+//   final http.Response response = await client.get(
+//     uri,
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Accept': 'application/json',
+//       'Access-Control-Allow-Origin': "*",
+//     },
+//   );
+//   final dynamic body = response.body;
+//   return body;
 // }
+
+  Future updateUserDetails(
+      {required String? token,
+      required int idUser,
+      required String userName,
+      required String userSurname,
+      required String userEmail,
+      required String userPhoneNo}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.updateUserDetailsURL}?IdUser=$idUser');
+
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode({
+          "name": userName,
+          "surname": userSurname,
+          "email": userEmail,
+          "phone": userPhoneNo,
+        }));
+    
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  Future changePassword(
+      {required String? token,
+      required int idUser,
+      required String password,
+      required String confirmPassword}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.changePasswordURL}?IdUser=$idUser');
+
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+
+        },
+        body: jsonEncode({
+          "password": password,
+          "confirmPassword": confirmPassword
+        }));
+        if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  final headers = {
+    'Content-Type': 'application/json',
+    // 'Accept': 'application/json',
+    // 'Access-Control-Allow-Origin': "*",
+  };
+}
