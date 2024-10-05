@@ -18,7 +18,7 @@ class CustomDropDownButtonFormField extends StatefulWidget {
   final String? hintText;
   final String? labelText;
   final ValueChanged<String> onItemChanged;
-  final String? actualValue;
+  final dynamic actualValue;
   final String? Function(String?)? validator;
 
   @override

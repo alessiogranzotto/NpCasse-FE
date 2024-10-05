@@ -16,6 +16,7 @@ import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
+import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
@@ -43,7 +44,7 @@ List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.categoryOneShopRoute, 'Shop', Icons.shop,
       const Icon(Icons.layers), const ShopNavigator()),
   MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
-      const Icon(Icons.settings), const SettingScreen()),
+      const Icon(Icons.settings), const InstitutionScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
       const Icon(Icons.shopping_cart), const CartNavigator()),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
@@ -79,7 +80,7 @@ class _MasterScreenState extends State<MasterScreen> {
 
   void getUserData(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context);
+        Provider.of<AuthenticationNotifier>(context, listen: false);
 
     cUserModel = authenticationNotifier.getUser();
 

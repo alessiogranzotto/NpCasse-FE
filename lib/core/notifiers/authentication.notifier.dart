@@ -35,7 +35,7 @@ class AuthenticationNotifier with ChangeNotifier {
             "InstitutionAdmin");
   }
 
-  Future getUserAppInstitution() async {
+  List<UserAppInstitutionModel> getUserAppInstitution() {
     return currentUserModel.userAppInstitutionModelList;
   }
 
