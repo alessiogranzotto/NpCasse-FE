@@ -487,26 +487,21 @@ class AuthenticationNotifier with ChangeNotifier {
     });
   }
 
-   Future updateUserDetails({
+  Future updateUserDetails({
     required BuildContext context,
     required String? token,
     required int idUser,
+    required int idUserAppInstitution,
     required String name,
     required String surname,
     required String email,
     required String phone,
-    
   }) async {
     try {
-      // _actualState = 'LoadingState';
-      _isLoading = true;
-      notifyListeners();
-      UserModel userModel = UserModel.empty();
-
-      //await Future.delayed(const Duration(seconds: 3));
       var response = await userDetailAPI.updateUserDetails(
         token: token,
         idUser: idUser,
+        idUserAppInstitution: idUserAppInstitution,
         userName: name,
         userSurname: surname,
         userEmail: email,
@@ -526,9 +521,11 @@ class AuthenticationNotifier with ChangeNotifier {
           notifyListeners();
         }
       } else {
-        userModel = UserModel.fromJson(parseData['okResult']);
-        _stepLoading = "otp";
-        _isLoading = false;
+        UserModel userModel = getUser();
+        userModel.name = name;
+        userModel.surname = surname;
+        userModel.email = email;
+        userModel.phone = phone;
         setUser(userModel);
         notifyListeners();
       }
@@ -554,13 +551,12 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
-    Future changeUserPassword({
-    required BuildContext context,
-    required String? token,
-    required int idUser,
-    required String password,
-    required String confirmPassword
-  }) async {
+  Future changeUserPassword(
+      {required BuildContext context,
+      required String? token,
+      required int idUser,
+      required String password,
+      required String confirmPassword}) async {
     try {
       // _actualState = 'LoadingState';
       _isLoading = true;
@@ -569,11 +565,10 @@ class AuthenticationNotifier with ChangeNotifier {
 
       //await Future.delayed(const Duration(seconds: 3));
       var response = await userDetailAPI.changePassword(
-        token: token,
-        idUser: idUser,
-        password: password,
-        confirmPassword: confirmPassword
-      );
+          token: token,
+          idUser: idUser,
+          password: password,
+          confirmPassword: confirmPassword);
 
       final Map<String, dynamic> parseData = await jsonDecode(response);
       bool isOk = parseData['isOk'];
@@ -615,5 +610,4 @@ class AuthenticationNotifier with ChangeNotifier {
       }
     }
   }
-
 }

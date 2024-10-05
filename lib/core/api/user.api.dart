@@ -46,11 +46,12 @@ class UserAPI {
   Future updateUserDetails(
       {required String? token,
       required int idUser,
+      required int idUserAppInstitution,
       required String userName,
       required String userSurname,
       required String userEmail,
       required String userPhoneNo}) async {
-    final Uri uri = Uri.parse('${ApiRoutes.updateUserDetailsURL}?IdUser=$idUser');
+    final Uri uri = Uri.parse('${ApiRoutes.updateUserDetailsURL}/$idUser');
 
     final http.Response response = await client.put(uri,
         headers: {
@@ -60,12 +61,13 @@ class UserAPI {
           "Authorization": token ?? ''
         },
         body: jsonEncode({
+          "idUserAppInstitution": idUserAppInstitution,
           "name": userName,
           "surname": userSurname,
           "email": userEmail,
           "phone": userPhoneNo,
         }));
-    
+
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
@@ -81,7 +83,7 @@ class UserAPI {
       required int idUser,
       required String password,
       required String confirmPassword}) async {
-    final Uri uri = Uri.parse('${ApiRoutes.changePasswordURL}?IdUser=$idUser');
+    final Uri uri = Uri.parse('${ApiRoutes.changePasswordURL}/$idUser');
 
     final http.Response response = await client.put(uri,
         headers: {
@@ -89,13 +91,10 @@ class UserAPI {
           'Accept': 'application/json',
           'Access-Control-Allow-Origin': "*",
           "Authorization": token ?? ''
-
         },
-        body: jsonEncode({
-          "password": password,
-          "confirmPassword": confirmPassword
-        }));
-        if (response.statusCode == 200) {
+        body: jsonEncode(
+            {"password": password, "confirmPassword": confirmPassword}));
+    if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
     } else {
