@@ -573,7 +573,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                       actualValue: idCategory.toString(),
                                       labelText: '',
                                       listOfValue: availableCategory,
-                                      onItemChanged: (String? value) {
+                                      onItemChanged: (value) {
                                         onChangeCategory(value);
                                       },
                                     )),

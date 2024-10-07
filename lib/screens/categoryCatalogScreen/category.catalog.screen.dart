@@ -107,7 +107,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                       actualValue: levelCategory,
                       labelText: 'Mostra livelli categorie',
                       listOfValue: availableLevelCategory,
-                      onItemChanged: (String value) {
+                      onItemChanged: (value) {
                         onChangeLevelCategory(value);
                       },
                     )),
@@ -118,7 +118,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                       actualValue: numberResult,
                       labelText: 'Mostra numero risultati',
                       listOfValue: availableNumberResult,
-                      onItemChanged: (String value) {
+                      onItemChanged: (value) {
                         onChangeNumberResult(value);
                       },
                     )),
@@ -129,7 +129,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                       actualValue: orderBy,
                       labelText: 'Ordinamento',
                       listOfValue: availableOrderBy,
-                      onItemChanged: (String value) {
+                      onItemChanged: (value) {
                         onChangeOrderBy(value);
                       },
                     )),

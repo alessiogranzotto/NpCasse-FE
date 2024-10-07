@@ -73,6 +73,7 @@ class _MasterScreenState extends State<MasterScreen> {
   int nrProductinCart = 0;
   late UserModel cUserModel;
   late UserAppInstitutionModel cSelectedUserAppInstitution;
+  List<MenuList> currentDestinations = [];
   // final List<GlobalKey<NavigatorState>> _navigatorKeys = [
   //   projectNavigatorKey,
   //   cartNavigatorKey
@@ -88,18 +89,18 @@ class _MasterScreenState extends State<MasterScreen> {
         authenticationNotifier.getSelectedUserAppInstitution();
   }
 
-  void adjustMenu(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context);
+  // void adjustMenu(BuildContext context) {
+  //   AuthenticationNotifier authenticationNotifier =
+  //       Provider.of<AuthenticationNotifier>(context);
 
-    int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
+  //   int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
 
-    if (nrAssociazioni == 1) {
-      destinations.removeWhere((element) => element.label == "Associazioni");
-    }
-    // destinations.removeWhere((element) => element.label == "Impostazioni");
-    // destinations.removeWhere((element) => element.label == "Utente");
-  }
+  //   if (nrAssociazioni == 1) {
+  //     destinations.removeWhere((element) => element.label == "Associazioni");
+  //   }
+  //   // destinations.removeWhere((element) => element.label == "Impostazioni");
+  //   // destinations.removeWhere((element) => element.label == "Utente");
+  // }
 
   signOut(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -124,16 +125,25 @@ class _MasterScreenState extends State<MasterScreen> {
   //   }
   // }
 
-  List<SideNavigationBarItem> getSideNavigationBarItem() {
+  List<SideNavigationBarItem> getSideNavigationBarItem(BuildContext context) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context);
+
+    int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
+    currentDestinations = destinations;
+    if (nrAssociazioni == 1) {
+      currentDestinations
+          .removeWhere((element) => element.label == "Associazioni");
+    }
     List<SideNavigationBarItem> result = [];
-    result = destinations
+    result = currentDestinations
         .map((e) => SideNavigationBarItem(icon: e.icon, label: e.label))
         .toList();
     return result;
   }
 
   List<Widget> getScreenNavigationBarItem() {
-    return destinations.map((e) => e.screen).toList();
+    return currentDestinations.map((e) => e.screen).toList();
   }
 
   @override
@@ -151,8 +161,11 @@ class _MasterScreenState extends State<MasterScreen> {
     ShopCategoryNotifier shopCategoryNotifier =
         Provider.of<ShopCategoryNotifier>(context);
 
-    adjustMenu(context);
+    // adjustMenu(context);
     getUserData(context);
+    if (1 == 1) {
+      setState(() {});
+    }
     // cartNotifier.refresh();
     //nrProductinCart = cartNotifier.nrProductInCart;
     return Scaffold(
@@ -195,7 +208,7 @@ class _MasterScreenState extends State<MasterScreen> {
               ],
             )),
             selectedIndex: _selectedIndex,
-            items: getSideNavigationBarItem(),
+            items: getSideNavigationBarItem(context),
             onTap: (index) {
               setState(() {
                 _selectedIndex = index;

@@ -15,13 +15,7 @@ class InstitutionScreen extends StatefulWidget {
 }
 
 class _InstitutionScreenState extends State<InstitutionScreen> {
-  UserAppInstitutionModel? selectedInstitution;
-  List<DropdownMenuItem<UserAppInstitutionModel>> availableUserAppInstitution =
-      [];
-
-  var nameTextEditingController;
-  List<DropdownMenuItem<UserAppInstitutionModel>>
-      getAvailableUserAppInstitution() {
+  List<DropdownMenuItem<UserAppInstitutionModel>> getUserAppInstitution() {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     List<UserAppInstitutionModel> cUserAppInstitutionModel =
@@ -36,6 +30,32 @@ class _InstitutionScreenState extends State<InstitutionScreen> {
     }).toList();
   }
 
+  UserAppInstitutionModel getSelectedUserAppInstitution() {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    List<UserAppInstitutionModel> cUserAppInstitutionModel =
+        authenticationNotifier.getUserAppInstitution();
+
+    var t = cUserAppInstitutionModel.where((element) => element.selected);
+    if (t.length == 1) {
+      return t.first;
+    } else {
+      return cUserAppInstitutionModel.first;
+    }
+  }
+
+  void onUserAppInstitutionChanged(UserAppInstitutionModel value) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    authenticationNotifier.setSelectedUserAppInstitution(value);
+  }
+
+  reinitAccount() {
+    var authNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    authNotifier.reinitAccount(context: context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,15 +63,6 @@ class _InstitutionScreenState extends State<InstitutionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-    List<UserAppInstitutionModel> cUserAppInstitutionModel =
-        authenticationNotifier.getUserAppInstitution();
-
-    UserModel currentUserModel = authenticationNotifier.getUser();
-    String name = currentUserModel.name;
-    TextEditingController nameTextEditingController = TextEditingController();
-    nameTextEditingController.text = name;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         //drawer: const CustomDrawerWidget(),
@@ -77,16 +88,14 @@ class _InstitutionScreenState extends State<InstitutionScreen> {
                     Expanded(
                         child: CustomDropDownButtonFormField(
                       enabled: true,
-                      actualValue: selectedInstitution,
+                      actualValue: getSelectedUserAppInstitution(),
                       labelText: '',
-                      listOfValue: getAvailableUserAppInstitution(),
-                      onItemChanged: (String value) {
-                        // onChangeParentCategory(value);
+                      listOfValue: getUserAppInstitution(),
+                      onItemChanged: (value) {
+                        onUserAppInstitutionChanged(value);
+                        reinitAccount();
                       },
                     )),
-                    Expanded(
-                        child: CustomTextFormField(
-                            controller: nameTextEditingController))
                   ],
                 ),
                 trailing: const Icon(Icons.edit),

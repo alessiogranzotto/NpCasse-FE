@@ -576,7 +576,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                       actualValue: parentIdCategory.toString(),
                                       labelText: '',
                                       listOfValue: availableCategory,
-                                      onItemChanged: (String value) {
+                                      onItemChanged: (value) {
                                         onChangeParentCategory(value);
                                       },
                                     )),
@@ -1147,185 +1147,170 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
           ],
         ),
         floatingActionButton: Wrap(direction: Axis.vertical, children: <Widget>[
-          canAddProduct
-              ? Container(
-                  margin: const EdgeInsets.all(10),
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(eccentricity: 0.5),
-                    onPressed: () {
-                      CategoryCatalogModel categoryCatalogModel =
-                          CategoryCatalogModel(
-                              idCategory: widget
-                                  .categoryCatalogModelArgument.idCategory,
-                              nameCategory:
-                                  textEditingControllerNameCategory.text,
-                              descriptionCategory:
-                                  textEditingControllerDescriptionCategory.text,
-                              parentIdCategory: parentIdCategory,
-                              parentCategoryName: '',
-                              displayOrder: int.tryParse(
-                                      textEditingControllerDisplayOrderCategory
+          Container(
+            margin: const EdgeInsets.all(10),
+            child: FloatingActionButton(
+              shape: const CircleBorder(eccentricity: 0.5),
+              onPressed: () {
+                CategoryCatalogModel categoryCatalogModel =
+                    CategoryCatalogModel(
+                        idCategory:
+                            widget.categoryCatalogModelArgument.idCategory,
+                        nameCategory: textEditingControllerNameCategory.text,
+                        descriptionCategory:
+                            textEditingControllerDescriptionCategory.text,
+                        parentIdCategory: parentIdCategory,
+                        parentCategoryName: '',
+                        displayOrder: int.tryParse(
+                                textEditingControllerDisplayOrderCategory
+                                    .text) ??
+                            0,
+                        deleted: deleted,
+                        idUserAppInstitution:
+                            cUserAppInstitutionModel.idUserAppInstitution,
+                        imageData: tImageString,
+                        giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
+                          idFinalizzazione: int.tryParse(
+                                  textEditingControllerIdFinalizzazione.text) ??
+                              0,
+                          idEvento: int.tryParse(
+                                  textEditingControllerIdEvento.text) ??
+                              0,
+                          idAttivita: int.tryParse(
+                                  textEditingControllerIdAttivita.text) ??
+                              0,
+                          idAgenda: int.tryParse(
+                                  textEditingControllerIdAgenda.text) ??
+                              0,
+                          idComunicazioni: int.tryParse(
+                                  textEditingControllerIdComunicazioni.text) ??
+                              0,
+                          idTipDonazione: int.tryParse(
+                                  textEditingControllerIdTipDonazione.text) ??
+                              0,
+                          idCatalogo: int.tryParse(
+                                  textEditingControllerIdCatalogo.text) ??
+                              0,
+                        ));
+
+                categoryCatalogNotifier
+                    .addOrUpdateCategory(
+                        context: context,
+                        token: authenticationNotifier.token,
+                        categoryCatalogModel: categoryCatalogModel)
+                    .then((value) {
+                  if (value) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackUtil.stylishSnackBar(
+                            title: "Categorie",
+                            message: "Informazioni aggiornate",
+                            contentType: "success"));
+                    Navigator.of(context).pop();
+                    categoryCatalogNotifier.refresh();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackUtil.stylishSnackBar(
+                            title: "Categorie",
+                            message: "Errore di connessione",
+                            contentType: "failure"));
+                    Navigator.of(context).pop();
+                  }
+                });
+              },
+              //backgroundColor: Colors.deepOrangeAccent,
+              child: const Icon(Icons.check),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(10),
+            child: FloatingActionButton(
+              shape: const CircleBorder(eccentricity: 0.5),
+              onPressed: () {
+                var dialog = CustomAlertDialog(
+                  title: "Eliminazione categoria",
+                  content: Text("Si desidera procedere alla cancellazione?"),
+                  yesCallBack: () {
+                    deleted = true;
+                    CategoryCatalogModel categoryCatalogModel =
+                        CategoryCatalogModel(
+                            idCategory:
+                                widget.categoryCatalogModelArgument.idCategory,
+                            nameCategory:
+                                textEditingControllerNameCategory.text,
+                            descriptionCategory:
+                                textEditingControllerDescriptionCategory.text,
+                            parentIdCategory: parentIdCategory,
+                            parentCategoryName: '',
+                            displayOrder: int.tryParse(
+                                    textEditingControllerDisplayOrderCategory
+                                        .text) ??
+                                0,
+                            deleted: deleted,
+                            idUserAppInstitution:
+                                cUserAppInstitutionModel.idUserAppInstitution,
+                            imageData: tImageString,
+                            giveIdsFlatStructureModel:
+                                GiveIdsFlatStructureModel(
+                              idFinalizzazione: int.tryParse(
+                                      textEditingControllerIdFinalizzazione
                                           .text) ??
                                   0,
-                              deleted: deleted,
-                              idUserAppInstitution:
-                                  cUserAppInstitutionModel.idUserAppInstitution,
-                              imageData: tImageString,
-                              giveIdsFlatStructureModel:
-                                  GiveIdsFlatStructureModel(
-                                idFinalizzazione: int.tryParse(
-                                        textEditingControllerIdFinalizzazione
-                                            .text) ??
-                                    0,
-                                idEvento: int.tryParse(
-                                        textEditingControllerIdEvento.text) ??
-                                    0,
-                                idAttivita: int.tryParse(
-                                        textEditingControllerIdAttivita.text) ??
-                                    0,
-                                idAgenda: int.tryParse(
-                                        textEditingControllerIdAgenda.text) ??
-                                    0,
-                                idComunicazioni: int.tryParse(
-                                        textEditingControllerIdComunicazioni
-                                            .text) ??
-                                    0,
-                                idTipDonazione: int.tryParse(
-                                        textEditingControllerIdTipDonazione
-                                            .text) ??
-                                    0,
-                                idCatalogo: int.tryParse(
-                                        textEditingControllerIdCatalogo.text) ??
-                                    0,
-                              ));
+                              idEvento: int.tryParse(
+                                      textEditingControllerIdEvento.text) ??
+                                  0,
+                              idAttivita: int.tryParse(
+                                      textEditingControllerIdAttivita.text) ??
+                                  0,
+                              idAgenda: int.tryParse(
+                                      textEditingControllerIdAgenda.text) ??
+                                  0,
+                              idComunicazioni: int.tryParse(
+                                      textEditingControllerIdComunicazioni
+                                          .text) ??
+                                  0,
+                              idTipDonazione: int.tryParse(
+                                      textEditingControllerIdTipDonazione
+                                          .text) ??
+                                  0,
+                              idCatalogo: int.tryParse(
+                                      textEditingControllerIdCatalogo.text) ??
+                                  0,
+                            ));
 
-                      categoryCatalogNotifier
-                          .addOrUpdateCategory(
-                              context: context,
-                              token: authenticationNotifier.token,
-                              categoryCatalogModel: categoryCatalogModel)
-                          .then((value) {
-                        if (value) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackUtil.stylishSnackBar(
-                                  title: "Categorie",
-                                  message: "Informazioni aggiornate",
-                                  contentType: "success"));
-                          Navigator.of(context).pop();
-                          categoryCatalogNotifier.refresh();
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackUtil.stylishSnackBar(
-                                  title: "Categorie",
-                                  message: "Errore di connessione",
-                                  contentType: "failure"));
-                          Navigator.of(context).pop();
-                        }
-                      });
-                    },
-                    //backgroundColor: Colors.deepOrangeAccent,
-                    child: const Icon(Icons.check),
-                  ),
-                )
-              : const SizedBox.shrink(),
-          (canAddProduct && isEdit)
-              ? Container(
-                  margin: const EdgeInsets.all(10),
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(eccentricity: 0.5),
-                    onPressed: () {
-                      var dialog = CustomAlertDialog(
-                        title: "Eliminazione categoria",
-                        content:
-                            Text("Si desidera procedere alla cancellazione?"),
-                        yesCallBack: () {
-                          deleted = true;
-                          CategoryCatalogModel categoryCatalogModel =
-                              CategoryCatalogModel(
-                                  idCategory: widget
-                                      .categoryCatalogModelArgument.idCategory,
-                                  nameCategory:
-                                      textEditingControllerNameCategory.text,
-                                  descriptionCategory:
-                                      textEditingControllerDescriptionCategory
-                                          .text,
-                                  parentIdCategory: parentIdCategory,
-                                  parentCategoryName: '',
-                                  displayOrder: int.tryParse(
-                                          textEditingControllerDisplayOrderCategory
-                                              .text) ??
-                                      0,
-                                  deleted: deleted,
-                                  idUserAppInstitution: cUserAppInstitutionModel
-                                      .idUserAppInstitution,
-                                  imageData: tImageString,
-                                  giveIdsFlatStructureModel:
-                                      GiveIdsFlatStructureModel(
-                                    idFinalizzazione: int.tryParse(
-                                            textEditingControllerIdFinalizzazione
-                                                .text) ??
-                                        0,
-                                    idEvento: int.tryParse(
-                                            textEditingControllerIdEvento
-                                                .text) ??
-                                        0,
-                                    idAttivita: int.tryParse(
-                                            textEditingControllerIdAttivita
-                                                .text) ??
-                                        0,
-                                    idAgenda: int.tryParse(
-                                            textEditingControllerIdAgenda
-                                                .text) ??
-                                        0,
-                                    idComunicazioni: int.tryParse(
-                                            textEditingControllerIdComunicazioni
-                                                .text) ??
-                                        0,
-                                    idTipDonazione: int.tryParse(
-                                            textEditingControllerIdTipDonazione
-                                                .text) ??
-                                        0,
-                                    idCatalogo: int.tryParse(
-                                            textEditingControllerIdCatalogo
-                                                .text) ??
-                                        0,
-                                  ));
-
-                          categoryCatalogNotifier
-                              .addOrUpdateCategory(
-                                  context: context,
-                                  token: authenticationNotifier.token,
-                                  categoryCatalogModel: categoryCatalogModel)
-                              .then((value) {
-                            if (value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackUtil.stylishSnackBar(
-                                      title: "Categorie",
-                                      message: "Informazioni aggiornate",
-                                      contentType: "success"));
-                              Navigator.of(context).pop();
-                              categoryCatalogNotifier.refresh();
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackUtil.stylishSnackBar(
-                                      title: "Categorie",
-                                      message: "Errore di connessione",
-                                      contentType: "failure"));
-                              Navigator.of(context).pop();
-                            }
-                          });
-                        },
-                        noCallBack: () {},
-                      );
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => dialog);
-                    },
-                    //backgroundColor: Colors.deepOrangeAccent,
-                    child: const Icon(Icons.delete),
-                  ),
-                )
-              : const SizedBox.shrink()
+                    categoryCatalogNotifier
+                        .addOrUpdateCategory(
+                            context: context,
+                            token: authenticationNotifier.token,
+                            categoryCatalogModel: categoryCatalogModel)
+                        .then((value) {
+                      if (value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackUtil.stylishSnackBar(
+                                title: "Categorie",
+                                message: "Informazioni aggiornate",
+                                contentType: "success"));
+                        Navigator.of(context).pop();
+                        categoryCatalogNotifier.refresh();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackUtil.stylishSnackBar(
+                                title: "Categorie",
+                                message: "Errore di connessione",
+                                contentType: "failure"));
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  noCallBack: () {},
+                );
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => dialog);
+              },
+              //backgroundColor: Colors.deepOrangeAccent,
+              child: const Icon(Icons.delete),
+            ),
+          )
         ]));
   }
 }

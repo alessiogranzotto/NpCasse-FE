@@ -144,7 +144,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                               actualValue: selectedIdCategory,
                               labelText: 'Categoria',
                               listOfValue: tAvailableCategory,
-                              onItemChanged: (String value) {
+                              onItemChanged: (value) {
                                 onChangeSelectedIdCategory(value);
                               });
                         },
@@ -190,7 +190,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                               actualValue: selectedIdSubCategory,
                               labelText: 'Sottocategoria',
                               listOfValue: tAvailableCategory,
-                              onItemChanged: (String value) {
+                              onItemChanged: (value) {
                                 onChangeSelectedIdSubCategory(value);
                               });
                         },
@@ -294,7 +294,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       actualValue: numberResult,
                       labelText: 'Mostra risultati',
                       listOfValue: availableNumberResult,
-                      onItemChanged: (String? value) {
+                      onItemChanged: (value) {
                         onChangeNumberResult(value);
                       },
                     )),
@@ -305,7 +305,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       actualValue: orderBy,
                       labelText: 'Ordinamento',
                       listOfValue: availableOrderBy,
-                      onItemChanged: (String? value) {
+                      onItemChanged: (value) {
                         onChangeOrderBy(value);
                       },
                     )),

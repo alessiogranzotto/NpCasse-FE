@@ -111,7 +111,7 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                       actualValue: numberResult,
                       labelText: 'Mostra numero risultati',
                       listOfValue: availableNumberResult,
-                      onItemChanged: (String? value) {
+                      onItemChanged: (value) {
                         onChangeNumberResult(value);
                       },
                     )),
@@ -122,7 +122,7 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                       actualValue: orderBy,
                       labelText: 'Ordinamento',
                       listOfValue: availableOrderBy,
-                      onItemChanged: (String? value) {
+                      onItemChanged: (value) {
                         onChangeOrderBy(value);
                       },
                     )),

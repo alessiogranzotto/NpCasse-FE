@@ -17,7 +17,7 @@ class CustomDropDownButtonFormField extends StatefulWidget {
   final Icon? prefixIcon;
   final String? hintText;
   final String? labelText;
-  final ValueChanged<String> onItemChanged;
+  final ValueChanged<dynamic> onItemChanged;
   final dynamic actualValue;
   final String? Function(String?)? validator;
 
@@ -28,7 +28,7 @@ class CustomDropDownButtonFormField extends StatefulWidget {
 
 class _CustomDropDownButtonFormField
     extends State<CustomDropDownButtonFormField> {
-  late String? _selectedValue;
+  late dynamic _selectedValue;
 
   @override
   void initState() {

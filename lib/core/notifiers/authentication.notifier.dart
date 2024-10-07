@@ -11,6 +11,7 @@ import 'package:np_casse/core/api/authentication.api.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -256,6 +257,7 @@ class AuthenticationNotifier with ChangeNotifier {
             idUserAppInstitution:
                 getSelectedUserAppInstitution().idUserAppInstitution);
         final Map<String, dynamic> parseData2 = await jsonDecode(response2);
+        isOk = parseData1['isOk'];
         if (!isOk) {
           String errorDescription = parseData2['errorDescription'];
           if (context.mounted) {
@@ -341,6 +343,101 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
+  Future reinitAccount({required BuildContext context}) async {
+    try {
+      UserModel userModel = getUser();
+
+      //CHIAMO API PER GRANT
+      var response2 = await userAPI.getUserAppInstitutionGrant(
+          token: userModel.token,
+          idUser: userModel.idUser,
+          idUserAppInstitution:
+              getSelectedUserAppInstitution().idUserAppInstitution);
+      final Map<String, dynamic> parseData2 = await jsonDecode(response2);
+      bool isOk = parseData2['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData2['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Autenticazione",
+              message: errorDescription,
+              contentType: "failure"));
+          // _actualState = 'ErrorState';
+
+          _isLoading = false;
+          notifyListeners();
+          // Navigator.pop(context);
+        }
+      } else {
+        userModel.token = parseData2['okResult']['token'];
+        userModel.refreshToken = parseData2['okResult']['refreshToken'];
+        userModel.expirationTime =
+            DateTime.parse(parseData2['okResult']['expirationTime']);
+      }
+
+      bool isAuthenticated = userModel.token.isNotEmpty;
+      if (isAuthenticated) {
+        WriteCache.setString(
+            key: AppKeys.userData,
+            value: json.encode({
+              'idUser': userModel.idUser,
+              // 'idUserAppInstitution': userModel.idUserAppInstitution,
+              'name': userModel.name,
+              'surname': userModel.surname,
+              'email': userModel.email,
+              'phone': userModel.phone,
+              'token': userModel.token,
+              'refreshToken': userModel.refreshToken,
+              // 'role': userModel.role,
+              'expirationTime': userModel.expirationTime.toString(),
+              'userAppInstitutionModelList': jsonEncode(userModel
+                  .userAppInstitutionModelList
+                  .map((e) => e.toJson())
+                  .toList())
+            })).whenComplete(
+          () {
+            // _isLoading = false;
+            // _stepLoading = "user";
+            notifyListeners();
+            // Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute);
+          },
+        );
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Autenticazione",
+              message: "Errore di connessione",
+              contentType: "failure"));
+          // await Future.delayed(const Duration(seconds: 1));
+          // _actualState = 'ErrorState';
+
+          _isLoading = false;
+          notifyListeners();
+        }
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
   // Future userRegister(
   //     {required BuildContext context,
   //     required String email,
@@ -393,16 +490,15 @@ class AuthenticationNotifier with ChangeNotifier {
     return currentUserModel.userAppInstitutionModelList.length;
   }
 
-  void setSelectedUserAppInstitution(UserAppInstitutionModel? val) {
+  void setSelectedUserAppInstitution(UserAppInstitutionModel val) {
     for (var element in currentUserModel.userAppInstitutionModelList) {
       element.selected = false;
     }
     var s = currentUserModel.userAppInstitutionModelList.where(
-        (element) => element.idUserAppInstitution == val?.idUserAppInstitution);
+        (element) => element.idUserAppInstitution == val.idUserAppInstitution);
     if (s.length == 1) {
       s.first.selected = true;
     }
-    notifyListeners();
   }
 
   UserAppInstitutionModel getSelectedUserAppInstitution() {
