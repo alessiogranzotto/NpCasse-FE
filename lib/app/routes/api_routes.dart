@@ -29,6 +29,11 @@ class ApiRoutes {
   static const String authUserAppInstitutionGrantURL =
       "$authURL/api/User/Utility/get-user-app-institution-grant";
 
+  static const String updateUserDetailsURL =
+      "$authURL/api/User/Utility/update-user";
+  static const String changePasswordURL =
+      "$authURL/api/User/Utility/update-user-password";
+
   static const String baseUserAppInstitutionURL =
       "$casseURL/api/UserAppInstitution";
 

@@ -305,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 },
                                                 //runs when every textfield is filled
                                                 onSubmit: (String value) {
-                                                  otpCode = value;
+                                                  otpCode = value.length > 5 ? value.substring(0, 5) : value;
                                                   checkOtp();
                                                 }, // end onSubmit
                                               ),

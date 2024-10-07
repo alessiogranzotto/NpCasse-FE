@@ -285,25 +285,26 @@ class RecapitoGiveModel {
 }
 
 class ContattiGiveModel {
-  ContattiGiveModel(
-      {required this.id,
-      required this.idStakeholder,
-      required this.nome,
-      required this.cognome,
-      required this.sesso,
-      required this.email,
-      required this.tel,
-      required this.cell,
-      required this.fax,
-      required this.codicefiscale,
-      required this.dataNascita,
-      required this.comCartacee,
-      required this.comEmail,
-      required this.consensoRingrazia,
-      required this.consensoMaterialeInfo,
-      required this.consensoComEspresso,
-      required this.consensoMarketing,
-      required this.consensoSms});
+  ContattiGiveModel({
+    required this.id,
+    required this.idStakeholder,
+    required this.nome,
+    required this.cognome,
+    required this.sesso,
+    required this.email,
+    required this.tel,
+    required this.cell,
+    // required this.fax,
+    required this.codicefiscale,
+    required this.dataNascita,
+    // required this.comCartacee,
+    // required this.comEmail,
+    // required this.consensoRingrazia,
+    // required this.consensoMaterialeInfo,
+    // required this.consensoComEspresso,
+    // required this.consensoMarketing,
+    // required this.consensoSms
+  });
 
   late int id;
   late int idStakeholder;
@@ -357,13 +358,13 @@ class ContattiGiveModel {
     email = json['email'] ?? '';
     codicefiscale = json['codicefiscale'] ?? '';
     dataNascita = json['dataNascita'] ?? '';
-    comCartacee = json['com_cartacee'];
-    comEmail = json['com_email'];
-    consensoRingrazia = json['consenso_ringrazia'];
-    consensoMaterialeInfo = json['consenso_materiale_info'];
-    consensoComEspresso = json['consenso_com_espresso'];
-    consensoMarketing = json['consenso_marketing'];
-    consensoSms = json['consenso_sms'];
+    // comCartacee = json['com_cartacee'];
+    // comEmail = json['com_email'];
+    // consensoRingrazia = json['consenso_ringrazia'];
+    // consensoMaterialeInfo = json['consenso_materiale_info'];
+    // consensoComEspresso = json['consenso_com_espresso'];
+    // consensoMarketing = json['consenso_marketing'];
+    // consensoSms = json['consenso_sms'];
   }
 
   Map<String, dynamic> toJson() {
