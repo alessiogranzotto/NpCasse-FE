@@ -529,6 +529,7 @@ class AuthenticationNotifier with ChangeNotifier {
         setUser(userModel);
         notifyListeners();
       }
+      return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
@@ -561,9 +562,7 @@ class AuthenticationNotifier with ChangeNotifier {
       // _actualState = 'LoadingState';
       _isLoading = true;
       notifyListeners();
-      UserModel userModel = UserModel.empty();
 
-      //await Future.delayed(const Duration(seconds: 3));
       var response = await userDetailAPI.changePassword(
           token: token,
           idUser: idUser,
@@ -583,12 +582,11 @@ class AuthenticationNotifier with ChangeNotifier {
           notifyListeners();
         }
       } else {
-        userModel = UserModel.fromJson(parseData['okResult']);
         _stepLoading = "otp";
         _isLoading = false;
-        setUser(userModel);
         notifyListeners();
       }
+      return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(

@@ -5,6 +5,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/user.model.dart';
+import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class UserScreeen extends StatefulWidget {
   const UserScreeen({super.key});
@@ -106,7 +107,16 @@ class _UserScreeenState extends State<UserScreeen> {
           name: firstNameController.text,
           surname: lastNameController.text,
           email: emailController.text,
-          phone: phoneController.text);
+          phone: phoneController.text).then((value) {
+        if (value) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Utente",
+              message: "Utente aggiornato correttamente",
+              contentType: "success"));
+         }
+        }
+      });
     }
   }
 
@@ -121,7 +131,16 @@ class _UserScreeenState extends State<UserScreeen> {
           token: authNotifier.token,
           idUser: cUserModel.idUser,
           password: passwordController.text,
-          confirmPassword: confirmPasswordController.text);
+          confirmPassword: confirmPasswordController.text).then((value) {     
+        if (value) {
+         if (context.mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Password",
+              message: "La password è stata modificata correttamente",
+              contentType: "success"));
+          }
+        }
+      });
     }
   }
 
