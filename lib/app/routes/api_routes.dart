@@ -15,9 +15,9 @@ class ApiRoutes {
   // static const String localWebAuthURL = "http://31.14.141.7:8084";
   // static const String testBaseURL = "http://31.14.141.7:8443";
 
-  static const String authURL = prodAuthURL;
-  static const String casseURL = prodCasseURL;
-  static const String whURL = prodWhURL;
+  static const String authURL = devAuthURL;
+  static const String casseURL = devCasseURL;
+  static const String whURL = devWhURL;
 
   static const String authenticateURL =
       "$authURL/api/user/utility/authenticate";
@@ -31,7 +31,7 @@ class ApiRoutes {
 
   static const String updateUserDetailsURL =
       "$authURL/api/User/Utility/update-user";
-  static const String  changePasswordURL =
+  static const String changePasswordURL =
       "$authURL/api/User/Utility/update-user-password";
 
   static const String baseUserAppInstitutionURL =
