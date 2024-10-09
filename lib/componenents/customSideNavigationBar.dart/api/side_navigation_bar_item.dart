@@ -8,9 +8,13 @@ class SideNavigationBarItem {
   /// A text to display route information
   final String label;
 
+  /// Optional margin for the icon (e.g., left margin)
+  final EdgeInsetsGeometry? margin;
+
   /// Item data
   const SideNavigationBarItem({
     required this.icon,
     required this.label,
+    this.margin, // Optional margin parameter
   });
 }
