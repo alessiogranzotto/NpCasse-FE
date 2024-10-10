@@ -205,15 +205,25 @@ void handleMenuTap(int index) {
     return items;
   }
 
-  Widget getSelectedScreen() {
-    final mainMenu = currentDestinations[_selectedMainMenuIndex];
+Widget getSelectedScreen() {
+  final mainMenu = currentDestinations[_selectedMainMenuIndex];
 
-    if (_selectedSubMenuIndex != null) {
-      return mainMenu.subMenus![_selectedSubMenuIndex!].screen;
-    }
-
-    return mainMenu.screen;
+  // If there are submenus and one is selected, show the selected submenu screen
+  if (_selectedSubMenuIndex != null) {
+    return LazyIndexedStack(
+      index: _selectedSubMenuIndex!, // Index of the currently selected submenu
+      children: mainMenu.subMenus!.map((subMenu) => subMenu.screen).toList(),
+    );
   }
+
+  // If no submenu is selected, show the main menu screen
+  return LazyIndexedStack(
+    index: _selectedMainMenuIndex, // Index of the selected main menu
+    children: currentDestinations.map((menu) => menu.screen).toList(),
+  );
+}
+
+
 
   @override
   Widget build(BuildContext context) {
