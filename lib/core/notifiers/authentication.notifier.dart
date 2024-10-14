@@ -232,10 +232,8 @@ class AuthenticationNotifier with ChangeNotifier {
                 .toList();
 
         userModel.userAppInstitutionModelList = userAppInstitutionModelList;
-        if (userAppInstitutionModelList.length == 1) {
+        if (userAppInstitutionModelList.length >= 1) {
           userModel.userAppInstitutionModelList.first.selected = true;
-        } else if (userAppInstitutionModelList.length > 1) {
-          userModel.userAppInstitutionModelList.last.selected = true;
         } else {
           String errorDescription =
               'Nessuna associazione configurata per l' 'utente';
@@ -504,13 +502,9 @@ class AuthenticationNotifier with ChangeNotifier {
   }
 
   UserAppInstitutionModel getSelectedUserAppInstitution() {
-    var s = currentUserModel.userAppInstitutionModelList
-        .where((element) => element.selected == true);
-    if (s.length == 1) {
-      return s.first;
-    } else {
-      return UserAppInstitutionModel.empty();
-    }
+    return currentUserModel.userAppInstitutionModelList
+        .where((element) => element.selected == true)
+        .first;
   }
 
   void checkPasswordStrength({required String password}) {

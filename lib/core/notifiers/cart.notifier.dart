@@ -334,6 +334,56 @@ class CartNotifier with ChangeNotifier {
     }
   }
 
+  Future sendInvoice(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int idCart,
+      required String emailName}) async {
+    try {
+      var response = await cartAPI.sendInvoice(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          idCart: idCart,
+          emailName: emailName);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Carrello",
+                    message: "Email inviata con successo",
+                    contentType: "success"));
+          }
+          // notifyListeners();
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
   Future cartToStakeholder(
       {required BuildContext context,
       required String? token,

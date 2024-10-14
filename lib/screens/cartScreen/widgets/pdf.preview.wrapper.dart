@@ -91,8 +91,6 @@ class _PdfPreviewWrapperState extends State<PdfPreviewWrapper> {
         onShared: _showSharedToast,
         onError: (context, error) => AlertDialog(
               content: Text(error.toString() + context.toString()),
-            )
-        // , cartNotifier.getCart()
-        );
+            ));
   }
 }

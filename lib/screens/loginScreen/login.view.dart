@@ -30,8 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController = TextEditingController()..addListener(controllerListener);
     passwordController = TextEditingController()
       ..addListener(controllerListener);
-    // emailController.text = "meyer@meyer.it";
-    // passwordController.text = "sT!rme4yer";
+    emailController.text = "meyer@meyer.it";
+    passwordController.text = "sT!rme4yer";
   }
 
   void disposeControllers() {
@@ -305,7 +305,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 },
                                                 //runs when every textfield is filled
                                                 onSubmit: (String value) {
-                                                  otpCode = value.length > 5 ? value.substring(0, 5) : value;
+                                                  otpCode = value.length > 5
+                                                      ? value.substring(0, 5)
+                                                      : value;
                                                   checkOtp();
                                                 }, // end onSubmit
                                               ),

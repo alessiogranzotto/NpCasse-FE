@@ -26,19 +26,6 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
     LayoutCallback build,
     PdfPageFormat pageFormat,
   ) async {
-    // HomeNotifier homeNotifier =
-    //     Provider.of<HomeNotifier>(context, listen: false);
-
-    // // homeNotifier.setHomeIndex(0);
-    // // Navigator.of(context).popUntil((route) => route.isFirst);
-    // Navigator.pop(context);
-    // // PersistentNavBarNavigator.pushNewScreen(
-    // //   context,
-    // //   screen: const CartScreen(),
-    // //   withNavBar: true,
-    // //   pageTransitionAnimation: PageTransitionAnimation.fade,
-    // // );
-    // homeNotifier.setHomeIndex(0);
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
 
@@ -51,6 +38,36 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
     // homeNotifier.setHomeIndex(0);
     Navigator.of(context).popUntil((route) => route.isFirst);
     cartNotifier.refresh();
+  }
+
+  void sendInvoice(
+    BuildContext context,
+    LayoutCallback build,
+    PdfPageFormat pageFormat,
+  ) async {
+    CartNotifier cartNotifier =
+        Provider.of<CartNotifier>(context, listen: false);
+
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+    cartNotifier.sendInvoice(
+        context: context,
+        token: authenticationNotifier.token,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        idCart: cartNotifier.getCart().idCart,
+        emailName: emailName);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+          title: "Carrello",
+          message: "Invio email preso in carico",
+          contentType: "success"));
+    }
+    // homeNotifier.setHomeIndex(0);
+    //Navigator.of(context).popUntil((route) => route.isFirst);
+    //cartNotifier.refresh();
   }
 
   @override
@@ -79,6 +96,10 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
       const PdfPreviewAction(
         icon: Icon(Icons.home),
         onPressed: closeCart,
+      ),
+      PdfPreviewAction(
+        icon: Icon(Icons.email),
+        onPressed: sendInvoice,
       ),
       PdfPreviewAction(
         icon: SizedBox(

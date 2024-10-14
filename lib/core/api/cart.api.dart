@@ -186,6 +186,32 @@ class CartAPI {
     }
   }
 
+  Future sendInvoice(
+      {required String? token,
+      required int idUserAppInstitution,
+      required int idCart,
+      required String emailName}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.cartURL}/Send-invoice?IdUserAppInstitution=$idUserAppInstitution&IdCart=$idCart&EmailName=$emailName');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic bodyBytes = response.body;
+      return bodyBytes;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
   Future cartToStakeholder(
       {String? token,
       required int idUserAppInstitution,
