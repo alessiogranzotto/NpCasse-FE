@@ -52,7 +52,7 @@ class _SideNavigationBarItemWidgetState
     // The color of the icon and text to be displayed
     final Color? currentColor = _evaluateColor(context, isSelected);
 
-    /// Return a basic list-tile for now
+    /// Return a basic list-tile with margin applied to the icon
     return Tooltip(
       waitDuration: const Duration(seconds: 1),
       message: widget.itemData.label,
@@ -61,10 +61,13 @@ class _SideNavigationBarItemWidgetState
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
                 tileColor: _evaluateBackgroundColor(isSelected),
-                leading: Icon(
-                  widget.itemData.icon,
-                  color: currentColor,
-                  size: widget.itemTheme.iconSize,
+                leading: Container(
+                  margin: widget.itemData.margin ?? EdgeInsets.zero, // Apply margin if provided
+                  child: Icon(
+                    widget.itemData.icon,
+                    color: currentColor,
+                    size: widget.itemTheme.iconSize,
+                  ),
                 ),
                 title: Text(
                   widget.itemData.label,
@@ -84,15 +87,18 @@ class _SideNavigationBarItemWidgetState
                     color: _evaluateBackgroundColor(isSelected),
                     shape: widget.itemTheme.iconShape,
                   ),
-                  child: IconButton(
-                    icon: Icon(
-                      widget.itemData.icon,
-                      color: currentColor,
-                      size: widget.itemTheme.iconSize,
+                  child: Container(
+                    margin: widget.itemData.margin ?? EdgeInsets.zero, // Apply margin if provided
+                    child: IconButton(
+                      icon: Icon(
+                        widget.itemData.icon,
+                        color: currentColor,
+                        size: widget.itemTheme.iconSize,
+                      ),
+                      onPressed: () {
+                        widget.onTap(widget.index);
+                      },
                     ),
-                    onPressed: () {
-                      widget.onTap(widget.index);
-                    },
                   ),
                 ),
               ),
@@ -101,7 +107,7 @@ class _SideNavigationBarItemWidgetState
   }
 
   /// Determines if this tile is currently selected
-  ///
+   ///
   /// Looks at the both item labels to compare whether they are equal
   /// and compares the parents [index] with this tiles index
   bool _isTileSelected(
@@ -116,11 +122,11 @@ class _SideNavigationBarItemWidgetState
 
   /// Check if this item [isSelected] and return the passed [widget.selectedColor]
   /// If it is not selected return either [Colors.white] or [Colors.grey] based on the
-  /// [Brightness]
+  /// [Brightness]  
   Color? _evaluateColor(final BuildContext context, final bool isSelected) {
     final Brightness brightness = Theme.of(context).brightness;
     return isSelected
-        // If selectedItemColor is null we pass the default
+            // If selectedItemColor is null we pass the default
         ? widget.itemTheme.selectedItemColor ??
             SideNavigationBarItemTheme.defaultSelectedItemColor
         // If unselectedItemColor is null we evaluate current brightness and return either grey or white

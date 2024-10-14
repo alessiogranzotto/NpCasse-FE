@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lazy_indexed_stack/flutter_lazy_indexed_stack.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
@@ -8,12 +7,7 @@ import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navi
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
-import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
-import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/screens/cartScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
@@ -28,35 +22,55 @@ import 'package:provider/provider.dart';
 
 class MenuList {
   MenuList(
-      this.screenRoute, this.label, this.icon, this.selectedIcon, this.screen);
+    this.screenRoute,
+    this.label,
+    this.icon,
+    this.selectedIcon,
+    this.screen, {
+    this.isVisible = true,
+    this.subMenus,
+  });
+
   String screenRoute;
   String label;
   IconData icon;
   Widget selectedIcon;
   Widget screen;
+  bool isVisible; // Property to control visibility
+  List<MenuList>? subMenus; // Property for submenus
 }
 
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite), const WishlistScreen()),
-  // MenuList(AppRouter.projectRoute, 'Progetti', Icons.layers_outlined,
-  //     const Icon(Icons.layers), const ProjectNavigator()),
   MenuList(AppRouter.categoryOneShopRoute, 'Shop', Icons.shop,
       const Icon(Icons.layers), const ShopNavigator()),
   MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
       const Icon(Icons.settings), const InstitutionScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
       const Icon(Icons.shopping_cart), const CartNavigator()),
+  MenuList(AppRouter.cartHistoryRoute, 'Storico Carello', Icons.history,
+          const Icon(Icons.history), const CartHistoryScreen()),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
       const Icon(Icons.settings), const ProductAttributeNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,
       const Icon(Icons.settings), const CategoryCatalogNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
       const Icon(Icons.settings), const ProductCatalogNavigator()),
-  MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
-      const Icon(Icons.settings), const SettingScreen()),
-  MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
-      const Icon(Icons.account_circle), const UserScreeen()),
+  MenuList(
+    AppRouter.settingRoute,
+    'Impostazioni Generale',
+    Icons.settings,
+    const Icon(Icons.settings),
+    const SettingScreen(),
+    subMenus: [
+      MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
+          const Icon(Icons.account_circle), const UserScreeen()),
+      MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.store,
+          const Icon(Icons.settings), const SettingScreen()),
+    ],
+  ),
+
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
       const Icon(Icons.logout), const LogoutScreen()),
 ];
@@ -69,27 +83,40 @@ class MasterScreen extends StatefulWidget {
 }
 
 class _MasterScreenState extends State<MasterScreen> {
-  int _selectedIndex = 0;
+  int _selectedMainMenuIndex = 0; // Track selected main menu index
+  int? _selectedSubMenuIndex; // Track selected submenu index
   int nrProductinCart = 0;
-  late UserModel cUserModel;
-  late UserAppInstitutionModel cSelectedUserAppInstitution;
   List<MenuList> currentDestinations = [];
-  // final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-  //   projectNavigatorKey,
-  //   cartNavigatorKey
-  // ];
+  Set<int> visibleSubMenus = {}; // Track visible submenus by main menu index
+  Widget? _currentScreen; // Track the current screen to display
+  UserModel? cUserModel; // Make this nullable initially
+  UserAppInstitutionModel? cSelectedUserAppInstitution; // Also nullable
 
-  void getUserData(BuildContext context) {
+  signOut(BuildContext context) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    authenticationNotifier.userLogout(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUserData(); // Fetch user data when the screen is initialized
+    _currentScreen = destinations[_selectedMainMenuIndex].screen; // Set the initial screen
+  }
+
+  void getUserData() {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
 
-    cUserModel = authenticationNotifier.getUser();
-
-    cSelectedUserAppInstitution =
-        authenticationNotifier.getSelectedUserAppInstitution();
+    // Fetch the user and institution models
+    setState(() {
+      cUserModel = authenticationNotifier.getUser();
+      cSelectedUserAppInstitution = authenticationNotifier.getSelectedUserAppInstitution();
+    });
   }
-
-  // void adjustMenu(BuildContext context) {
+  
+    // void adjustMenu(BuildContext context) {
   //   AuthenticationNotifier authenticationNotifier =
   //       Provider.of<AuthenticationNotifier>(context);
 
@@ -101,17 +128,6 @@ class _MasterScreenState extends State<MasterScreen> {
   //   // destinations.removeWhere((element) => element.label == "Impostazioni");
   //   // destinations.removeWhere((element) => element.label == "Utente");
   // }
-
-  signOut(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-    authenticationNotifier.userLogout(context);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   // Future<bool> _systemBackButtonPressed() async {
   //   if (_navigatorKeys[_selectedIndex].currentState?.canPop() == true) {
@@ -125,55 +141,121 @@ class _MasterScreenState extends State<MasterScreen> {
   //   }
   // }
 
-  List<SideNavigationBarItem> getSideNavigationBarItem(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context);
+  void handleMenuTap(int index) {
+    setState(() {
+      final menu = currentDestinations[index];
 
-    int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
-    currentDestinations = destinations;
-    if (nrAssociazioni == 1) {
-      currentDestinations
-          .removeWhere((element) => element.label == "Associazioni");
-    }
-    List<SideNavigationBarItem> result = [];
-    result = currentDestinations
-        .map((e) => SideNavigationBarItem(icon: e.icon, label: e.label))
-        .toList();
-    return result;
+      // If the selected menu is "Uscita" (logout)
+      if (menu.label == 'Uscita') {
+        signOut(context); // Call signOut when the menu label is "Uscita"
+      }
+
+      // Check if the clicked menu has submenus
+      if (menu.subMenus != null && menu.subMenus!.isNotEmpty) {
+        // Toggle the visibility of the submenu
+        if (visibleSubMenus.contains(index)) {
+          visibleSubMenus.remove(index); // Collapse submenu
+        } else {
+          visibleSubMenus.add(index); // Expand submenu
+        }
+        // Don't change the screen if submenus are available
+        _selectedMainMenuIndex = index; // Update the selected main menu index
+        _selectedSubMenuIndex = null; // Clear submenu selection
+      } else {
+        _selectedMainMenuIndex = index; // Set the selected main menu
+        _selectedSubMenuIndex = null; // Clear submenu selection
+        visibleSubMenus.clear(); // Collapse all submenus
+        _currentScreen = menu.screen; // Store the current menu's screen
+      }
+    });
   }
 
-  List<Widget> getScreenNavigationBarItem() {
-    return currentDestinations.map((e) => e.screen).toList();
+  void handleSubMenuTap(int mainMenuIndex, int subMenuIndex) {
+    setState(() {
+      _selectedMainMenuIndex = mainMenuIndex; // Update main menu index
+      _selectedSubMenuIndex = subMenuIndex; // Set the selected submenu index
+      _currentScreen = currentDestinations[mainMenuIndex].subMenus![subMenuIndex].screen; // Update current screen
+    });
+  }
+
+  List<SideNavigationBarItem> getSideNavigationBarItems(BuildContext context) {
+    currentDestinations = destinations.where((menu) => menu.isVisible).toList();
+    List<SideNavigationBarItem> items = [];
+
+    // Iterate over main menu items
+    for (int i = 0; i < currentDestinations.length; i++) {
+      final menu = currentDestinations[i];
+
+      // Add main menu item
+      items.add(SideNavigationBarItem(
+        icon: menu.icon,
+        label: menu.label,
+      ));
+
+      // Add submenu items if they are visible
+      if (visibleSubMenus.contains(i) && menu.subMenus != null) {
+        for (int j = 0; j < menu.subMenus!.length; j++) {
+          items.add(SideNavigationBarItem(
+            icon: menu.subMenus![j].icon,
+            label: menu.subMenus![j].label,
+            margin: const EdgeInsets.only(left: 16.0), // Add left margin to submenu items
+          ));
+        }
+      }
+    }
+
+    return items;
+  }
+
+  Widget getSelectedScreen() {
+    // If a submenu is selected, return the submenu screen; otherwise return the selected screen
+    if (_selectedSubMenuIndex != null) {
+      return currentDestinations[_selectedMainMenuIndex].subMenus![_selectedSubMenuIndex!].screen;
+    }
+    return _currentScreen!; // Return the  selected screen
   }
 
   @override
   Widget build(BuildContext context) {
-    CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
-    // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
-    WishlistProductNotifier wishlistProductNotifier =
-        Provider.of<WishlistProductNotifier>(context);
-    ProductAttributeNotifier productAttributeNotifier =
-        Provider.of<ProductAttributeNotifier>(context);
-    ProductCatalogNotifier productCatalogNotifier =
-        Provider.of<ProductCatalogNotifier>(context);
-    CategoryCatalogNotifier categoryCatalogNotifier =
-        Provider.of<CategoryCatalogNotifier>(context);
-    ShopCategoryNotifier shopCategoryNotifier =
-        Provider.of<ShopCategoryNotifier>(context);
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: true);
+    cUserModel = authenticationNotifier.getUser();
+    cSelectedUserAppInstitution = authenticationNotifier.getSelectedUserAppInstitution();
+    
+    // Display a loading state while data is being fetched
+    if (cUserModel == null || cSelectedUserAppInstitution == null) {
+      return const Center(child: CircularProgressIndicator()); // Show loading spinner until data is available
+    }
+
+     // CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
+    // // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
+    // WishlistProductNotifier wishlistProductNotifier =
+    //     Provider.of<WishlistProductNotifier>(context);
+    // ProductAttributeNotifier productAttributeNotifier =
+    //     Provider.of<ProductAttributeNotifier>(context);
+    // ProductCatalogNotifier productCatalogNotifier =
+    //     Provider.of<ProductCatalogNotifier>(context);
+    // CategoryCatalogNotifier categoryCatalogNotifier =
+    //     Provider.of<CategoryCatalogNotifier>(context);
+    // ShopCategoryNotifier shopCategoryNotifier =
+    //     Provider.of<ShopCategoryNotifier>(context);
 
     // adjustMenu(context);
-    getUserData(context);
-    if (1 == 1) {
-      setState(() {});
-    }
+    // getUserData(context);
+    // if (1 == 1) {
+    //   setState(() {});
+    // }
     // cartNotifier.refresh();
-    //nrProductinCart = cartNotifier.nrProductInCart;
+    //nrProductinCart = cartNotifier.nrProductInCart; 
+
     return Scaffold(
       body: Row(
         children: [
+          // Sidebar for main navigation
           SideNavigationBar(
             expandable: true,
             theme: SideNavigationBarTheme.blue(),
+                       
             // header: SideNavigationBarHeader(
             //     image: null,
             //     title: Text(
@@ -191,57 +273,87 @@ class _MasterScreenState extends State<MasterScreen> {
             //       ],
             //     )),
             footer: SideNavigationBarFooter(
-                label: Column(
-              children: [
-                Text(
-                  '${cUserModel.name} ${cUserModel.surname}',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                Text(
-                  cUserModel.email,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                Text(
-                  cSelectedUserAppInstitution.roleUserAppInstitution,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            )),
-            selectedIndex: _selectedIndex,
-            items: getSideNavigationBarItem(context),
+              label: Column(
+                children: [
+                  Text(
+                    '${cUserModel!.name} ${cUserModel!.surname}',  // Safely unwrap nullable values
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Text(
+                    cUserModel!.email, // Safely unwrap nullable value
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Text(
+                    cSelectedUserAppInstitution!.roleUserAppInstitution, // Safely unwrap
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
+              ),
+            ),
+            selectedIndex: _selectedSubMenuIndex == null
+                ? _selectedMainMenuIndex
+                : _selectedMainMenuIndex + 1 + _selectedSubMenuIndex!,
+            items: getSideNavigationBarItems(context),
             onTap: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-              if (destinations.elementAt(index).label == "Preferiti") {
-                wishlistProductNotifier.refresh();
-                // } else if (destinations.elementAt(index).label == "Progetti") {
-                //   projectNotifier.refresh();
-                // } else
-              } else if (destinations.elementAt(index).label == "Shop") {
-                shopCategoryNotifier.refresh();
-              } else if (destinations.elementAt(index).label == "Carrello") {
-                cartNotifier.refresh();
-              } else if (destinations.elementAt(index).label ==
-                  "Attributi prodotti") {
-                productAttributeNotifier.refresh();
-              } else if (destinations.elementAt(index).label ==
-                  "Catalogo prodotti") {
-                productCatalogNotifier.refresh();
-              } else if (destinations.elementAt(index).label ==
-                  "Catalogo categorie") {
-                categoryCatalogNotifier.refresh();
-              } else if (destinations.elementAt(index).label == "Uscita") {
-                signOut(context);
+              int currentIndex = 0;
+
+              for (int i = 0; i < currentDestinations.length; i++) {
+                final menu = currentDestinations[i];
+
+                if (currentIndex == index) {
+                  handleMenuTap(i);
+                  return;
+                }
+
+                currentIndex++;
+
+                if (visibleSubMenus.contains(i) && menu.subMenus != null) {
+                  for (int j = 0; j < menu.subMenus!.length; j++) {
+                    if (currentIndex == index) {
+                      handleSubMenuTap(i, j);
+                      return;
+                    }
+                    currentIndex++;
+                  }
+                }
               }
             },
           ),
+
+          // Expanded area to display the selected content
           Expanded(
-            child: LazyIndexedStack(
-                index: _selectedIndex, children: getScreenNavigationBarItem()),
+            child: getSelectedScreen(),
           ),
         ],
       ),
     );
   }
 }
+
+
+// onTap: (index) {
+//               setState(() {
+//                 _selectedIndex = index;
+//               });
+//               if (destinations.elementAt(index).label == "Preferiti") {
+//                 wishlistProductNotifier.refresh();
+//                 // } else if (destinations.elementAt(index).label == "Progetti") {
+//                 //   projectNotifier.refresh();
+//                 // } else
+//               } else if (destinations.elementAt(index).label == "Shop") {
+//                 shopCategoryNotifier.refresh();
+//               } else if (destinations.elementAt(index).label == "Carrello") {
+//                 cartNotifier.refresh();
+//               } else if (destinations.elementAt(index).label ==
+//                   "Attributi prodotti") {
+//                 productAttributeNotifier.refresh();
+//               } else if (destinations.elementAt(index).label ==
+//                   "Catalogo prodotti") {
+//                 productCatalogNotifier.refresh();
+//               } else if (destinations.elementAt(index).label ==
+//                   "Catalogo categorie") {
+//                 categoryCatalogNotifier.refresh();
+//               } else if (destinations.elementAt(index).label == "Uscita") {
+//                 signOut(context);
+//               }
+//             },

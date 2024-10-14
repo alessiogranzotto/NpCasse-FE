@@ -57,6 +57,7 @@ class AppRouter {
   static const String wishListRoute = "/wishList";
   static const String institutionRoute = "/institution";
   static const String cartRoute = "/cart";
+  static const String cartHistoryRoute = "/cartHistory";
 
   static const String shManage = "/shManage";
   static const String shManageNewEdit = "/shManageNewEdit";
