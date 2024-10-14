@@ -4,6 +4,7 @@ import 'package:np_casse/app/providers/provider.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/themes/themes.dart';
 import 'package:provider/provider.dart';
+import 'package:paged_datatable/paged_datatable.dart'; // Import your PagedDataTable
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
@@ -36,6 +37,13 @@ class Core extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Np casse',
+      localizationsDelegates: [
+        PagedDataTableLocalization.delegate, // Add this line
+      ],
+      supportedLocales: [
+        const Locale('en', ''), // English
+        // You can add more locales here if needed
+      ],
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRouter.generateRoute,
       initialRoute: AppRouter.splashRoute,
