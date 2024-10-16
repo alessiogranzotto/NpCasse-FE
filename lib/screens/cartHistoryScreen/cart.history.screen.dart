@@ -117,7 +117,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               title: const Text('Payment Type'),
               cellBuilder: (context, item, index) =>
                   Text(item['paymentTypeCart'].toString().split('.').last),
-              size: const FractionalColumnSize(0.23),
+              size: const FractionalColumnSize(0.15),
               sortable: true,
             ),
             TableColumn(
@@ -135,7 +135,18 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   item['totalPriceCart'] != null
                       ? item['totalPriceCart'].toString()
                       : ''),
-              size: const FractionalColumnSize(0.20),
+              size: const FractionalColumnSize(0.15),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'idStakeholder',
+              title: const Text('Stakeholder Id'),
+              cellBuilder: (context, item, index) =>
+                  Text(
+                  item['idStakeholder'] != null
+                      ? item['idStakeholder'].toString()
+                      : ''),
+              size: const FractionalColumnSize(0.15),
               sortable: true,
             ),
             TableColumn(
@@ -144,7 +155,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               cellBuilder: (context, item, index) => PopupMenuButton<int>(
                 icon: const Icon(Icons.more_vert),
                 itemBuilder: (context) => [
-                  PopupMenuItem<int>(
+                 if (item['idStakeholder'] != null)
+                    PopupMenuItem<int>(
                     value: 1,
                     child: const Text('Emissione ricevuta'),
                   ),
