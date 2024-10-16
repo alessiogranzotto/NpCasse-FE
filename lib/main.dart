@@ -5,8 +5,10 @@ import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/themes/themes.dart';
 import 'package:provider/provider.dart';
 import 'package:paged_datatable/paged_datatable.dart'; // Import your PagedDataTable
+import 'package:intl/date_symbol_data_local.dart'; // Import this for locale initialization
 
 void main() {
+  initializeDateFormatting('it', null);
   HttpOverrides.global = MyHttpOverrides();
   runApp(const NpCasseApp());
 }

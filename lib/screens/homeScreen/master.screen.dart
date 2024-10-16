@@ -7,7 +7,8 @@ import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navi
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/screens/cartScreen/cart.history.screen.dart';
+import 'package:np_casse/screens/cartHistoryScreen/cart.history.screen.dart';
+import 'package:np_casse/screens/cartHistoryScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
@@ -50,7 +51,7 @@ List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
       const Icon(Icons.shopping_cart), const CartNavigator()),
   MenuList(AppRouter.cartHistoryRoute, 'Storico Carello', Icons.history,
-          const Icon(Icons.history), const CartHistoryScreen()),
+          const Icon(Icons.history), const CartHistoryNavigator()),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
       const Icon(Icons.settings), const ProductAttributeNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,

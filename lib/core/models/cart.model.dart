@@ -2,50 +2,70 @@ import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 
 class CartModel {
-  CartModel(
-      {required this.idCart,
-      required this.dateCreatedCart,
-      required this.stateCart});
+  CartModel({
+    required this.idCart,
+    required this.idUserAppInstitution, // Include this in the constructor
+    required this.dateCreatedCart,
+    required this.paymentTypeCart,
+    required this.stateCart,
+    required this.notesCart,
+    required this.cartProducts,
+    required this.totalPriceCart,
+    required this.idStakeholder,
+  });
+
   late final int idCart;
   late final int idUserAppInstitution;
   late final DateTime dateCreatedCart;
   late final String paymentTypeCart;
   late final int stateCart;
   late final String notesCart;
+  late final int? totalPriceCart;
+  late final int? idStakeholder;
   late final List<CartProductModel> cartProducts;
 
+  // Empty constructor with default values
   CartModel.empty() {
     idCart = 0;
-    idUserAppInstitution = 0;
+    idUserAppInstitution = 0; // Ensure it's initialized here
     dateCreatedCart = DateTime.now();
     paymentTypeCart = '';
     stateCart = 0;
     notesCart = '';
+    totalPriceCart = null;
+    idStakeholder = null;
     cartProducts = List.empty();
   }
+
+  // JSON deserialization
   CartModel.fromJson(Map<String, dynamic> json) {
     idCart = json['idCart'];
+    idUserAppInstitution = json['idUserAppInstitution'] ?? 0; // Handle null
     var dateTimeC =
         DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCreatedCart'], true);
-    var dateLocalC = dateTimeC.toLocal();
-
-    dateCreatedCart = dateLocalC;
-    paymentTypeCart = json['paymentTypeCart'];
+    dateCreatedCart = dateTimeC.toLocal();
+    paymentTypeCart = json['paymentTypeCart'] ?? '';
     stateCart = json['stateCart'];
-    notesCart = json['notesCart'];
+    notesCart = json['notesCart'] ?? '';
+    totalPriceCart = json['totalPriceCart'];
+    idStakeholder = json['idStakeholder'];
     cartProducts = List.from(json['cartProducts'])
         .map((e) => CartProductModel.fromJson(e))
         .toList();
   }
 
+  // JSON serialization
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['idCart'] = idCart;
     data['idUserAppInstitution'] = idUserAppInstitution;
-    data['dateCreatedCart'] = dateCreatedCart;
+    data['dateCreatedCart'] = dateCreatedCart.toIso8601String();
+    data['paymentTypeCart'] = paymentTypeCart;
     data['stateCart'] = stateCart;
     data['notesCart'] = notesCart;
-    data['cartProducts'] = cartProducts;
+    data['totalPriceCart'] = totalPriceCart;
+    data['idStakeholder'] = idStakeholder;
+    data['cartProducts'] = cartProducts.map((e) => e.toJson()).toList();
     return data;
   }
 }
