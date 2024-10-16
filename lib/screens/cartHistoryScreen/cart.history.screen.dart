@@ -34,12 +34,15 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
 
       // Sorting logic
       String? sortBy;
-      bool? sortAscending;
-
+      String? sortDirection;
+      String? sortColumnAndDirection = '';
+      
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
-        sortAscending = sortModel.descending ? false : true;
+        sortDirection = sortModel.descending ? 'DESC' : 'ASC';
+        sortColumnAndDirection = sortBy + ";" + sortDirection;
       }
+
 
       // Date range filter logic
       DateTimeRange? dateRange = filterModel?["dateRange"];
@@ -52,7 +55,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
         pageNumber: pageNumber,
         pageSize: pageSize,
-        orderBy: (sortBy != null) ? [sortBy] : [],
+        orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
         // startDate: startDate,   // Pass start date
         // endDate: endDate,       // Pass end date
       );
