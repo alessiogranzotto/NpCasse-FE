@@ -45,12 +45,8 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.favorite), const WishlistScreen()),
   MenuList(AppRouter.categoryOneShopRoute, 'Shop', Icons.shop,
       const Icon(Icons.layers), const ShopNavigator()),
-  MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
-      const Icon(Icons.settings), const InstitutionScreen()),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
       const Icon(Icons.shopping_cart), const CartNavigator()),
-  MenuList(AppRouter.cartHistoryRoute, 'Storico Carello', Icons.history,
-          const Icon(Icons.history), const CartHistoryScreen()),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
       const Icon(Icons.settings), const ProductAttributeNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,
@@ -58,19 +54,44 @@ List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
       const Icon(Icons.settings), const ProductCatalogNavigator()),
   MenuList(
-    AppRouter.settingRoute,
-    'Impostazioni Generale',
+    // AppRouter.settingRoute,
+    '',
+    'Impostazioni',
     Icons.settings,
     const Icon(Icons.settings),
-    const SettingScreen(),
+    Placeholder(),
     subMenus: [
+      MenuList(
+          AppRouter.institutionRoute,
+          'Associazioni',
+          Icons.settings_outlined,
+          const Icon(Icons.settings),
+          const InstitutionScreen()),
       MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
           const Icon(Icons.account_circle), const UserScreeen()),
       MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.store,
           const Icon(Icons.settings), const SettingScreen()),
     ],
   ),
-
+  MenuList(
+    '',
+    'Report',
+    Icons.dashboard,
+    const Icon(Icons.dashboard),
+    Placeholder(),
+    subMenus: [
+      MenuList(AppRouter.cartHistoryRoute, 'Carrelli', Icons.history,
+          const Icon(Icons.history), const CartHistoryScreen()),
+      MenuList(
+          AppRouter.userRoute,
+          'Prodotti',
+          Icons.history,
+          const Icon(
+            Icons.history,
+          ),
+          const UserScreeen()),
+    ],
+  ),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
       const Icon(Icons.logout), const LogoutScreen()),
 ];
@@ -102,7 +123,8 @@ class _MasterScreenState extends State<MasterScreen> {
   void initState() {
     super.initState();
     getUserData(); // Fetch user data when the screen is initialized
-    _currentScreen = destinations[_selectedMainMenuIndex].screen; // Set the initial screen
+    _currentScreen =
+        destinations[_selectedMainMenuIndex].screen; // Set the initial screen
   }
 
   void getUserData() {
@@ -112,11 +134,12 @@ class _MasterScreenState extends State<MasterScreen> {
     // Fetch the user and institution models
     setState(() {
       cUserModel = authenticationNotifier.getUser();
-      cSelectedUserAppInstitution = authenticationNotifier.getSelectedUserAppInstitution();
+      cSelectedUserAppInstitution =
+          authenticationNotifier.getSelectedUserAppInstitution();
     });
   }
-  
-    // void adjustMenu(BuildContext context) {
+
+  // void adjustMenu(BuildContext context) {
   //   AuthenticationNotifier authenticationNotifier =
   //       Provider.of<AuthenticationNotifier>(context);
 
@@ -174,7 +197,9 @@ class _MasterScreenState extends State<MasterScreen> {
     setState(() {
       _selectedMainMenuIndex = mainMenuIndex; // Update main menu index
       _selectedSubMenuIndex = subMenuIndex; // Set the selected submenu index
-      _currentScreen = currentDestinations[mainMenuIndex].subMenus![subMenuIndex].screen; // Update current screen
+      _currentScreen = currentDestinations[mainMenuIndex]
+          .subMenus![subMenuIndex]
+          .screen; // Update current screen
     });
   }
 
@@ -198,7 +223,8 @@ class _MasterScreenState extends State<MasterScreen> {
           items.add(SideNavigationBarItem(
             icon: menu.subMenus![j].icon,
             label: menu.subMenus![j].label,
-            margin: const EdgeInsets.only(left: 16.0), // Add left margin to submenu items
+            margin: const EdgeInsets.only(
+                left: 16.0), // Add left margin to submenu items
           ));
         }
       }
@@ -210,7 +236,9 @@ class _MasterScreenState extends State<MasterScreen> {
   Widget getSelectedScreen() {
     // If a submenu is selected, return the submenu screen; otherwise return the selected screen
     if (_selectedSubMenuIndex != null) {
-      return currentDestinations[_selectedMainMenuIndex].subMenus![_selectedSubMenuIndex!].screen;
+      return currentDestinations[_selectedMainMenuIndex]
+          .subMenus![_selectedSubMenuIndex!]
+          .screen;
     }
     return _currentScreen!; // Return the  selected screen
   }
@@ -220,14 +248,17 @@ class _MasterScreenState extends State<MasterScreen> {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: true);
     cUserModel = authenticationNotifier.getUser();
-    cSelectedUserAppInstitution = authenticationNotifier.getSelectedUserAppInstitution();
-    
+    cSelectedUserAppInstitution =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
     // Display a loading state while data is being fetched
     if (cUserModel == null || cSelectedUserAppInstitution == null) {
-      return const Center(child: CircularProgressIndicator()); // Show loading spinner until data is available
+      return const Center(
+          child:
+              CircularProgressIndicator()); // Show loading spinner until data is available
     }
 
-     // CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
+    // CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
     // // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
     // WishlistProductNotifier wishlistProductNotifier =
     //     Provider.of<WishlistProductNotifier>(context);
@@ -246,7 +277,7 @@ class _MasterScreenState extends State<MasterScreen> {
     //   setState(() {});
     // }
     // cartNotifier.refresh();
-    //nrProductinCart = cartNotifier.nrProductInCart; 
+    //nrProductinCart = cartNotifier.nrProductInCart;
 
     return Scaffold(
       body: Row(
@@ -255,7 +286,7 @@ class _MasterScreenState extends State<MasterScreen> {
           SideNavigationBar(
             expandable: true,
             theme: SideNavigationBarTheme.blue(),
-                       
+
             // header: SideNavigationBarHeader(
             //     image: null,
             //     title: Text(
@@ -276,7 +307,7 @@ class _MasterScreenState extends State<MasterScreen> {
               label: Column(
                 children: [
                   Text(
-                    '${cUserModel!.name} ${cUserModel!.surname}',  // Safely unwrap nullable values
+                    '${cUserModel!.name} ${cUserModel!.surname}', // Safely unwrap nullable values
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   Text(
@@ -284,7 +315,13 @@ class _MasterScreenState extends State<MasterScreen> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   Text(
-                    cSelectedUserAppInstitution!.roleUserAppInstitution, // Safely unwrap
+                    cSelectedUserAppInstitution!
+                        .roleUserAppInstitution, // Safely unwrap
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  Text(
+                    cSelectedUserAppInstitution!.idInstitutionNavigation
+                        .nameInstitution, // Safely unwrap
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ],
@@ -329,7 +366,6 @@ class _MasterScreenState extends State<MasterScreen> {
     );
   }
 }
-
 
 // onTap: (index) {
 //               setState(() {
