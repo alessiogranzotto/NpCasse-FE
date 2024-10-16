@@ -10,11 +10,13 @@ import 'package:provider/provider.dart';
 class PdfPreviewWrapper extends StatefulWidget {
   final List<PdfPreviewAction> actions;
   final String emailName;
-  const PdfPreviewWrapper({
-    Key? key,
-    required this.actions,
-    required this.emailName,
-  }) : super(key: key);
+  final int idCart;
+  const PdfPreviewWrapper(
+      {Key? key,
+      required this.actions,
+      required this.emailName,
+      required this.idCart})
+      : super(key: key);
 
   @override
   State<PdfPreviewWrapper> createState() => _PdfPreviewWrapperState();
@@ -34,7 +36,7 @@ class _PdfPreviewWrapperState extends State<PdfPreviewWrapper> {
         context: context,
         token: authenticationNotifier.token,
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-        idCart: cartNotifier.getCart().idCart,
+        idCart: widget.idCart,
         emailName: emailName);
 
     // final pdf = pw.Document(

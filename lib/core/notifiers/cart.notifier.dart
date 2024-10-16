@@ -27,7 +27,7 @@ class CartNotifier with ChangeNotifier {
   late ValueNotifier<int> totalCartProduct = ValueNotifier(0);
   late ValueNotifier<int> totalCartProductType = ValueNotifier(0);
 
-  setCart(CartModel cartModel) {
+  setCurrentCart(CartModel cartModel) {
     int _nrProductInCart = 0;
     int _nrProductTypeInCart = 0;
     double _subTotalCartMoney = 0;
@@ -45,7 +45,7 @@ class CartNotifier with ChangeNotifier {
     totalCartMoney.value = _subTotalCartMoney;
   }
 
-  getCart() {
+  getCurrentCart() {
     return currentCartModel;
   }
 
@@ -128,10 +128,10 @@ class CartNotifier with ChangeNotifier {
         } else {
           if (parseData['okResult'] != null) {
             CartModel cartModel = CartModel.fromJson(parseData['okResult']);
-            setCart(cartModel);
+            setCurrentCart(cartModel);
             return cartModel;
           } else {
-            setCart(CartModel.empty());
+            setCurrentCart(CartModel.empty());
             return null;
           }
         }
@@ -180,7 +180,7 @@ class CartNotifier with ChangeNotifier {
           }
         } else {
           CartModel cartModel = CartModel.fromJson(parseData['okResult'] ?? '');
-          setCart(cartModel);
+          setCurrentCart(cartModel);
           if (quantityCartProduct == 0) {
             notifyListeners();
           }

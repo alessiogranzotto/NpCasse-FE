@@ -20,7 +20,7 @@ class CartModel {
   late final String paymentTypeCart;
   late final int stateCart;
   late final String notesCart;
-  late final int? totalPriceCart;
+  late final double? totalPriceCart;
   late final int? idStakeholder;
   late final List<CartProductModel> cartProducts;
 

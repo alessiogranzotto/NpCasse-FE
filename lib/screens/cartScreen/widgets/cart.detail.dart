@@ -102,7 +102,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    CartModel cCart = cartNotifier.getCart();
+    CartModel cCart = cartNotifier.getCurrentCart();
 
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
@@ -143,7 +143,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    CartModel cCart = cartNotifier.getCart();
+    CartModel cCart = cartNotifier.getCurrentCart();
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
         .setCartCheckout(

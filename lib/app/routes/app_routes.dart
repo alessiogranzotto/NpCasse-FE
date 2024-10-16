@@ -344,13 +344,16 @@ class AppRouter {
             settings: settings,
           );
         }
+
       case shPdfInvoice:
         {
           return MaterialPageRoute(
-            builder: (_) => const PdfInvoiceScreen(),
+            builder: (context) => PdfInvoiceScreen(
+              idCart: ModalRoute.of(context)!.settings.arguments as int,
+            ),
+            settings: settings,
           );
         }
-
       // case searchRoute:
       //   {
       //     return MaterialPageRoute(

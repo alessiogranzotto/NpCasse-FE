@@ -221,7 +221,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                             .cartToStakeholder(
                                 context: context,
                                 token: authenticationNotifier.token,
-                                idCart: cartNotifier.getCart().idCart,
+                                idCart: cartNotifier.getCurrentCart().idCart,
                                 idUserAppInstitution: cUserAppInstitutionModel
                                     .idUserAppInstitution,
                                 idStakeholder: cStakeholderGiveModelSearch!.id)
@@ -229,14 +229,8 @@ class _ShManageScreenState extends State<ShManageScreen> {
                           if (value) {
                             Navigator.of(context).pushNamed(
                                 AppRouter.shPdfInvoice,
-                                arguments: cStakeholderGiveModelSearch);
-                            // PersistentNavBarNavigator.pushNewScreen(
-                            //   context,
-                            //   screen: const PdfInvoiceScreen(),
-                            //   withNavBar: true,
-                            //   pageTransitionAnimation:
-                            //       PageTransitionAnimation.fade,
-                            // );
+                                arguments:
+                                    cartNotifier.getCurrentCart().idCart);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackUtil.stylishSnackBar(

@@ -10,7 +10,11 @@ import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 class PdfInvoiceScreen extends StatefulWidget {
-  const PdfInvoiceScreen({super.key});
+  const PdfInvoiceScreen({
+    Key? key,
+    required this.idCart,
+  }) : super(key: key);
+  final int idCart;
 
   @override
   State<PdfInvoiceScreen> createState() => _PdfInvoiceScreenState();
@@ -57,7 +61,7 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
         context: context,
         token: authenticationNotifier.token,
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-        idCart: cartNotifier.getCart().idCart,
+        idCart: widget.idCart,
         emailName: emailName);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
@@ -144,6 +148,7 @@ class _PdfInvoiceScreenState extends State<PdfInvoiceScreen> {
             return PdfPreviewWrapper(
               actions: actions,
               emailName: emailName,
+              idCart: widget.idCart,
             );
           } else if (snapshot.hasError) {
             return const Icon(

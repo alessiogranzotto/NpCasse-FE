@@ -21,18 +21,21 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
 
-  Future<(List<Map<String, dynamic>>, String?)> fetchData(
-      int pageSize, SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
-    final cartHistoryNotifier = Provider.of<CartHistoryNotifier>(context, listen: false);
+  Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
+      SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
+    final cartHistoryNotifier =
+        Provider.of<CartHistoryNotifier>(context, listen: false);
     try {
       int pageNumber = (pageToken != null) ? int.parse(pageToken) : 1;
-      var authNotifier = Provider.of<AuthenticationNotifier>(context, listen: false);
-      UserAppInstitutionModel cUserAppInstitutionModel = authNotifier.getSelectedUserAppInstitution();
+      var authNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authNotifier.getSelectedUserAppInstitution();
 
       // Sorting logic
       String? sortBy;
       bool? sortAscending;
-      
+
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortAscending = sortModel.descending ? false : true;
@@ -55,11 +58,12 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       );
 
       if (response is CartHistoryModel) {
-        List<Map<String, dynamic>> data = response.CartHistoryList
-            .map((cart) => cart.toJson()) // Assuming CartModel has a toJson method
+        List<Map<String, dynamic>> data = response.CartHistoryList.map((cart) =>
+                cart.toJson()) // Assuming CartModel has a toJson method
             .toList();
 
-        String? nextPageToken = response.hasNext ? (pageNumber + 1).toString() : null;
+        String? nextPageToken =
+            response.hasNext ? (pageNumber + 1).toString() : null;
         return (data, nextPageToken);
       } else {
         return (<Map<String, dynamic>>[], null);
@@ -124,8 +128,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'totalPriceCart',
               title: const Text('Total Price'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['totalPriceCart'] != null
+              cellBuilder: (context, item, index) => Text(
+                  item['totalPriceCart'] != null
                       ? item['totalPriceCart'].toString()
                       : ''),
               size: const FractionalColumnSize(0.20),
@@ -147,33 +151,14 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                     CartNotifier cartNotifier =
                         Provider.of<CartNotifier>(context, listen: false);
                     AuthenticationNotifier authenticationNotifier =
-                        Provider.of<AuthenticationNotifier>(context, listen: false);
+                        Provider.of<AuthenticationNotifier>(context,
+                            listen: false);
 
                     UserAppInstitutionModel cUserAppInstitutionModel =
                         authenticationNotifier.getSelectedUserAppInstitution();
 
-                    cartNotifier
-                        .cartToStakeholder(
-                            context: context,
-                            token: authenticationNotifier.token,
-                            idCart: cartNotifier.getCart().idCart,
-                            idUserAppInstitution: cUserAppInstitutionModel
-                                .idUserAppInstitution,
-                            idStakeholder: item['idStakeholder'] ?? 0)
-                        .then((value) {
-                      if (value) {
-                        Navigator.of(context).pushNamed(
-                          AppRouter.shPdfInvoice,
-                          arguments: [],
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackUtil.stylishSnackBar(
-                                title: "Anagrafiche",
-                                message: "Errore di connessione",
-                                contentType: "failure"));
-                      }
-                    });
+                    Navigator.of(context).pushNamed(AppRouter.shPdfInvoice,
+                        arguments: item['idCart']);
                   }
                 },
               ),
@@ -184,10 +169,11 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               id: "dateRange",
               name: "",
               chipFormatter: (range) =>
-                  "From ${ DateFormat("yyyy-MM-dd").format(range.start)} to ${ DateFormat("yyyy-MM-dd").format(range.end)}",
-              firstDate: DateTime(DateTime.now().year - 5, 1, 1), // Start from January last year
+                  "From ${DateFormat("yyyy-MM-dd").format(range.start)} to ${DateFormat("yyyy-MM-dd").format(range.end)}",
+              firstDate: DateTime(DateTime.now().year - 5, 1,
+                  1), // Start from January last year
               lastDate: DateTime.now(),
-              initialValue: null,  // No default selection
+              initialValue: null, // No default selection
               formatter: (range) =>
                   "${DateFormat("yyyy-MM-dd").format(range.start)} - ${DateFormat("yyyy-MM-dd").format(range.end)}",
             ),
@@ -215,7 +201,12 @@ class DateRangePickerTableFilter extends TableFilter<DateTimeRange> {
     DateTimeRange? initialValue, // Allow for initial value
     required this.formatter,
     super.enabled = true,
-  }) : super(initialValue: initialValue, id: id, name: name, chipFormatter:chipFormatter); // Pass required parameters to superclass
+  }) : super(
+            initialValue: initialValue,
+            id: id,
+            name: name,
+            chipFormatter:
+                chipFormatter); // Pass required parameters to superclass
 
   @override
   Widget buildPicker(BuildContext context, FilterState<DateTimeRange> state) {
@@ -230,22 +221,24 @@ class DateRangePickerTableFilter extends TableFilter<DateTimeRange> {
             return Theme(
               data: Theme.of(context).copyWith(
                 colorScheme: const ColorScheme.light(
-                primary: Colors.blueAccent, // <-- SEE HERE
-                onPrimary: Colors.white, // <-- SEE HERE
-                onSurface: Colors.blueAccent, // <-- SEE HERE
-            ),
-             textButtonTheme: TextButtonThemeData(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blueAccent, // button text color
+                  primary: Colors.blueAccent, // <-- SEE HERE
+                  onPrimary: Colors.white, // <-- SEE HERE
+                  onSurface: Colors.blueAccent, // <-- SEE HERE
                 ),
-              ),
+                textButtonTheme: TextButtonThemeData(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blueAccent, // button text color
+                  ),
+                ),
               ),
               child: child ?? const SizedBox(),
             );
           },
         );
 
-        if (picked != null && picked != DateTimeRange(start: DateTime.now(), end: DateTime.now())) {
+        if (picked != null &&
+            picked !=
+                DateTimeRange(start: DateTime.now(), end: DateTime.now())) {
           state.value = picked; // Update the selected date range
         }
       },
