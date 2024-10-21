@@ -21,6 +21,7 @@ import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_lazy_indexed_stack/flutter_lazy_indexed_stack.dart';
 
 class MenuList {
   MenuList(
@@ -56,7 +57,6 @@ List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
       const Icon(Icons.settings), const ProductCatalogNavigator()),
   MenuList(
-    // AppRouter.settingRoute,
     '',
     'Impostazioni',
     Icons.settings,
@@ -76,7 +76,6 @@ List<MenuList> destinations = <MenuList>[
     ],
   ),
   MenuList(
-    // AppRouter.settingRoute,
     '',
     'Report',
     Icons.dashboard,
@@ -103,12 +102,11 @@ class MasterScreen extends StatefulWidget {
 class _MasterScreenState extends State<MasterScreen> {
   int _selectedMainMenuIndex = 0; // Track selected main menu index
   int? _selectedSubMenuIndex; // Track selected submenu index
-  int nrProductinCart = 0;
   List<MenuList> currentDestinations = [];
   Set<int> visibleSubMenus = {}; // Track visible submenus by main menu index
   Widget? _currentScreen; // Track the current screen to display
   UserModel? cUserModel; // Make this nullable initially
-  UserAppInstitutionModel? cSelectedUserAppInstitution; // Also nullable
+  UserAppInstitutionModel? cSelectedUserAppInstitution;
 
   signOut(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -136,67 +134,41 @@ class _MasterScreenState extends State<MasterScreen> {
     });
   }
 
-  // void adjustMenu(BuildContext context) {
-  //   AuthenticationNotifier authenticationNotifier =
-  //       Provider.of<AuthenticationNotifier>(context);
-
-  //   int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
-
-  //   if (nrAssociazioni == 1) {
-  //     destinations.removeWhere((element) => element.label == "Associazioni");
-  //   }
-  //   // destinations.removeWhere((element) => element.label == "Impostazioni");
-  //   // destinations.removeWhere((element) => element.label == "Utente");
-  // }
-
-  // Future<bool> _systemBackButtonPressed() async {
-  //   if (_navigatorKeys[_selectedIndex].currentState?.canPop() == true) {
-  //     _navigatorKeys[_selectedIndex]
-  //         .currentState
-  //         ?.pop(_navigatorKeys[_selectedIndex].currentContext);
-  //     return false;
-  //   } else {
-  //     SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
-  //     return true; // Indicate that the back action is handled
-  //   }
-  // }
-
   void handleMenuTap(int index) {
     setState(() {
       final menu = currentDestinations[index];
 
-      // If the selected menu is "Uscita" (logout)
       if (menu.label == 'Uscita') {
-        signOut(context); // Call signOut when the menu label is "Uscita"
+        signOut(context);
+        return;
       }
 
-      // Check if the clicked menu has submenus
+      // Check if the selected menu has submenus
       if (menu.subMenus != null && menu.subMenus!.isNotEmpty) {
-        // Toggle the visibility of the submenu
-        if (visibleSubMenus.contains(index)) {
-          visibleSubMenus.remove(index); // Collapse submenu
-        } else {
-          visibleSubMenus.add(index); // Expand submenu
-        }
-        // Don't change the screen if submenus are available
-        _selectedMainMenuIndex = index; // Update the selected main menu index
-        _selectedSubMenuIndex = null; // Clear submenu selection
+        visibleSubMenus.clear(); // Clear submenus
+        visibleSubMenus.add(index);
+        _selectedMainMenuIndex = index; // Set the selected main menu index
+        _selectedSubMenuIndex = 0; // Clear any previously selected submenu
       } else {
-        _selectedMainMenuIndex = index; // Set the selected main menu
-        _selectedSubMenuIndex = null; // Clear submenu selection
-        visibleSubMenus.clear(); // Collapse all submenus
-        _currentScreen = menu.screen; // Store the current menu's screen
+        // If no submenu, clear the submenu selection and set the main screen
+        _selectedMainMenuIndex = index;
+        _selectedSubMenuIndex = null;
+        visibleSubMenus.clear(); // Clear submenus
+        _currentScreen = menu.screen;
       }
     });
   }
 
   void handleSubMenuTap(int mainMenuIndex, int subMenuIndex) {
     setState(() {
-      _selectedMainMenuIndex = mainMenuIndex; // Update main menu index
-      _selectedSubMenuIndex = subMenuIndex; // Set the selected submenu index
-      _currentScreen = currentDestinations[mainMenuIndex]
-          .subMenus![subMenuIndex]
-          .screen; // Update current screen
+      // Update both main and submenu indices only if they are different
+      if (_selectedMainMenuIndex != mainMenuIndex ||
+          _selectedSubMenuIndex != subMenuIndex) {
+        _selectedMainMenuIndex = mainMenuIndex;
+        _selectedSubMenuIndex = subMenuIndex;
+        _currentScreen =
+            currentDestinations[mainMenuIndex].subMenus![subMenuIndex].screen;
+      }
     });
   }
 
@@ -230,6 +202,31 @@ class _MasterScreenState extends State<MasterScreen> {
     return items;
   }
 
+  // Calculate selected index based on main and submenu indices
+  int calculateSelectedIndex() {
+    int selectedIndex = _selectedMainMenuIndex;
+    int subMenuOffset = 0;
+
+    // Calculate the offset based on the number of visible submenus in preceding main menus
+    for (int i = 0; i < _selectedMainMenuIndex; i++) {
+      if (currentDestinations[i].subMenus != null &&
+          visibleSubMenus.contains(i)) {
+        subMenuOffset += currentDestinations[i].subMenus!.length;
+      }
+    }
+
+    // Adjust the index if a submenu is selected
+    if (_selectedSubMenuIndex != null) {
+      selectedIndex += subMenuOffset +
+          _selectedSubMenuIndex! +
+          1; // +1 for the main menu itself
+    } else {
+      selectedIndex += subMenuOffset;
+    }
+
+    return selectedIndex;
+  }
+
   Widget getSelectedScreen() {
     // If a submenu is selected, return the submenu screen; otherwise return the selected screen
     if (_selectedSubMenuIndex != null) {
@@ -237,7 +234,7 @@ class _MasterScreenState extends State<MasterScreen> {
           .subMenus![_selectedSubMenuIndex!]
           .screen;
     }
-    return _currentScreen!; // Return the  selected screen
+    return _currentScreen!; // Return the selected screen
   }
 
   @override
@@ -255,26 +252,19 @@ class _MasterScreenState extends State<MasterScreen> {
               CircularProgressIndicator()); // Show loading spinner until data is available
     }
 
-    // CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
-    // // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
-    // WishlistProductNotifier wishlistProductNotifier =
-    //     Provider.of<WishlistProductNotifier>(context);
-    // ProductAttributeNotifier productAttributeNotifier =
-    //     Provider.of<ProductAttributeNotifier>(context);
-    // ProductCatalogNotifier productCatalogNotifier =
-    //     Provider.of<ProductCatalogNotifier>(context);
-    // CategoryCatalogNotifier categoryCatalogNotifier =
-    //     Provider.of<CategoryCatalogNotifier>(context);
-    // ShopCategoryNotifier shopCategoryNotifier =
-    //     Provider.of<ShopCategoryNotifier>(context);
-
-    // adjustMenu(context);
-    // getUserData(context);
-    // if (1 == 1) {
-    //   setState(() {});
-    // }
-    // cartNotifier.refresh();
-    //nrProductinCart = cartNotifier.nrProductInCart;
+    CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
+    WishlistProductNotifier wishlistProductNotifier =
+        Provider.of<WishlistProductNotifier>(context);
+    ProductAttributeNotifier productAttributeNotifier =
+        Provider.of<ProductAttributeNotifier>(context);
+    ProductCatalogNotifier productCatalogNotifier =
+        Provider.of<ProductCatalogNotifier>(context);
+    CategoryCatalogNotifier categoryCatalogNotifier =
+        Provider.of<CategoryCatalogNotifier>(context);
+    ShopCategoryNotifier shopCategoryNotifier =
+        Provider.of<ShopCategoryNotifier>(context);
+    CartHistoryNotifier cartHistoryNotifier =
+        Provider.of<CartHistoryNotifier>(context);
 
     return Scaffold(
       body: Row(
@@ -283,23 +273,6 @@ class _MasterScreenState extends State<MasterScreen> {
           SideNavigationBar(
             expandable: true,
             theme: SideNavigationBarTheme.blue(),
-
-            // header: SideNavigationBarHeader(
-            //     image: null,
-            //     title: Text(
-            //       '${cUserModel.name} ${cUserModel.surname}',
-            //       style: const TextStyle(fontSize: 14, color: Colors.white),
-            //     ),
-            //     subtitle: Column(
-            //       children: [
-            //         Text(cUserModel.email,
-            //             style:
-            //                 const TextStyle(fontSize: 14, color: Colors.white)),
-            //         Text(cSelectedUserAppInstitution.roleUserAppInstitution,
-            //             style:
-            //                 const TextStyle(fontSize: 14, color: Colors.white)),
-            //       ],
-            //     )),
             footer: SideNavigationBarFooter(
               label: Column(
                 children: [
@@ -324,16 +297,26 @@ class _MasterScreenState extends State<MasterScreen> {
                 ],
               ),
             ),
-            selectedIndex: _selectedSubMenuIndex == null
-                ? _selectedMainMenuIndex
-                : _selectedMainMenuIndex + 1 + _selectedSubMenuIndex!,
+            selectedIndex: calculateSelectedIndex(),
             items: getSideNavigationBarItems(context),
             onTap: (index) {
               int currentIndex = 0;
 
               for (int i = 0; i < currentDestinations.length; i++) {
                 final menu = currentDestinations[i];
-
+                if (menu.label == "Preferiti") {
+                  wishlistProductNotifier.refresh();
+                } else if (menu.label == "Shop") {
+                  shopCategoryNotifier.refresh();
+                } else if (menu.label == "Carrello") {
+                  cartNotifier.refresh();
+                } else if (menu.label == "Attributi prodotti") {
+                  productAttributeNotifier.refresh();
+                } else if (menu.label == "Catalogo prodotti") {
+                  productCatalogNotifier.refresh();
+                } else if (menu.label == "Catalogo categorie") {
+                  categoryCatalogNotifier.refresh();
+                }
                 if (currentIndex == index) {
                   handleMenuTap(i);
                   return;
@@ -343,6 +326,9 @@ class _MasterScreenState extends State<MasterScreen> {
 
                 if (visibleSubMenus.contains(i) && menu.subMenus != null) {
                   for (int j = 0; j < menu.subMenus!.length; j++) {
+                    if (menu.subMenus![j].label == "Carrelli") {
+                      cartHistoryNotifier.refresh();
+                    }
                     if (currentIndex == index) {
                       handleSubMenuTap(i, j);
                       return;
@@ -356,7 +342,25 @@ class _MasterScreenState extends State<MasterScreen> {
 
           // Expanded area to display the selected content
           Expanded(
-            child: getSelectedScreen(),
+            flex: 5,
+            child: LazyIndexedStack(
+              index: _selectedMainMenuIndex, // The main menu index
+              children: currentDestinations.map((menu) {
+                if (menu.subMenus != null &&
+                    visibleSubMenus.contains(_selectedMainMenuIndex)) {
+                  // Use LazyIndexedStack for the sub-menu screens
+                  return LazyIndexedStack(
+                    index: _selectedSubMenuIndex ??
+                        0, // Default to the first submenu if none is selected
+                    children: menu.subMenus!.map((submenu) {
+                      return submenu.screen;
+                    }).toList(),
+                  );
+                }
+                // If no submenu is selected, return the main menu screen
+                return menu.screen;
+              }).toList(),
+            ),
           ),
         ],
       ),
@@ -364,29 +368,52 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 }
 
-// onTap: (index) {
-//               setState(() {
-//                 _selectedIndex = index;
-//               });
-//               if (destinations.elementAt(index).label == "Preferiti") {
-//                 wishlistProductNotifier.refresh();
-//                 // } else if (destinations.elementAt(index).label == "Progetti") {
-//                 //   projectNotifier.refresh();
-//                 // } else
-//               } else if (destinations.elementAt(index).label == "Shop") {
-//                 shopCategoryNotifier.refresh();
-//               } else if (destinations.elementAt(index).label == "Carrello") {
-//                 cartNotifier.refresh();
-//               } else if (destinations.elementAt(index).label ==
-//                   "Attributi prodotti") {
-//                 productAttributeNotifier.refresh();
-//               } else if (destinations.elementAt(index).label ==
-//                   "Catalogo prodotti") {
-//                 productCatalogNotifier.refresh();
-//               } else if (destinations.elementAt(index).label ==
-//                   "Catalogo categorie") {
-//                 categoryCatalogNotifier.refresh();
-//               } else if (destinations.elementAt(index).label == "Uscita") {
-//                 signOut(context);
-//               }
-//             },
+// void adjustMenu(BuildContext context) {
+//   AuthenticationNotifier authenticationNotifier =
+//       Provider.of<AuthenticationNotifier>(context);
+
+//   int nrAssociazioni = authenticationNotifier.getNumberUserAppInstitution();
+
+//   if (nrAssociazioni == 1) {
+//     destinations.removeWhere((element) => element.label == "Associazioni");
+//   }
+//   // destinations.removeWhere((element) => element.label == "Impostazioni");
+//   // destinations.removeWhere((element) => element.label == "Utente");
+// }
+
+// Future<bool> _systemBackButtonPressed() async {
+//   if (_navigatorKeys[_selectedIndex].currentState?.canPop() == true) {
+//     _navigatorKeys[_selectedIndex]
+//         .currentState
+//         ?.pop(_navigatorKeys[_selectedIndex].currentContext);
+//     return false;
+//   } else {
+//     SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+//     return true; // Indicate that the back action is handled
+//   }
+// }
+
+// adjustMenu(context);
+// getUserData(context);
+// if (1 == 1) {
+//   setState(() {});
+// }
+// cartNotifier.refresh();
+// nrProductinCart = cartNotifier.nrProductInCart;
+
+// header: SideNavigationBarHeader(
+//     image: null,
+//     title: Text(
+//       '${cUserModel.name} ${cUserModel.surname}',
+//       style: const TextStyle(fontSize: 14, color: Colors.white),
+//     ),
+//     subtitle: Column(
+//       children: [
+//         Text(cUserModel.email,
+//             style:
+//                 const TextStyle(fontSize: 14, color: Colors.white)),
+//         Text(cSelectedUserAppInstitution.roleUserAppInstitution,
+//             style:
+//                 const TextStyle(fontSize: 14, color: Colors.white)),
+//       ],
+//     )),
