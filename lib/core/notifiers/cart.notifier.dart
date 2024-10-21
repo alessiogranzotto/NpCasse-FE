@@ -32,6 +32,7 @@ class CartNotifier with ChangeNotifier {
     int _nrProductInCart = 0;
     int _nrProductTypeInCart = 0;
     double _subTotalCartMoney = 0;
+    totalCartProductNoDonation = 0;
     currentCartModel = cartModel;
     _nrProductTypeInCart = cartModel.cartProducts.length;
     for (var element in cartModel.cartProducts) {
