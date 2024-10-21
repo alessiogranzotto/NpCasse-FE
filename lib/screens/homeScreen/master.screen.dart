@@ -7,6 +7,13 @@ import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navi
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
+import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/report.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
+import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
@@ -263,8 +270,7 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<CategoryCatalogNotifier>(context);
     ShopCategoryNotifier shopCategoryNotifier =
         Provider.of<ShopCategoryNotifier>(context);
-    CartHistoryNotifier cartHistoryNotifier =
-        Provider.of<CartHistoryNotifier>(context);
+    ReportNotifier reportNotifier = Provider.of<ReportNotifier>(context);
 
     return Scaffold(
       body: Row(
@@ -327,7 +333,7 @@ class _MasterScreenState extends State<MasterScreen> {
                 if (visibleSubMenus.contains(i) && menu.subMenus != null) {
                   for (int j = 0; j < menu.subMenus!.length; j++) {
                     if (menu.subMenus![j].label == "Carrelli") {
-                      cartHistoryNotifier.refresh();
+                      reportNotifier.refresh();
                     }
                     if (currentIndex == index) {
                       handleSubMenuTap(i, j);
