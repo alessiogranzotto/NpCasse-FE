@@ -1,7 +1,6 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:input_slider/input_slider.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/money_formatter.dart';
 import 'package:np_casse/core/models/cart.model.dart';
@@ -10,7 +9,6 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
-import 'package:np_casse/screens/cartScreen/widgets/cart.checkout.dart';
 import 'package:provider/provider.dart';
 
 enum PaymentType { contanti, bancomat, cartaCredito, assegni }
