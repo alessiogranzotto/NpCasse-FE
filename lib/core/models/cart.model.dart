@@ -12,6 +12,7 @@ class CartModel {
     required this.cartProducts,
     required this.totalPriceCart,
     required this.idStakeholder,
+    required this.denominationStakeholder,
   });
 
   late final int idCart;
@@ -22,6 +23,7 @@ class CartModel {
   late final String notesCart;
   late final double? totalPriceCart;
   late final int? idStakeholder;
+  late final String? denominationStakeholder;
   late final List<CartProductModel> cartProducts;
 
   // Empty constructor with default values
@@ -34,6 +36,7 @@ class CartModel {
     notesCart = '';
     totalPriceCart = null;
     idStakeholder = null;
+    denominationStakeholder = null;
     cartProducts = List.empty();
   }
 
@@ -49,6 +52,7 @@ class CartModel {
     notesCart = json['notesCart'] ?? '';
     totalPriceCart = json['totalPriceCart'];
     idStakeholder = json['idStakeholder'];
+    denominationStakeholder = json['denominationStakeholder'];
     cartProducts = List.from(json['cartProducts'])
         .map((e) => CartProductModel.fromJson(e))
         .toList();
@@ -65,6 +69,7 @@ class CartModel {
     data['notesCart'] = notesCart;
     data['totalPriceCart'] = totalPriceCart;
     data['idStakeholder'] = idStakeholder;
+    data['denominationStakeholder'] = denominationStakeholder;
     data['cartProducts'] = cartProducts.map((e) => e.toJson()).toList();
     return data;
   }

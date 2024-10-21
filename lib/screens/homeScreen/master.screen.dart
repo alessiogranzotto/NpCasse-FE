@@ -7,14 +7,15 @@ import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navi
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/screens/cartHistoryScreen/cart.history.screen.dart';
-import 'package:np_casse/screens/cartHistoryScreen/cart.history.navigator.dart';
+import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
+import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
+import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
 import 'package:np_casse/screens/settingScreen/setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
@@ -84,6 +85,8 @@ List<MenuList> destinations = <MenuList>[
     subMenus: [
       MenuList(AppRouter.institutionRoute, 'Carrelli', Icons.dashboard,
           const Icon(Icons.dashboard), const CartHistoryNavigator()),
+      MenuList(AppRouter.institutionRoute, 'Prodotti', Icons.dashboard,
+          const Icon(Icons.dashboard), const ProductHistoryNavigator()),
     ],
   ),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,

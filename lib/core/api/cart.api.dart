@@ -216,7 +216,8 @@ class CartAPI {
       {String? token,
       required int idUserAppInstitution,
       required int idCart,
-      required int idStakeholder}) async {
+      required int idStakeholder,
+      required String denominationStakeholder}) async {
     final Uri uri = Uri.parse('${ApiRoutes.cartURL}/cart-to-stakeholder');
 
     final http.Response response = await client.put(uri,
@@ -229,7 +230,8 @@ class CartAPI {
         body: jsonEncode({
           "idCart": idCart,
           "idUserAppInstitution": idUserAppInstitution,
-          "idStakeholder": idStakeholder
+          "idStakeholder": idStakeholder,
+          "denominationStakeholder": denominationStakeholder
         }));
     if (response.statusCode == 200) {
       final dynamic body = response.body;

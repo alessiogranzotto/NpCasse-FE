@@ -217,6 +217,11 @@ class _ShManageScreenState extends State<ShManageScreen> {
                             authenticationNotifier
                                 .getSelectedUserAppInstitution();
 
+                        String denominationStakeholder =
+                            cStakeholderGiveModelSearch!
+                                    .ragionesociale.isNotEmpty
+                                ? cStakeholderGiveModelSearch!.ragionesociale
+                                : "${cStakeholderGiveModelSearch!.nome} ${cStakeholderGiveModelSearch!.cognome}";
                         cartNotifier
                             .cartToStakeholder(
                                 context: context,
@@ -224,7 +229,9 @@ class _ShManageScreenState extends State<ShManageScreen> {
                                 idCart: cartNotifier.getCurrentCart().idCart,
                                 idUserAppInstitution: cUserAppInstitutionModel
                                     .idUserAppInstitution,
-                                idStakeholder: cStakeholderGiveModelSearch!.id)
+                                idStakeholder: cStakeholderGiveModelSearch!.id,
+                                denominationStakeholder:
+                                    denominationStakeholder)
                             .then((value) {
                           if (value) {
                             Navigator.of(context).pushNamed(

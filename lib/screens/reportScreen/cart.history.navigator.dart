@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/screens/cartHistoryScreen/cart.history.screen.dart';
+import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 
 class CartHistoryNavigator extends StatefulWidget {
   const CartHistoryNavigator({super.key});

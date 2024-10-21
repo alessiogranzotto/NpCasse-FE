@@ -289,6 +289,7 @@ class AuthenticationNotifier with ChangeNotifier {
                 'name': userModel.name,
                 'surname': userModel.surname,
                 'email': userModel.email,
+                'phone': userModel.phone,
                 'token': userModel.token,
                 'refreshToken': userModel.refreshToken,
                 // 'role': userModel.role,

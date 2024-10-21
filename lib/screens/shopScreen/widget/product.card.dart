@@ -670,7 +670,7 @@ class _ProductCardState extends State<ProductCard> {
                                           message:
                                               '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
                                           contentType: "success"));
-
+                                  textEditingControllerNoteProduct.clear();
                                   // Navigator.of(context)
                                   //     .pushNamed(AppRouter.homeRoute);
                                 } else {

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/core/notifiers/report.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
-import 'package:np_casse/core/notifiers/cart.history.notifier.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/models/cart.history.model.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class CartHistoryScreen extends StatefulWidget {
   const CartHistoryScreen({Key? key}) : super(key: key);
@@ -24,7 +22,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
     final cartHistoryNotifier =
-        Provider.of<CartHistoryNotifier>(context, listen: false);
+        Provider.of<ReportNotifier>(context, listen: false);
     try {
       int pageNumber = (pageToken != null) ? int.parse(pageToken) : 1;
       var authNotifier =
@@ -36,13 +34,12 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       String? sortBy;
       String? sortDirection;
       String? sortColumnAndDirection = '';
-      
+
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
         sortColumnAndDirection = sortBy + ";" + sortDirection;
       }
-
 
       // Date range filter logic
       DateTimeRange? dateRange = filterModel?["dateRange"];
@@ -85,7 +82,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Storico Carello',
+          'Storico Carrello',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -97,24 +94,50 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           pageSizes: const [10, 20, 50],
           fetcher: (pageSize, sortModel, filterModel, pageToken) =>
               fetchData(pageSize, sortModel, filterModel, pageToken),
+          filterBarChild: PopupMenuButton(
+            icon: const Icon(Icons.more_vert_outlined),
+            itemBuilder: (context) => <PopupMenuEntry>[
+              PopupMenuItem(
+                child: const Text("Seleziona tutti"),
+                onTap: () {
+                  tableController.selectAllRows();
+                },
+              ),
+              PopupMenuItem(
+                child: const Text("Deseleziona tutti"),
+                onTap: () {
+                  tableController.unselectAllRows();
+                },
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                child: const Text("Export Excel"),
+                onTap: () {
+                  tableController.removeRowAt(0);
+                },
+              ),
+            ],
+          ),
           columns: [
+            RowSelectorColumn(),
             TableColumn(
               id: 'idCart',
-              title: const Text('Id'),
+              title: const Text('#'),
               cellBuilder: (context, item, index) =>
                   Text(item['idCart'].toString()),
+              size: const FractionalColumnSize(0.10),
               sortable: true,
             ),
-            TableColumn(
-              id: 'stateCart',
-              title: const Text('State'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['stateCart'].toString()),
-              sortable: true,
-            ),
+            // TableColumn(
+            //   id: 'stateCart',
+            //   title: const Text('State'),
+            //   cellBuilder: (context, item, index) =>
+            //       Text(item['stateCart'].toString()),
+            //   sortable: true,
+            // ),
             TableColumn(
               id: 'paymentTypeCart',
-              title: const Text('Payment Type'),
+              title: const Text('Tipo pagamento'),
               cellBuilder: (context, item, index) =>
                   Text(item['paymentTypeCart'].toString().split('.').last),
               size: const FractionalColumnSize(0.15),
@@ -122,61 +145,65 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             ),
             TableColumn(
               id: 'dateCreatedCart',
-              title: const Text('Created date'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['dateCreatedCart'].toString()),
-              size: const FractionalColumnSize(0.25),
+              title: const Text('Data'),
+              cellBuilder: (context, item, index) => Text(
+                  DateFormat("yyyy-MM-ddTHH:mm:ss")
+                      .parse(item['dateCreatedCart'], true)
+                      .toLocal()
+                      .toString()),
+              size: const FractionalColumnSize(0.15),
               sortable: true,
             ),
             TableColumn(
               id: 'totalPriceCart',
-              title: const Text('Total Price'),
+              title: const Text('Totale carrello'),
               cellBuilder: (context, item, index) => Text(
                   item['totalPriceCart'] != null
-                      ? item['totalPriceCart'].toString()
+                      ? item['totalPriceCart'].toStringAsFixed(2) + ' €'
                       : ''),
               size: const FractionalColumnSize(0.15),
               sortable: true,
             ),
             TableColumn(
-              id: 'idStakeholder',
-              title: const Text('Stakeholder Id'),
-              cellBuilder: (context, item, index) =>
-                  Text(
+              id: '# Stakeholder',
+              title: const Text('# Stakeholder'),
+              cellBuilder: (context, item, index) => Text(
                   item['idStakeholder'] != null
                       ? item['idStakeholder'].toString()
                       : ''),
-              size: const FractionalColumnSize(0.15),
+              size: const FractionalColumnSize(0.14999),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'denominationStakeholder',
+              title: const Text('Denominazione Stakeholder'),
+              cellBuilder: (context, item, index) => Text(
+                  item['denominationStakeholder'] != null
+                      ? item['denominationStakeholder'].toString()
+                      : ''),
+              size: const FractionalColumnSize(0.20),
               sortable: true,
             ),
             TableColumn(
               id: 'actions',
-              title: const Text('Actions'),
+              title: const Text('Azioni'),
               cellBuilder: (context, item, index) => PopupMenuButton<int>(
                 icon: const Icon(Icons.more_vert),
                 itemBuilder: (context) => [
-                 if (item['idStakeholder'] != null)
+                  if (item['idStakeholder'] != null)
                     PopupMenuItem<int>(
-                    value: 1,
-                    child: const Text('Emissione ricevuta'),
-                  ),
+                      value: 1,
+                      child: const Text('Emissione ricevuta'),
+                    ),
                 ],
                 onSelected: (value) {
                   if (value == 1) {
-                    CartNotifier cartNotifier =
-                        Provider.of<CartNotifier>(context, listen: false);
-                    AuthenticationNotifier authenticationNotifier =
-                        Provider.of<AuthenticationNotifier>(context,
-                            listen: false);
-
-                    UserAppInstitutionModel cUserAppInstitutionModel =
-                        authenticationNotifier.getSelectedUserAppInstitution();
-
                     Navigator.of(context).pushNamed(AppRouter.shPdfInvoice,
                         arguments: item['idCart']);
                   }
                 },
               ),
+              size: const FractionalColumnSize(0.10),
             ),
           ],
           filters: [

@@ -48,8 +48,14 @@ class CartProductModel {
     data['idCartProduct'] = idCartProduct;
     data['idCart'] = idCart;
     data['idProduct'] = idProduct;
+    data['nameProduct'] = nameProduct;
+    data['descriptionProduct'] = descriptionProduct;
+    data['freePriceProduct'] = freePriceProduct;
+    data['productAttributeJson'] = productAttributeJson;
+    data['productAttributeExplicit'] = productAttributeExplicit;
     data['quantityCartProduct'] = quantityCartProduct;
     data['priceCartProduct'] = priceCartProduct;
+    data['imageData'] = imageData;
     data['notesCartProduct'] = notesCartProduct;
     return data;
   }

@@ -25,6 +25,7 @@ class CartNotifier with ChangeNotifier {
   late ValueNotifier<double> subTotalCartMoney = ValueNotifier(0);
   late ValueNotifier<double> totalCartMoney = ValueNotifier(0);
   late ValueNotifier<int> totalCartProduct = ValueNotifier(0);
+  late double totalCartProductNoDonation = 0;
   late ValueNotifier<int> totalCartProductType = ValueNotifier(0);
 
   setCurrentCart(CartModel cartModel) {
@@ -37,6 +38,10 @@ class CartNotifier with ChangeNotifier {
       _subTotalCartMoney = _subTotalCartMoney +
           (element.priceCartProduct * element.quantityCartProduct.value);
       _nrProductInCart = _nrProductInCart + element.quantityCartProduct.value;
+      if (!element.freePriceProduct) {
+        totalCartProductNoDonation = totalCartProductNoDonation +
+            (element.priceCartProduct * element.quantityCartProduct.value);
+      }
     }
 
     totalCartProductType.value = _nrProductTypeInCart;
@@ -389,14 +394,16 @@ class CartNotifier with ChangeNotifier {
       required String? token,
       required int idCart,
       required int idUserAppInstitution,
-      required int idStakeholder}) async {
+      required int idStakeholder,
+      required String denominationStakeholder}) async {
     try {
       bool isOk = false;
       var response = await cartAPI.cartToStakeholder(
           token: token,
           idCart: idCart,
           idUserAppInstitution: idUserAppInstitution,
-          idStakeholder: idStakeholder);
+          idStakeholder: idStakeholder,
+          denominationStakeholder: denominationStakeholder);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);

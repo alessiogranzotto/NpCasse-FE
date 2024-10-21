@@ -1,5 +1,7 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:input_slider/input_slider.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/money_formatter.dart';
 import 'package:np_casse/core/models/cart.model.dart';
@@ -45,12 +47,21 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           initDoubleValue: 0,
           maxDigits: 8);
 
-  void adjustPrice(double value) {
+  TextEditingController rateDiscoutTextEditingController =
+      TextEditingController();
+  void adjustPrice() {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
+    rateDiscounted =
+        double.tryParse(rateDiscoutTextEditingController.text) ?? 0;
+    if (rateDiscounted > 100) {
+      rateDiscoutTextEditingController.text = '';
+      rateDiscounted = 0;
+    }
+    totalDiscount =
+        (rateDiscounted / 100) * cartNotifier.totalCartProductNoDonation;
+
     setState(() {
-      rateDiscounted = value;
-      totalDiscount = (value / 100) * cartNotifier.subTotalCartMoney.value;
       cartNotifier.totalCartMoney.value =
           cartNotifier.subTotalCartMoney.value - totalDiscount;
     });
@@ -178,6 +189,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   @override
   void initState() {
     super.initState();
+    rateDiscoutTextEditingController.addListener(adjustPrice);
     textEditingControllerCashInserted.addListener(cashInsertedOnChange);
     toBeReturnedCalculation = 0;
     _toBeReturned = '---';
@@ -349,18 +361,47 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                         style: CustomTextStyle.textFormFieldMedium.copyWith(
                             color: Colors.grey.shade700, fontSize: 12),
                       ),
-                      Slider(
-                        label: rateDiscounted.toStringAsFixed(2) + " %",
-                        divisions: 100,
-                        min: 0.0,
-                        max: 100.0,
-                        activeColor: Colors.lightBlue,
-                        inactiveColor: Colors.purple.shade100,
-                        value: rateDiscounted,
-                        onChanged: (double value) {
-                          adjustPrice(value);
-                        },
+                      SizedBox(
+                        width: 100,
+                        child: TextFormField(
+                          maxLines: 1,
+                          textAlignVertical: TextAlignVertical.top,
+                          controller: rateDiscoutTextEditingController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true, signed: false),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ], // Only numbers can be entered
+                          style: Theme.of(context).textTheme.titleSmall,
+                          decoration: const InputDecoration(
+                            suffixIcon: Icon(Icons.percent),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 0.2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                              borderSide:
+                                  BorderSide(color: Colors.red, width: 0.2),
+                            ),
+                          ),
+                        ),
                       ),
+                      // Slider(
+                      //   label: rateDiscounted.toStringAsFixed(2) + " %",
+                      //   divisions: 100,
+                      //   min: 0.0,
+                      //   max: 100.0,
+                      //   activeColor: Colors.lightBlue,
+                      //   inactiveColor: Colors.purple.shade100,
+                      //   value: rateDiscounted,
+                      //   onChanged: (double value) {
+                      //     adjustPrice(value);
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
