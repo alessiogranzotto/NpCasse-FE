@@ -68,44 +68,60 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   void variantChanged(int index, String? value) {
-    selectedValueVariant[index] = value!;
+    // Update the selected value for the variant at the specified index
+    selectedValueVariant[index] = value;
 
-    List<int> machingInt = [];
-    for (int i = 0;
-        i < productCatalog.smartProductAttributeJson[index].value.length;
-        i++) {
-      if (productCatalog.smartProductAttributeJson[index].value[i].value ==
-          value) {
-        print(i);
-        machingInt.add(i);
+    // Create a list to store the selectable status for each variant
+    List<List<bool>> selectableStatus = List.generate(
+      productCatalog.smartProductAttributeJson.length,
+      (i) => List.generate(productCatalog.smartProductAttributeJson[i].value.length, (j) => false),
+    );
+
+    // Iterate over each combination to determine which attributes can be selected
+    for (var combination in productCatalog.productAttributeCombination) {
+      bool combinationMatches = true;
+
+      // Check if the selected values match the current combination
+      for (int i = 0; i < selectedValueVariant.length; i++) {
+        if (selectedValueVariant[i] != null && selectedValueVariant[i]!.isNotEmpty) {
+          // Check if the current selected value exists in the combination
+          bool valueInCombination = combination.productAttributeJson.any((attr) =>
+              attr.value == selectedValueVariant[i] &&
+              attr.idProductAttribute == productCatalog.smartProductAttributeJson[i].idProductAttribute);
+        
+          if (!valueInCombination) {
+            combinationMatches = false;
+            break;
+          }
+        }
       }
-    }
-    print(machingInt);
-    for (int i = 0; i < productCatalog.smartProductAttributeJson.length; i++) {
-      if (i != index) {
-        for (int j = 0;
-            j < productCatalog.smartProductAttributeJson[i].value.length;
-            j++) {
-          if (machingInt.contains(j)) {
-            productCatalog.smartProductAttributeJson[i].value[j].selectable =
-                true;
-          } else {
-            productCatalog.smartProductAttributeJson[i].value[j].selectable =
-                false;
+
+      // If the combination matches the selected values, mark the attributes as selectable
+      if (combinationMatches) {
+        for (int i = 0; i < productCatalog.smartProductAttributeJson.length; i++) {
+          for (int j = 0; j < productCatalog.smartProductAttributeJson[i].value.length; j++) {
+            if (productCatalog.smartProductAttributeJson[i].value[j].value == combination.productAttributeJson[i].value) {
+              selectableStatus[i][j] = true; // Mark as selectable
+            }
           }
         }
       }
     }
 
-    enableVariants = true;
-    if (selectedValueVariant.length > 0) {
-      for (int i = 0; i < selectedValueVariant.length; i++) {
-        if (selectedValueVariant[i]?.isEmpty ?? true) {
-          enableVariants = false;
-        }
+    // Update the selectable property for each attribute based on the computed status
+    for (int i = 0; i < productCatalog.smartProductAttributeJson.length; i++) {
+      for (int j = 0; j < productCatalog.smartProductAttributeJson[i].value.length; j++) {
+        productCatalog.smartProductAttributeJson[i].value[j].selectable = selectableStatus[i][j];
       }
     }
+
+    // Determine if all required variants are selected to enable further actions
+    enableVariants = selectedValueVariant.every((value) => value != null && value.isNotEmpty);
+
+    // Update the state of the Add to Cart button
     addToCartButtonEnabled.value = checkEnableButton();
+
+    // Get the updated product price based on the current selections
     getProductPrice();
   }
 

@@ -187,6 +187,8 @@ class ProductCatalogModel {
     data['idUserAppInstitution'] = idUserAppInstitution;
     data['imageData'] = imageData;
     data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
+    data['productAttributeCombinations'] =
+        productAttributeCombination.map((e) => e.toJson()).toList();
     return data;
   }
 }
