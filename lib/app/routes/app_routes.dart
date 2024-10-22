@@ -163,13 +163,13 @@ class AppRouter {
       //       settings: settings,
       //     );
       //   }
-      case loginRoute: //
-        {
-          return MaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (_) => const LoginScreen(),
-          );
-        }
+      // case loginRoute: //
+      //   {
+      //     return MaterialPageRoute(
+      //       fullscreenDialog: true,
+      //       builder: (_) => const LoginScreen(),
+      //     );
+      //   }
       // case storeRoute:
       //   {
       //     return MaterialPageRoute(

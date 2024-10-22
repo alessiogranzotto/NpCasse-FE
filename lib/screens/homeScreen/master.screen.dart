@@ -310,20 +310,21 @@ class _MasterScreenState extends State<MasterScreen> {
 
               for (int i = 0; i < currentDestinations.length; i++) {
                 final menu = currentDestinations[i];
-                if (menu.label == "Preferiti") {
-                  wishlistProductNotifier.refresh();
-                } else if (menu.label == "Shop") {
-                  shopCategoryNotifier.refresh();
-                } else if (menu.label == "Carrello") {
-                  cartNotifier.refresh();
-                } else if (menu.label == "Attributi prodotti") {
-                  productAttributeNotifier.refresh();
-                } else if (menu.label == "Catalogo prodotti") {
-                  productCatalogNotifier.refresh();
-                } else if (menu.label == "Catalogo categorie") {
-                  categoryCatalogNotifier.refresh();
-                }
+
                 if (currentIndex == index) {
+                  if (menu.label == "Preferiti") {
+                    wishlistProductNotifier.refresh();
+                  } else if (menu.label == "Shop") {
+                    shopCategoryNotifier.refresh();
+                  } else if (menu.label == "Carrello") {
+                    cartNotifier.refresh();
+                  } else if (menu.label == "Attributi prodotti") {
+                    productAttributeNotifier.refresh();
+                  } else if (menu.label == "Catalogo prodotti") {
+                    productCatalogNotifier.refresh();
+                  } else if (menu.label == "Catalogo categorie") {
+                    categoryCatalogNotifier.refresh();
+                  }
                   handleMenuTap(i);
                   return;
                 }
@@ -332,10 +333,13 @@ class _MasterScreenState extends State<MasterScreen> {
 
                 if (visibleSubMenus.contains(i) && menu.subMenus != null) {
                   for (int j = 0; j < menu.subMenus!.length; j++) {
-                    if (menu.subMenus![j].label == "Carrelli") {
-                      reportNotifier.refresh();
-                    }
                     if (currentIndex == index) {
+                      if (menu.subMenus![j].label == "Carrelli") {
+                        reportNotifier.refresh();
+                      }
+                      if (menu.subMenus![j].label == "Prodotti") {
+                        reportNotifier.refresh();
+                      }
                       handleSubMenuTap(i, j);
                       return;
                     }
