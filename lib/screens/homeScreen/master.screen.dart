@@ -268,8 +268,8 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<ProductCatalogNotifier>(context);
     CategoryCatalogNotifier categoryCatalogNotifier =
         Provider.of<CategoryCatalogNotifier>(context);
-    ShopCategoryNotifier shopCategoryNotifier =
-        Provider.of<ShopCategoryNotifier>(context);
+    // ShopCategoryNotifier shopCategoryNotifier =
+    //     Provider.of<ShopCategoryNotifier>(context);
     ReportNotifier reportNotifier = Provider.of<ReportNotifier>(context);
 
     return Scaffold(
@@ -315,7 +315,7 @@ class _MasterScreenState extends State<MasterScreen> {
                   if (menu.label == "Preferiti") {
                     wishlistProductNotifier.refresh();
                   } else if (menu.label == "Shop") {
-                    shopCategoryNotifier.refresh();
+                    categoryCatalogNotifier.refresh();
                   } else if (menu.label == "Carrello") {
                     cartNotifier.refresh();
                   } else if (menu.label == "Attributi prodotti") {

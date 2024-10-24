@@ -6,8 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:np_casse/core/notifiers/report.notifier.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/models/cart.history.model.dart';
-import 'package:np_casse/app/routes/app_routes.dart';
 
 class ProductHistoryScreen extends StatefulWidget {
   const ProductHistoryScreen({Key? key}) : super(key: key);
@@ -113,19 +111,17 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               const PopupMenuDivider(),
               PopupMenuItem(
                 child: const Text("Export Excel"),
-                onTap: () {
-                  tableController.removeRowAt(0);
-                },
+                onTap: () {},
               ),
             ],
           ),
           columns: [
             RowSelectorColumn(),
             TableColumn(
-              id: 'idCart',
+              id: 'docNumberCart',
               title: const Text('#'),
               cellBuilder: (context, item, index) =>
-                  Text(item['idCart'].toString()),
+                  Text(item['docNumberCart'].toString().padLeft(6, '0')),
               size: const FractionalColumnSize(0.10),
               sortable: true,
             ),
@@ -143,7 +139,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               cellBuilder: (context, item, index) =>
                   Text(item['productAttributeExplicit'].toString()),
               size: const FractionalColumnSize(0.25),
-              sortable: true,
+              sortable: false,
             ),
             TableColumn(
               id: 'quantityCartProduct',

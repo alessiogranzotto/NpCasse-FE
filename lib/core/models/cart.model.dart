@@ -7,7 +7,9 @@ class CartModel {
     required this.idUserAppInstitution, // Include this in the constructor
     required this.dateCreatedCart,
     required this.paymentTypeCart,
+    required this.docNumberCart,
     required this.stateCart,
+    required this.stateCartDescription,
     required this.notesCart,
     required this.cartProducts,
     required this.totalPriceCart,
@@ -19,7 +21,9 @@ class CartModel {
   late final int idUserAppInstitution;
   late final DateTime dateCreatedCart;
   late final String paymentTypeCart;
+  late final int docNumberCart;
   late final int stateCart;
+  late final String stateCartDescription;
   late final String notesCart;
   late final double? totalPriceCart;
   late final int? idStakeholder;
@@ -32,7 +36,9 @@ class CartModel {
     idUserAppInstitution = 0; // Ensure it's initialized here
     dateCreatedCart = DateTime.now();
     paymentTypeCart = '';
+    docNumberCart = 0;
     stateCart = 0;
+    stateCartDescription = '';
     notesCart = '';
     totalPriceCart = null;
     idStakeholder = null;
@@ -48,7 +54,9 @@ class CartModel {
         DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCreatedCart'], true);
     dateCreatedCart = dateTimeC.toLocal();
     paymentTypeCart = json['paymentTypeCart'] ?? '';
+    docNumberCart = json['docNumberCart'];
     stateCart = json['stateCart'];
+    stateCartDescription = json['stateCartDescription'];
     notesCart = json['notesCart'] ?? '';
     totalPriceCart = json['totalPriceCart'];
     idStakeholder = json['idStakeholder'];
@@ -65,7 +73,10 @@ class CartModel {
     data['idUserAppInstitution'] = idUserAppInstitution;
     data['dateCreatedCart'] = dateCreatedCart.toIso8601String();
     data['paymentTypeCart'] = paymentTypeCart;
+    data['paymentTypeCart'] = paymentTypeCart;
+    data['docNumberCart'] = docNumberCart;
     data['stateCart'] = stateCart;
+    data['stateCartDescription'] = stateCartDescription;
     data['notesCart'] = notesCart;
     data['totalPriceCart'] = totalPriceCart;
     data['idStakeholder'] = idStakeholder;

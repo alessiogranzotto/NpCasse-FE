@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 class CartProductModel {
-  CartProductModel(
-      {required this.idCartProduct,
-      required this.idCart,
-      required this.idProduct,
-      required this.nameProduct,
-      required this.descriptionProduct,
-      required this.freePriceProduct,
-      required this.productAttributeJson,
-      required this.productAttributeExplicit,
-      required this.quantityCartProduct,
-      required this.priceCartProduct,
-      required this.imageData,
-      required this.notesCartProduct});
+  CartProductModel({
+    required this.idCartProduct,
+    required this.idCart,
+    required this.idProduct,
+    required this.nameProduct,
+    required this.descriptionProduct,
+    required this.freePriceProduct,
+    required this.productAttributeJson,
+    required this.productAttributeExplicit,
+    required this.quantityCartProduct,
+    required this.priceCartProduct,
+    required this.imageData,
+    required this.notesCartProduct,
+    required this.docNumberCart,
+  });
   late final int idCartProduct;
   late final int idCart;
   late final int idProduct;
@@ -27,6 +29,7 @@ class CartProductModel {
   late final double priceCartProduct;
   late final String imageData;
   late final String notesCartProduct;
+  late final int docNumberCart;
 
   CartProductModel.fromJson(Map<String, dynamic> json) {
     idCartProduct = json['idCartProduct'];
@@ -41,6 +44,7 @@ class CartProductModel {
     priceCartProduct = json['priceCartProduct'];
     imageData = json['imageData'];
     notesCartProduct = json['notesCartProduct'];
+    docNumberCart = json['docNumberCart'];
   }
 
   Map<String, dynamic> toJson() {
@@ -57,6 +61,7 @@ class CartProductModel {
     data['priceCartProduct'] = priceCartProduct;
     data['imageData'] = imageData;
     data['notesCartProduct'] = notesCartProduct;
+    data['docNumberCart'] = docNumberCart;
     return data;
   }
 }

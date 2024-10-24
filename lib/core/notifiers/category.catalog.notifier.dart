@@ -17,8 +17,12 @@ class CategoryCatalogNotifier with ChangeNotifier {
   // String get getNameProduct => currentProductModel.nameProduct;
   // double get getPriceProduct => currentProductModel.priceProduct;
 
-  setCategoryCatalog(CategoryCatalogModel CategoryCatalogModel) {
+  setCurrentCategoryCatalog(CategoryCatalogModel CategoryCatalogModel) {
     currentCategoryCatalogModel = CategoryCatalogModel;
+  }
+
+  getCurrentCategoryCatalog() {
+    return currentCategoryCatalogModel;
   }
 
   Future getCategories(

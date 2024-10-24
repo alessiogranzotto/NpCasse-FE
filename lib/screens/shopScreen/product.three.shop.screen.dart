@@ -7,6 +7,7 @@ import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/screens/shopScreen/widget/product.card.dart';
 import 'package:provider/provider.dart';
@@ -14,9 +15,7 @@ import 'package:provider/provider.dart';
 class ProductThreeShopScreen extends StatefulWidget {
   const ProductThreeShopScreen({
     Key? key,
-    required this.childCategoryCatalogModel,
   }) : super(key: key);
-  final CategoryCatalogModel childCategoryCatalogModel;
 
   State<ProductThreeShopScreen> createState() =>
       __ProductThreeShopScreenState();
@@ -83,20 +82,17 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
-
-    // ProjectNotifier projectNotifier = Provider.of<ProjectNotifier>(context);
-    // StoreNotifier storeNotifier = Provider.of<StoreNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    // bool canAddProduct = authenticationNotifier.canUserAddItem();
-
-    return SafeArea(
-        child: Scaffold(
+    CategoryCatalogNotifier categoryCatalogNotifier =
+        Provider.of<CategoryCatalogNotifier>(context);
+    return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       // drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text(widget.childCategoryCatalogModel.nameCategory,
+        title: Text(
+            categoryCatalogNotifier.getCurrentCategoryCatalog().nameCategory,
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: SingleChildScrollView(
@@ -266,8 +262,9 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                           token: authenticationNotifier.token,
                           idUserAppInstitution:
                               cUserAppInstitutionModel.idUserAppInstitution,
-                          idCategory:
-                              widget.childCategoryCatalogModel.idCategory,
+                          idCategory: categoryCatalogNotifier
+                              .getCurrentCategoryCatalog()
+                              .idCategory,
                           readAlsoDeleted: false,
                           numberResult: numberResult,
                           nameDescSearch: nameDescSearchController.text,
@@ -346,6 +343,6 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
           ],
         ),
       ),
-    ));
+    );
   }
 }

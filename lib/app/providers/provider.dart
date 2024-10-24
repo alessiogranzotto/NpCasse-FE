@@ -36,6 +36,6 @@ class AppProvider {
         create: (_) => ProductAttributeCombinationNotifier()),
     // ChangeNotifierProvider(create: (_) => HomeNotifier()),
     ChangeNotifierProvider(create: (_) => CategoryCatalogNotifier()),
-    ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
+    // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];
 }

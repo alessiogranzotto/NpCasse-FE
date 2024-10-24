@@ -284,12 +284,7 @@ class AppRouter {
       case categoryProductShopRoute:
         {
           return MaterialPageRoute(
-            builder: (context) => ProductThreeShopScreen(
-              childCategoryCatalogModel: ModalRoute.of(context)!
-                  .settings
-                  .arguments as CategoryCatalogModel,
-            ),
-            settings: settings,
+            builder: (_) => const ProductThreeShopScreen(),
           );
         }
       case onBoardRoute:

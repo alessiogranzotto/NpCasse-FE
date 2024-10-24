@@ -112,29 +112,28 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               const PopupMenuDivider(),
               PopupMenuItem(
                 child: const Text("Export Excel"),
-                onTap: () {
-                  tableController.removeRowAt(0);
-                },
+                onTap: () {},
               ),
             ],
           ),
           columns: [
             RowSelectorColumn(),
             TableColumn(
-              id: 'idCart',
+              id: 'docNumberCart',
               title: const Text('#'),
               cellBuilder: (context, item, index) =>
-                  Text(item['idCart'].toString()),
-              size: const FractionalColumnSize(0.10),
+                  Text(item['docNumberCart'].toString().padLeft(6, '0')),
+              size: const FractionalColumnSize(0.08),
               sortable: true,
             ),
-            // TableColumn(
-            //   id: 'stateCart',
-            //   title: const Text('State'),
-            //   cellBuilder: (context, item, index) =>
-            //       Text(item['stateCart'].toString()),
-            //   sortable: true,
-            // ),
+            TableColumn(
+              id: 'stateCartDescription',
+              title: const Text('State'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['stateCartDescription'].toString()),
+              sortable: true,
+              size: const FractionalColumnSize(0.12),
+            ),
             TableColumn(
               id: 'paymentTypeCart',
               title: const Text('Tipo pagamento'),
@@ -146,26 +145,26 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'dateCreatedCart',
               title: const Text('Data'),
-              cellBuilder: (context, item, index) => Text(
-                  DateFormat("yyyy-MM-ddTHH:mm:ss")
+              cellBuilder: (context, item, index) =>
+                  Text(DateFormat("yyyy-MM-ddTHH:mm:ss")
                       .parse(item['dateCreatedCart'], true)
-                      .toLocal()
+                      // .toLocal()
                       .toString()),
               size: const FractionalColumnSize(0.15),
               sortable: true,
             ),
             TableColumn(
               id: 'totalPriceCart',
-              title: const Text('Totale carrello'),
+              title: const Text('Totale'),
               cellBuilder: (context, item, index) => Text(
                   item['totalPriceCart'] != null
                       ? item['totalPriceCart'].toStringAsFixed(2) + ' €'
                       : ''),
-              size: const FractionalColumnSize(0.15),
+              size: const FractionalColumnSize(0.10),
               sortable: true,
             ),
             TableColumn(
-              id: '# Stakeholder',
+              id: 'idStakeholder',
               title: const Text('# Stakeholder'),
               cellBuilder: (context, item, index) => Text(
                   item['idStakeholder'] != null
@@ -176,12 +175,12 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             ),
             TableColumn(
               id: 'denominationStakeholder',
-              title: const Text('Denominazione Stakeholder'),
+              title: const Text('Stakeholder'),
               cellBuilder: (context, item, index) => Text(
                   item['denominationStakeholder'] != null
                       ? item['denominationStakeholder'].toString()
                       : ''),
-              size: const FractionalColumnSize(0.20),
+              size: const FractionalColumnSize(0.15),
               sortable: true,
             ),
             TableColumn(

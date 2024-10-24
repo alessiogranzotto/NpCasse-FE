@@ -110,9 +110,10 @@ class CategoryTwoShopScreen extends StatelessWidget {
                             CategoryCatalogModel category = tSnapshot[index];
                             return GestureDetector(
                               onTap: () {
+                                categoryCatalogNotifier
+                                    .setCurrentCategoryCatalog(category);
                                 Navigator.of(context).pushNamed(
-                                    AppRouter.categoryProductShopRoute,
-                                    arguments: category);
+                                    AppRouter.categoryProductShopRoute);
                               },
                               child: CategoryCard(
                                 categoryCatalogModel: category,
