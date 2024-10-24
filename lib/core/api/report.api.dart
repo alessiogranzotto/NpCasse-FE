@@ -55,4 +55,50 @@ class ReportApi {
       return null;
     }
   }
+
+  Future downloadCartList(
+      {required String? token,
+      required int idUserAppInstitution}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.reportURL}/download-cart-list?idUserAppInstitution=$idUserAppInstitution');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else if (response.statusCode == 401) {
+      //REFRESH TOKEN??
+      return null;
+    }
+ }
+
+  Future downloadProductList(
+      {required String? token,
+      required int idUserAppInstitution}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.reportURL}/download-product-list?idUserAppInstitution=$idUserAppInstitution');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else if (response.statusCode == 401) {
+      //REFRESH TOKEN??
+      return null;
+    }
+  }
 }
