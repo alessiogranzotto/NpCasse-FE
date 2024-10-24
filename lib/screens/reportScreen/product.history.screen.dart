@@ -73,6 +73,18 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
     }
   }
 
+  void handleDownloadProductList(BuildContext context) async {
+    final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
+    var authNotifier = Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel = authNotifier.getSelectedUserAppInstitution();
+
+    await reportNotifier.downloadProductList(
+      context: context,
+      token: authNotifier.token,
+      idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +123,9 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               const PopupMenuDivider(),
               PopupMenuItem(
                 child: const Text("Export Excel"),
-                onTap: () {},
+                onTap: () {
+                  handleDownloadProductList(context); 
+                },
               ),
             ],
           ),

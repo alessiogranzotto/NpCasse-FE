@@ -74,6 +74,18 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
     }
   }
 
+  void handleDownloadCartList(BuildContext context) async {
+    final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
+    var authNotifier = Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel = authNotifier.getSelectedUserAppInstitution();
+
+    await reportNotifier.downloadCartList(
+      context: context,
+      token: authNotifier.token,
+      idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,7 +124,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               const PopupMenuDivider(),
               PopupMenuItem(
                 child: const Text("Export Excel"),
-                onTap: () {},
+              onTap: () {
+                handleDownloadCartList(context); 
+              },
               ),
             ],
           ),
