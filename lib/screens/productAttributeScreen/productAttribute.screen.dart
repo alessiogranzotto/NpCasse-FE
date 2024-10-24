@@ -81,7 +81,7 @@ class _ProductAttributeScreenState extends State<ProductAttributeScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            'Attributi prodotti',
+            'Attributi prodotti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           automaticallyImplyLeading: false,

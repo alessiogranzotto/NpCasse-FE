@@ -112,7 +112,7 @@ class _CartScreenState extends State<CartScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Prodotti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Carrello ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

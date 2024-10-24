@@ -24,6 +24,7 @@ import 'package:np_casse/screens/productAttributeScreen/product.attribute.naviga
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
 import 'package:np_casse/screens/settingScreen/setting.screen.dart';
+import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/userScreen/user.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
@@ -52,17 +53,28 @@ class MenuList {
 
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
-      const Icon(Icons.favorite), const WishlistScreen()),
-  MenuList(AppRouter.categoryOneShopRoute, 'Shop', Icons.shop,
-      const Icon(Icons.layers), const ShopNavigator()),
-  MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart_outlined,
+      const Icon(Icons.favorite_outlined), const WishlistScreen()),
+  MenuList(
+    '',
+    'Shop',
+    Icons.shop,
+    const Icon(Icons.shop),
+    const Placeholder(),
+    subMenus: [
+      MenuList(AppRouter.categoryOneShopRoute, 'Naviga', Icons.shop,
+          const Icon(Icons.shop), const ShopNavigator()),
+      MenuList(AppRouter.userRoute, 'Ricerca', Icons.search,
+          const Icon(Icons.search), const ProductSearchScreen()),
+    ],
+  ),
+  MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart,
       const Icon(Icons.shopping_cart), const CartNavigator()),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
-      const Icon(Icons.settings), const ProductAttributeNavigator()),
+      const Icon(Icons.article_outlined), const ProductAttributeNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,
-      const Icon(Icons.settings), const CategoryCatalogNavigator()),
+      const Icon(Icons.book), const CategoryCatalogNavigator()),
   MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
-      const Icon(Icons.settings), const ProductCatalogNavigator()),
+      const Icon(Icons.store), const ProductCatalogNavigator()),
   MenuList(
     '',
     'Impostazioni',
@@ -74,11 +86,11 @@ List<MenuList> destinations = <MenuList>[
           AppRouter.institutionRoute,
           'Associazioni',
           Icons.settings_outlined,
-          const Icon(Icons.settings),
+          const Icon(Icons.settings_outlined),
           const InstitutionScreen()),
       MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
           const Icon(Icons.account_circle), const UserScreeen()),
-      MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.store,
+      MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
           const Icon(Icons.settings), const SettingScreen()),
     ],
   ),
@@ -114,7 +126,8 @@ class _MasterScreenState extends State<MasterScreen> {
   Widget? _currentScreen; // Track the current screen to display
   UserModel? cUserModel; // Make this nullable initially
   UserAppInstitutionModel? cSelectedUserAppInstitution;
-  UserAppInstitutionModel? previousSelectedInstitution; // Previous institution value
+  UserAppInstitutionModel?
+      previousSelectedInstitution; // Previous institution value
 
   signOut(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -130,7 +143,7 @@ class _MasterScreenState extends State<MasterScreen> {
         destinations[_selectedMainMenuIndex].screen; // Set the initial screen
   }
 
-   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -143,7 +156,8 @@ class _MasterScreenState extends State<MasterScreen> {
     if (currentInstitution != previousSelectedInstitution) {
       setState(() {
         cSelectedUserAppInstitution = currentInstitution;
-        previousSelectedInstitution = currentInstitution; // Update previous value
+        previousSelectedInstitution =
+            currentInstitution; // Update previous value
         resetNavigators();
       });
     }
@@ -151,8 +165,10 @@ class _MasterScreenState extends State<MasterScreen> {
 
   void resetNavigators() {
     CartNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-    CategoryCatalogNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-    ProductAttributeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    CategoryCatalogNavigatorKey.currentState
+        ?.popUntil((route) => route.isFirst);
+    ProductAttributeNavigatorKey.currentState
+        ?.popUntil((route) => route.isFirst);
     ProductCatalogNavigatorKey.currentState?.popUntil((route) => route.isFirst);
     CartHistoryNavigatorKey.currentState?.popUntil((route) => route.isFirst);
     ShopNavigatorKey.currentState?.popUntil((route) => route.isFirst);

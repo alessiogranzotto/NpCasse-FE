@@ -40,12 +40,12 @@ class CategoryOneShopScreen extends StatelessWidget {
     //   iconSize = 50;
     // }
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Shop ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Naviga shop ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

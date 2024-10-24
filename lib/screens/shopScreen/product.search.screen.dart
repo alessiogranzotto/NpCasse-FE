@@ -12,16 +12,15 @@ import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/screens/shopScreen/widget/product.card.dart';
 import 'package:provider/provider.dart';
 
-class ProductThreeShopScreen extends StatefulWidget {
-  const ProductThreeShopScreen({
+class ProductSearchScreen extends StatefulWidget {
+  const ProductSearchScreen({
     Key? key,
   }) : super(key: key);
 
-  State<ProductThreeShopScreen> createState() =>
-      __ProductThreeShopScreenState();
+  State<ProductSearchScreen> createState() => __ProductSearchScreenState();
 }
 
-class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
+class __ProductSearchScreenState extends State<ProductSearchScreen> {
   double widgetWitdh = 325;
   double widgetHeight = 550;
   double widgetHeightHalf = 400;
@@ -84,16 +83,17 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
         Provider.of<AuthenticationNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    CategoryCatalogNotifier categoryCatalogNotifier =
-        Provider.of<CategoryCatalogNotifier>(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       // drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-            categoryCatalogNotifier.getCurrentCategoryCatalog().nameCategory,
-            style: Theme.of(context).textTheme.headlineMedium),
+          'Ricerca shop ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -262,9 +262,7 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                           token: authenticationNotifier.token,
                           idUserAppInstitution:
                               cUserAppInstitutionModel.idUserAppInstitution,
-                          idCategory: categoryCatalogNotifier
-                              .getCurrentCategoryCatalog()
-                              .idCategory,
+                          idCategory: 0,
                           readAlsoDeleted: false,
                           numberResult: numberResult,
                           nameDescSearch: nameDescSearchController.text,

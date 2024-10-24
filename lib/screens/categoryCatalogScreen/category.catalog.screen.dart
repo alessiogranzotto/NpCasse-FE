@@ -91,7 +91,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Categorie ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Catalogo categorie ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

@@ -75,13 +75,18 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context);
+
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Storico Carrello',
+          'Report prodotti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

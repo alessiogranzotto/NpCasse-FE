@@ -134,13 +134,10 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       textEditingControllerDescriptionProduct.text =
           widget.productCatalogModelArgument.descriptionProduct;
       tImageString = widget.productCatalogModelArgument.imageData;
-      var t1 = widget.productCatalogModelArgument.priceProduct.toString();
+      var t1 =
+          widget.productCatalogModelArgument.priceProduct.toStringAsFixed(2);
       String t2 = '';
-      if (t1.contains('.')) {
-        t2 = t1.replaceAll('.', ',');
-      } else {
-        t2 = t1 + ',00';
-      }
+      t2 = t1.replaceAll('.', ',');
       textEditingControllerPriceProduct.text = t2;
       textEditingControllerBarcodeProduct.text =
           widget.productCatalogModelArgument.barcode.toString();

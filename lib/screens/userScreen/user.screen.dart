@@ -99,22 +99,26 @@ class _UserScreeenState extends State<UserScreeen> {
       UserModel cUserModel = authNotifier.getUser();
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
-      authNotifier.updateUserDetails(
-          context: context,
-          token: authNotifier.token,
-          idUser: cUserModel.idUser,
-          idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-          name: firstNameController.text,
-          surname: lastNameController.text,
-          email: emailController.text,
-          phone: phoneController.text).then((value) {
+      authNotifier
+          .updateUserDetails(
+              context: context,
+              token: authNotifier.token,
+              idUser: cUserModel.idUser,
+              idUserAppInstitution:
+                  cUserAppInstitutionModel.idUserAppInstitution,
+              name: firstNameController.text,
+              surname: lastNameController.text,
+              email: emailController.text,
+              phone: phoneController.text)
+          .then((value) {
         if (value) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Utente",
-              message: "Utente aggiornato correttamente",
-              contentType: "success"));
-         }
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Utente",
+                    message: "Utente aggiornato correttamente",
+                    contentType: "success"));
+          }
         }
       });
     }
@@ -126,18 +130,21 @@ class _UserScreeenState extends State<UserScreeen> {
           Provider.of<AuthenticationNotifier>(context, listen: false);
       UserModel cUserModel = authNotifier.getUser();
 
-      authNotifier.changeUserPassword(
-          context: context,
-          token: authNotifier.token,
-          idUser: cUserModel.idUser,
-          password: passwordController.text,
-          confirmPassword: confirmPasswordController.text).then((value) {     
+      authNotifier
+          .changeUserPassword(
+              context: context,
+              token: authNotifier.token,
+              idUser: cUserModel.idUser,
+              password: passwordController.text,
+              confirmPassword: confirmPasswordController.text)
+          .then((value) {
         if (value) {
-         if (context.mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Password",
-              message: "La password è stata modificata correttamente",
-              contentType: "success"));
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Password",
+                    message: "La password è stata modificata correttamente",
+                    contentType: "success"));
           }
         }
       });
@@ -148,6 +155,8 @@ class _UserScreeenState extends State<UserScreeen> {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
     UserModel cUserModel = authenticationNotifier.getUser();
     firstNameController.text = cUserModel.name;
     lastNameController.text = cUserModel.surname;
@@ -155,6 +164,15 @@ class _UserScreeenState extends State<UserScreeen> {
     phoneController.text = cUserModel.phone;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Utente ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return Row(

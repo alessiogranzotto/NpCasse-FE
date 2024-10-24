@@ -97,7 +97,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Prodotti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Catalogo prodotti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),

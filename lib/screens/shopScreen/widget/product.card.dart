@@ -74,7 +74,9 @@ class _ProductCardState extends State<ProductCard> {
     // Create a list to store the selectable status for each variant
     List<List<bool>> selectableStatus = List.generate(
       productCatalog.smartProductAttributeJson.length,
-      (i) => List.generate(productCatalog.smartProductAttributeJson[i].value.length, (j) => false),
+      (i) => List.generate(
+          productCatalog.smartProductAttributeJson[i].value.length,
+          (j) => false),
     );
 
     // Iterate over each combination to determine which attributes can be selected
@@ -83,12 +85,16 @@ class _ProductCardState extends State<ProductCard> {
 
       // Check if the selected values match the current combination
       for (int i = 0; i < selectedValueVariant.length; i++) {
-        if (selectedValueVariant[i] != null && selectedValueVariant[i]!.isNotEmpty) {
+        if (selectedValueVariant[i] != null &&
+            selectedValueVariant[i]!.isNotEmpty) {
           // Check if the current selected value exists in the combination
-          bool valueInCombination = combination.productAttributeJson.any((attr) =>
-              attr.value == selectedValueVariant[i] &&
-              attr.idProductAttribute == productCatalog.smartProductAttributeJson[i].idProductAttribute);
-        
+          bool valueInCombination = combination.productAttributeJson.any(
+              (attr) =>
+                  attr.value == selectedValueVariant[i] &&
+                  attr.idProductAttribute ==
+                      productCatalog
+                          .smartProductAttributeJson[i].idProductAttribute);
+
           if (!valueInCombination) {
             combinationMatches = false;
             break;
@@ -98,9 +104,14 @@ class _ProductCardState extends State<ProductCard> {
 
       // If the combination matches the selected values, mark the attributes as selectable
       if (combinationMatches) {
-        for (int i = 0; i < productCatalog.smartProductAttributeJson.length; i++) {
-          for (int j = 0; j < productCatalog.smartProductAttributeJson[i].value.length; j++) {
-            if (productCatalog.smartProductAttributeJson[i].value[j].value == combination.productAttributeJson[i].value) {
+        for (int i = 0;
+            i < productCatalog.smartProductAttributeJson.length;
+            i++) {
+          for (int j = 0;
+              j < productCatalog.smartProductAttributeJson[i].value.length;
+              j++) {
+            if (productCatalog.smartProductAttributeJson[i].value[j].value ==
+                combination.productAttributeJson[i].value) {
               selectableStatus[i][j] = true; // Mark as selectable
             }
           }
@@ -110,13 +121,17 @@ class _ProductCardState extends State<ProductCard> {
 
     // Update the selectable property for each attribute based on the computed status
     for (int i = 0; i < productCatalog.smartProductAttributeJson.length; i++) {
-      for (int j = 0; j < productCatalog.smartProductAttributeJson[i].value.length; j++) {
-        productCatalog.smartProductAttributeJson[i].value[j].selectable = selectableStatus[i][j];
+      for (int j = 0;
+          j < productCatalog.smartProductAttributeJson[i].value.length;
+          j++) {
+        productCatalog.smartProductAttributeJson[i].value[j].selectable =
+            selectableStatus[i][j];
       }
     }
 
     // Determine if all required variants are selected to enable further actions
-    enableVariants = selectedValueVariant.every((value) => value != null && value.isNotEmpty);
+    enableVariants = selectedValueVariant
+        .every((value) => value != null && value.isNotEmpty);
 
     // Update the state of the Add to Cart button
     addToCartButtonEnabled.value = checkEnableButton();
@@ -272,31 +287,31 @@ class _ProductCardState extends State<ProductCard> {
                         : const SizedBox.shrink()
                   ]),
             SizedBox(
-              height: 60,
+              height: 40,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   productCatalog.nameProduct,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
             ),
             SizedBox(
-              height: 50,
+              height: 30,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
                   productCatalog.descriptionProduct,
-                  maxLines: 3,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
             ),
             Container(
-              height: 150,
+              height: 140,
               child: GridView.builder(
                 padding: const EdgeInsets.all(8),
                 itemCount: productCatalog.smartProductAttributeJson.length,
@@ -714,7 +729,7 @@ class _ProductCardState extends State<ProductCard> {
               padding: const EdgeInsets.only(
                   top: 16.0, bottom: 0.0, left: 4.0, right: 4.0),
               child: SizedBox(
-                height: 120,
+                height: 100,
                 child: Column(
                   children: [
                     Tooltip(
@@ -735,7 +750,7 @@ class _ProductCardState extends State<ProductCard> {
                               Expanded(
                                 child: TextField(
                                   controller: textEditingControllerNoteProduct,
-                                  minLines: 2,
+                                  minLines: 1,
                                   maxLines: 2,
                                   onTapOutside: (event) {
                                     FocusManager.instance.primaryFocus
@@ -745,7 +760,7 @@ class _ProductCardState extends State<ProductCard> {
                               ),
                             ],
                           ),
-                          trailing: const Icon(Icons.edit),
+                          // trailing: const Icon(Icons.edit),
                           onTap: () {},
                         ),
                       ),

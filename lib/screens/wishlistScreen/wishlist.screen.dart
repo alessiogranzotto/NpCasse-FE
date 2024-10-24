@@ -18,19 +18,19 @@ class WishlistScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    double widgetWitdh = 320;
-    double widgetHeight = 620;
-    double widgetHeightHalf = 470;
+    double widgetWitdh = 325;
+    double widgetHeight = 550;
+    double widgetHeightHalf = 400;
     double gridMainAxisSpacing = 10;
 
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         // const CustomDrawerWidget(),
         appBar: AppBar(
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: Text(
-            'Preferiti di ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+            'Preferiti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),

@@ -31,7 +31,7 @@ class CategoryTwoShopScreen extends StatelessWidget {
     bool canAddProject = authenticationNotifier.canUserAddItem();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
