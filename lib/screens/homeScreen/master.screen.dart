@@ -114,6 +114,7 @@ class _MasterScreenState extends State<MasterScreen> {
   Widget? _currentScreen; // Track the current screen to display
   UserModel? cUserModel; // Make this nullable initially
   UserAppInstitutionModel? cSelectedUserAppInstitution;
+  UserAppInstitutionModel? previousSelectedInstitution; // Previous institution value
 
   signOut(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -127,6 +128,34 @@ class _MasterScreenState extends State<MasterScreen> {
     getUserData(); // Fetch user data when the screen is initialized
     _currentScreen =
         destinations[_selectedMainMenuIndex].screen; // Set the initial screen
+  }
+
+   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: true);
+    UserAppInstitutionModel? currentInstitution =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    // Check if the institution has changed
+    if (currentInstitution != previousSelectedInstitution) {
+      setState(() {
+        cSelectedUserAppInstitution = currentInstitution;
+        previousSelectedInstitution = currentInstitution; // Update previous value
+        resetNavigators();
+      });
+    }
+  }
+
+  void resetNavigators() {
+    CartNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    CategoryCatalogNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    ProductAttributeNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    ProductCatalogNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    CartHistoryNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    ShopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
   }
 
   void getUserData() {

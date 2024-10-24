@@ -9,13 +9,13 @@ class CartHistoryNavigator extends StatefulWidget {
   CartHistoryNavigatorState createState() => CartHistoryNavigatorState();
 }
 
-GlobalKey<NavigatorState> cartHistoryNavigatorKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> CartHistoryNavigatorKey = GlobalKey<NavigatorState>();
 
 class CartHistoryNavigatorState extends State<CartHistoryNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: cartHistoryNavigatorKey,
+      key: CartHistoryNavigatorKey,
       onGenerateRoute: (RouteSettings settings) {
         if (settings.name != "/") {
           return AppRouter.generateRoute(settings);
