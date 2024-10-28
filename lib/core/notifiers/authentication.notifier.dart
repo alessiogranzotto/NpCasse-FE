@@ -14,6 +14,7 @@ import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
+import 'package:np_casse/screens/shopScreen/widget/shop.grant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationNotifier with ChangeNotifier {
@@ -119,10 +120,22 @@ class AuthenticationNotifier with ChangeNotifier {
         }
       } else {
         userModel = UserModel.fromJson(parseData['okResult']);
-        _stepLoading = "otp";
-        _isLoading = false;
         setUser(userModel);
-        notifyListeners();
+        var itemUserOtpMode = userModel.userAttributeModelList
+            .where((element) => element.attributeName == 'User.OtpMode')
+            .firstOrNull;
+        if (itemUserOtpMode != null &&
+            itemUserOtpMode.attributeName == 'Email') {
+          _stepLoading = "otp";
+          _isLoading = false;
+          notifyListeners();
+        } else {
+          initAccount(
+              context: context,
+              email: email,
+              password: password,
+              appName: appName);
+        }
       }
     } on SocketException catch (_) {
       if (context.mounted) {
@@ -292,17 +305,20 @@ class AuthenticationNotifier with ChangeNotifier {
                 'phone': userModel.phone,
                 'token': userModel.token,
                 'refreshToken': userModel.refreshToken,
-                // 'role': userModel.role,
                 'expirationTime': userModel.expirationTime.toString(),
                 'userAppInstitutionModelList': jsonEncode(userModel
                     .userAppInstitutionModelList
+                    .map((e) => e.toJson())
+                    .toList()),
+                'userAttributeModelList': jsonEncode(userModel
+                    .userAttributeModelList
                     .map((e) => e.toJson())
                     .toList())
               })).whenComplete(
             () {
               _isLoading = false;
-              _stepLoading = "user";
-              // notifyListeners();
+              // _stepLoading = "user";
+              notifyListeners();
               Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute);
             },
           );
@@ -393,6 +409,10 @@ class AuthenticationNotifier with ChangeNotifier {
               'expirationTime': userModel.expirationTime.toString(),
               'userAppInstitutionModelList': jsonEncode(userModel
                   .userAppInstitutionModelList
+                  .map((e) => e.toJson())
+                  .toList()),
+              'userAttributeModelList': jsonEncode(userModel
+                  .userAttributeModelList
                   .map((e) => e.toJson())
                   .toList())
             })).whenComplete(

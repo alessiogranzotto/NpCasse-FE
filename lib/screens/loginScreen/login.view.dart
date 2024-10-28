@@ -22,7 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
-
   // late final String email, password;
   String otpCode = "";
 
@@ -30,6 +29,9 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController = TextEditingController()..addListener(controllerListener);
     passwordController = TextEditingController()
       ..addListener(controllerListener);
+
+    emailController.text = 'alessio.granzotto@aebsolutions.it';
+    passwordController.text = 'kl6&u7H4';
   }
 
   void disposeControllers() {
@@ -262,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           ),
                                                         ),
                                                         child: const Text(
-                                                          AppStrings.sendOtp,
+                                                          AppStrings.login,
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.black,
@@ -562,7 +564,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         ),
                                                       ),
                                                       child: const Text(
-                                                        AppStrings.sendOtp,
+                                                        AppStrings.login,
                                                         style: TextStyle(
                                                             color: Colors.black,
                                                             fontSize: 14),

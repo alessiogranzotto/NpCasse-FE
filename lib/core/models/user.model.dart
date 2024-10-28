@@ -14,7 +14,8 @@ class UserModel {
       required this.refreshToken,
       // required this.role,
       required this.expirationTime,
-      required this.userAppInstitutionModelList});
+      required this.userAppInstitutionModelList,
+      required this.userAttributeModelList});
   late int idUser;
   // late int idUserAppInstitution;
   late String name;
@@ -26,6 +27,7 @@ class UserModel {
   // late final String role;
   late DateTime expirationTime;
   late List<UserAppInstitutionModel> userAppInstitutionModelList;
+  late List<UserAttributeModel> userAttributeModelList;
 
   UserModel.empty() {
     idUser = 0;
@@ -37,6 +39,7 @@ class UserModel {
     // role = "";
     expirationTime = DateTime.now();
     userAppInstitutionModelList = List.empty();
+    userAttributeModelList = List.empty();
   }
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -51,6 +54,7 @@ class UserModel {
     // role = json['role'];
     expirationTime = DateTime.parse(json['expirationTime']);
 
+    //COMES FROM INIT STRING - START
     if (json.containsKey('userAppInstitutionModelList') &
         json['userAppInstitutionModelList'].toString().isNotEmpty) {
       userAppInstitutionModelList =
@@ -60,6 +64,27 @@ class UserModel {
     } else {
       userAppInstitutionModelList = List.empty();
     }
+
+    if (json.containsKey('userAttributeModelList') &
+        json['userAttributeModelList'].toString().isNotEmpty) {
+      userAttributeModelList =
+          List.from(jsonDecode(json['userAttributeModelList']))
+              .map((e) => UserAttributeModel.fromJson(e))
+              .toList();
+    } else {
+      userAttributeModelList = List.empty();
+    }
+    //COMES FROM INIT STRING - END
+
+    //COME FROM LOGIN - START
+    if (json.containsKey('userAttribute')) {
+      userAttributeModelList = List.from(json['userAttribute'])
+          .map((e) => UserAttributeModel.fromJson(e))
+          .toList();
+    } else {
+      userAttributeModelList = List.empty();
+    }
+    //COME FROM LOGIN - END
   }
 
   Map<String, dynamic> toJson() {
@@ -72,8 +97,31 @@ class UserModel {
     data['phone'] = phone;
     data['token'] = token;
     data['refreshToken'] = refreshToken;
-    // data['role'] = role;
-    data['refreshToken'] = refreshToken;
+    data['expirationTime'] = expirationTime;
+    return data;
+  }
+}
+
+class UserAttributeModel {
+  UserAttributeModel(
+      {required this.attributeName, required this.attributeValue});
+  late String attributeName;
+  late String attributeValue;
+
+  UserAttributeModel.empty() {
+    attributeName = "";
+    attributeValue = "";
+  }
+
+  UserAttributeModel.fromJson(Map<String, dynamic> json) {
+    attributeName = json['attributeName'];
+    attributeValue = json['attributeValue'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['attributeName'] = attributeName;
+    data['attributeValue'] = attributeValue;
     return data;
   }
 }

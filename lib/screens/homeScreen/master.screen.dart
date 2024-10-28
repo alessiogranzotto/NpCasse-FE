@@ -12,9 +12,7 @@ import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.notifier.dart';
-import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
-import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
@@ -23,10 +21,10 @@ import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
-import 'package:np_casse/screens/settingScreen/setting.screen.dart';
+import 'package:np_casse/screens/settingScreen/general.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
-import 'package:np_casse/screens/userScreen/user.screen.dart';
+import 'package:np_casse/screens/settingScreen/user.setting.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_lazy_indexed_stack/flutter_lazy_indexed_stack.dart';
@@ -37,8 +35,8 @@ class MenuList {
     this.label,
     this.icon,
     this.selectedIcon,
-    this.screen, {
-    this.isVisible = true,
+    this.screen,
+    this.intGrant, {
     this.subMenus,
   });
 
@@ -47,51 +45,59 @@ class MenuList {
   IconData icon;
   Widget selectedIcon;
   Widget screen;
-  bool isVisible; // Property to control visibility
+  int intGrant; // Property to control grant
   List<MenuList>? subMenus; // Property for submenus
+
+  static int calculateGrant(String userGrant) {
+    if (userGrant == 'User') {
+      return 1;
+    } else if (userGrant == 'InstitutionAdmin') {
+      return 2;
+    } else if (userGrant == 'Admin') {
+      return 3;
+    } else {
+      return 0;
+    }
+  }
 }
 
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
-      const Icon(Icons.favorite_outlined), const WishlistScreen()),
+      const Icon(Icons.favorite_outlined), const WishlistScreen(), 1),
   MenuList(
     '',
     'Shop',
     Icons.shop,
     const Icon(Icons.shop),
     const Placeholder(),
+    1,
     subMenus: [
       MenuList(AppRouter.categoryOneShopRoute, 'Naviga', Icons.shop,
-          const Icon(Icons.shop), const ShopNavigator()),
+          const Icon(Icons.shop), const ShopNavigator(), 1),
       MenuList(AppRouter.userRoute, 'Ricerca', Icons.search,
-          const Icon(Icons.search), const ProductSearchScreen()),
+          const Icon(Icons.search), const ProductSearchScreen(), 1),
     ],
   ),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart,
-      const Icon(Icons.shopping_cart), const CartNavigator()),
+      const Icon(Icons.shopping_cart), const CartNavigator(), 1),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
-      const Icon(Icons.article_outlined), const ProductAttributeNavigator()),
+      const Icon(Icons.article_outlined), const ProductAttributeNavigator(), 2),
   MenuList(AppRouter.settingRoute, 'Catalogo categorie', Icons.book,
-      const Icon(Icons.book), const CategoryCatalogNavigator()),
+      const Icon(Icons.book), const CategoryCatalogNavigator(), 2),
   MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
-      const Icon(Icons.store), const ProductCatalogNavigator()),
+      const Icon(Icons.store), const ProductCatalogNavigator(), 2),
   MenuList(
     '',
     'Impostazioni',
     Icons.settings,
     const Icon(Icons.settings),
     Placeholder(),
+    1,
     subMenus: [
-      MenuList(
-          AppRouter.institutionRoute,
-          'Associazioni',
-          Icons.settings_outlined,
-          const Icon(Icons.settings_outlined),
-          const InstitutionScreen()),
       MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
-          const Icon(Icons.account_circle), const UserScreeen()),
-      MenuList(AppRouter.settingRoute, 'Impostazioni', Icons.settings,
-          const Icon(Icons.settings), const SettingScreen()),
+          const Icon(Icons.account_circle), const UserSettingScreeen(), 1),
+      MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
+          const Icon(Icons.settings), const GeneralSettingScreen(), 2),
     ],
   ),
   MenuList(
@@ -100,15 +106,18 @@ List<MenuList> destinations = <MenuList>[
     Icons.dashboard,
     const Icon(Icons.dashboard),
     Placeholder(),
+    1,
     subMenus: [
       MenuList(AppRouter.institutionRoute, 'Carrelli', Icons.dashboard,
-          const Icon(Icons.dashboard), const CartHistoryNavigator()),
+          const Icon(Icons.dashboard), const CartHistoryNavigator(), 1),
       MenuList(AppRouter.institutionRoute, 'Prodotti', Icons.dashboard,
-          const Icon(Icons.dashboard), const ProductHistoryNavigator()),
+          const Icon(Icons.dashboard), const ProductHistoryNavigator(), 1),
     ],
   ),
+  MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
+      const Icon(Icons.settings_outlined), const InstitutionScreen(), 1),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
-      const Icon(Icons.logout), const LogoutScreen()),
+      const Icon(Icons.logout), const LogoutScreen(), 1),
 ];
 
 class MasterScreen extends StatefulWidget {
@@ -225,28 +234,38 @@ class _MasterScreenState extends State<MasterScreen> {
   }
 
   List<SideNavigationBarItem> getSideNavigationBarItems(BuildContext context) {
-    currentDestinations = destinations.where((menu) => menu.isVisible).toList();
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: true);
+    UserAppInstitutionModel selectedUserAppInstitution =
+        authenticationNotifier.getSelectedUserAppInstitution();
+    int currentIntGrant = MenuList.calculateGrant(
+        selectedUserAppInstitution.roleUserAppInstitution);
+
+    currentDestinations = destinations.toList();
     List<SideNavigationBarItem> items = [];
 
     // Iterate over main menu items
     for (int i = 0; i < currentDestinations.length; i++) {
       final menu = currentDestinations[i];
-
+      // if (currentIntGrant >= menu.intGrant) {
       // Add main menu item
       items.add(SideNavigationBarItem(
         icon: menu.icon,
         label: menu.label,
       ));
+      // }
 
       // Add submenu items if they are visible
       if (visibleSubMenus.contains(i) && menu.subMenus != null) {
         for (int j = 0; j < menu.subMenus!.length; j++) {
+          // if (currentIntGrant >= menu.subMenus![j].intGrant) {
           items.add(SideNavigationBarItem(
             icon: menu.subMenus![j].icon,
             label: menu.subMenus![j].label,
             margin: const EdgeInsets.only(
                 left: 16.0), // Add left margin to submenu items
           ));
+          // }
         }
       }
     }

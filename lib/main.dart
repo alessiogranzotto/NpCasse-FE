@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:np_casse/app/providers/provider.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/themes/themes.dart';

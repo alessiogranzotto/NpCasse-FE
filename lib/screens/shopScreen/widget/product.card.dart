@@ -211,10 +211,11 @@ class _ProductCardState extends State<ProductCard> {
       }
     }
 
-    enableQuantity = enablePrice = quantityForProductNotifier.value > 0;
-    (productCatalog.priceProduct > 0 && productCatalog.freePriceProduct) ||
-        (!productCatalog.freePriceProduct &&
-            quantityForProductNotifier.value > 0);
+    enableQuantity = quantityForProductNotifier.value > 0;
+    enablePrice =
+        (productCatalog.priceProduct > 0 && productCatalog.freePriceProduct) ||
+            (!productCatalog.freePriceProduct &&
+                quantityForProductNotifier.value > 0);
     enableVariants = selectedValueVariant.length == 0;
     if (selectedValueVariant.length > 0) {
       enableVariants = true;

@@ -40,8 +40,8 @@ class AppStrings {
   static const String loginAndRegister = 'Login and Register UI';
   static const String uhOhPageNotFound = 'uh-oh!\nPage not found';
   static const String register = 'Register';
-  static const String sendOtp = 'Send OTP';
-  static const String confirmOtp = 'Confirm OTP';
+  static const String sendOtp = 'Invia OTP';
+  static const String confirmOtp = 'Conferma OTP';
   static const String login = 'Login';
   static const String back = 'Back';
   static const String createYourAccount = 'Create your account';
@@ -60,33 +60,34 @@ class AppStrings {
   static const String update = 'Update';
   static const String changePassword = 'Change Password';
 
-  static const String name = 'Name';
-  static const String pleaseEnterName = 'Please, Enter Name';
-  static const String invalidName = 'Invalid Name';
+  // static const String name = 'Name';
+  // static const String pleaseEnterName = 'Please, Enter Name';
+  // static const String invalidName = 'Invalid Name';
 
-  static const String firstName = 'First Name';
-  static const String pleaseEnterFirstName = 'Please, Enter First Name';
-  static const String invalidFirstName = 'Invalid First Name';
+  static const String firstName = 'Nome';
+  static const String pleaseEnterFirstName = 'Inserire il nome';
+  static const String invalidFirstName = 'Nome invalido';
 
-  static const String lastName = 'Last Name';
-  static const String pleaseEnterLastName = 'Please, Enter Last Name';
-  static const String invalidLastName = 'Invalid Last Name';
+  static const String lastName = 'Cognome';
+  static const String pleaseEnterLastName = 'Inserire il cognome';
+  static const String invalidLastName = 'Cognome invalido';
 
-  static const String telephoneNumber = 'Telephone Number';
-  static const String pleaseEnterTelephoneNumber = 'Please, Enter Telephone Number';
-  static const String invalidTelephoneNumber = 'Invalid Telephone Number';
+  static const String telephoneNumber = 'Numero di telefono';
+  static const String pleaseEnterTelephoneNumber =
+      'Inserire il numero di telefono';
+  static const String invalidTelephoneNumber = 'Numero di telefono invalido';
 
   static const String email = 'Email';
-  static const String pleaseEnterEmailAddress = 'Please, Enter Email Address';
-  static const String invalidEmailAddress = 'Invalid Email Address';
+  static const String pleaseEnterEmailAddress = 'Inserire l' 'email';
+  static const String invalidEmailAddress = 'Email invalida';
 
   static const String password = 'Password';
-  static const String pleaseEnterPassword = 'Please, Enter Password';
-  static const String invalidPassword = 'Invalid Password';
+  static const String pleaseEnterPassword = 'Inserire la password';
+  static const String invalidPassword = 'Password invalida';
 
-  static const String confirmPassword = 'Confirm Password';
-  static const String pleaseReEnterPassword = 'Please, Re-Enter Password';
-  static const String passwordNotMatched = 'Password not matched!';
+  static const String confirmPassword = 'Conferma Password';
+  static const String pleaseReEnterPassword = 'Reinserire la password';
+  static const String passwordNotMatched = 'Password non coincidenti!';
 }
 
 class AppColors {
