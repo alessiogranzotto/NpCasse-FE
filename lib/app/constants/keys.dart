@@ -56,8 +56,8 @@ class AppStrings {
 
   static const String loggedIn = 'Logged In!';
   static const String registrationComplete = 'Registration Complete!';
-  static const String cancel = 'Cancel';
-  static const String update = 'Update';
+  static const String cancel = 'Annulla';
+  static const String update = 'Aggiorna';
   static const String changePassword = 'Change Password';
 
   // static const String name = 'Name';
@@ -80,6 +80,11 @@ class AppStrings {
   static const String email = 'Email';
   static const String pleaseEnterEmailAddress = 'Inserire l' 'email';
   static const String invalidEmailAddress = 'Email invalida';
+
+  static const String otpMode = 'Modalità OTP';
+  static const String tokenExpiration =
+      'Durata token di autenticazione (in giorni)';
+  static const String pleaseEnterTokenExpiration = 'Durata token non valida';
 
   static const String password = 'Password';
   static const String pleaseEnterPassword = 'Inserire la password';

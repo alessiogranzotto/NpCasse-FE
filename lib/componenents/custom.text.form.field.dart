@@ -44,75 +44,82 @@ class CustomTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      cursorColor: Theme.of(context).colorScheme.inversePrimary,
-      controller: controller,
-      enabled: enabled ?? true,
-      maxLength: maxLength ?? maxLength,
-      inputFormatters:
-          inputFormatter ?? [LengthLimitingTextInputFormatter(500)],
-      textInputAction: textInputAction ?? TextInputAction.next,
-      keyboardType: keyboardType ?? TextInputType.text,
-      focusNode: focusNode,
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
-      onTap: onTap,
-      autofocus: autofocus ?? false,
-      validator: validator,
-      obscureText: obscureText ?? false,
-      obscuringCharacter: '*',
-      onEditingComplete: onEditingComplete,
-      textAlign: textAlign ?? TextAlign.start,
-      style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-      decoration: InputDecoration(
-        suffixIcon: suffixIcon,
-        labelText: labelText,
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        labelStyle: Theme.of(context).textTheme.labelLarge!
-        // .copyWith(color: Colors.blueGrey)
-        ,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .labelLarge!
-            .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(
-              color:
-                  Theme.of(context).colorScheme.inversePrimary.withOpacity(0.8),
-              // color: Colors.grey,
-              width: 1.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        cursorColor: Theme.of(context).colorScheme.inversePrimary,
+        controller: controller,
+        enabled: enabled ?? true,
+        maxLength: maxLength ?? maxLength,
+        inputFormatters:
+            inputFormatter ?? [LengthLimitingTextInputFormatter(500)],
+        textInputAction: textInputAction ?? TextInputAction.next,
+        keyboardType: keyboardType ?? TextInputType.text,
+        focusNode: focusNode,
+        onChanged: onChanged,
+        onFieldSubmitted: onFieldSubmitted,
+        onTap: onTap,
+        autofocus: autofocus ?? false,
+        validator: validator,
+        obscureText: obscureText ?? false,
+        obscuringCharacter: '*',
+        onEditingComplete: onEditingComplete,
+        textAlign: textAlign ?? TextAlign.start,
+        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        decoration: InputDecoration(
+          suffixIcon: suffixIcon,
+          labelText: labelText,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          labelStyle: Theme.of(context).textTheme.labelLarge!
+          // .copyWith(color: Colors.blueGrey)
+          ,
+          hintStyle: Theme.of(context)
+              .textTheme
+              .labelLarge!
+              .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+                color: Theme.of(context)
+                    .colorScheme
+                    .inversePrimary
+                    .withOpacity(0.8),
+                // color: Colors.grey,
+                width: 1.0),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+                color: Theme.of(context)
+                    .colorScheme
+                    .inversePrimary
+                    .withOpacity(0.5),
+                // color: Colors.grey,
+                width: 1.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                // color: Colors.blue,
+                width: 1.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide:
+                BorderSide(color: Colors.red.withOpacity(0.5), width: 1.0),
+          ),
+          focusedErrorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.red, width: 1.0),
+          ),
         ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(
-              color:
-                  Theme.of(context).colorScheme.inversePrimary.withOpacity(0.5),
-              // color: Colors.grey,
-              width: 1.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              // color: Colors.blue,
-              width: 1.0),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          borderSide:
-              BorderSide(color: Colors.red.withOpacity(0.5), width: 1.0),
-        ),
-        focusedErrorBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.red, width: 1.0),
-        ),
+        onTapOutside: (event) => FocusScope.of(context).unfocus(),
+        // style: const TextStyle(
+        //   fontWeight: FontWeight.w500,
+        // color: Colors.black,
+        //),
       ),
-      onTapOutside: (event) => FocusScope.of(context).unfocus(),
-      // style: const TextStyle(
-      //   fontWeight: FontWeight.w500,
-      // color: Colors.black,
-      //),
     );
   }
 }

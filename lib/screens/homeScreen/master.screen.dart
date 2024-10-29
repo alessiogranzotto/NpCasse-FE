@@ -95,7 +95,7 @@ List<MenuList> destinations = <MenuList>[
     1,
     subMenus: [
       MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
-          const Icon(Icons.account_circle), const UserSettingScreeen(), 1),
+          const Icon(Icons.account_circle), const UserSettingScreen(), 1),
       MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
           const Icon(Icons.settings), const GeneralSettingScreen(), 2),
     ],
