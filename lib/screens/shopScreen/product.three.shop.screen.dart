@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
@@ -13,20 +12,17 @@ import 'package:np_casse/screens/shopScreen/widget/product.card.dart';
 import 'package:provider/provider.dart';
 
 class ProductThreeShopScreen extends StatefulWidget {
-  const ProductThreeShopScreen({
-    Key? key,
-  }) : super(key: key);
+  const ProductThreeShopScreen({Key? key}) : super(key: key);
 
-  State<ProductThreeShopScreen> createState() =>
-      __ProductThreeShopScreenState();
+  @override
+  State<ProductThreeShopScreen> createState() => _ProductThreeShopScreenState();
 }
 
-class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
-  double widgetWitdh = 325;
-  double widgetHeight = 550;
-  double widgetHeightHalf = 400;
+class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
+  double widgetWidth = 320;
+  double widgetHeight = 620;
+  double widgetHeightHalf = 470;
   double gridMainAxisSpacing = 10;
-
   Timer? _timer;
   Icon icona = const Icon(Icons.search);
   TextEditingController nameDescSearchController = TextEditingController();
@@ -48,8 +44,7 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
   List<DropdownMenuItem<String>> availableOrderBy = [
     DropdownMenuItem(child: Text("Nome"), value: "NameProduct"),
     DropdownMenuItem(child: Text("Descrizione"), value: "DescriptionProduct"),
-    DropdownMenuItem(
-        child: Text("Ordine di visualizzazione"), value: "DisplayOrder"),
+    DropdownMenuItem(child: Text("Ordine di visualizzazione"), value: "DisplayOrder"),
   ];
   Icon iconaNameDescSearch = const Icon(Icons.search);
 
@@ -73,27 +68,48 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
 
   @override
   void initState() {
+    super.initState();
     nameDescSearchController.text = "";
     viewOutOfAssortment = false;
-    super.initState();
+  }
+
+  Widget _buildCheckboxTile({
+    required bool value,
+    required ValueChanged<bool?> onChanged,
+    required String title,
+    required BuildContext context,
+  }) {
+    return CheckboxListTile(
+        side: const BorderSide(color: Colors.blueGrey),
+        checkColor: Colors.blueAccent,
+        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        activeColor: Colors.blueAccent,
+        controlAffinity: ListTileControlAffinity.leading,
+        value: value,
+        onChanged: onChanged,
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
+        ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context);
-    UserAppInstitutionModel cUserAppInstitutionModel =
-        authenticationNotifier.getSelectedUserAppInstitution();
-    CategoryCatalogNotifier categoryCatalogNotifier =
-        Provider.of<CategoryCatalogNotifier>(context);
+    AuthenticationNotifier authenticationNotifier = Provider.of<AuthenticationNotifier>(context);
+    UserAppInstitutionModel cUserAppInstitutionModel = authenticationNotifier.getSelectedUserAppInstitution();
+    CategoryCatalogNotifier categoryCatalogNotifier = Provider.of<CategoryCatalogNotifier>(context);
+
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      // drawer: const CustomDrawerWidget(),
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-            categoryCatalogNotifier.getCurrentCategoryCatalog().nameCategory,
-            style: Theme.of(context).textTheme.headlineMedium),
+          categoryCatalogNotifier.getCurrentCategoryCatalog().nameCategory,
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -101,86 +117,57 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
             Row(
               children: [
                 Expanded(
-                    flex: 1,
-                    child: CustomDropDownButtonFormField(
-                      enabled: true,
-                      actualValue: numberResult,
-                      labelText: 'Mostra numero risultati',
-                      listOfValue: availableNumberResult,
-                      onItemChanged: (value) {
-                        onChangeNumberResult(value);
-                      },
-                    )),
-                Expanded(
-                    flex: 2,
-                    child: CustomDropDownButtonFormField(
-                      enabled: true,
-                      actualValue: orderBy,
-                      labelText: 'Ordinamento',
-                      listOfValue: availableOrderBy,
-                      onItemChanged: (value) {
-                        onChangeOrderBy(value);
-                      },
-                    )),
-                Expanded(
                   flex: 1,
-                  child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueGrey),
-                    checkColor: Colors.blueAccent,
-                    checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    activeColor: Colors.blueAccent,
-
-                    controlAffinity: ListTileControlAffinity.leading,
+                  child: CustomDropDownButtonFormField(
+                    enabled: true,
+                    actualValue: numberResult,
+                    labelText: 'Mostra numero risultati',
+                    listOfValue: availableNumberResult,
+                    onItemChanged: onChangeNumberResult,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: CustomDropDownButtonFormField(
+                    enabled: true,
+                    actualValue: orderBy,
+                    labelText: 'Ordinamento',
+                    listOfValue: availableOrderBy,
+                    onItemChanged: onChangeOrderBy,
+                  ),
+                ),
+                if (screenWidth > 1002) ...[
+                  Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
                     value: viewOutOfAssortment,
                     onChanged: (bool? value) {
                       setState(() {
                         viewOutOfAssortment = value!;
                       });
                     },
-                    title: Text(
-                      'Visualizza fuori assortimento',
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                    ),
-                    // subtitle: const Text(""),
-                  ),
-                ),
-                Expanded(
+                    title: 'Visualizza fuori assortimento',
+                    context: context,
+                  )
+                 ),
+                 Expanded(
                   flex: 1,
-                  child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueGrey),
-                    checkColor: Colors.blueAccent,
-                    checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    activeColor: Colors.blueAccent,
-
-                    controlAffinity: ListTileControlAffinity.leading,
+                  child:_buildCheckboxTile(
                     value: readImageData,
                     onChanged: (bool? value) {
                       setState(() {
                         readImageData = value!;
                       });
                     },
-                    title: Text(
-                      'Visualizza immagine',
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                    ),
-                    // subtitle: const Text(""),
-                  ),
+                    title: 'Visualizza immagine',
+                    context: context,
+                  )
                 ),
+              ],
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: TextFormField(
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelLarge!
-                        .copyWith(color: Colors.blueGrey),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Colors.blueGrey),
                     onChanged: (String value) {
                       if (_timer?.isActive ?? false) {
                         _timer!.cancel();
@@ -197,17 +184,9 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                     controller: nameDescSearchController,
                     decoration: InputDecoration(
                       labelText: "Ricerca per nome, descrizione o barcode",
-                      labelStyle: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
+                      labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
                       hintText: "Ricerca per nome, descrizione o barcode",
-                      hintStyle: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .copyWith(
-                              color:
-                                  Theme.of(context).hintColor.withOpacity(0.3)),
+                      hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
                       suffixIcon: IconButton(
                         icon: iconaNameDescSearch,
                         onPressed: () {
@@ -217,8 +196,8 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                             } else {
                               iconaNameDescSearch = const Icon(Icons.search);
                               nameDescSearchController.text = "";
-                            }
-                          });
+                              }                          
+                            });
                         },
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -240,14 +219,45 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                       ),
                       focusedErrorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                            color: Colors.deepOrangeAccent, width: 1.0),
+                        borderSide: BorderSide(color: Colors.deepOrangeAccent, width: 1.0),
                       ),
                     ),
                   ),
                 ),
               ],
             ),
+            // Second row of checkboxes for small screens
+            if (screenWidth <= 1002) ...[
+              Row(
+                children: [
+                  Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
+                    value: viewOutOfAssortment,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        viewOutOfAssortment = value!;
+                      });
+                    },
+                    title: 'Visualizza fuori assortimento',
+                    context: context,
+                  )),
+                 Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
+                    value: readImageData,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        readImageData = value!;
+                      });
+                    },
+                    title: 'Visualizza immagine',
+                    context: context,
+                  )),
+                ],
+              ),
+            ],
+            // Grid view for products
             SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -258,36 +268,35 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: FutureBuilder(
                       future: productCatalogNotifier.getProducts(
-                          context: context,
-                          token: authenticationNotifier.token,
-                          idUserAppInstitution:
-                              cUserAppInstitutionModel.idUserAppInstitution,
-                          idCategory: categoryCatalogNotifier
-                              .getCurrentCategoryCatalog()
-                              .idCategory,
-                          readAlsoDeleted: false,
-                          numberResult: numberResult,
-                          nameDescSearch: nameDescSearchController.text,
-                          orderBy: orderBy,
-                          readImageData: readImageData,
-                          shoWVariant: true,
-                          viewOutOfAssortment: viewOutOfAssortment),
+                        context: context,
+                        token: authenticationNotifier.token,
+                        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+                        idCategory: categoryCatalogNotifier.getCurrentCategoryCatalog().idCategory,
+                        readAlsoDeleted: false,
+                        numberResult: numberResult,
+                        nameDescSearch: nameDescSearchController.text,
+                        orderBy: orderBy,
+                        readImageData: readImageData,
+                        shoWVariant: true,
+                        viewOutOfAssortment: viewOutOfAssortment,
+                      ),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Center(
-                                    child: SizedBox(
-                                        width: 100,
-                                        height: 100,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 5,
-                                          color: Colors.redAccent,
-                                        ))),
+                                  child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 5,
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -295,44 +304,33 @@ class __ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                           return const Center(
                             child: Text(
                               'No data...',
-                              style: TextStyle(
-                                color: Colors.redAccent,
-                              ),
+                              style: TextStyle(color: Colors.redAccent),
                             ),
                           );
                         } else {
-                          var tSnapshot =
-                              snapshot.data as List<ProductCatalogModel>;
-                          var t = tSnapshot
-                              .any((element) => element.imageData.isNotEmpty);
+                          var tSnapshot = snapshot.data as List<ProductCatalogModel>;
+                          var t = tSnapshot.any((element) => element.imageData.isNotEmpty);
                           bool areAllWithNoImage = !t;
-                          double cHeight = 0;
-                          if (areAllWithNoImage) {
-                            cHeight = widgetHeightHalf;
-                          } else {
-                            cHeight = widgetHeight;
-                          }
+                          double cHeight = areAllWithNoImage ? widgetHeightHalf : widgetHeight;
+                          
                           return GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-                                crossAxisCount:
-                                    (MediaQuery.of(context).size.width) ~/
-                                        widgetWitdh,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: gridMainAxisSpacing,
-                                height: cHeight,
-                              ),
-                              physics: const ScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: tSnapshot.length,
-                              // scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                ProductCatalogModel productCatalog =
-                                    tSnapshot[index];
-                                return ProductCard(
-                                    productCatalog: productCatalog,
-                                    areAllWithNoImage: areAllWithNoImage);
-                              });
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+                              crossAxisCount: (MediaQuery.of(context).size.width ~/ widgetWidth),
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: gridMainAxisSpacing,
+                              height: cHeight,
+                            ),
+                            physics: const ScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: tSnapshot.length,
+                            itemBuilder: (context, index) {
+                              ProductCatalogModel productCatalog = tSnapshot[index];
+                              return ProductCard(
+                                productCatalog: productCatalog,
+                                areAllWithNoImage: areAllWithNoImage,
+                              );
+                            },
+                          );
                         }
                       },
                     ),

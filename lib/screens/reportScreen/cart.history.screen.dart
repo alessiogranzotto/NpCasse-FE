@@ -18,6 +18,26 @@ class CartHistoryScreen extends StatefulWidget {
 class _CartHistoryScreenState extends State<CartHistoryScreen> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
+  UserAppInstitutionModel? cSelectedUserAppInstitution;
+  UserAppInstitutionModel? previousSelectedInstitution;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: true);
+    UserAppInstitutionModel? currentInstitution =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    if (currentInstitution != previousSelectedInstitution) {
+      setState(() {
+        cSelectedUserAppInstitution = currentInstitution;
+        previousSelectedInstitution = currentInstitution;
+        tableController.refresh(); 
+      });
+    }
+  }
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
@@ -29,7 +49,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           Provider.of<AuthenticationNotifier>(context, listen: false);
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
-
+    
       // Sorting logic
       String? sortBy;
       String? sortDirection;
@@ -38,7 +58,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = sortBy + ";" + sortDirection;
+        sortColumnAndDirection = '$sortBy;$sortDirection';
       }
 
       // Date range filter logic
@@ -59,7 +79,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
 
       if (response is CartHistoryModel) {
         List<Map<String, dynamic>> data = response.CartHistoryList.map((cart) =>
-                cart.toJson()) // Assuming CartModel has a toJson method
+                cart.toJson())
             .toList();
 
         String? nextPageToken =
@@ -90,9 +110,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
-
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -105,103 +125,102 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: PagedDataTable<String, Map<String, dynamic>>(
-          controller: tableController,
-          initialPageSize: 20,
-          pageSizes: const [10, 20, 50],
-          fetcher: (pageSize, sortModel, filterModel, pageToken) =>
-              fetchData(pageSize, sortModel, filterModel, pageToken),
-          filterBarChild: PopupMenuButton(
-            icon: const Icon(Icons.more_vert_outlined),
-            itemBuilder: (context) => <PopupMenuEntry>[
-              PopupMenuItem(
-                child: const Text("Seleziona tutti"),
-                onTap: () {
-                  tableController.selectAllRows();
-                },
+            child: PagedDataTable<String, Map<String, dynamic>>(
+              controller: tableController,
+              initialPageSize: 20,
+              pageSizes: const [10, 20, 50],
+              fetcher: (pageSize, sortModel, filterModel, pageToken) =>
+                  fetchData(pageSize, sortModel, filterModel, pageToken),
+              filterBarChild: PopupMenuButton(
+                icon: const Icon(Icons.more_vert_outlined),
+                itemBuilder: (context) => <PopupMenuEntry>[
+                  PopupMenuItem(
+                    child: const Text("Seleziona tutti"),
+                    onTap: () {
+                      tableController.selectAllRows();
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: const Text("Deseleziona tutti"),
+                    onTap: () {
+                      tableController.unselectAllRows();
+                    },
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    child: const Text("Export Excel"),
+                    onTap: () {
+                      handleDownloadCartList(context);
+                    },
+                  ),
+                ],
               ),
-              PopupMenuItem(
-                child: const Text("Deseleziona tutti"),
-                onTap: () {
-                  tableController.unselectAllRows();
-                },
-              ),
-              const PopupMenuDivider(),
-              PopupMenuItem(
-                child: const Text("Export Excel"),
-              onTap: () {
-                handleDownloadCartList(context); 
-              },
-              ),
-            ],
-          ),
-          columns: [
-            RowSelectorColumn(),
-            TableColumn(
-              id: 'docNumberCart',
-              title: const Text('#'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['docNumberCart'].toString().padLeft(6, '0')),
-              size: const FractionalColumnSize(0.08),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'stateCartDescription',
-              title: const Text('State'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['stateCartDescription'].toString()),
-              sortable: true,
-              size: const FractionalColumnSize(0.12),
-            ),
-            TableColumn(
-              id: 'paymentTypeCart',
-              title: const Text('Tipo pagamento'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['paymentTypeCart'].toString().split('.').last),
-              size: const FractionalColumnSize(0.15),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'dateCreatedCart',
-              title: const Text('Data'),
-              cellBuilder: (context, item, index) =>
-                  Text(DateFormat("yyyy-MM-ddTHH:mm:ss")
-                      .parse(item['dateCreatedCart'], true)
-                      // .toLocal()
-                      .toString()),
-              size: const FractionalColumnSize(0.15),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'totalPriceCart',
-              title: const Text('Totale'),
-              cellBuilder: (context, item, index) => Text(
-                  item['totalPriceCart'] != null
-                      ? item['totalPriceCart'].toStringAsFixed(2) + ' €'
-                      : ''),
-              size: const FractionalColumnSize(0.10),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'idStakeholder',
-              title: const Text('# Stakeholder'),
-              cellBuilder: (context, item, index) => Text(
-                  item['idStakeholder'] != null
-                      ? item['idStakeholder'].toString()
-                      : ''),
-              size: const FractionalColumnSize(0.14999),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'denominationStakeholder',
-              title: const Text('Stakeholder'),
-              cellBuilder: (context, item, index) => Text(
-                  item['denominationStakeholder'] != null
-                      ? item['denominationStakeholder'].toString()
-                      : ''),
-              size: const FractionalColumnSize(0.15),
-              sortable: true,
-            ),
+              columns: [
+                RowSelectorColumn(),
+                TableColumn(
+                  id: 'docNumberCart',
+                  title: const Text('#'),
+                  cellBuilder: (context, item, index) =>
+                      Text(item['docNumberCart'].toString().padLeft(6, '0')),
+                  size: const FixedColumnSize(100),
+                  sortable: true,
+                ),
+                TableColumn(
+                  id: 'stateCartDescription',
+                  title: const Text('State'),
+                  cellBuilder: (context, item, index) =>
+                      Text(item['stateCartDescription'].toString()),
+                  size: const FixedColumnSize(150),
+                  sortable: true,
+                ),
+                TableColumn(
+                  id: 'paymentTypeCart',
+                  title: const Text('Tipo pagamento'),
+                  cellBuilder: (context, item, index) =>
+                      Text(item['paymentTypeCart'].toString().split('.').last),
+                  size: const FixedColumnSize(150),
+                  sortable: true,
+                ),
+                TableColumn(
+                  id: 'dateCreatedCart',
+                  title: const Text('Data'),
+                  cellBuilder: (context, item, index) =>
+                      Text(DateFormat("yyyy-MM-ddTHH:mm:ss")
+                          .parse(item['dateCreatedCart'], true)
+                          .toString()),
+                  size: const FixedColumnSize(170),
+                  sortable: true,
+                ),
+                TableColumn(
+                  id: 'totalPriceCart',
+                  title: const Text('Totale'),
+                  cellBuilder: (context, item, index) => Text(
+                      item['totalPriceCart'] != null
+                          ? '${item['totalPriceCart'].toStringAsFixed(2)} €'
+                          : ''),
+                  size: const FixedColumnSize(120),
+                  sortable: true,
+                ),
+                TableColumn(
+                  id: 'idStakeholder',
+                  title: const Text('# Stakeholder'),
+                  cellBuilder: (context, item, index) => Text(
+                      item['idStakeholder'] != null
+                          ? item['idStakeholder'].toString()
+                          : ''),
+                  size: const FixedColumnSize(150),
+                  sortable: true,
+                ),
+                TableColumn(
+                  id: 'denominationStakeholder',
+                  title: const Text('Stakeholder'),
+                  cellBuilder: (context, item, index) => Text(
+                      item['denominationStakeholder'] != null
+                          ? item['denominationStakeholder'].toString()
+                          : ''),
+                  size: const FixedColumnSize(150),
+                  sortable: true,
+                ),
             TableColumn(
               id: 'actions',
               title: const Text('Azioni'),
@@ -221,7 +240,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   }
                 },
               ),
-              size: const FractionalColumnSize(0.10),
+                  size: const FixedColumnSize(100),
             ),
           ],
           filters: [
@@ -240,7 +259,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           ],
         ),
       ),
-    );
+     );
   }
 }
 

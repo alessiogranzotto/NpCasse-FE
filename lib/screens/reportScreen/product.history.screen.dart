@@ -17,6 +17,29 @@ class ProductHistoryScreen extends StatefulWidget {
 class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
+  UserAppInstitutionModel? cSelectedUserAppInstitution;
+  UserAppInstitutionModel?
+      previousSelectedInstitution; // Previous institution value    
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: true);
+    UserAppInstitutionModel? currentInstitution =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    // Check if the institution has changed
+    if (currentInstitution != previousSelectedInstitution) {
+      setState(() {
+        cSelectedUserAppInstitution = currentInstitution;
+        previousSelectedInstitution =
+            currentInstitution; // Update previous value
+        tableController.refresh(); 
+      });
+    }
+  }
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
@@ -36,7 +59,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = sortBy + ";" + sortDirection;
+        sortColumnAndDirection = '$sortBy;$sortDirection';
       }
 
       // Date range filter logic
@@ -141,7 +164,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('#'),
               cellBuilder: (context, item, index) =>
                   Text(item['docNumberCart'].toString().padLeft(6, '0')),
-              size: const FractionalColumnSize(0.10),
+              size: const FixedColumnSize(100),
               sortable: true,
             ),
             TableColumn(
@@ -149,15 +172,15 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('Nome prodotto'),
               cellBuilder: (context, item, index) =>
                   Text(item['nameProduct'].toString()),
-              size: const FractionalColumnSize(0.25),
+              size: const FixedColumnSize(150),
               sortable: true,
             ),
             TableColumn(
               id: 'productAttributeExplicit',
               title: const Text('Variante'),
               cellBuilder: (context, item, index) =>
-                  Text(item['productAttributeExplicit'].toString()),
-              size: const FractionalColumnSize(0.25),
+                  Text(item['productAttributeExplicit'].toString()),                 
+              size: const FixedColumnSize(350),
               sortable: false,
             ),
             TableColumn(
@@ -167,7 +190,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                   (item['quantityCartProduct'] as ValueNotifier<int>)
                       .value
                       .toString()),
-              size: const FractionalColumnSize(0.10),
+              size: const FixedColumnSize(100),
               sortable: true,
             ),
             TableColumn(
@@ -175,7 +198,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('Prezzo'),
               cellBuilder: (context, item, index) =>
                   Text(item['priceCartProduct'].toStringAsFixed(2) + ' €'),
-              size: const FractionalColumnSize(0.10),
+              size: const FixedColumnSize(100),
               sortable: true,
             ),
             TableColumn(
@@ -183,7 +206,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('Note'),
               cellBuilder: (context, item, index) =>
                   Text(item['notesCartProduct'].toString()),
-              size: const FractionalColumnSize(0.20),
+              size: const FixedColumnSize(350),
               sortable: true,
             ),
           ],
