@@ -77,12 +77,33 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
     super.initState();
   }
 
+  Widget _buildCheckboxTile({
+    required bool value,
+    required ValueChanged<bool?> onChanged,
+    required String title,
+    required BuildContext context,
+  }) {
+    return CheckboxListTile(
+        side: const BorderSide(color: Colors.blueGrey),
+        checkColor: Colors.blueAccent,
+        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        activeColor: Colors.blueAccent,
+        controlAffinity: ListTileControlAffinity.leading,
+        value: value,
+        onChanged: onChanged,
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
+        ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -122,58 +143,33 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                         onChangeOrderBy(value);
                       },
                     )),
-                Expanded(
+                 if (screenWidth > 1002) ...[
+                  Expanded(
                   flex: 1,
-                  child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueGrey),
-                    checkColor: Colors.blueAccent,
-                    checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    activeColor: Colors.blueAccent,
-
-                    controlAffinity: ListTileControlAffinity.leading,
+                  child:_buildCheckboxTile(
                     value: viewOutOfAssortment,
                     onChanged: (bool? value) {
                       setState(() {
                         viewOutOfAssortment = value!;
                       });
                     },
-                    title: Text(
-                      'Visualizza fuori assortimento',
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                    ),
-                    // subtitle: const Text(""),
-                  ),
-                ),
-                Expanded(
+                    title: 'Visualizza fuori assortimento',
+                    context: context,
+                  )
+                 ),
+                 Expanded(
                   flex: 1,
-                  child: CheckboxListTile(
-                    side: const BorderSide(color: Colors.blueGrey),
-                    checkColor: Colors.blueAccent,
-                    checkboxShape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    activeColor: Colors.blueAccent,
-
-                    controlAffinity: ListTileControlAffinity.leading,
+                  child:_buildCheckboxTile(
                     value: readImageData,
                     onChanged: (bool? value) {
                       setState(() {
                         readImageData = value!;
                       });
                     },
-                    title: Text(
-                      'Visualizza immagine',
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                    ),
-                    // subtitle: const Text(""),
-                  ),
-                ),
+                    title: 'Visualizza immagine',
+                    context: context,
+                  )
+                ),],
                 Expanded(
                   flex: 2,
                   child: TextFormField(
@@ -248,6 +244,37 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                 ),
               ],
             ),
+            // Second row of checkboxes for small screens
+            if (screenWidth <= 1002) ...[
+              Row(
+                children: [
+                  Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
+                    value: viewOutOfAssortment,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        viewOutOfAssortment = value!;
+                      });
+                    },
+                    title: 'Visualizza fuori assortimento',
+                    context: context,
+                  )),
+                 Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
+                    value: readImageData,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        readImageData = value!;
+                      });
+                    },
+                    title: 'Visualizza immagine',
+                    context: context,
+                  )),
+                ],
+              ),
+            ],
             SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,

@@ -84,6 +84,27 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     super.initState();
   }
 
+  Widget _buildCheckboxTile({
+    required bool value,
+    required ValueChanged<bool?> onChanged,
+    required String title,
+    required BuildContext context,
+  }) {
+    return CheckboxListTile(
+        side: const BorderSide(color: Colors.blueGrey),
+        checkColor: Colors.blueAccent,
+        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        activeColor: Colors.blueAccent,
+        controlAffinity: ListTileControlAffinity.leading,
+        value: value,
+        onChanged: onChanged,
+        title: Text(
+          title,
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
+        ),
+    );
+  } 
+
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -91,6 +112,8 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
+
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -309,63 +332,69 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                         onChangeOrderBy(value);
                       },
                     )),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.stretch,
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CheckboxListTile(
-                        side: const BorderSide(color: Colors.blueGrey),
-                        checkColor: Colors.blueAccent,
-                        checkboxShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        activeColor: Colors.blueAccent,
-
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: readAlsoDeleted,
-                        onChanged: (bool? value) {
-                          setState(() {
+                if (screenWidth > 1002) ...[
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      // crossAxisAlignment: CrossAxisAlignment.stretch,
+                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildCheckboxTile(
+                          value: readAlsoDeleted,
+                          onChanged: (bool? value) {
+                            setState(() {
                             readAlsoDeleted = value!;
-                          });
-                        },
-                        title: Text(
-                          'Mostra anche cancellati',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .copyWith(color: Colors.blueGrey),
+                            });
+                          },
+                          title: 'Mostra anche cancellati',
+                          context: context,
                         ),
-                        // subtitle: const Text(""),
-                      ),
-                      CheckboxListTile(
-                        side: const BorderSide(color: Colors.blueGrey),
-                        checkColor: Colors.blueAccent,
-                        checkboxShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        activeColor: Colors.blueAccent,
-
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: readImageData,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            readImageData = value!;
-                          });
-                        },
-                        title: Text(
-                          'Visualizza immagine',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium!
-                              .copyWith(color: Colors.blueGrey),
+                        _buildCheckboxTile(
+                          value: readImageData,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              readImageData = value!;
+                            });
+                          },
+                          title: 'Visualizza immagine',
+                          context: context,
                         ),
-                        // subtitle: const Text(""),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+              ], ],
             ),
+            // Second row of checkboxes for small screens
+            if (screenWidth <= 1002) ...[
+              Row(
+                children: [
+                  Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
+                    value: readAlsoDeleted,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        readAlsoDeleted = value!;
+                      });
+                    },
+                    title: 'Mostra anche cancellati',
+                    context: context,
+                  )),
+                 Expanded(
+                  flex: 1,
+                  child:_buildCheckboxTile(
+                    value: readImageData,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        readImageData = value!;
+                      });
+                    },
+                    title: 'Visualizza immagine',
+                    context: context,
+                  )),
+                ],
+              ),
+            ],
             SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,

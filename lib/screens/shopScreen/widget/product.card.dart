@@ -67,67 +67,9 @@ class _ProductCardState extends State<ProductCard> {
     addToCartButtonEnabled.value = enablePrice && enableVariants;
   }
 
-  void variantChanged(int index, String? value) {
+    void variantChanged(int index, String? value) {
     // Update the selected value for the variant at the specified index
     selectedValueVariant[index] = value;
-
-    // Create a list to store the selectable status for each variant
-    List<List<bool>> selectableStatus = List.generate(
-      productCatalog.smartProductAttributeJson.length,
-      (i) => List.generate(
-          productCatalog.smartProductAttributeJson[i].value.length,
-          (j) => false),
-    );
-
-    // Iterate over each combination to determine which attributes can be selected
-    for (var combination in productCatalog.productAttributeCombination) {
-      bool combinationMatches = true;
-
-      // Check if the selected values match the current combination
-      for (int i = 0; i < selectedValueVariant.length; i++) {
-        if (selectedValueVariant[i] != null &&
-            selectedValueVariant[i]!.isNotEmpty) {
-          // Check if the current selected value exists in the combination
-          bool valueInCombination = combination.productAttributeJson.any(
-              (attr) =>
-                  attr.value == selectedValueVariant[i] &&
-                  attr.idProductAttribute ==
-                      productCatalog
-                          .smartProductAttributeJson[i].idProductAttribute);
-
-          if (!valueInCombination) {
-            combinationMatches = false;
-            break;
-          }
-        }
-      }
-
-      // If the combination matches the selected values, mark the attributes as selectable
-      if (combinationMatches) {
-        for (int i = 0;
-            i < productCatalog.smartProductAttributeJson.length;
-            i++) {
-          for (int j = 0;
-              j < productCatalog.smartProductAttributeJson[i].value.length;
-              j++) {
-            if (productCatalog.smartProductAttributeJson[i].value[j].value ==
-                combination.productAttributeJson[i].value) {
-              selectableStatus[i][j] = true; // Mark as selectable
-            }
-          }
-        }
-      }
-    }
-
-    // Update the selectable property for each attribute based on the computed status
-    for (int i = 0; i < productCatalog.smartProductAttributeJson.length; i++) {
-      for (int j = 0;
-          j < productCatalog.smartProductAttributeJson[i].value.length;
-          j++) {
-        productCatalog.smartProductAttributeJson[i].value[j].selectable =
-            selectableStatus[i][j];
-      }
-    }
 
     // Determine if all required variants are selected to enable further actions
     enableVariants = selectedValueVariant
@@ -139,6 +81,44 @@ class _ProductCardState extends State<ProductCard> {
     // Get the updated product price based on the current selections
     getProductPrice();
   }
+
+  List<DropdownMenuItem<String>> getSelectableItems(int index) {
+  return productCatalog.smartProductAttributeJson[index].value
+      .where((element) {
+        // Ensure that the current element can be selected based on the existing selections
+        return productCatalog.productAttributeCombination.any((combination) {
+          // Check if the combination matches the selected variants
+          return selectedValueVariant.asMap().entries.every((entry) {
+            int i = entry.key; // Get the index of the variant
+            String? selectedValue = entry.value; // Get the selected value for this index
+
+            // Skip the current index since we are evaluating options for it
+            if (i == index) return true; 
+
+            // If a value is selected for this index, ensure it matches the combination
+            if (selectedValue != null && selectedValue.isNotEmpty) {
+              return combination.productAttributeJson.any((attr) =>
+                  attr.value == selectedValue &&
+                  attr.idProductAttribute == productCatalog.smartProductAttributeJson[i].idProductAttribute);
+            }
+
+            return true; // If no value is selected for this index, consider it compatible
+          }) &&
+          // Check if the current element can fit into this combination
+          combination.productAttributeJson.any((attr) =>
+              attr.value == element.value &&
+              attr.idProductAttribute == productCatalog.smartProductAttributeJson[index].idProductAttribute);
+        });
+      })
+      .map<String>((SmartProductAttributeJsonValue e) => e.value ?? '')
+      .toSet() // Convert to Set to remove duplicates
+      .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+            value: value, child: Text(value));
+      })
+      .toList();
+}
+
 
   getProductPrice() {
     double result = priceNotifier.value;
@@ -325,9 +305,15 @@ class _ProductCardState extends State<ProductCard> {
                   var cSmartProductAttributeJson =
                       productCatalog.smartProductAttributeJson[index];
 
-                  return SizedBox(
+           return SizedBox(
                     width: 100,
-                    child: DropdownButtonFormField<String>(
+                    child: GestureDetector(
+                    onTap: () {
+                      // Clear the current selected value for the variant
+                      selectedValueVariant[index] = null;
+                      setState(() {}); // Refresh the UI
+                    },
+child: DropdownButtonFormField<String>(
                       focusNode: AlwaysDisabledFocusNode(),
                       style: Theme.of(context)
                           .textTheme
@@ -391,17 +377,8 @@ class _ProductCardState extends State<ProductCard> {
 
                         setState(() {});
                       },
-                      items: cSmartProductAttributeJson.value
-                          .where((element) => element.selectable)
-                          .map<String>((SmartProductAttributeJsonValue e) {
-                            return e.value ?? '';
-                          })
-                          .toSet()
-                          .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                                value: value, child: Text(value));
-                          })
-                          .toList(),
+                        items: getSelectableItems(index),
+                      ),
                     ),
                   );
                   // Text(selectedProductAttributeModel[i]
