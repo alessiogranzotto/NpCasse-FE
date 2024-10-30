@@ -13,6 +13,7 @@ class CartModel {
     required this.notesCart,
     required this.cartProducts,
     required this.totalPriceCart,
+    required this.percDiscount,
     required this.idStakeholder,
     required this.denominationStakeholder,
   });
@@ -26,6 +27,7 @@ class CartModel {
   late final String stateCartDescription;
   late final String notesCart;
   late final double? totalPriceCart;
+  late final double? percDiscount;
   late final int? idStakeholder;
   late final String? denominationStakeholder;
   late final List<CartProductModel> cartProducts;
@@ -41,6 +43,7 @@ class CartModel {
     stateCartDescription = '';
     notesCart = '';
     totalPriceCart = null;
+    percDiscount = null;
     idStakeholder = null;
     denominationStakeholder = null;
     cartProducts = List.empty();
@@ -59,6 +62,7 @@ class CartModel {
     stateCartDescription = json['stateCartDescription'];
     notesCart = json['notesCart'] ?? '';
     totalPriceCart = json['totalPriceCart'];
+    percDiscount = json['percDiscount'];
     idStakeholder = json['idStakeholder'];
     denominationStakeholder = json['denominationStakeholder'];
     cartProducts = List.from(json['cartProducts'])
@@ -79,6 +83,7 @@ class CartModel {
     data['stateCartDescription'] = stateCartDescription;
     data['notesCart'] = notesCart;
     data['totalPriceCart'] = totalPriceCart;
+    data['percDiscount'] = percDiscount;
     data['idStakeholder'] = idStakeholder;
     data['denominationStakeholder'] = denominationStakeholder;
     data['cartProducts'] = cartProducts.map((e) => e.toJson()).toList();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CartProductModel {
   CartProductModel({
@@ -15,6 +16,9 @@ class CartProductModel {
     required this.imageData,
     required this.notesCartProduct,
     required this.docNumberCart,
+    required this.dateCart,
+    required this.percDiscount,
+    required this.priceDiscounted,
   });
   late final int idCartProduct;
   late final int idCart;
@@ -30,6 +34,9 @@ class CartProductModel {
   late final String imageData;
   late final String notesCartProduct;
   late final int docNumberCart;
+  late final DateTime dateCart;
+  late final double percDiscount;
+  late final double priceDiscounted;
 
   CartProductModel.fromJson(Map<String, dynamic> json) {
     idCartProduct = json['idCartProduct'];
@@ -45,6 +52,11 @@ class CartProductModel {
     imageData = json['imageData'];
     notesCartProduct = json['notesCartProduct'];
     docNumberCart = json['docNumberCart'];
+    var dateTimeC =
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCart'], true);
+    dateCart = dateTimeC.toLocal();
+    percDiscount = json['percDiscount'];
+    priceDiscounted = json['priceDiscounted'];
   }
 
   Map<String, dynamic> toJson() {
@@ -62,6 +74,9 @@ class CartProductModel {
     data['imageData'] = imageData;
     data['notesCartProduct'] = notesCartProduct;
     data['docNumberCart'] = docNumberCart;
+    data['dateCart'] = dateCart;
+    data['percDiscount'] = percDiscount;
+    data['priceDiscounted'] = priceDiscounted;
     return data;
   }
 }

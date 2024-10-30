@@ -121,6 +121,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
             idCart: cCart.idCart,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
             totalPriceCart: cartNotifier.totalCartMoney.value,
+            percDiscount:
+                double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
             typePayment: strTypePayment)
         .then((value) {
       if (value > 0) {
@@ -161,6 +163,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
             idCart: cCart.idCart,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
             totalPriceCart: cartNotifier.totalCartMoney.value,
+            percDiscount:
+                double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
             typePayment: strTypePayment)
         .then((value) {
       if (value > 0) {

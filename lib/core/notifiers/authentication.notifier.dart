@@ -18,8 +18,8 @@ import 'package:np_casse/screens/shopScreen/widget/shop.grant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationNotifier with ChangeNotifier {
-  final AuthenticationAPI userAPI = AuthenticationAPI();
-  final UserAPI userDetailAPI = UserAPI();
+  final AuthenticationAPI authentificationAPI = AuthenticationAPI();
+  // final UserAPI userDetailAPI = UserAPI();
 
   UserModel currentUserModel = UserModel.empty();
 
@@ -101,7 +101,7 @@ class AuthenticationNotifier with ChangeNotifier {
       UserModel userModel = UserModel.empty();
 
       //await Future.delayed(const Duration(seconds: 3));
-      var response = await userAPI.authenticateAccount(
+      var response = await authentificationAPI.authenticateAccount(
         email: email,
         password: password,
       );
@@ -124,8 +124,11 @@ class AuthenticationNotifier with ChangeNotifier {
         var itemUserOtpMode = userModel.userAttributeModelList
             .where((element) => element.attributeName == 'User.OtpMode')
             .firstOrNull;
-        if (itemUserOtpMode != null &&
-            itemUserOtpMode.attributeName == 'Email') {
+        if (itemUserOtpMode == null) {
+          _stepLoading = "otp";
+          _isLoading = false;
+          notifyListeners();
+        } else if (itemUserOtpMode.attributeValue == 'Email') {
           _stepLoading = "otp";
           _isLoading = false;
           notifyListeners();
@@ -172,7 +175,7 @@ class AuthenticationNotifier with ChangeNotifier {
       await Future.delayed(const Duration(seconds: 1));
       UserModel userModel = getUser();
 
-      var response = await userAPI.checkOtp(
+      var response = await authentificationAPI.checkOtp(
           token: userModel.token, email: email, otpCode: otpCode);
 
       final Map<String, dynamic> parseData = await jsonDecode(response);
@@ -223,7 +226,7 @@ class AuthenticationNotifier with ChangeNotifier {
       notifyListeners();
       UserModel userModel = getUser();
 
-      var response1 = await userAPI.getUserAppInstitution(
+      var response1 = await authentificationAPI.getUserAppInstitution(
           token: userModel.token, idUser: userModel.idUser, appName: appName);
       final Map<String, dynamic> parseData1 = await jsonDecode(response1);
       bool isOk = parseData1['isOk'];
@@ -264,7 +267,7 @@ class AuthenticationNotifier with ChangeNotifier {
 
         setUser(userModel);
         //CHIAMO API PER GRANT
-        var response2 = await userAPI.getUserAppInstitutionGrant(
+        var response2 = await authentificationAPI.getUserAppInstitutionGrant(
             token: userModel.token,
             idUser: userModel.idUser,
             idUserAppInstitution:
@@ -365,7 +368,7 @@ class AuthenticationNotifier with ChangeNotifier {
       UserModel userModel = getUser();
 
       //CHIAMO API PER GRANT
-      var response2 = await userAPI.getUserAppInstitutionGrant(
+      var response2 = await authentificationAPI.getUserAppInstitutionGrant(
           token: userModel.token,
           idUser: userModel.idUser,
           idUserAppInstitution:
@@ -609,10 +612,9 @@ class AuthenticationNotifier with ChangeNotifier {
     required String phone,
   }) async {
     try {
-      var response = await userDetailAPI.updateUserDetails(
+      var response = await authentificationAPI.updateUserDetails(
         token: token,
         idUser: idUser,
-        idUserAppInstitution: idUserAppInstitution,
         userName: name,
         userSurname: surname,
         userEmail: email,
@@ -674,7 +676,7 @@ class AuthenticationNotifier with ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      var response = await userDetailAPI.changePassword(
+      var response = await authentificationAPI.changePassword(
           token: token,
           idUser: idUser,
           password: password,
@@ -712,6 +714,58 @@ class AuthenticationNotifier with ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
             title: "Change password",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future updateGeneralSettingData({
+    required BuildContext context,
+    required String? token,
+    required int idUser,
+    required String otpMode,
+    required int tokenExpiration,
+  }) async {
+    try {
+      var response = await authentificationAPI.updateGeneralSetting(
+          token: token,
+          idUser: idUser,
+          otpMode: otpMode,
+          tokenExpiration: tokenExpiration);
+
+      final Map<String, dynamic> parseData = await jsonDecode(response);
+      bool isOk = parseData['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Impostazioni generali",
+              message: errorDescription,
+              contentType: "failure"));
+          _isLoading = false;
+          notifyListeners();
+        }
+      } else {
+        notifyListeners();
+      }
+      return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni generali",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        _isLoading = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni generali",
             message: "Errore di connessione",
             contentType: "failure"));
         _isLoading = false;

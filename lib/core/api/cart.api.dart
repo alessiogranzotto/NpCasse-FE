@@ -110,7 +110,8 @@ class CartAPI {
       required int idUserAppInstitution,
       required int idCart,
       required String typePayment,
-      required double totalPriceCart}) async {
+      required double totalPriceCart,
+      required double percDiscount}) async {
     final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Set-cart-checkout');
 
     final http.Response response = await client.put(uri,
@@ -124,7 +125,8 @@ class CartAPI {
           "idCart": idCart,
           "idUserAppInstitution": idUserAppInstitution,
           "typePayment": typePayment,
-          "totalPriceCart": totalPriceCart
+          "totalPriceCart": totalPriceCart,
+          "percDiscount": percDiscount
         }));
 
     if (response.statusCode == 200) {

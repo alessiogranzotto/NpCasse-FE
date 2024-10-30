@@ -19,7 +19,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       PagedDataTableController();
   UserAppInstitutionModel? cSelectedUserAppInstitution;
   UserAppInstitutionModel?
-      previousSelectedInstitution; // Previous institution value    
+      previousSelectedInstitution; // Previous institution value
 
   @override
   void didChangeDependencies() {
@@ -36,7 +36,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
         cSelectedUserAppInstitution = currentInstitution;
         previousSelectedInstitution =
             currentInstitution; // Update previous value
-        tableController.refresh(); 
+        tableController.refresh();
       });
     }
   }
@@ -98,8 +98,10 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
 
   void handleDownloadProductList(BuildContext context) async {
     final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
-    var authNotifier = Provider.of<AuthenticationNotifier>(context, listen: false);
-    UserAppInstitutionModel cUserAppInstitutionModel = authNotifier.getSelectedUserAppInstitution();
+    var authNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authNotifier.getSelectedUserAppInstitution();
 
     await reportNotifier.downloadProductList(
       context: context,
@@ -136,29 +138,29 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
           filterBarChild: PopupMenuButton(
             icon: const Icon(Icons.more_vert_outlined),
             itemBuilder: (context) => <PopupMenuEntry>[
-              PopupMenuItem(
-                child: const Text("Seleziona tutti"),
-                onTap: () {
-                  tableController.selectAllRows();
-                },
-              ),
-              PopupMenuItem(
-                child: const Text("Deseleziona tutti"),
-                onTap: () {
-                  tableController.unselectAllRows();
-                },
-              ),
-              const PopupMenuDivider(),
+              // PopupMenuItem(
+              //   child: const Text("Seleziona tutti"),
+              //   onTap: () {
+              //     tableController.selectAllRows();
+              //   },
+              // ),
+              // PopupMenuItem(
+              //   child: const Text("Deseleziona tutti"),
+              //   onTap: () {
+              //     tableController.unselectAllRows();
+              //   },
+              // ),
+              //const PopupMenuDivider(),
               PopupMenuItem(
                 child: const Text("Export Excel"),
                 onTap: () {
-                  handleDownloadProductList(context); 
+                  handleDownloadProductList(context);
                 },
               ),
             ],
           ),
           columns: [
-            RowSelectorColumn(),
+            // RowSelectorColumn(),
             TableColumn(
               id: 'docNumberCart',
               title: const Text('#'),
@@ -167,19 +169,29 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               size: const FixedColumnSize(100),
               sortable: true,
             ),
+
+            TableColumn(
+              id: 'dateCart',
+              title: const Text('Data carrello'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['dateCart'].toString()),
+              size: const FixedColumnSize(150),
+              sortable: true,
+            ),
+
             TableColumn(
               id: 'nameProduct',
               title: const Text('Nome prodotto'),
               cellBuilder: (context, item, index) =>
                   Text(item['nameProduct'].toString()),
-              size: const FixedColumnSize(150),
+              size: const FixedColumnSize(200),
               sortable: true,
             ),
             TableColumn(
               id: 'productAttributeExplicit',
               title: const Text('Variante'),
               cellBuilder: (context, item, index) =>
-                  Text(item['productAttributeExplicit'].toString()),                 
+                  Text(item['productAttributeExplicit'].toString()),
               size: const FixedColumnSize(350),
               sortable: false,
             ),
@@ -201,6 +213,23 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               size: const FixedColumnSize(100),
               sortable: true,
             ),
+            TableColumn(
+              id: 'percDiscount',
+              title: const Text('Sconto'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['percDiscount'].toStringAsFixed(2) + ' %'),
+              size: const FixedColumnSize(100),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'priceDiscounted',
+              title: const Text('Prezzo scontato'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['priceDiscounted'].toStringAsFixed(2) + ' €'),
+              size: const FixedColumnSize(150),
+              sortable: true,
+            ),
+
             TableColumn(
               id: 'notesCartProduct',
               title: const Text('Note'),

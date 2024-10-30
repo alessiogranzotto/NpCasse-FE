@@ -34,7 +34,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       setState(() {
         cSelectedUserAppInstitution = currentInstitution;
         previousSelectedInstitution = currentInstitution;
-        tableController.refresh(); 
+        tableController.refresh();
       });
     }
   }
@@ -49,7 +49,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           Provider.of<AuthenticationNotifier>(context, listen: false);
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
-    
+
       // Sorting logic
       String? sortBy;
       String? sortDirection;
@@ -78,9 +78,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       );
 
       if (response is CartHistoryModel) {
-        List<Map<String, dynamic>> data = response.CartHistoryList.map((cart) =>
-                cart.toJson())
-            .toList();
+        List<Map<String, dynamic>> data =
+            response.CartHistoryList.map((cart) => cart.toJson()).toList();
 
         String? nextPageToken =
             response.hasNext ? (pageNumber + 1).toString() : null;
@@ -96,8 +95,10 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
 
   void handleDownloadCartList(BuildContext context) async {
     final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
-    var authNotifier = Provider.of<AuthenticationNotifier>(context, listen: false);
-    UserAppInstitutionModel cUserAppInstitutionModel = authNotifier.getSelectedUserAppInstitution();
+    var authNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authNotifier.getSelectedUserAppInstitution();
 
     await reportNotifier.downloadCartList(
       context: context,
@@ -125,102 +126,102 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-            child: PagedDataTable<String, Map<String, dynamic>>(
-              controller: tableController,
-              initialPageSize: 20,
-              pageSizes: const [10, 20, 50],
-              fetcher: (pageSize, sortModel, filterModel, pageToken) =>
-                  fetchData(pageSize, sortModel, filterModel, pageToken),
-              filterBarChild: PopupMenuButton(
-                icon: const Icon(Icons.more_vert_outlined),
-                itemBuilder: (context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                    child: const Text("Seleziona tutti"),
-                    onTap: () {
-                      tableController.selectAllRows();
-                    },
-                  ),
-                  PopupMenuItem(
-                    child: const Text("Deseleziona tutti"),
-                    onTap: () {
-                      tableController.unselectAllRows();
-                    },
-                  ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    child: const Text("Export Excel"),
-                    onTap: () {
-                      handleDownloadCartList(context);
-                    },
-                  ),
-                ],
+        child: PagedDataTable<String, Map<String, dynamic>>(
+          controller: tableController,
+          initialPageSize: 20,
+          pageSizes: const [10, 20, 50],
+          fetcher: (pageSize, sortModel, filterModel, pageToken) =>
+              fetchData(pageSize, sortModel, filterModel, pageToken),
+          filterBarChild: PopupMenuButton(
+            icon: const Icon(Icons.more_vert_outlined),
+            itemBuilder: (context) => <PopupMenuEntry>[
+              // PopupMenuItem(
+              //   child: const Text("Seleziona tutti"),
+              //   onTap: () {
+              //     tableController.selectAllRows();
+              //   },
+              // ),
+              // PopupMenuItem(
+              //   child: const Text("Deseleziona tutti"),
+              //   onTap: () {
+              //     tableController.unselectAllRows();
+              //   },
+              // ),
+              // const PopupMenuDivider(),
+              PopupMenuItem(
+                child: const Text("Export Excel"),
+                onTap: () {
+                  handleDownloadCartList(context);
+                },
               ),
-              columns: [
-                RowSelectorColumn(),
-                TableColumn(
-                  id: 'docNumberCart',
-                  title: const Text('#'),
-                  cellBuilder: (context, item, index) =>
-                      Text(item['docNumberCart'].toString().padLeft(6, '0')),
-                  size: const FixedColumnSize(100),
-                  sortable: true,
-                ),
-                TableColumn(
-                  id: 'stateCartDescription',
-                  title: const Text('State'),
-                  cellBuilder: (context, item, index) =>
-                      Text(item['stateCartDescription'].toString()),
-                  size: const FixedColumnSize(150),
-                  sortable: true,
-                ),
-                TableColumn(
-                  id: 'paymentTypeCart',
-                  title: const Text('Tipo pagamento'),
-                  cellBuilder: (context, item, index) =>
-                      Text(item['paymentTypeCart'].toString().split('.').last),
-                  size: const FixedColumnSize(150),
-                  sortable: true,
-                ),
-                TableColumn(
-                  id: 'dateCreatedCart',
-                  title: const Text('Data'),
-                  cellBuilder: (context, item, index) =>
-                      Text(DateFormat("yyyy-MM-ddTHH:mm:ss")
-                          .parse(item['dateCreatedCart'], true)
-                          .toString()),
-                  size: const FixedColumnSize(170),
-                  sortable: true,
-                ),
-                TableColumn(
-                  id: 'totalPriceCart',
-                  title: const Text('Totale'),
-                  cellBuilder: (context, item, index) => Text(
-                      item['totalPriceCart'] != null
-                          ? '${item['totalPriceCart'].toStringAsFixed(2)} €'
-                          : ''),
-                  size: const FixedColumnSize(120),
-                  sortable: true,
-                ),
-                TableColumn(
-                  id: 'idStakeholder',
-                  title: const Text('# Stakeholder'),
-                  cellBuilder: (context, item, index) => Text(
-                      item['idStakeholder'] != null
-                          ? item['idStakeholder'].toString()
-                          : ''),
-                  size: const FixedColumnSize(150),
-                  sortable: true,
-                ),
-                TableColumn(
-                  id: 'denominationStakeholder',
-                  title: const Text('Stakeholder'),
-                  cellBuilder: (context, item, index) => Text(
-                      item['denominationStakeholder'] != null
-                          ? item['denominationStakeholder'].toString()
-                          : ''),
-                  size: const FixedColumnSize(150),
-                  sortable: true,
-                ),
+            ],
+          ),
+          columns: [
+            // RowSelectorColumn(),
+            TableColumn(
+              id: 'docNumberCart',
+              title: const Text('#'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['docNumberCart'].toString().padLeft(6, '0')),
+              size: const FixedColumnSize(100),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'stateCartDescription',
+              title: const Text('State'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['stateCartDescription'].toString()),
+              size: const FixedColumnSize(150),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'paymentTypeCart',
+              title: const Text('Tipo pagamento'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['paymentTypeCart'].toString().split('.').last),
+              size: const FixedColumnSize(150),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'dateCreatedCart',
+              title: const Text('Data'),
+              cellBuilder: (context, item, index) => Text(
+                  DateFormat("yyyy-MM-ddTHH:mm:ss")
+                      .parse(item['dateCreatedCart'], true)
+                      .toString()),
+              size: const FixedColumnSize(170),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'totalPriceCart',
+              title: const Text('Totale'),
+              cellBuilder: (context, item, index) => Text(
+                  item['totalPriceCart'] != null
+                      ? '${item['totalPriceCart'].toStringAsFixed(2)} €'
+                      : ''),
+              size: const FixedColumnSize(120),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'idStakeholder',
+              title: const Text('# Stakeholder'),
+              cellBuilder: (context, item, index) => Text(
+                  item['idStakeholder'] != null
+                      ? item['idStakeholder'].toString()
+                      : ''),
+              size: const FixedColumnSize(150),
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'denominationStakeholder',
+              title: const Text('Stakeholder'),
+              cellBuilder: (context, item, index) => Text(
+                  item['denominationStakeholder'] != null
+                      ? item['denominationStakeholder'].toString()
+                      : ''),
+              size: const FixedColumnSize(150),
+              sortable: true,
+            ),
             TableColumn(
               id: 'actions',
               title: const Text('Azioni'),
@@ -240,7 +241,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   }
                 },
               ),
-                  size: const FixedColumnSize(100),
+              size: const FixedColumnSize(100),
             ),
           ],
           filters: [
@@ -259,7 +260,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           ],
         ),
       ),
-     );
+    );
   }
 }
 

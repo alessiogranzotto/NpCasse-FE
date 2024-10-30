@@ -30,8 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordController = TextEditingController()
       ..addListener(controllerListener);
 
-    // emailController.text = 'alessio.granzotto@aebsolutions.it';
-    // passwordController.text = 'kl6&u7H4';
+    emailController.text = 'alessio.granzotto@aebsolutions.it';
+    passwordController.text = 'kl6&u7H4';
   }
 
   void disposeControllers() {

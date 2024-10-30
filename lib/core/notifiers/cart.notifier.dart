@@ -216,7 +216,8 @@ class CartNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int idCart,
       required String typePayment,
-      required double totalPriceCart}) async {
+      required double totalPriceCart,
+      required double percDiscount}) async {
     try {
       bool isOk = false;
       int savedIdCart = 0;
@@ -225,6 +226,7 @@ class CartNotifier with ChangeNotifier {
           idCart: idCart,
           idUserAppInstitution: idUserAppInstitution,
           totalPriceCart: totalPriceCart,
+          percDiscount: percDiscount,
           typePayment: typePayment);
 
       if (response != null) {

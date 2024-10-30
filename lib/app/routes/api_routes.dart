@@ -31,6 +31,8 @@ class ApiRoutes {
 
   static const String updateUserDetailsURL =
       "$authURL/api/User/Utility/update-user";
+  static const String updateGeneralSettingsURL =
+      "$authURL/api/User/Utility/update-user-attribute";
   static const String changePasswordURL =
       "$authURL/api/User/Utility/update-user-password";
 

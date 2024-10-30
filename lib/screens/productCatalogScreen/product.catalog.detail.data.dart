@@ -1433,7 +1433,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     shape: const CircleBorder(eccentricity: 0.5),
                     onPressed: () {
                       var dialog = CustomAlertDialog(
-                        title: "Eliminazione categoria",
+                        title: "Eliminazione prodotto",
                         content:
                             Text("Si desidera procedere alla cancellazione?"),
                         yesCallBack: () {

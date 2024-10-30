@@ -19,13 +19,27 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen> {
   final _formKey = GlobalKey<FormState>();
   final ValueNotifier<bool> fieldValidNotifier = ValueNotifier(false);
 
-  late final TextEditingController tokenExpirationController =
+  late TextEditingController tokenExpirationController =
       TextEditingController();
   List<DropdownMenuItem<String>> availableOtpMode = [
     DropdownMenuItem(child: Text("No"), value: "No"),
     DropdownMenuItem(child: Text("Email"), value: "Email"),
   ];
   String valueOtpMode = '';
+  int valueTokenExpiration = 0;
+
+  void initializeControllers() {
+    tokenExpirationController = TextEditingController()
+      ..addListener(controllerListener);
+  }
+
+  void controllerListener() {
+    if (int.tryParse(tokenExpirationController.text) == null) {
+      fieldValidNotifier.value = false;
+    } else {
+      fieldValidNotifier.value = true;
+    }
+  }
 
   void disposeControllers() {
     tokenExpirationController.dispose();
@@ -33,6 +47,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen> {
 
   @override
   void initState() {
+    initializeControllers();
     super.initState();
   }
 
@@ -42,37 +57,34 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen> {
     super.dispose();
   }
 
-  // updateGeneralSettingData() {
-  //   if (_formKey.currentState!.validate()) {
-  //     var authNotifier =
-  //         Provider.of<AuthenticationNotifier>(context, listen: false);
-  //     UserModel cUserModel = authNotifier.getUser();
-  //     UserAppInstitutionModel cUserAppInstitutionModel =
-  //         authNotifier.getSelectedUserAppInstitution();
-  //     authNotifier
-  //         .updateUserDetails(
-  //             context: context,
-  //             token: authNotifier.token,
-  //             idUser: cUserModel.idUser,
-  //             idUserAppInstitution:
-  //                 cUserAppInstitutionModel.idUserAppInstitution,
-  //             name: firstNameController.text,
-  //             surname: tokenExpirationController.text,
-  //             email: emailController.text,
-  //             phone: phoneController.text)
-  //         .then((value) {
-  //       if (value) {
-  //         if (context.mounted) {
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackUtil.stylishSnackBar(
-  //                   title: "Utente",
-  //                   message: "Utente aggiornato correttamente",
-  //                   contentType: "success"));
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
+  updateGeneralSettingData() {
+    if (_formKey.currentState!.validate()) {
+      var authNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserModel cUserModel = authNotifier.getUser();
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authNotifier.getSelectedUserAppInstitution();
+      authNotifier
+          .updateGeneralSettingData(
+              context: context,
+              token: authNotifier.token,
+              idUser: cUserModel.idUser,
+              otpMode: valueOtpMode,
+              tokenExpiration:
+                  int.tryParse(tokenExpirationController.text) ?? 3)
+          .then((value) {
+        if (value) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni generali",
+                    message: "Impostazioni generali aggiornate correttamente",
+                    contentType: "success"));
+          }
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +101,21 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen> {
     if (itemUserOtpMode != null) {
       valueOtpMode = itemUserOtpMode.attributeValue;
     } else {
-      valueOtpMode = 'No';
+      valueOtpMode = 'Email';
     }
 
-    tokenExpirationController.text = cUserModel.surname;
+    var itemTokenExpiration = cUserModel.userAttributeModelList
+        .where((element) => element.attributeName == 'User.TokenExpiration')
+        .firstOrNull;
+
+    if (itemTokenExpiration != null) {
+      valueTokenExpiration =
+          int.tryParse(itemTokenExpiration.attributeValue) ?? 3; // null ;
+    } else {
+      valueTokenExpiration = 3;
+    }
+
+    tokenExpirationController.text = valueTokenExpiration.toString();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -169,7 +192,7 @@ class _GeneralSettingScreenState extends State<GeneralSettingScreen> {
                                           return ElevatedButton(
                                             onPressed: isValid
                                                 ? () {
-                                                    // updateGeneralSettingData();
+                                                    updateGeneralSettingData();
                                                   }
                                                 : null,
                                             style: ElevatedButton.styleFrom(

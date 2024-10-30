@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
+import 'package:np_casse/core/models/user.model.dart';
 
 class AuthenticationAPI {
   final client = http.Client();
@@ -99,6 +100,98 @@ class AuthenticationAPI {
     }
   }
 
+  Future updateUserDetails(
+      {required String? token,
+      required int idUser,
+      required String userName,
+      required String userSurname,
+      required String userEmail,
+      required String userPhoneNo}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.updateUserDetailsURL}/$idUser');
+
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode({
+          "name": userName,
+          "surname": userSurname,
+          "email": userEmail,
+          "phone": userPhoneNo,
+        }));
+
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  Future changePassword(
+      {required String? token,
+      required int idUser,
+      required String password,
+      required String confirmPassword}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.changePasswordURL}/$idUser');
+
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode(
+            {"password": password, "confirmPassword": confirmPassword}));
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  Future updateGeneralSetting(
+      {required String? token,
+      required int idUser,
+      required String otpMode,
+      required int tokenExpiration}) async {
+    List<UserAttributeModel> cUserAttributeModel = [];
+    cUserAttributeModel.add(new UserAttributeModel(
+        attributeName: 'User.OtpMode', attributeValue: otpMode));
+    cUserAttributeModel.add(new UserAttributeModel(
+        attributeName: 'User.TokenExpiration',
+        attributeValue: tokenExpiration.toString()));
+
+    final Uri uri = Uri.parse('${ApiRoutes.updateGeneralSettingsURL}/$idUser');
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode({
+          "updateUserAttributeRequest": cUserAttributeModel,
+        }));
+
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
   // Future userRegister({required String email, required String password}) async {
   //   final Uri uri = Uri.parse(ApiRoutes.registerURL);
   //   final http.Response response = await client.post(uri,
