@@ -20,24 +20,23 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       PagedDataTableController();
   UserAppInstitutionModel? cSelectedUserAppInstitution;
   UserAppInstitutionModel? previousSelectedInstitution;
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  //   AuthenticationNotifier authenticationNotifier =
+  //       Provider.of<AuthenticationNotifier>(context, listen: true);
+  //   UserAppInstitutionModel? currentInstitution =
+  //       authenticationNotifier.getSelectedUserAppInstitution();
 
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: true);
-    UserAppInstitutionModel? currentInstitution =
-        authenticationNotifier.getSelectedUserAppInstitution();
-
-    if (currentInstitution != previousSelectedInstitution) {
-      setState(() {
-        cSelectedUserAppInstitution = currentInstitution;
-        previousSelectedInstitution = currentInstitution;
-        tableController.refresh(); 
-      });
-    }
-  }
+  //   if (currentInstitution != previousSelectedInstitution) {
+  //     setState(() {
+  //       cSelectedUserAppInstitution = currentInstitution;
+  //       previousSelectedInstitution = currentInstitution;
+  //       tableController.refresh(); 
+  //     });
+  //   }
+  // }
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {

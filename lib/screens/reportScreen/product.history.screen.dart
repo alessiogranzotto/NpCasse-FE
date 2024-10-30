@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/product.history.model.dart';
+import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/notifiers/report.notifier.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/models/category.catalog.model.dart';
 
 class ProductHistoryScreen extends StatefulWidget {
   const ProductHistoryScreen({Key? key}) : super(key: key);
@@ -18,28 +20,29 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
   UserAppInstitutionModel? cSelectedUserAppInstitution;
-  UserAppInstitutionModel?
-      previousSelectedInstitution; // Previous institution value    
+  UserAppInstitutionModel? previousSelectedInstitution;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  List<DropdownMenuItem<CategoryCatalogModel>> categoryDropdownItems = [];
+  
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
 
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: true);
-    UserAppInstitutionModel? currentInstitution =
-        authenticationNotifier.getSelectedUserAppInstitution();
+  //   AuthenticationNotifier authenticationNotifier =
+  //       Provider.of<AuthenticationNotifier>(context, listen: true);
+  //   UserAppInstitutionModel? currentInstitution =
+  //       authenticationNotifier.getSelectedUserAppInstitution();
 
-    // Check if the institution has changed
-    if (currentInstitution != previousSelectedInstitution) {
-      setState(() {
-        cSelectedUserAppInstitution = currentInstitution;
-        previousSelectedInstitution =
-            currentInstitution; // Update previous value
-        tableController.refresh(); 
-      });
-    }
-  }
+  //   // Check if the institution has changed
+  //   if (currentInstitution != previousSelectedInstitution) {
+  //     setState(() {
+  //       cSelectedUserAppInstitution = currentInstitution;
+  //       previousSelectedInstitution =
+  //           currentInstitution; // Update previous value
+  //       tableController.refresh(); 
+  //     });
+  //   }
+  // }
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
@@ -51,7 +54,6 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      // Sorting logic
       String? sortBy;
       String? sortDirection;
       String? sortColumnAndDirection = '';
@@ -62,7 +64,6 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
         sortColumnAndDirection = '$sortBy;$sortDirection';
       }
 
-      // Date range filter logic
       DateTimeRange? dateRange = filterModel?["dateRange"];
       DateTime? startDate = dateRange?.start;
       DateTime? endDate = dateRange?.end;
@@ -74,8 +75,6 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
         pageNumber: pageNumber,
         pageSize: pageSize,
         orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
-        // startDate: startDate,   // Pass start date
-        // endDate: endDate,       // Pass end date
       );
 
       if (response is ProductHistoryModel) {
@@ -115,6 +114,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -211,87 +211,10 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             ),
           ],
           filters: [
-            DateRangePickerTableFilter(
-              id: "dateRange",
-              name: "",
-              chipFormatter: (range) =>
-                  "From ${DateFormat("yyyy-MM-dd").format(range.start)} to ${DateFormat("yyyy-MM-dd").format(range.end)}",
-              firstDate: DateTime(DateTime.now().year - 5, 1,
-                  1), // Start from January last year
-              lastDate: DateTime.now(),
-              initialValue: null, // No default selection
-              formatter: (range) =>
-                  "${DateFormat("yyyy-MM-dd").format(range.start)} - ${DateFormat("yyyy-MM-dd").format(range.end)}",
-            ),
+
+  
           ],
         ),
-      ),
-    );
-  }
-}
-
-class DateRangePickerTableFilter extends TableFilter<DateTimeRange> {
-  final String id;
-  final String name;
-  final DateTime firstDate;
-  final DateTime lastDate;
-  final String Function(DateTimeRange) chipFormatter;
-  final String Function(DateTimeRange) formatter;
-
-  const DateRangePickerTableFilter({
-    required this.id,
-    required this.name,
-    required this.chipFormatter,
-    required this.firstDate,
-    required this.lastDate,
-    DateTimeRange? initialValue, // Allow for initial value
-    required this.formatter,
-    super.enabled = true,
-  }) : super(
-            initialValue: initialValue,
-            id: id,
-            name: name,
-            chipFormatter:
-                chipFormatter); // Pass required parameters to superclass
-
-  @override
-  Widget buildPicker(BuildContext context, FilterState<DateTimeRange> state) {
-    return TextButton(
-      onPressed: () async {
-        final DateTimeRange? picked = await showDateRangePicker(
-          context: context,
-          firstDate: firstDate,
-          lastDate: lastDate,
-          initialDateRange: state.value ?? initialValue,
-          builder: (BuildContext context, Widget? child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: const ColorScheme.light(
-                  primary: Colors.blueAccent, // <-- SEE HERE
-                  onPrimary: Colors.white, // <-- SEE HERE
-                  onSurface: Colors.blueAccent, // <-- SEE HERE
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blueAccent, // button text color
-                  ),
-                ),
-              ),
-              child: child ?? const SizedBox(),
-            );
-          },
-        );
-
-        if (picked != null &&
-            picked !=
-                DateTimeRange(start: DateTime.now(), end: DateTime.now())) {
-          state.value = picked; // Update the selected date range
-        }
-      },
-      child: Text(
-        state.value == null
-            ? 'Select date range'
-            : chipFormatter(state.value!), // Format the chip text
       ),
     );
   }

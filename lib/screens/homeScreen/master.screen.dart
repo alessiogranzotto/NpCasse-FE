@@ -165,11 +165,33 @@ class _MasterScreenState extends State<MasterScreen> {
     if (currentInstitution != previousSelectedInstitution) {
       setState(() {
         cSelectedUserAppInstitution = currentInstitution;
-        previousSelectedInstitution =
-            currentInstitution; // Update previous value
+        previousSelectedInstitution = currentInstitution; // Update previous value
+        _selectedMainMenuIndex = 0; // Reset selected index to 0
+        _selectedSubMenuIndex = null;
+        visibleSubMenus.clear(); // Reset visible submenus
         resetNavigators();
+        // recalculateMenu();
       });
     }
+  }
+
+  void recalculateMenu() {
+    int currentIntGrant = MenuList.calculateGrant(
+        cSelectedUserAppInstitution!.roleUserAppInstitution);
+    currentDestinations = filterDestinations(currentIntGrant);
+  }
+
+  List<MenuList> filterDestinations(int currentIntGrant) {
+    return destinations.where((menu) {
+      return menu.intGrant <= currentIntGrant;
+    }).map((menu) {
+      if (menu.subMenus != null) {
+        menu.subMenus = menu.subMenus!.where((submenu) {
+          return submenu.intGrant <= currentIntGrant;
+        }).toList();
+      }
+      return menu;
+    }).toList();
   }
 
   void resetNavigators() {
@@ -233,7 +255,7 @@ class _MasterScreenState extends State<MasterScreen> {
     });
   }
 
-  List<SideNavigationBarItem> getSideNavigationBarItems(BuildContext context) {
+   List<SideNavigationBarItem> getSideNavigationBarItems(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: true);
     UserAppInstitutionModel selectedUserAppInstitution =
@@ -241,44 +263,36 @@ class _MasterScreenState extends State<MasterScreen> {
     int currentIntGrant = MenuList.calculateGrant(
         selectedUserAppInstitution.roleUserAppInstitution);
 
-    currentDestinations = destinations.toList();
+    currentDestinations = currentDestinations = filterDestinations(currentIntGrant);
     List<SideNavigationBarItem> items = [];
 
-    // Iterate over main menu items
+    // Iterate over main menu items and add items that match the user grant
     for (int i = 0; i < currentDestinations.length; i++) {
       final menu = currentDestinations[i];
-      // if (currentIntGrant >= menu.intGrant) {
-      // Add main menu item
       items.add(SideNavigationBarItem(
         icon: menu.icon,
         label: menu.label,
       ));
-      // }
 
-      // Add submenu items if they are visible
+      // Add submenu items if they are visible and match the grant
       if (visibleSubMenus.contains(i) && menu.subMenus != null) {
         for (int j = 0; j < menu.subMenus!.length; j++) {
-          // if (currentIntGrant >= menu.subMenus![j].intGrant) {
-          items.add(SideNavigationBarItem(
-            icon: menu.subMenus![j].icon,
-            label: menu.subMenus![j].label,
-            margin: const EdgeInsets.only(
-                left: 16.0), // Add left margin to submenu items
-          ));
-          // }
+            items.add(SideNavigationBarItem(
+              icon: menu.subMenus![j].icon,
+              label: menu.subMenus![j].label,
+              margin: const EdgeInsets.only(left: 16.0), // Add left margin for submenu items
+            ));
         }
       }
     }
 
     return items;
   }
-
   // Calculate selected index based on main and submenu indices
   int calculateSelectedIndex() {
     int selectedIndex = _selectedMainMenuIndex;
     int subMenuOffset = 0;
 
-    // Calculate the offset based on the number of visible submenus in preceding main menus
     for (int i = 0; i < _selectedMainMenuIndex; i++) {
       if (currentDestinations[i].subMenus != null &&
           visibleSubMenus.contains(i)) {
@@ -286,29 +300,32 @@ class _MasterScreenState extends State<MasterScreen> {
       }
     }
 
-    // Adjust the index if a submenu is selected
-    if (_selectedSubMenuIndex != null) {
-      selectedIndex += subMenuOffset +
-          _selectedSubMenuIndex! +
-          1; // +1 for the main menu itself
+    if (_selectedSubMenuIndex != null &&
+        currentDestinations[_selectedMainMenuIndex].subMenus != null &&
+        _selectedSubMenuIndex! <
+            currentDestinations[_selectedMainMenuIndex].subMenus!.length) {
+      selectedIndex += subMenuOffset + _selectedSubMenuIndex! + 1;
     } else {
       selectedIndex += subMenuOffset;
     }
 
-    return selectedIndex;
+    return selectedIndex < getSideNavigationBarItems(context).length
+        ? selectedIndex
+        : 0; // Fallback to 0 if out of bounds
   }
 
   Widget getSelectedScreen() {
-    // If a submenu is selected, return the submenu screen; otherwise return the selected screen
-    if (_selectedSubMenuIndex != null) {
-      return currentDestinations[_selectedMainMenuIndex]
-          .subMenus![_selectedSubMenuIndex!]
-          .screen;
+    if (_selectedSubMenuIndex != null &&
+        _selectedMainMenuIndex < currentDestinations.length &&
+        currentDestinations[_selectedMainMenuIndex].subMenus != null &&
+        _selectedSubMenuIndex! <
+            currentDestinations[_selectedMainMenuIndex].subMenus!.length) {
+      return currentDestinations[_selectedMainMenuIndex].subMenus![_selectedSubMenuIndex!].screen;
     }
-    return _currentScreen!; // Return the selected screen
+    return _currentScreen!;
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: true);
@@ -422,8 +439,8 @@ class _MasterScreenState extends State<MasterScreen> {
               children: currentDestinations.map((menu) {
                 if (menu.subMenus != null &&
                     visibleSubMenus.contains(_selectedMainMenuIndex)) {
-                  // Use LazyIndexedStack for the sub-menu screens
-                  return LazyIndexedStack(
+                  // Use IndexedStack for the sub-menu screens
+                  return IndexedStack(
                     index: _selectedSubMenuIndex ??
                         0, // Default to the first submenu if none is selected
                     children: menu.subMenus!.map((submenu) {
