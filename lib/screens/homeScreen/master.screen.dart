@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
@@ -362,107 +363,113 @@ class _MasterScreenState extends State<MasterScreen> {
     //     Provider.of<ShopCategoryNotifier>(context);
     ReportNotifier reportNotifier = Provider.of<ReportNotifier>(context);
 
-    return Scaffold(
-      body: Row(
-        children: [
-          // Sidebar for main navigation
-          SideNavigationBar(
-            expandable: true,
-            theme: SideNavigationBarTheme.blue(),
-            footer: SideNavigationBarFooter(
-              label: Column(
-                children: [
-                  Text(
-                    '${cUserModel!.name} ${cUserModel!.surname}', // Safely unwrap nullable values
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  Text(
-                    cUserModel!.email, // Safely unwrap nullable value
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  Text(
-                    cSelectedUserAppInstitution!
-                        .roleUserAppInstitution, // Safely unwrap
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  Text(
-                    cSelectedUserAppInstitution!.idInstitutionNavigation
-                        .nameInstitution, // Safely unwrap
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ],
+    return IdleDetector(
+      idleTime: const Duration(minutes: 2),
+      onIdle: () {
+        signOut(context);
+      },
+      child: Scaffold(
+        body: Row(
+          children: [
+            // Sidebar for main navigation
+            SideNavigationBar(
+              expandable: true,
+              theme: SideNavigationBarTheme.blue(),
+              footer: SideNavigationBarFooter(
+                label: Column(
+                  children: [
+                    Text(
+                      '${cUserModel!.name} ${cUserModel!.surname}', // Safely unwrap nullable values
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    Text(
+                      cUserModel!.email, // Safely unwrap nullable value
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    Text(
+                      cSelectedUserAppInstitution!
+                          .roleUserAppInstitution, // Safely unwrap
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    Text(
+                      cSelectedUserAppInstitution!.idInstitutionNavigation
+                          .nameInstitution, // Safely unwrap
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ],
+                ),
+              ),
+              selectedIndex: calculateSelectedIndex(),
+              items: getSideNavigationBarItems(context),
+              onTap: (index) {
+                int currentIndex = 0;
+
+                for (int i = 0; i < currentDestinations.length; i++) {
+                  final menu = currentDestinations[i];
+
+                  if (currentIndex == index) {
+                    if (menu.label == "Preferiti") {
+                      wishlistProductNotifier.refresh();
+                    } else if (menu.label == "Shop") {
+                      categoryCatalogNotifier.refresh();
+                    } else if (menu.label == "Carrello") {
+                      cartNotifier.refresh();
+                    } else if (menu.label == "Attributi prodotti") {
+                      productAttributeNotifier.refresh();
+                    } else if (menu.label == "Catalogo prodotti") {
+                      productCatalogNotifier.refresh();
+                    } else if (menu.label == "Catalogo categorie") {
+                      categoryCatalogNotifier.refresh();
+                    }
+                    handleMenuTap(i);
+                    return;
+                  }
+
+                  currentIndex++;
+
+                  if (visibleSubMenus.contains(i) && menu.subMenus != null) {
+                    for (int j = 0; j < menu.subMenus!.length; j++) {
+                      if (currentIndex == index) {
+                        if (menu.subMenus![j].label == "Carrelli") {
+                          reportNotifier.refresh();
+                        }
+                        if (menu.subMenus![j].label == "Prodotti") {
+                          reportNotifier.refresh();
+                        }
+                        handleSubMenuTap(i, j);
+                        return;
+                      }
+                      currentIndex++;
+                    }
+                  }
+                }
+              },
+            ),
+
+            // Expanded area to display the selected content
+            Expanded(
+              flex: 5,
+              child: LazyIndexedStack(
+                index: _selectedMainMenuIndex, // The main menu index
+                children: currentDestinations.map((menu) {
+                  if (menu.subMenus != null &&
+                      visibleSubMenus.contains(_selectedMainMenuIndex)) {
+                    // Use IndexedStack for the sub-menu screens
+                    return IndexedStack(
+                      index: _selectedSubMenuIndex ??
+                          0, // Default to the first submenu if none is selected
+                      children: menu.subMenus!.map((submenu) {
+                        return submenu.screen;
+                      }).toList(),
+                    );
+                  }
+                  // If no submenu is selected, return the main menu screen
+                  return menu.screen;
+                }).toList(),
               ),
             ),
-            selectedIndex: calculateSelectedIndex(),
-            items: getSideNavigationBarItems(context),
-            onTap: (index) {
-              int currentIndex = 0;
-
-              for (int i = 0; i < currentDestinations.length; i++) {
-                final menu = currentDestinations[i];
-
-                if (currentIndex == index) {
-                  if (menu.label == "Preferiti") {
-                    wishlistProductNotifier.refresh();
-                  } else if (menu.label == "Shop") {
-                    categoryCatalogNotifier.refresh();
-                  } else if (menu.label == "Carrello") {
-                    cartNotifier.refresh();
-                  } else if (menu.label == "Attributi prodotti") {
-                    productAttributeNotifier.refresh();
-                  } else if (menu.label == "Catalogo prodotti") {
-                    productCatalogNotifier.refresh();
-                  } else if (menu.label == "Catalogo categorie") {
-                    categoryCatalogNotifier.refresh();
-                  }
-                  handleMenuTap(i);
-                  return;
-                }
-
-                currentIndex++;
-
-                if (visibleSubMenus.contains(i) && menu.subMenus != null) {
-                  for (int j = 0; j < menu.subMenus!.length; j++) {
-                    if (currentIndex == index) {
-                      if (menu.subMenus![j].label == "Carrelli") {
-                        reportNotifier.refresh();
-                      }
-                      if (menu.subMenus![j].label == "Prodotti") {
-                        reportNotifier.refresh();
-                      }
-                      handleSubMenuTap(i, j);
-                      return;
-                    }
-                    currentIndex++;
-                  }
-                }
-              }
-            },
-          ),
-
-          // Expanded area to display the selected content
-          Expanded(
-            flex: 5,
-            child: LazyIndexedStack(
-              index: _selectedMainMenuIndex, // The main menu index
-              children: currentDestinations.map((menu) {
-                if (menu.subMenus != null &&
-                    visibleSubMenus.contains(_selectedMainMenuIndex)) {
-                  // Use IndexedStack for the sub-menu screens
-                  return IndexedStack(
-                    index: _selectedSubMenuIndex ??
-                        0, // Default to the first submenu if none is selected
-                    children: menu.subMenus!.map((submenu) {
-                      return submenu.screen;
-                    }).toList(),
-                  );
-                }
-                // If no submenu is selected, return the main menu screen
-                return menu.screen;
-              }).toList(),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
