@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
 class BluetoothConfigurationScreen extends StatefulWidget {
   const BluetoothConfigurationScreen({super.key});
 
@@ -62,18 +61,20 @@ class _BluetoothConfigurationScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
- ElevatedButton(
-            onPressed: () async {
-              // Get connection token from the backend
-              String connectionToken = await StripeService.createConnectionToken();
-              await StripeTerminal.initializeReader(connectionToken);
+            ElevatedButton(
+              onPressed: () async {
+                // Get connection token from the backend
+                String connectionToken =
+                    await StripeService.createConnectionToken();
+                await StripeTerminal.initializeReader(connectionToken);
 
-              // Create Payment Intent
-              String clientSecret = await StripeService.createPaymentIntent(1000); // Amount in cents
-              await StripeTerminal.processPayment(clientSecret);
-            },
-            child: Text("Pay with Stripe Terminal"),
-          ),
+                // Create Payment Intent
+                String clientSecret = await StripeService.createPaymentIntent(
+                    1000); // Amount in cents
+                await StripeTerminal.processPayment(clientSecret);
+              },
+              child: Text("Pay with Stripe Terminal"),
+            ),
             const SizedBox(
               height: 30,
             ),
@@ -143,12 +144,12 @@ class StripeTerminal {
   }
 }
 
-
 class StripeService {
   static const String baseUrl = 'https://localhost:7263/api/StripeTerminal';
 
   static Future<String> createConnectionToken() async {
-    final response = await http.post(Uri.parse('$baseUrl/Create-connection-token'));
+    final response =
+        await http.post(Uri.parse('$baseUrl/Create-connection-token'));
     final data = json.decode(response.body);
     return data['secret'];
   }
