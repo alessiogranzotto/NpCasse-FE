@@ -8,7 +8,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
-// import 'dart:html' as html;
+import 'dart:html' as html;
 
 class ReportNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
@@ -227,14 +227,14 @@ class ReportNotifier with ChangeNotifier {
     }
 
     // Create a Blob and download it
-    // final blob = html.Blob([fileBytes], okResult['contentType']);
-    // final url = html.Url.createObjectUrlFromBlob(blob);
-    // html.AnchorElement(href: url)
-    //   ..setAttribute('download', okResult['fileDownloadName'])
-    //   ..click();
+    final blob = html.Blob([fileBytes], okResult['contentType']);
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    html.AnchorElement(href: url)
+      ..setAttribute('download', okResult['fileDownloadName'])
+      ..click();
 
     // Revoke object URL after downloading to free memory
-    // html.Url.revokeObjectUrl(url);
+    html.Url.revokeObjectUrl(url);
   }
 
   void refresh() {
