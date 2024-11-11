@@ -320,8 +320,8 @@ class AuthenticationNotifier with ChangeNotifier {
               })).whenComplete(
             () {
               _isLoading = false;
-              // _stepLoading = "user";
-              notifyListeners();
+              _stepLoading = "user";
+              // notifyListeners();
               Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute);
             },
           );
@@ -588,6 +588,7 @@ class AuthenticationNotifier with ChangeNotifier {
   }
 
   Future exit(BuildContext context) async {
+    stepLoading == "user";
     DeleteCache.deleteKey(AppKeys.userData).whenComplete(() async {
       if (context.mounted) {
         Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(

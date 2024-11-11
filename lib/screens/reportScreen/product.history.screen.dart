@@ -216,14 +216,19 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             TableColumn(
               id: 'percDiscount',
               title: const Text('Sconto'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['percDiscount'].toStringAsFixed(2) + ' %'),
+              cellBuilder: (context, item, index) {
+                if (item['freePriceProduct']) {
+                  return Text('');
+                } else {
+                  return Text(item['percDiscount'].toStringAsFixed(2) + ' %');
+                }
+              },
               size: const FixedColumnSize(100),
               sortable: true,
             ),
             TableColumn(
               id: 'priceDiscounted',
-              title: const Text('Prezzo scontato'),
+              title: const Text('Prezzo finale'),
               cellBuilder: (context, item, index) =>
                   Text(item['priceDiscounted'].toStringAsFixed(2) + ' €'),
               size: const FixedColumnSize(150),

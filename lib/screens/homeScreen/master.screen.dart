@@ -21,6 +21,7 @@ import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
+import 'package:np_casse/screens/settingScreen/bluetooth.configuration.screen.dart';
 import 'package:np_casse/screens/settingScreen/general.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
@@ -98,6 +99,8 @@ List<MenuList> destinations = <MenuList>[
           const Icon(Icons.account_circle), const UserSettingScreen(), 1),
       MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
           const Icon(Icons.settings), const GeneralSettingScreen(), 2),
+      MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
+          const Icon(Icons.settings), const BluetoothConfigurationScreen(), 2),
     ],
   ),
   MenuList(
@@ -165,7 +168,8 @@ class _MasterScreenState extends State<MasterScreen> {
     if (currentInstitution != previousSelectedInstitution) {
       setState(() {
         cSelectedUserAppInstitution = currentInstitution;
-        previousSelectedInstitution = currentInstitution; // Update previous value
+        previousSelectedInstitution =
+            currentInstitution; // Update previous value
         _selectedMainMenuIndex = 0; // Reset selected index to 0
         _selectedSubMenuIndex = null;
         visibleSubMenus.clear(); // Reset visible submenus
@@ -255,7 +259,7 @@ class _MasterScreenState extends State<MasterScreen> {
     });
   }
 
-   List<SideNavigationBarItem> getSideNavigationBarItems(BuildContext context) {
+  List<SideNavigationBarItem> getSideNavigationBarItems(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: true);
     UserAppInstitutionModel selectedUserAppInstitution =
@@ -263,7 +267,8 @@ class _MasterScreenState extends State<MasterScreen> {
     int currentIntGrant = MenuList.calculateGrant(
         selectedUserAppInstitution.roleUserAppInstitution);
 
-    currentDestinations = currentDestinations = filterDestinations(currentIntGrant);
+    currentDestinations =
+        currentDestinations = filterDestinations(currentIntGrant);
     List<SideNavigationBarItem> items = [];
 
     // Iterate over main menu items and add items that match the user grant
@@ -277,17 +282,19 @@ class _MasterScreenState extends State<MasterScreen> {
       // Add submenu items if they are visible and match the grant
       if (visibleSubMenus.contains(i) && menu.subMenus != null) {
         for (int j = 0; j < menu.subMenus!.length; j++) {
-            items.add(SideNavigationBarItem(
-              icon: menu.subMenus![j].icon,
-              label: menu.subMenus![j].label,
-              margin: const EdgeInsets.only(left: 16.0), // Add left margin for submenu items
-            ));
+          items.add(SideNavigationBarItem(
+            icon: menu.subMenus![j].icon,
+            label: menu.subMenus![j].label,
+            margin: const EdgeInsets.only(
+                left: 16.0), // Add left margin for submenu items
+          ));
         }
       }
     }
 
     return items;
   }
+
   // Calculate selected index based on main and submenu indices
   int calculateSelectedIndex() {
     int selectedIndex = _selectedMainMenuIndex;
@@ -320,12 +327,14 @@ class _MasterScreenState extends State<MasterScreen> {
         currentDestinations[_selectedMainMenuIndex].subMenus != null &&
         _selectedSubMenuIndex! <
             currentDestinations[_selectedMainMenuIndex].subMenus!.length) {
-      return currentDestinations[_selectedMainMenuIndex].subMenus![_selectedSubMenuIndex!].screen;
+      return currentDestinations[_selectedMainMenuIndex]
+          .subMenus![_selectedSubMenuIndex!]
+          .screen;
     }
     return _currentScreen!;
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: true);
