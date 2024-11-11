@@ -191,4 +191,12 @@ class ProductCatalogModel {
         productAttributeCombination.map((e) => e.toJson()).toList();
     return data;
   }
+
+    @override
+  String toString() {
+    return 'ProductCatalogModel(idProduct: $idProduct, nameProduct: "$nameProduct", '
+           'priceProduct: $priceProduct, wishlisted: $wishlisted, '
+           'categoryName: "$categoryName", createdOnUtc: ${createdOnUtc?.toIso8601String()}, '
+           'updatedOnUtc: ${updatedOnUtc?.toIso8601String()})';
+  }
 }
