@@ -8,7 +8,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 class ReportNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
@@ -119,18 +119,18 @@ class ReportNotifier with ChangeNotifier {
     }
   }
 
-Future<void> downloadCartList({
-  required BuildContext context,
-  required String? token,
-  required int idUserAppInstitution,
-}) async {
-  try {
-     bool isOk = false;
-     var response =  await reportAPI.downloadCartList(
-      token: token,
-      idUserAppInstitution: idUserAppInstitution,
-    );
-     if (response != null) {
+  Future<void> downloadCartList({
+    required BuildContext context,
+    required String? token,
+    required int idUserAppInstitution,
+  }) async {
+    try {
+      bool isOk = false;
+      var response = await reportAPI.downloadCartList(
+        token: token,
+        idUserAppInstitution: idUserAppInstitution,
+      );
+      if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         isOk = parseData['isOk'];
         if (!isOk) {
@@ -163,20 +163,20 @@ Future<void> downloadCartList({
             contentType: "failure"));
       }
     }
-}
+  }
 
-Future<void> downloadProductList({
-  required BuildContext context,
-  required String? token,
-  required int idUserAppInstitution,
-}) async {
-  try {
-     bool isOk = false;
-     var response =  await reportAPI.downloadProductList(
-      token: token,
-      idUserAppInstitution: idUserAppInstitution,
-    );
-     if (response != null) {
+  Future<void> downloadProductList({
+    required BuildContext context,
+    required String? token,
+    required int idUserAppInstitution,
+  }) async {
+    try {
+      bool isOk = false;
+      var response = await reportAPI.downloadProductList(
+        token: token,
+        idUserAppInstitution: idUserAppInstitution,
+      );
+      if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         isOk = parseData['isOk'];
         if (!isOk) {
@@ -209,9 +209,10 @@ Future<void> downloadProductList({
             contentType: "failure"));
       }
     }
-}
+  }
 
-Future<void> downloadFile(Map<String, dynamic> okResult, BuildContext context) async {
+  Future<void> downloadFile(
+      Map<String, dynamic> okResult, BuildContext context) async {
     print(okResult);
     var fileContents = okResult['fileContents'];
 
@@ -226,15 +227,15 @@ Future<void> downloadFile(Map<String, dynamic> okResult, BuildContext context) a
     }
 
     // Create a Blob and download it
-    final blob = html.Blob([fileBytes], okResult['contentType']);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    html.AnchorElement(href: url)
-      ..setAttribute('download', okResult['fileDownloadName'])
-      ..click();
+    // final blob = html.Blob([fileBytes], okResult['contentType']);
+    // final url = html.Url.createObjectUrlFromBlob(blob);
+    // html.AnchorElement(href: url)
+    //   ..setAttribute('download', okResult['fileDownloadName'])
+    //   ..click();
 
     // Revoke object URL after downloading to free memory
-    html.Url.revokeObjectUrl(url);
-}
+    // html.Url.revokeObjectUrl(url);
+  }
 
   void refresh() {
     notifyListeners();
