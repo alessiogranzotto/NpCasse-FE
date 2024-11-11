@@ -1742,14 +1742,19 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
             ValueListenableBuilder<bool>(
               builder: (BuildContext context, bool value, Widget? child) {
                 return Visibility(
-                    visible: value,
+                  visible: value,
+                  child: SizedBox(
+                    height: 600, // Give an explicit height 
                     child: Container(
-                        margin: const EdgeInsets.all(10),
-                        child: ShowGiveShDataTableDeduplica(
-                            snapshot: stakeholderDeduplicaResult,
-                            width: MediaQuery.of(context).size.width,
-                            stakeholderDeduplicaSelected:
-                                stakeholderDeduplicaSelected)));
+                      margin: const EdgeInsets.all(10),
+                      child: ShowGiveShDataTableDeduplica(
+                        snapshot: stakeholderDeduplicaResult,
+                        width: MediaQuery.of(context).size.width,
+                        stakeholderDeduplicaSelected: stakeholderDeduplicaSelected,
+                      ),
+                    ),
+                  ),
+                );
               },
               valueListenable: visibilityDeduplicationScreen,
             ),
