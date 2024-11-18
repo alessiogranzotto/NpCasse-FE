@@ -73,7 +73,8 @@ class ReportNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int pageNumber,
       required int pageSize,
-      required List<String> orderBy}) async {
+      required List<String> orderBy,
+      required List<String> filter}) async {
     try {
       bool isOk = false;
       var response = await reportAPI.findProductList(
@@ -81,7 +82,8 @@ class ReportNotifier with ChangeNotifier {
           idUserAppInstitution: idUserAppInstitution,
           pageNumber: pageNumber,
           pageSize: pageSize,
-          orderBy: orderBy);
+          orderBy: orderBy,
+          filter: filter);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
@@ -165,17 +167,23 @@ class ReportNotifier with ChangeNotifier {
     }
   }
 
-  Future<void> downloadProductList({
-    required BuildContext context,
-    required String? token,
-    required int idUserAppInstitution,
-  }) async {
+  Future<void> downloadProductList(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int pageNumber,
+      required int pageSize,
+      required List<String> orderBy,
+      required List<String> filter}) async {
     try {
       bool isOk = false;
       var response = await reportAPI.downloadProductList(
-        token: token,
-        idUserAppInstitution: idUserAppInstitution,
-      );
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+          orderBy: orderBy,
+          filter: filter);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         isOk = parseData['isOk'];

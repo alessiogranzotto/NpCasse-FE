@@ -67,7 +67,7 @@ class _ProductCardState extends State<ProductCard> {
     addToCartButtonEnabled.value = enablePrice && enableVariants;
   }
 
-    void variantChanged(int index, String? value) {
+  void variantChanged(int index, String? value) {
     // Update the selected value for the variant at the specified index
     selectedValueVariant[index] = value;
 
@@ -83,42 +83,45 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   List<DropdownMenuItem<String>> getSelectableItems(int index) {
-  return productCatalog.smartProductAttributeJson[index].value
-      .where((element) {
-        // Ensure that the current element can be selected based on the existing selections
-        return productCatalog.productAttributeCombination.any((combination) {
-          // Check if the combination matches the selected variants
-          return selectedValueVariant.asMap().entries.every((entry) {
-            int i = entry.key; // Get the index of the variant
-            String? selectedValue = entry.value; // Get the selected value for this index
+    return productCatalog.smartProductAttributeJson[index].value
+        .where((element) {
+          // Ensure that the current element can be selected based on the existing selections
+          return productCatalog.productAttributeCombination.any((combination) {
+            // Check if the combination matches the selected variants
+            return selectedValueVariant.asMap().entries.every((entry) {
+                  int i = entry.key; // Get the index of the variant
+                  String? selectedValue =
+                      entry.value; // Get the selected value for this index
 
-            // Skip the current index since we are evaluating options for it
-            if (i == index) return true; 
+                  // Skip the current index since we are evaluating options for it
+                  if (i == index) return true;
 
-            // If a value is selected for this index, ensure it matches the combination
-            if (selectedValue != null && selectedValue.isNotEmpty) {
-              return combination.productAttributeJson.any((attr) =>
-                  attr.value == selectedValue &&
-                  attr.idProductAttribute == productCatalog.smartProductAttributeJson[i].idProductAttribute);
-            }
+                  // If a value is selected for this index, ensure it matches the combination
+                  if (selectedValue != null && selectedValue.isNotEmpty) {
+                    return combination.productAttributeJson.any((attr) =>
+                        attr.value == selectedValue &&
+                        attr.idProductAttribute ==
+                            productCatalog.smartProductAttributeJson[i]
+                                .idProductAttribute);
+                  }
 
-            return true; // If no value is selected for this index, consider it compatible
-          }) &&
-          // Check if the current element can fit into this combination
-          combination.productAttributeJson.any((attr) =>
-              attr.value == element.value &&
-              attr.idProductAttribute == productCatalog.smartProductAttributeJson[index].idProductAttribute);
-        });
-      })
-      .map<String>((SmartProductAttributeJsonValue e) => e.value ?? '')
-      .toSet() // Convert to Set to remove duplicates
-      .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-            value: value, child: Text(value));
-      })
-      .toList();
-}
-
+                  return true; // If no value is selected for this index, consider it compatible
+                }) &&
+                // Check if the current element can fit into this combination
+                combination.productAttributeJson.any((attr) =>
+                    attr.value == element.value &&
+                    attr.idProductAttribute ==
+                        productCatalog.smartProductAttributeJson[index]
+                            .idProductAttribute);
+          });
+        })
+        .map<String>((SmartProductAttributeJsonValue e) => e.value ?? '')
+        .toSet() // Convert to Set to remove duplicates
+        .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        })
+        .toList();
+  }
 
   getProductPrice() {
     double result = priceNotifier.value;
@@ -306,78 +309,84 @@ class _ProductCardState extends State<ProductCard> {
                   var cSmartProductAttributeJson =
                       productCatalog.smartProductAttributeJson[index];
 
-           return SizedBox(
+                  return SizedBox(
                     width: 100,
                     child: GestureDetector(
-                    onTap: () {
-                      // Clear the current selected value for the variant
-                      selectedValueVariant[index] = null;
-                      setState(() {}); // Refresh the UI
-                    },
-child: DropdownButtonFormField<String>(
-                      focusNode: AlwaysDisabledFocusNode(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.shop),
-                        labelText:
-                            cSmartProductAttributeJson.nameProductAttribute,
-                        labelStyle: Theme.of(context)
+                      onTap: () {
+                        // Clear the current selected value for the variant
+                        selectedValueVariant[index] = null;
+                        setState(() {}); // Refresh the UI
+                      },
+                      child: DropdownButtonFormField<String>(
+                        focusNode: AlwaysDisabledFocusNode(),
+                        style: Theme.of(context)
                             .textTheme
                             .labelMedium!
                             .copyWith(color: Colors.blueGrey),
-                        hintText:
-                            cSmartProductAttributeJson.nameProductAttribute,
-                        hintStyle: Theme.of(context)
-                            .textTheme
-                            .labelLarge!
-                            .copyWith(
-                                color: Theme.of(context)
-                                    .hintColor
-                                    .withOpacity(0.3)),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.0),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.shop),
+                          labelText:
+                              cSmartProductAttributeJson.nameProductAttribute,
+                          labelStyle: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .copyWith(color: Colors.blueGrey),
+                          hintText:
+                              cSmartProductAttributeJson.nameProductAttribute,
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .hintColor
+                                      .withOpacity(0.3)),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.blue, width: 1.0),
+                          ),
+                          errorBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.red, width: 1.0),
+                          ),
+                          focusedErrorBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                                color: Colors.deepOrangeAccent, width: 1.0),
+                          ),
                         ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.0),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 1.0),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1.0),
-                        ),
-                        focusedErrorBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                              color: Colors.deepOrangeAccent, width: 1.0),
-                        ),
-                      ),
-                      // hint: Text(
-                      //   widget.hintText,
-                      // ),
-                      isExpanded: true,
+                        // hint: Text(
+                        //   widget.hintText,
+                        // ),
+                        isExpanded: true,
 
-                      validator: (value) =>
-                          value == null ? 'field required' : null,
+                        validator: (value) =>
+                            value == null ? 'field required' : null,
 
-                      value: selectedValueVariant[index],
+                        value: selectedValueVariant[index],
 
-                      onChanged: (String? value) {
-                        variantChanged(index, value);
+                        onChanged: (String? value) {
+                          variantChanged(index, value);
 
-                        setState(() {});
-                      },
+                          setState(() {});
+                        },
                         items: getSelectableItems(index),
                       ),
                     ),
@@ -664,6 +673,7 @@ child: DropdownButtonFormField<String>(
                                           cUserAppInstitutionModel
                                               .idUserAppInstitution,
                                       idProduct: productCatalog.idProduct,
+                                      idSubcategory: productCatalog.idCategory,
                                       quantity: quantity,
                                       price: productCatalog.freePriceProduct
                                           ? freePriceProductNotifier.value

@@ -89,11 +89,7 @@ class ProductCatalogAPI {
       {required String? token,
       required ProductCatalogModel productCatalogModel}) async {
     int idProduct = productCatalogModel.idProduct;
-    String x = jsonEncode(productCatalogModel);
-    String y = jsonEncode(productCatalogModel.giveIdsFlatStructureModel);
     if (kDebugMode) {
-      print(x);
-      print(y);
       print(jsonEncode(productCatalogModel));
     }
     final http.Response response;

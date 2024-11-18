@@ -35,9 +35,14 @@ class ReportApi {
       required int idUserAppInstitution,
       required int pageNumber,
       required int pageSize,
-      required List<String> orderBy}) async {
+      required List<String> orderBy,
+      required List<String> filter}) async {
+    String filterJoined = "";
+    for (var item in filter) {
+      filterJoined = filterJoined + "&" + item;
+    }
     final Uri uri = Uri.parse(
-        '${ApiRoutes.reportURL}/find-product-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy');
+        '${ApiRoutes.reportURL}/find-product-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -57,8 +62,7 @@ class ReportApi {
   }
 
   Future downloadCartList(
-      {required String? token,
-      required int idUserAppInstitution}) async {
+      {required String? token, required int idUserAppInstitution}) async {
     final Uri uri = Uri.parse(
         '${ApiRoutes.reportURL}/download-cart-list?idUserAppInstitution=$idUserAppInstitution');
     final http.Response response = await client.get(
@@ -77,13 +81,21 @@ class ReportApi {
       //REFRESH TOKEN??
       return null;
     }
- }
+  }
 
   Future downloadProductList(
       {required String? token,
-      required int idUserAppInstitution}) async {
+      required int idUserAppInstitution,
+      required int pageNumber,
+      required int pageSize,
+      required List<String> orderBy,
+      required List<String> filter}) async {
+    String filterJoined = "";
+    for (var item in filter) {
+      filterJoined = filterJoined + "&" + item;
+    }
     final Uri uri = Uri.parse(
-        '${ApiRoutes.reportURL}/download-product-list?idUserAppInstitution=$idUserAppInstitution');
+        '${ApiRoutes.reportURL}/download-product-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
       uri,
       headers: {

@@ -34,6 +34,7 @@ class CartAPI {
       {required String? token,
       required int idUserAppInstitution,
       required int idProduct,
+      required int idSubcategory,
       required int quantity,
       double? price,
       required List<CartProductVariants?> cartProductVariants,
@@ -42,6 +43,7 @@ class CartAPI {
     var p = jsonEncode({
       "idUserAppInstitution": idUserAppInstitution,
       "idProduct": idProduct,
+      "idSubcategory": idSubcategory,
       "quantityCartProduct": quantity,
       "priceCartProduct": price,
       "notesCartProduct": notes,

@@ -20,6 +20,19 @@ class ProductCatalogCard extends StatelessWidget {
   final bool areAllWithNoImage;
   final bool comeFromWishList;
 
+  String getProductCategoriesString(ProductCatalogModel product) {
+    String result = '';
+    for (int i = 0; i < product.productCategoryMappingModel.length; i++) {
+      result = result +
+          product.productCategoryMappingModel[i].categoryModel.nameCategory +
+          ' - ';
+    }
+    if (result.length > 0) {
+      result = result.substring(0, result.length - 3);
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -89,7 +102,7 @@ class ProductCatalogCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
-                  'Categoria: ' + product.categoryName,
+                  getProductCategoriesString(product),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context)
@@ -132,11 +145,13 @@ class ProductCatalogCard extends StatelessWidget {
                                         cUserAppInstitutionModel
                                             .idUserAppInstitution,
                                     imageData: product.imageData,
-                                    categoryName: product.categoryName,
+                                    // categoryName: product.categoryName,
                                     giveIdsFlatStructureModel:
                                         product.giveIdsFlatStructureModel,
                                     productAttributeCombination:
                                         product.productAttributeCombination,
+                                    productCategoryMappingModel:
+                                        product.productCategoryMappingModel,
                                     smartProductAttributeJson:
                                         product.smartProductAttributeJson),
                               );

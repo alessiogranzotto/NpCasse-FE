@@ -34,6 +34,10 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
 
   bool isLoadingCategories = true; // Add loading state variable
 
+  List<String> filterStringModel = [];
+  String? sortBy;
+  String? sortDirection;
+  String sortColumnAndDirection = '';
   @override
   void initState() {
     super.initState();
@@ -49,27 +53,53 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      String? sortBy;
-      String? sortDirection;
-      String? sortColumnAndDirection = '';
+      // String? sortBy;
+      // String? sortDirection;
+      sortColumnAndDirection = '';
 
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
         sortColumnAndDirection = '$sortBy;$sortDirection';
       }
-
-      print('filterModel');
-      print(filterModel);
+      filterStringModel = [];
+      if (filterModel != null) {
+        if (filterModel['categoryFilter'] != null) {
+          CategoryCatalogModel cCategoryCatalogModel =
+              filterModel['categoryFilter'];
+          filterStringModel.add('Filter=categoryFilter:' +
+              cCategoryCatalogModel.idCategory.toString());
+        }
+        if (filterModel['subcategoryFilter'] != null) {
+          CategoryCatalogModel cCategoryCatalogModel =
+              filterModel['subcategoryFilter'];
+          filterStringModel.add('Filter=subcategoryFilter:' +
+              cCategoryCatalogModel.idCategory.toString());
+        }
+        if (filterModel['productFilter'] != null) {
+          ProductCatalogModel cProductCatalogModel =
+              filterModel['productFilter'];
+          filterStringModel.add('Filter=productFilter:' +
+              cProductCatalogModel.idProduct.toString());
+        }
+        if (filterModel['startDate'] != null) {
+          String cStartDate = filterModel['startDate'];
+          filterStringModel.add('Filter=startDate:' + cStartDate);
+        }
+        if (filterModel['endDate'] != null) {
+          String cEndDate = filterModel['endDate'];
+          filterStringModel.add('Filter=endDate:' + cEndDate);
+        }
+      }
 
       var response = await reportNotifier.findProductList(
-        context: context,
-        token: authNotifier.token,
-        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-        pageNumber: pageNumber,
-        pageSize: pageSize,
-        orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
-      );
+          context: context,
+          token: authNotifier.token,
+          idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+          orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
+          filter: filterStringModel);
 
       if (response is ProductHistoryModel) {
         List<Map<String, dynamic>> data = response.productHistoryList
@@ -97,10 +127,13 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
         authNotifier.getSelectedUserAppInstitution();
 
     await reportNotifier.downloadProductList(
-      context: context,
-      token: authNotifier.token,
-      idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-    );
+        context: context,
+        token: authNotifier.token,
+        pageNumber: 1,
+        pageSize: -1 >>> 1,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
+        filter: filterStringModel);
   }
 
   @override
@@ -133,19 +166,6 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             icon: const Icon(Icons.more_vert_outlined),
             itemBuilder: (context) => <PopupMenuEntry>[
               PopupMenuItem(
-                child: const Text("Seleziona tutti"),
-                onTap: () {
-                  tableController.selectAllRows();
-                },
-              ),
-              PopupMenuItem(
-                child: const Text("Deseleziona tutti"),
-                onTap: () {
-                  tableController.unselectAllRows();
-                },
-              ),
-              const PopupMenuDivider(),
-              PopupMenuItem(
                 child: const Text("Export Excel"),
                 onTap: () {
                   handleDownloadProductList(context);
@@ -154,7 +174,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             ],
           ),
           columns: [
-            RowSelectorColumn(),
+            // RowSelectorColumn(),
             TableColumn(
               id: 'docNumberCart',
               title: const Text('#'),
@@ -418,9 +438,9 @@ class DateTextTableFilter extends TableFilter<String> {
       }
 
       // Check if the date is less than or equal to today
-      if (parsedDate.isAfter(DateTime.now())) {
-        return false; // Reject future dates
-      }
+      // if (parsedDate.isAfter(DateTime.now())) {
+      //   return false; // Reject future dates
+      // }
 
       return _isValidDayMonth(
           parsedDate.day, parsedDate.month, parsedDate.year);

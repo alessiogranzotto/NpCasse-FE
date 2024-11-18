@@ -84,7 +84,8 @@ class AppStrings {
   static const String otpMode = 'Modalità OTP';
   static const String tokenExpiration =
       'Durata token di autenticazione (in giorni)';
-  static const String pleaseEnterTokenExpiration = 'Durata token non valida';
+  static const String pleaseEnterTokenExpiration =
+      'Inserire la durata del token';
 
   static const String password = 'Password';
   static const String pleaseEnterPassword = 'Inserire la password';
