@@ -16,8 +16,8 @@ class CartHistoryScreen extends StatefulWidget {
 }
 
 class _CartHistoryScreenState extends State<CartHistoryScreen> {
-  final PagedDataTableController<String, Map<String, dynamic>> tableController =
-      PagedDataTableController();
+  static PagedDataTableController<String, Map<String, dynamic>>
+      tableController = PagedDataTableController();
   UserAppInstitutionModel? cSelectedUserAppInstitution;
   UserAppInstitutionModel? previousSelectedInstitution;
   // @override

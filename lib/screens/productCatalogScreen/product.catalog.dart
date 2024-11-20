@@ -135,10 +135,10 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
               children: [
                 Expanded(
                   flex: 2,
-                  child: Consumer<CategoryCatalogNotifier>(
-                    builder: (context, categoryCatalogNotifier, _) {
+                  child: Consumer<ProductCatalogNotifier>(
+                    builder: (context, productCatalogNotifier, _) {
                       return FutureBuilder(
-                        future: categoryCatalogNotifier.getCategories(
+                        future: productCatalogNotifier.getCategories(
                             context: context,
                             token: authenticationNotifier.token,
                             idUserAppInstitution:
@@ -181,10 +181,10 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: Consumer<CategoryCatalogNotifier>(
-                    builder: (context, categoryCatalogNotifier, _) {
+                  child: Consumer<ProductCatalogNotifier>(
+                    builder: (context, productCatalogNotifier, _) {
                       return FutureBuilder(
-                        future: categoryCatalogNotifier.getCategories(
+                        future: productCatalogNotifier.getCategories(
                             context: context,
                             token: authenticationNotifier.token,
                             idUserAppInstitution:

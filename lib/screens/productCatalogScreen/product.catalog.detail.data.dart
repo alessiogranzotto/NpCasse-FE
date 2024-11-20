@@ -13,6 +13,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
@@ -295,6 +296,9 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         Provider.of<AuthenticationNotifier>(context);
     ProductCatalogNotifier productCatalogNotifier =
         Provider.of<ProductCatalogNotifier>(context);
+
+    WishlistProductNotifier wishlistProductNotifier =
+        Provider.of<WishlistProductNotifier>(context);
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
@@ -1567,7 +1571,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                             message: "Informazioni aggiornate",
                             contentType: "success"));
                     Navigator.of(context).pop();
-                    productCatalogNotifier.refresh();
+                    // productCatalogNotifier.refresh();
+                    // wishlistProductNotifier.refresh();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackUtil.stylishSnackBar(

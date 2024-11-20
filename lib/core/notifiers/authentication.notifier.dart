@@ -172,7 +172,7 @@ class AuthenticationNotifier with ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      await Future.delayed(const Duration(seconds: 1));
+      //await Future.delayed(const Duration(seconds: 1));
       UserModel userModel = getUser();
 
       var response = await authentificationAPI.checkOtp(

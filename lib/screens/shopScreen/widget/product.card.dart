@@ -605,6 +605,7 @@ class _ProductCardState extends State<ProductCard> {
                                 }
                                 wishListedNotifier.value =
                                     productCatalog.wishlisted;
+                                //wishlistProductNotifier.refresh();
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackUtil.stylishSnackBar(
@@ -690,6 +691,7 @@ class _ProductCardState extends State<ProductCard> {
                                               '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
                                           contentType: "success"));
                                   textEditingControllerNoteProduct.clear();
+                                  //cartNotifier.refresh();
                                   // Navigator.of(context)
                                   //     .pushNamed(AppRouter.homeRoute);
                                 } else {

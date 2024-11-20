@@ -1206,7 +1206,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                             message: "Informazioni aggiornate",
                             contentType: "success"));
                     Navigator.of(context).pop();
-                    categoryCatalogNotifier.refresh();
+                    // categoryCatalogNotifier.refresh();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackUtil.stylishSnackBar(
@@ -1290,7 +1290,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                 message: "Informazioni aggiornate",
                                 contentType: "success"));
                         Navigator.of(context).pop();
-                        categoryCatalogNotifier.refresh();
+                        // categoryCatalogNotifier.refresh();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackUtil.stylishSnackBar(

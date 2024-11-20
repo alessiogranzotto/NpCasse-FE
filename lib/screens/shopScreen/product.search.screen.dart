@@ -9,6 +9,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/screens/shopScreen/widget/product.card.dart';
 import 'package:provider/provider.dart';
 
@@ -84,19 +85,24 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
     required BuildContext context,
   }) {
     return CheckboxListTile(
-        side: const BorderSide(color: Colors.blueGrey),
-        checkColor: Colors.blueAccent,
-        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        activeColor: Colors.blueAccent,
-        controlAffinity: ListTileControlAffinity.leading,
-        value: value,
-        onChanged: onChanged,
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
-        ),
+      side: const BorderSide(color: Colors.blueGrey),
+      checkColor: Colors.blueAccent,
+      checkboxShape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      activeColor: Colors.blueAccent,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: value,
+      onChanged: onChanged,
+      title: Text(
+        title,
+        style: Theme.of(context)
+            .textTheme
+            .labelMedium!
+            .copyWith(color: Colors.blueGrey),
+      ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
@@ -143,33 +149,32 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                         onChangeOrderBy(value);
                       },
                     )),
-                 if (screenWidth > 1002) ...[
+                if (screenWidth > 1002) ...[
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: viewOutOfAssortment,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        viewOutOfAssortment = value!;
-                      });
-                    },
-                    title: 'Visualizza fuori assortimento',
-                    context: context,
-                  )
-                 ),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )
-                ),],
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: viewOutOfAssortment,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            viewOutOfAssortment = value!;
+                          });
+                        },
+                        title: 'Visualizza fuori assortimento',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
+                ],
                 Expanded(
                   flex: 2,
                   child: TextFormField(
@@ -249,42 +254,42 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
               Row(
                 children: [
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: viewOutOfAssortment,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        viewOutOfAssortment = value!;
-                      });
-                    },
-                    title: 'Visualizza fuori assortimento',
-                    context: context,
-                  )),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )),
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: viewOutOfAssortment,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            viewOutOfAssortment = value!;
+                          });
+                        },
+                        title: 'Visualizza fuori assortimento',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
                 ],
               ),
             ],
             SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Consumer<ProductCatalogNotifier>(
-                builder: (context, productCatalogNotifier, _) {
+              child: Consumer<ShopSearchNotifier>(
+                builder: (context, shopSearchNotifier, _) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height * 0.8,
                     width: MediaQuery.of(context).size.width,
                     child: FutureBuilder(
-                      future: productCatalogNotifier.getProducts(
+                      future: shopSearchNotifier.getProducts(
                           context: context,
                           token: authenticationNotifier.token,
                           idUserAppInstitution:
