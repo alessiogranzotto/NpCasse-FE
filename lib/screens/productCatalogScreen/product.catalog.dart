@@ -91,19 +91,23 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     required BuildContext context,
   }) {
     return CheckboxListTile(
-        side: const BorderSide(color: Colors.blueGrey),
-        checkColor: Colors.blueAccent,
-        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        activeColor: Colors.blueAccent,
-        controlAffinity: ListTileControlAffinity.leading,
-        value: value,
-        onChanged: onChanged,
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
-        ),
+      side: const BorderSide(color: Colors.blueGrey),
+      checkColor: Colors.blueAccent,
+      checkboxShape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      activeColor: Colors.blueAccent,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: value,
+      onChanged: onChanged,
+      title: Text(
+        title,
+        style: Theme.of(context)
+            .textTheme
+            .labelMedium!
+            .copyWith(color: Colors.blueGrey),
+      ),
     );
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,10 +135,10 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
               children: [
                 Expanded(
                   flex: 2,
-                  child: Consumer<CategoryCatalogNotifier>(
-                    builder: (context, categoryCatalogNotifier, _) {
+                  child: Consumer<ProductCatalogNotifier>(
+                    builder: (context, productCatalogNotifier, _) {
                       return FutureBuilder(
-                        future: categoryCatalogNotifier.getCategories(
+                        future: productCatalogNotifier.getCategories(
                             context: context,
                             token: authenticationNotifier.token,
                             idUserAppInstitution:
@@ -177,10 +181,10 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: Consumer<CategoryCatalogNotifier>(
-                    builder: (context, categoryCatalogNotifier, _) {
+                  child: Consumer<ProductCatalogNotifier>(
+                    builder: (context, productCatalogNotifier, _) {
                       return FutureBuilder(
-                        future: categoryCatalogNotifier.getCategories(
+                        future: productCatalogNotifier.getCategories(
                             context: context,
                             token: authenticationNotifier.token,
                             idUserAppInstitution:
@@ -343,7 +347,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                           value: readAlsoDeleted,
                           onChanged: (bool? value) {
                             setState(() {
-                            readAlsoDeleted = value!;
+                              readAlsoDeleted = value!;
                             });
                           },
                           title: 'Mostra anche cancellati',
@@ -362,36 +366,37 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       ],
                     ),
                   ),
-              ], ],
+                ],
+              ],
             ),
             // Second row of checkboxes for small screens
             if (screenWidth <= 1002) ...[
               Row(
                 children: [
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readAlsoDeleted,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readAlsoDeleted = value!;
-                      });
-                    },
-                    title: 'Mostra anche cancellati',
-                    context: context,
-                  )),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )),
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readAlsoDeleted,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readAlsoDeleted = value!;
+                          });
+                        },
+                        title: 'Mostra anche cancellati',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
                 ],
               ),
             ],
