@@ -53,7 +53,6 @@ import 'package:np_casse/core/models/product.category.mapping.model.dart';
 class ProductCatalogModel {
   ProductCatalogModel(
       {required this.idProduct,
-      required this.idCategory,
       required this.nameProduct,
       required this.displayOrder,
       required this.descriptionProduct,
@@ -76,7 +75,6 @@ class ProductCatalogModel {
       required this.wishlisted});
 
   late final int idProduct;
-  late final int idCategory;
   late final String nameProduct;
   late final int displayOrder;
   late final String descriptionProduct;
@@ -102,7 +100,6 @@ class ProductCatalogModel {
 
   ProductCatalogModel.empty() {
     idProduct = 0;
-    idCategory = 0;
     nameProduct = '';
     displayOrder = 0;
     descriptionProduct = '';
@@ -124,7 +121,6 @@ class ProductCatalogModel {
 
   ProductCatalogModel.fromJson(Map<String, dynamic> json) {
     idProduct = json['idProduct'];
-    idCategory = json['idCategory'];
     nameProduct = json['nameProduct'];
     displayOrder = json['displayOrder'];
     descriptionProduct = json['descriptionProduct'];
@@ -180,7 +176,6 @@ class ProductCatalogModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['idProduct'] = idProduct;
-    data['idCategory'] = idCategory;
     data['nameProduct'] = nameProduct;
     data['displayOrder'] = displayOrder;
     data['descriptionProduct'] = descriptionProduct;

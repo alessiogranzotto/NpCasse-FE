@@ -12,13 +12,7 @@ class CategoryCatalogAPI {
       {required String? token,
       required CategoryCatalogModel categoryCatalogModel}) async {
     int idCategory = categoryCatalogModel.idCategory;
-    String x = jsonEncode(categoryCatalogModel);
-    String y = jsonEncode(categoryCatalogModel.giveIdsFlatStructureModel);
-    if (kDebugMode) {
-      print(x);
-      print(y);
-      print(jsonEncode(categoryCatalogModel));
-    }
+
     final http.Response response;
     if (idCategory == 0) {
       final Uri uri = Uri.parse('${ApiRoutes.baseCategoryURL}');

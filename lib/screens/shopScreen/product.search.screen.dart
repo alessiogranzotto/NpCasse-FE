@@ -23,8 +23,8 @@ class ProductSearchScreen extends StatefulWidget {
 
 class __ProductSearchScreenState extends State<ProductSearchScreen> {
   double widgetWitdh = 325;
-  double widgetHeight = 550;
-  double widgetHeightHalf = 400;
+  double widgetHeight = 580;
+  double widgetHeightHalf = 430;
   double gridMainAxisSpacing = 10;
 
   Timer? _timer;
@@ -360,8 +360,10 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                                 ProductCatalogModel productCatalog =
                                     tSnapshot[index];
                                 return ProductCard(
-                                    productCatalog: productCatalog,
-                                    areAllWithNoImage: areAllWithNoImage);
+                                  productCatalog: productCatalog,
+                                  areAllWithNoImage: areAllWithNoImage,
+                                  comeFrom: "Search",
+                                );
                               });
                         }
                       },

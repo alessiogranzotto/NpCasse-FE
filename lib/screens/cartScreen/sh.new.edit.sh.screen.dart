@@ -21,8 +21,10 @@ import 'package:provider/provider.dart';
 
 class ShNewEditScreen extends StatefulWidget {
   final StakeholderGiveModelSearch? editStakeholderGiveModelSearch;
+  final int idCart;
   const ShNewEditScreen({
     Key? key,
+    required this.idCart,
     this.editStakeholderGiveModelSearch,
   }) : super(key: key);
 
@@ -518,7 +520,8 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                       onDeduplicaSelectedStakeholderGiveModelSearch ??
                           StakeholderGiveModelSearch.empty());
                   Navigator.pop(context);
-                  Navigator.of(context).pushNamed(AppRouter.shManage);
+                  Navigator.of(context)
+                      .pushNamed(AppRouter.shManage, arguments: widget.idCart);
                   // PersistentNavBarNavigator.pushNewScreen(
                   //   context,
                   //   screen: const ShManageScreen(),
@@ -644,7 +647,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.editStakeholderGiveModelSearch == null
@@ -1744,13 +1747,14 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                 return Visibility(
                   visible: value,
                   child: SizedBox(
-                    height: 600, // Give an explicit height 
+                    height: 600, // Give an explicit height
                     child: Container(
                       margin: const EdgeInsets.all(10),
                       child: ShowGiveShDataTableDeduplica(
                         snapshot: stakeholderDeduplicaResult,
                         width: MediaQuery.of(context).size.width,
-                        stakeholderDeduplicaSelected: stakeholderDeduplicaSelected,
+                        stakeholderDeduplicaSelected:
+                            stakeholderDeduplicaSelected,
                       ),
                     ),
                   ),

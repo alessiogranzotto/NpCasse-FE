@@ -33,6 +33,16 @@ class ProductCatalogDetailAttributeMultipleArgument {
   });
 }
 
+class ShManageMultipleArgument {
+  final int idCart;
+  final StakeholderGiveModelSearch? cStakeholderGiveModelSearch;
+
+  ShManageMultipleArgument({
+    required this.idCart,
+    required this.cStakeholderGiveModelSearch,
+  });
+}
+
 class AppRouter {
   static const String splashRoute = "/splash"; //
   static const String onBoardRoute = "/onBoard";
@@ -325,16 +335,28 @@ class AppRouter {
       case shManage:
         {
           return MaterialPageRoute(
-            builder: (_) => const ShManageScreen(),
+            builder: (context) => ShManageScreen(
+              idCart: ModalRoute.of(context)!.settings.arguments as int,
+            ),
+            settings: settings,
           );
         }
       case shManageNewEdit:
         {
+          // return MaterialPageRoute(
+          //   builder: (context) => ShNewEditScreen(
+          //     editStakeholderGiveModelSearch: ModalRoute.of(context)!
+          //         .settings
+          //         .arguments as StakeholderGiveModelSearch?,
+          //   ),
+          //   settings: settings,
+          // );
+
+          final args = settings.arguments as ShManageMultipleArgument;
           return MaterialPageRoute(
             builder: (context) => ShNewEditScreen(
-              editStakeholderGiveModelSearch: ModalRoute.of(context)!
-                  .settings
-                  .arguments as StakeholderGiveModelSearch?,
+              idCart: args.idCart,
+              editStakeholderGiveModelSearch: args.cStakeholderGiveModelSearch,
             ),
             settings: settings,
           );

@@ -26,7 +26,7 @@ import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.
 import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
 import 'package:np_casse/screens/settingScreen/bluetooth.configuration.screen.dart';
-import 'package:np_casse/screens/settingScreen/general.setting.screen.dart';
+import 'package:np_casse/screens/settingScreen/institution.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/settingScreen/user.setting.screen.dart';
@@ -102,8 +102,8 @@ List<MenuList> destinations = <MenuList>[
 
   MenuList(AppRouter.userRoute, 'Impostazioni utente', Icons.account_circle,
       const Icon(Icons.account_circle), const UserSettingScreen(), 1),
-  MenuList(AppRouter.settingRoute, 'Impostazioni generali', Icons.settings,
-      const Icon(Icons.settings), const GeneralSettingScreen(), 1),
+  MenuList(AppRouter.settingRoute, 'Impostazioni ente', Icons.settings,
+      const Icon(Icons.settings), const InstitutionSettingScreen(), 2),
   // MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
   //     const Icon(Icons.settings), const BluetoothConfigurationScreen(), 2),
 
@@ -370,7 +370,8 @@ class _MasterScreenState extends State<MasterScreen> {
     //     Provider.of<ShopCategoryNotifier>(context);
     ReportNotifier reportNotifier = Provider.of<ReportNotifier>(context);
     return IdleDetector(
-      idleTime: const Duration(minutes: 30),
+      idleTime:
+          Duration(minutes: int.tryParse(cUserModel!.userMaxInactivity) ?? 30),
       onIdle: () {
         signOut(context);
       },

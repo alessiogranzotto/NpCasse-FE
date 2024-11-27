@@ -19,10 +19,11 @@ class ProductThreeShopScreen extends StatefulWidget {
 }
 
 class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
-  double widgetWidth = 320;
-  double widgetHeight = 620;
-  double widgetHeightHalf = 470;
+  double widgetWidth = 325;
+  double widgetHeight = 580;
+  double widgetHeightHalf = 430;
   double gridMainAxisSpacing = 10;
+
   Timer? _timer;
   Icon icona = const Icon(Icons.search);
   TextEditingController nameDescSearchController = TextEditingController();
@@ -44,7 +45,8 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
   List<DropdownMenuItem<String>> availableOrderBy = [
     DropdownMenuItem(child: Text("Nome"), value: "NameProduct"),
     DropdownMenuItem(child: Text("Descrizione"), value: "DescriptionProduct"),
-    DropdownMenuItem(child: Text("Ordine di visualizzazione"), value: "DisplayOrder"),
+    DropdownMenuItem(
+        child: Text("Ordine di visualizzazione"), value: "DisplayOrder"),
   ];
   Icon iconaNameDescSearch = const Icon(Icons.search);
 
@@ -80,25 +82,32 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
     required BuildContext context,
   }) {
     return CheckboxListTile(
-        side: const BorderSide(color: Colors.blueGrey),
-        checkColor: Colors.blueAccent,
-        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        activeColor: Colors.blueAccent,
-        controlAffinity: ListTileControlAffinity.leading,
-        value: value,
-        onChanged: onChanged,
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
-        ),
+      side: const BorderSide(color: Colors.blueGrey),
+      checkColor: Colors.blueAccent,
+      checkboxShape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      activeColor: Colors.blueAccent,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: value,
+      onChanged: onChanged,
+      title: Text(
+        title,
+        style: Theme.of(context)
+            .textTheme
+            .labelMedium!
+            .copyWith(color: Colors.blueGrey),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier = Provider.of<AuthenticationNotifier>(context);
-    UserAppInstitutionModel cUserAppInstitutionModel = authenticationNotifier.getSelectedUserAppInstitution();
-    CategoryCatalogNotifier categoryCatalogNotifier = Provider.of<CategoryCatalogNotifier>(context);
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+    CategoryCatalogNotifier categoryCatalogNotifier =
+        Provider.of<CategoryCatalogNotifier>(context);
 
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -138,36 +147,37 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                 ),
                 if (screenWidth > 1002) ...[
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: viewOutOfAssortment,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        viewOutOfAssortment = value!;
-                      });
-                    },
-                    title: 'Visualizza fuori assortimento',
-                    context: context,
-                  )
-                 ),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )
-                ),
-              ],
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: viewOutOfAssortment,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            viewOutOfAssortment = value!;
+                          });
+                        },
+                        title: 'Visualizza fuori assortimento',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
+                ],
                 Expanded(
                   flex: 1,
                   child: TextFormField(
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Colors.blueGrey),
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: Colors.blueGrey),
                     onChanged: (String value) {
                       if (_timer?.isActive ?? false) {
                         _timer!.cancel();
@@ -184,9 +194,17 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                     controller: nameDescSearchController,
                     decoration: InputDecoration(
                       labelText: "Ricerca per nome, descrizione o barcode",
-                      labelStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
+                      labelStyle: Theme.of(context)
+                          .textTheme
+                          .labelMedium!
+                          .copyWith(color: Colors.blueGrey),
                       hintText: "Ricerca per nome, descrizione o barcode",
-                      hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
+                      hintStyle: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(
+                              color:
+                                  Theme.of(context).hintColor.withOpacity(0.3)),
                       suffixIcon: IconButton(
                         icon: iconaNameDescSearch,
                         onPressed: () {
@@ -196,8 +214,8 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                             } else {
                               iconaNameDescSearch = const Icon(Icons.search);
                               nameDescSearchController.text = "";
-                              }                          
-                            });
+                            }
+                          });
                         },
                       ),
                       floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -219,7 +237,8 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                       ),
                       focusedErrorBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Colors.deepOrangeAccent, width: 1.0),
+                        borderSide: BorderSide(
+                            color: Colors.deepOrangeAccent, width: 1.0),
                       ),
                     ),
                   ),
@@ -231,29 +250,29 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
               Row(
                 children: [
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: viewOutOfAssortment,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        viewOutOfAssortment = value!;
-                      });
-                    },
-                    title: 'Visualizza fuori assortimento',
-                    context: context,
-                  )),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )),
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: viewOutOfAssortment,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            viewOutOfAssortment = value!;
+                          });
+                        },
+                        title: 'Visualizza fuori assortimento',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
                 ],
               ),
             ],
@@ -270,8 +289,11 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                       future: productCatalogNotifier.getProducts(
                         context: context,
                         token: authenticationNotifier.token,
-                        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-                        idCategory: categoryCatalogNotifier.getCurrentCategoryCatalog().idCategory,
+                        idUserAppInstitution:
+                            cUserAppInstitutionModel.idUserAppInstitution,
+                        idCategory: categoryCatalogNotifier
+                            .getCurrentCategoryCatalog()
+                            .idCategory,
                         readAlsoDeleted: false,
                         numberResult: numberResult,
                         nameDescSearch: nameDescSearchController.text,
@@ -281,7 +303,8 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                         viewOutOfAssortment: viewOutOfAssortment,
                       ),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -308,14 +331,21 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                             ),
                           );
                         } else {
-                          var tSnapshot = snapshot.data as List<ProductCatalogModel>;
-                          var t = tSnapshot.any((element) => element.imageData.isNotEmpty);
+                          var tSnapshot =
+                              snapshot.data as List<ProductCatalogModel>;
+                          var t = tSnapshot
+                              .any((element) => element.imageData.isNotEmpty);
                           bool areAllWithNoImage = !t;
-                          double cHeight = areAllWithNoImage ? widgetHeightHalf : widgetHeight;
-                          
+                          double cHeight = areAllWithNoImage
+                              ? widgetHeightHalf
+                              : widgetHeight;
+
                           return GridView.builder(
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-                              crossAxisCount: (MediaQuery.of(context).size.width ~/ widgetWidth),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+                              crossAxisCount:
+                                  (MediaQuery.of(context).size.width ~/
+                                      widgetWidth),
                               crossAxisSpacing: 10,
                               mainAxisSpacing: gridMainAxisSpacing,
                               height: cHeight,
@@ -324,11 +354,12 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                             shrinkWrap: true,
                             itemCount: tSnapshot.length,
                             itemBuilder: (context, index) {
-                              ProductCatalogModel productCatalog = tSnapshot[index];
+                              ProductCatalogModel productCatalog =
+                                  tSnapshot[index];
                               return ProductCard(
-                                productCatalog: productCatalog,
-                                areAllWithNoImage: areAllWithNoImage,
-                              );
+                                  productCatalog: productCatalog,
+                                  areAllWithNoImage: areAllWithNoImage,
+                                  comeFrom: "Navigate");
                             },
                           );
                         }

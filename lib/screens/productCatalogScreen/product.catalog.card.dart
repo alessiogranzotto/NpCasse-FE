@@ -13,12 +13,10 @@ class ProductCatalogCard extends StatelessWidget {
     required this.product,
     required this.readImageData,
     required this.areAllWithNoImage,
-    required this.comeFromWishList,
   }) : super(key: key);
   final ProductCatalogModel product;
   final bool readImageData;
   final bool areAllWithNoImage;
-  final bool comeFromWishList;
 
   String getProductCategoriesString(ProductCatalogModel product) {
     String result = '';
@@ -130,7 +128,6 @@ class ProductCatalogCard extends StatelessWidget {
                                 AppRouter.productCatalogDetailDataRoute,
                                 arguments: ProductCatalogModel(
                                     idProduct: product.idProduct,
-                                    idCategory: product.idCategory,
                                     nameProduct: product.nameProduct,
                                     displayOrder: product.displayOrder,
                                     descriptionProduct:

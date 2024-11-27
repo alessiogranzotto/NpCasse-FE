@@ -9,7 +9,6 @@ import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.card.dart';
 import 'package:provider/provider.dart';
@@ -492,7 +491,6 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                                       product: product,
                                       readImageData: readImageData,
                                       areAllWithNoImage: areAllWithNoImage,
-                                      comeFromWishList: false,
                                     );
                                   }),
                             ],
@@ -520,7 +518,6 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                   AppRouter.productCatalogDetailDataRoute,
                   arguments: ProductCatalogModel(
                       idProduct: 0,
-                      idCategory: 0,
                       nameProduct: '',
                       displayOrder: 0,
                       descriptionProduct: '',

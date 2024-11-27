@@ -171,8 +171,6 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         );
       }
       controllerCategory.addItems(tAvailableLevelCategory);
-      var t = controllerCategory.selectedItems.first.value.idCategory;
-      print(t);
     });
   }
 
@@ -182,14 +180,13 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
 
   @override
   void initState() {
-    idCategory = widget.productCatalogModelArgument.idCategory;
     isEdit = widget.productCatalogModelArgument.idProduct != 0;
     getAvailableCategories(0);
 
     getCategories(
         widget.productCatalogModelArgument.productCategoryMappingModel);
 
-    if (widget.productCatalogModelArgument.idCategory != 0) {
+    if (widget.productCatalogModelArgument.idProduct != 0) {
       textEditingControllerNameProduct.text =
           widget.productCatalogModelArgument.nameProduct;
       textEditingControllerDisplayOrderProduct.text =
@@ -607,48 +604,48 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     ),
                   ],
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 8,
-                      child: Column(
-                        children: [
-                          Tooltip(
-                            message: 'Categoria prodotto',
-                            child: Card(
-                              color: Theme.of(context).cardColor,
-                              elevation: 4,
-                              child: ListTile(
-                                subtitle: Row(
-                                  children: [
-                                    Expanded(
-                                        child: CustomDropDownButtonFormField(
-                                      enabled: true,
-                                      validator: (value) =>
-                                          value!.toString().isEmpty
-                                              ? "Inserire la categoria"
-                                              : null,
-                                      actualValue: idCategory.toString(),
-                                      labelText: '',
-                                      listOfValue: availableCategory,
-                                      onItemChanged: (value) {
-                                        onChangeCategory(value);
-                                      },
-                                    )),
-                                  ],
-                                ),
-                                trailing: const Icon(Icons.edit),
-                                leading: const Icon(Icons.book),
-                                onTap: () {},
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Expanded(
+                //       flex: 8,
+                //       child: Column(
+                //         children: [
+                //           Tooltip(
+                //             message: 'Categoria prodotto',
+                //             child: Card(
+                //               color: Theme.of(context).cardColor,
+                //               elevation: 4,
+                //               child: ListTile(
+                //                 subtitle: Row(
+                //                   children: [
+                //                     Expanded(
+                //                         child: CustomDropDownButtonFormField(
+                //                       enabled: true,
+                //                       validator: (value) =>
+                //                           value!.toString().isEmpty
+                //                               ? "Inserire la categoria"
+                //                               : null,
+                //                       actualValue: idCategory.toString(),
+                //                       labelText: '',
+                //                       listOfValue: availableCategory,
+                //                       onItemChanged: (value) {
+                //                         onChangeCategory(value);
+                //                       },
+                //                     )),
+                //                   ],
+                //                 ),
+                //                 trailing: const Icon(Icons.edit),
+                //                 leading: const Icon(Icons.book),
+                //                 onTap: () {},
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -711,16 +708,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                     // }
                                     return null;
                                   },
-                                  onSelectionChange: (selectedItems) {
-                                    debugPrint(
-                                        "OnSelectionChange: $selectedItems");
-                                    var t = selectedItems.first.idCategory;
-                                    setState(() {
-                                      // selectedProductAttributeModel = selectedItems;
-                                      // buttonCreateVariantEnabled = false;
-                                      // tempProductAttributeCombinationListModel = [];
-                                    });
-                                  },
+                                  onSelectionChange: (selectedItems) {},
                                 ),
                               ),
                             ),
@@ -1512,7 +1500,6 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                 }
                 ProductCatalogModel productCatalogModel = ProductCatalogModel(
                     idProduct: widget.productCatalogModelArgument.idProduct,
-                    idCategory: idCategory,
                     nameProduct: textEditingControllerNameProduct.text,
                     displayOrder: int.tryParse(
                             textEditingControllerDisplayOrderProduct.text) ??
@@ -1571,7 +1558,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                             message: "Informazioni aggiornate",
                             contentType: "success"));
                     Navigator.of(context).pop();
-                    // productCatalogNotifier.refresh();
+                    productCatalogNotifier.refresh();
                     // wishlistProductNotifier.refresh();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -1603,7 +1590,6 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                               ProductCatalogModel(
                                   idProduct: widget
                                       .productCatalogModelArgument.idProduct,
-                                  idCategory: idCategory,
                                   nameProduct: textEditingControllerNameProduct
                                       .text,
                                   displayOrder: int.tryParse(

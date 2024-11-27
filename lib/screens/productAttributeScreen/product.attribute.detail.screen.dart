@@ -496,7 +496,7 @@ class _ProductAttributeDetailState extends State<ProductAttributeDetailScreen> {
                           message: "Informazioni aggiornate",
                           contentType: "success"));
                   Navigator.of(context).pop();
-                  //productAttributeNotifier.refresh();
+                  productAttributeNotifier.refresh();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackUtil.stylishSnackBar(

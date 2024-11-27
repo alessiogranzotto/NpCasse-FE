@@ -598,13 +598,9 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: ExpansionPanelList(
                     expansionCallback: (panelIndex, isExpanded) {
-                      print(panelIndex);
-                      print(isExpanded);
                       setState(() {
                         panelIdsGiveExpanded = isExpanded;
                       });
-                      print(panelIdsGiveExpanded);
-                      print(panelOtherExpanded);
                     },
                     children: [
                       ExpansionPanel(
@@ -1206,7 +1202,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                             message: "Informazioni aggiornate",
                             contentType: "success"));
                     Navigator.of(context).pop();
-                    // categoryCatalogNotifier.refresh();
+                    categoryCatalogNotifier.refresh();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackUtil.stylishSnackBar(
