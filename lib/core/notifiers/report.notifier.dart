@@ -8,7 +8,10 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
-import 'dart:html' as html;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:np_casse/core/utils/file_web.dart' 
+    if (dart.library.io) 'package:np_casse/core/utils/file_mobile.dart';
+
 
 class ReportNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
@@ -211,9 +214,7 @@ class ReportNotifier with ChangeNotifier {
     }
   }
 
-  Future<void> downloadFile(
-      Map<String, dynamic> okResult, BuildContext context) async {
-    print(okResult);
+  Future<void> downloadFile(Map<String, dynamic> okResult, BuildContext context) async {
     var fileContents = okResult['fileContents'];
 
     // Check if fileContents is a base64-encoded string
@@ -221,20 +222,22 @@ class ReportNotifier with ChangeNotifier {
     if (fileContents is String) {
       // Decode base64 string to Uint8List
       fileBytes = base64Decode(fileContents);
+    } else if (fileContents is Uint8List) {
+      // If fileContents is already Uint8List, just use it
+      fileBytes = fileContents;
     } else {
-      // If it's not a string, handle appropriately (throw error or log)
-      throw Exception("File contents is not a valid base64 string");
+      // If it's neither, throw an error or handle accordingly
+      throw Exception("File contents is neither a valid base64 string nor a Uint8List");
     }
 
-    // Create a Blob and download it
-    final blob = html.Blob([fileBytes], okResult['contentType']);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    html.AnchorElement(href: url)
-      ..setAttribute('download', okResult['fileDownloadName'])
-      ..click();
-
-    // Revoke object URL after downloading to free memory
-    html.Url.revokeObjectUrl(url);
+    // Proceed with platform-specific logic
+    if (kIsWeb) {
+      // Web-specific logic
+        downloadFileWeb(fileBytes, okResult['fileDownloadName'], okResult['contentType']);
+    } else {
+      // Mobile-specific logic
+        // await downloadFileMobile(fileBytes, okResult['fileDownloadName'], context);
+      }
   }
 
   void refresh() {

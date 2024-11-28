@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class BluetoothConfigurationScreen extends StatefulWidget {
   const BluetoothConfigurationScreen({super.key});
@@ -15,25 +13,37 @@ class _BluetoothConfigurationScreenState
     extends State<BluetoothConfigurationScreen> {
   static const platform = MethodChannel('com.example.npcasse/stripe');
   TextEditingController textEditingController = TextEditingController();
-  late String resultText = '';
-  late String scan = '';
+  String resultText = '';
   String _batteryLevel = 'Unknown battery level.';
+  String _cardInfo = 'No card scanned';
+  String _connectedDeviceInfo = 'No device connected';
+  bool isTerminalInitialized = false;
+  List<String> _discoveredDevices = []; // To hold the list of discovered devices
 
-  Future<void> callNativeCode(String userName) async {
+  // Method to initialize Stripe terminal
+  Future<void> _initializeStripe() async {
     try {
-      resultText =
-          await platform.invokeMethod('userName', {'username': userName});
-      setState(() {});
-    } catch (_) {}
+      final result = await platform.invokeMethod('initializeStripe');
+      setState(() {
+        isTerminalInitialized = true; // Mark terminal as initialized
+      });
+      print(result);
+    } catch (e) {
+      setState(() {
+        isTerminalInitialized = false; // Handle initialization failure
+      });
+      print("Error initializing terminal: $e");
+    }
   }
 
-  Future<void> _scan() async {
-    try {
-      scan = await platform.invokeMethod('scan');
-      setState(() {});
-    } catch (_) {}
-  }
+  @override
+void initState() {
+  super.initState();
+  _initializeStripe();
+}
 
+
+  // Method to get battery level
   Future<void> _getBatteryLevel() async {
     String batteryLevel;
     try {
@@ -47,6 +57,105 @@ class _BluetoothConfigurationScreenState
       _batteryLevel = batteryLevel;
     });
   }
+
+Future<void> _discoverReaders() async {
+  if (!isTerminalInitialized) {
+    setState(() {
+      _cardInfo = 'Terminal is not initialized yet. Please initialize first.';
+    });
+    return;
+  }
+
+  try {
+    final result = await platform.invokeMethod('discoverReaders');
+
+    if (result != null) {
+      // Expecting a map with the first reader's details
+      Map<String, String> readerInfo = Map<String, String>.from(result);
+
+      setState(() {
+        _discoveredDevices = [
+          'Serial: ${readerInfo["serialNumber"]}, Type: ${readerInfo["deviceType"]}'
+        ];
+      });
+    } else {
+      setState(() {
+        _discoveredDevices = ['No readers found.'];
+      });
+    }
+
+  } catch (e) {
+    setState(() {
+      _cardInfo = 'Error discovering readers: $e';
+    });
+  }
+}
+
+Future<void> getConnectedReaderInfo() async {
+  try {
+    // Fetch connected device info
+    final connectedDevice = await platform.invokeMethod('getConnectedDeviceInfo');
+
+    if (connectedDevice != null && connectedDevice is Map) {
+      // Safely cast map values to String and handle potential null values
+      final serialNumber = connectedDevice["serialNumber"] ?? "Unknown";
+      final locationId = connectedDevice["locationId"] ?? "Unknown";
+
+      setState(() {
+        _connectedDeviceInfo = 
+            'Serial Number: $serialNumber, '
+            'Location ID: $locationId';
+      });
+    } else {
+      setState(() {
+        _connectedDeviceInfo = 'No connected device information available';
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _connectedDeviceInfo = 'Error connecting reader: $e';
+    });
+  }
+}
+
+
+  //  // Method to connect Bluetooth reader
+  // Future<void> _connectToReader() async {
+  //   try {
+  //     final result = await platform.invokeMethod('connectToReader');
+  //     setState(() {
+  //       _connectedDeviceInfo = result ?? "Connection failed.";
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       _connectedDeviceInfo = 'Error connecting to reader: $e';
+  //     });
+  //   }
+  // }
+
+Future<void> _makePayment(int amount, String currency) async {
+  if (!isTerminalInitialized) {
+    setState(() {
+      _cardInfo = 'Terminal or Reader is not connected. Please initialize and connect first.';
+    });
+    return;
+  }
+
+  try {
+    // Send the payment parameters (amount and currency) to Android
+    final paymentResult = await platform.invokeMethod('processPayment', {
+      'amount': amount,
+      'currency': currency,
+    });
+    setState(() {
+      _cardInfo = paymentResult; // Display success message
+    });
+  } catch (e) {
+    setState(() {
+      _cardInfo = 'Error processing payment: $e'; // Display error message
+    });
+  }
+}
 
   @override
   void dispose() {
@@ -62,105 +171,44 @@ class _BluetoothConfigurationScreenState
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              onPressed: () async {
-                // Get connection token from the backend
-                String connectionToken =
-                    await StripeService.createConnectionToken();
-                await StripeTerminal.initializeReader(connectionToken);
-
-                // Create Payment Intent
-                String clientSecret = await StripeService.createPaymentIntent(
-                    1000); // Amount in cents
-                await StripeTerminal.processPayment(clientSecret);
-              },
-              child: Text("Pay with Stripe Terminal"),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
               onPressed: _getBatteryLevel,
               child: const Text('Get Battery Level'),
             ),
             Text(_batteryLevel),
-            const SizedBox(
-              height: 30,
-            ),
+            const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: _scan,
-              child: const Text('Scan'),
+              onPressed: _discoverReaders, // Discover Bluetooth readers
+              child: const Text('Discover Bluetooth Readers'),
             ),
-            Text(_batteryLevel),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: TextField(
-                controller: textEditingController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter UserName',
-                ),
-              ),
+            // Display the list of discovered Bluetooth devices
+            Text('Discovered Devices:'),
+            ..._discoveredDevices.map((device) => Text(device)).toList(),
+            const SizedBox(height: 30),
+             
+             ElevatedButton(
+              onPressed: getConnectedReaderInfo, // Discover Bluetooth readers
+              child: const Text('Connected Bluetooth Readers'),
             ),
-            const SizedBox(
-              height: 30,
-            ),
-            MaterialButton(
-              color: Colors.teal,
-              textColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+            // Display the list of discovered Bluetooth devices
+            Text('Connected Devices:'),
+            Text('Connected Device Info: $_connectedDeviceInfo'), // Display connected device info
+            const SizedBox(height: 30),
+            ElevatedButton(
               onPressed: () {
-                String userName = textEditingController.text;
+                // Set the payment amount (in cents) and currency dynamically
+                int amount = 50; // Example: 100 cents = $1.00
+                String currency = 'EUR'; // Example: USD currency
 
-                if (userName.isEmpty) {
-                  userName = "FreeTrained";
-                }
-
-                callNativeCode(userName);
+                // Trigger payment with dynamic amount and currency
+                _makePayment(amount, currency);
               },
-              child: const Text('Click Me'),
+              child: const Text('Make Payment'),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              resultText,
-              style: const TextStyle(fontSize: 20),
-            ),
+
+            Text(_cardInfo), // Display payment result
           ],
         ),
       ),
     );
-  }
-}
-
-class StripeTerminal {
-  static const platform = MethodChannel('com.example.app/stripe_terminal');
-
-  static Future<void> initializeReader(String token) async {
-    await platform.invokeMethod('initializeReader', token);
-  }
-
-  static Future<void> processPayment(String clientSecret) async {
-    await platform.invokeMethod('processPayment', clientSecret);
-  }
-}
-
-class StripeService {
-  static const String baseUrl = 'https://localhost:7263/api/StripeTerminal';
-
-  static Future<String> createConnectionToken() async {
-    final response =
-        await http.post(Uri.parse('$baseUrl/Create-connection-token'));
-    final data = json.decode(response.body);
-    return data['secret'];
-  }
-
-  static Future<String> createPaymentIntent(int amount) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/Create-payment-intent'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'amount': amount, 'currency': 'usd'}),
-    );
-    final data = json.decode(response.body);
-    return data['clientSecret'];
   }
 }

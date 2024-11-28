@@ -1,418 +1,292 @@
 package com.example.np_casse
 
+import android.Manifest
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.BatteryManager
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
-
-import android.widget.Toast
+import android.util.Log
 import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import com.stripe.stripeterminal.Terminal
+import com.stripe.stripeterminal.external.callable.*
+import com.stripe.stripeterminal.external.models.*
+import com.stripe.stripeterminal.log.LogLevel
+import android.bluetooth.BluetoothAdapter
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import java.io.IOException
 
-class MainActivity: FlutterActivity() {
+class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.example.npcasse/stripe"
+    private var terminalInitialized = false
+    private lateinit var methodChannel: MethodChannel
 
-    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
+override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+    super.configureFlutterEngine(flutterEngine)
+    methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+    methodChannel.setMethodCallHandler { call, result ->
+        when (call.method) {
+            "initializeStripe" -> initializeTerminal(result)
+            "discoverReaders" -> {
+                if (terminalInitialized) discoverReaders(result)
+                else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
+            }
+            "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
+            "processPayment" -> {
+                // Extract amount and currency from Flutter arguments
+                val amount = (call.argument<Int>("amount") ?: 0) // Default to 0 if not provided
+                val currency = call.argument<String>("currency") ?: "EUR" // Default to EUR if not provided
 
-        val method = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+                // Convert amount to Long, as required by the Stripe terminal API
+                val amountInLong: Long = amount.toLong()
 
-
-        method.setMethodCallHandler {
-            // This method is invoked on the main thread.
-                call, result ->
-                when (call.method) 
-                { 
-                "getBatteryLevel" -> {
-                    val batteryLevel = getBatteryLevel()
-
-                    if (batteryLevel != -1) {
-                        result.success(batteryLevel)
-                    } else {
-                        result.error("UNAVAILABLE", "Battery level not available.", null)
-                    }
-                } 
-                "userName" -> {
-                    val userName = call.argument<String>("username")
-                    Toast.makeText(this, userName, Toast.LENGTH_LONG).show()
-                    result.success(userName)
-                } 
-
-                // "initializeStripe" -> {
-                //     val publishableKey = call.arguments as String
-                //     initializeStripe(publishableKey)
-                //     result.success("Stripe Initialized")
-                // }
-                // "createPaymentIntent" -> {
-                //     val amount = call.arguments as Double
-                //     createPaymentIntent(amount, result)
-                // }
-                // "presentPaymentSheet" -> {
-                //     val amount = call.arguments as Double
-                //     presentPaymentSheet()
-                // }
-                else -> result.notImplemented()
-            } 
+                // Pass the amount and currency to the processPayment method
+                processPayment(amountInLong, currency, result)
+            }
+            else -> result.notImplemented()
         }
     }
-
-
-
-    // private fun initializeStripe(publishableKey: String) {
-    //     PaymentConfiguration.init(applicationContext, publishableKey)
-    //     paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
-    // }
-
-    // private fun createPaymentIntent(amount: Double, result: MethodChannel.Result) {
-    //     // Call your backend here to create a PaymentIntent and get clientSecret
-    //     // For example, you might use Retrofit or OkHttp to call your server
-    //     // Here, we're assuming you've obtained a `clientSecret` after creating PaymentIntent on server
-    //     clientSecret = "YOUR_CLIENT_SECRET_FROM_SERVER"
-    //     result.success(clientSecret)
-    // }
-
-    // private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
-    //     when (paymentSheetResult) {
-    //         is PaymentSheetResult.Completed -> {
-    //             // Payment successful
-    //         }
-    //         is PaymentSheetResult.Canceled -> {
-    //             // Payment was canceled by the user
-    //         }
-    //         is PaymentSheetResult.Failed -> {
-    //             // Handle the failure case
-    //         }
-    //     }
-    // }
-
-    // private fun presentPaymentSheet() {
-    //     clientSecret?.let {
-    //         paymentSheet.presentWithPaymentIntent(
-    //             it,
-    //             PaymentSheet.Configuration("Your Merchant Name")
-    //         )
-    //     }
-    // }
-    
-
-    // override fun onRequestPermissionsResult(
-    // requestCode: Int,
-    // permissions: Array<String>,
-    // grantResults: IntArray
-    // ) {
-    // super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-    // if (requestCode == REQUEST_CODE_LOCATION && grantResults.isNotEmpty()
-    //     && grantResults[0] != PackageManager.PERMISSION_GRANTED
-    // ) 
-    //     {
-    //         throw RuntimeException("Location services are required in order to " + "connect to a reader.")
-    //     }
-    //     else
-    //     {
-    //         Toast.makeText(this, "onRequestPermissionsResult", Toast.LENGTH_LONG).show()
-    //     }
-    // }
-
-
-
-
-    private fun getBatteryLevel(): Int {
-        val batteryLevel: Int
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-            batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-        } else {
-            val intent = ContextWrapper(applicationContext).registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-            batteryLevel = intent!!.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-        }
-
-        return batteryLevel
-    }
-
-    // private fun scan(): Int {
-    //     val result: Int
-    //     result=0
-    //      if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) 
-    //      {
-    //             val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-    //             // Define the REQUEST_CODE_LOCATION on your app level
-    //             ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_LOCATION)
-    //             result=1
-    //     }
-    //     return result
-    // }
 }
 
 
-// package com.stripe.example
 
-// import android.Manifest
-// import android.bluetooth.BluetoothAdapter
-// import android.content.Context
-// import android.content.Intent
-// import android.content.pm.PackageManager
-// import android.location.LocationManager
-// import android.os.Build
-// import android.os.Bundle
-// import android.provider.Settings
-// import android.view.ContextThemeWrapper
-// import android.view.View
-// import androidx.activity.result.contract.ActivityResultContracts
-// import androidx.annotation.RequiresApi
-// import androidx.appcompat.app.AlertDialog
-// import androidx.appcompat.app.AppCompatActivity
-// import androidx.core.app.ActivityCompat
-// import androidx.core.content.ContextCompat
-// import androidx.recyclerview.widget.LinearLayoutManager
-// import androidx.recyclerview.widget.RecyclerView
-// import com.stripe.stripeterminal.Terminal
-// import com.stripe.stripeterminal.external.callable.*
-// import com.stripe.stripeterminal.external.models.DiscoveryConfiguration
-// import com.stripe.stripeterminal.log.LogLevel
-// import com.stripe.stripeterminal.external.models.*
-// import retrofit2.Call
-// import retrofit2.Response
-// import java.lang.ref.WeakReference
+    private fun initializeTerminal(result: MethodChannel.Result) {
+        if (!Terminal.isInitialized()) {
+            try {
+                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, TokenProvider(), TerminalEventListener())
+                terminalInitialized = true
+                result.success("Stripe Initialized")
+            } catch (e: TerminalException) {
+                terminalInitialized = false
+                result.error("INITIALIZATION_ERROR", "Error initializing Terminal: ${e.message}", null)
+            }
+        } else {
+            terminalInitialized = true
+            result.success("Stripe Already Initialized")
+        }
+    }
 
-// class MainActivity : AppCompatActivity() {
+    private fun discoverReaders(result: MethodChannel.Result) {
+        if (checkPermissions()) {
+            if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
+                BluetoothAdapter.getDefaultAdapter().enable()
+            }
 
-//     // Register the permissions callback to handles the response to the system permissions dialog.
-//     private val requestPermissionLauncher = registerForActivityResult(
-//         ActivityResultContracts.RequestMultiplePermissions(),
-//         ::onPermissionResult
-//     )
+            val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
+            val discoveredReaders = mutableListOf<Reader>()
 
-//     companion object {
-//         // The code that denotes the request for location permissions
-//         private const val REQUEST_CODE_LOCATION = 1
+            val discoveryListener = object : DiscoveryListener {
+    override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
+        if (readers.isNotEmpty()) {
+             val readerToConnect = readers.firstOrNull()
+        if (readerToConnect != null) {
+            connectToReader(readerToConnect, result)
+        }
+            val firstReader = readers.first()
 
-//         private val paymentIntentParams =
-//             PaymentIntentParameters.Builder(listOf(PaymentMethodType.CARD_PRESENT))
-//             .setAmount(500)
-//             .setCurrency("eur")
-//             .build()
+            // Sending the first reader's details
+            val readerInfo = mapOf(
+                "serialNumber" to (firstReader.serialNumber ?: "Unknown"),
+                "deviceType" to (firstReader.deviceType.name ?: "Unknown")
+            )
+            
+            // Send the first reader to Flutter
+            result.success(readerInfo)
+            
+        } else {
+            result.success(null) // Send null if no readers are found
+        }
+    }
+}
 
-//         private val discoveryConfig =
-//             DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = true)
-//         /*** Payment processing callbacks ***/
 
-//         // (Step 1 found below in the startPayment function)
-//         // Step 2 - once we've created the payment intent, it's time to read the card
-//         private val createPaymentIntentCallback by lazy {
-//             object : PaymentIntentCallback {
-//                 override fun onSuccess(paymentIntent: PaymentIntent) {
-//                     Terminal.getInstance()
-//                         .collectPaymentMethod(paymentIntent, collectPaymentMethodCallback)
-//                 }
+            Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, object : Callback {
+                override fun onSuccess() {
+                    Log.d("StripeTerminal", "Reader discovery completed")
+                }
 
-//                 override fun onFailure(e: TerminalException) {
-//                     // Update UI w/ failure
-//                 }
-//             }
-//         }
+                override fun onFailure(e: TerminalException) {
+                    result.error("DISCOVERY_ERROR", "Failed to discover readers: ${e.message}", null)
+                }
+            })
+        } else {
+            requestPermissions()
+        }
+    }
 
-//         // Step 3 - we've collected the payment method, so it's time to confirm the payment
-//         private val collectPaymentMethodCallback by lazy {
-//             object : PaymentIntentCallback {
-//                 override fun onSuccess(paymentIntent: PaymentIntent) {
-//                     Terminal.getInstance().confirmPaymentIntent(paymentIntent, confirmPaymentIntentCallback)
-//                 }
+    private fun connectToReader(reader: Reader, result: MethodChannel.Result) {
+    val apiUrl = "https://apicasse.giveapp.it/api/StripeTerminal/Get-location-id"
 
-//                 override fun onFailure(e: TerminalException) {
-//                     // Update UI w/ failure
-//                 }
-//             }
-//         }
+    fetchLocationId(apiUrl) { locationId, error ->
+        if (error != null) {
+            Log.e("StripeTerminal", "Error fetching location ID: $error")
+            result.error("LOCATION_ID_FETCH_ERROR", "Failed to fetch location ID: $error", null)
+            return@fetchLocationId
+        }
 
-//         // Step 4 - we've confirmed the payment! Show a success screen
-//         private val confirmPaymentIntentCallback by lazy {
-//             object : PaymentIntentCallback {
-//                 override fun onSuccess(paymentIntent: PaymentIntent) {
-//                     ApiClient.capturePaymentIntent(paymentIntent.id)
-//                 }
+        if (locationId.isNullOrBlank()) {
+            Log.e("StripeTerminal", "Received blank location ID")
+            result.error("INVALID_LOCATION_ID", "Location ID is blank or null", null)
+            return@fetchLocationId
+        }
 
-//                 override fun onFailure(e: TerminalException) {
-//                     // Update UI w/ failure
-//                 }
-//             }
-//         }
-//     }
+        val bluetoothReaderListener = TerminalBluetoothReaderListener()
 
-//     private val readerClickListener = ReaderClickListener(WeakReference(this))
-//     private val readerAdapter = ReaderAdapter(readerClickListener)
+        val connectionConfig = ConnectionConfiguration.BluetoothConnectionConfiguration(
+            locationId = locationId,
+            autoReconnectOnUnexpectedDisconnect = true,
+            bluetoothReaderListener = bluetoothReaderListener
+        )
 
-//     /**
-//      * Upon starting, we should verify we have the permissions we need, then start the app
-//      */
-//     override fun onCreate(savedInstanceState: Bundle?) {
-//         super.onCreate(savedInstanceState)
+        Terminal.getInstance().connectReader(reader, connectionConfig, object : ReaderCallback {
+            override fun onSuccess(connectedReader: Reader) {
+                Log.d("StripeTerminal", "Reader connected: ${connectedReader.serialNumber}")
+                notifyFlutterReaderConnection(true)
+                // Send the success message to Flutter
+                val successMessage = mapOf("message" to "Reader connected successfully: ${connectedReader.serialNumber}")
+                result.success(successMessage)
+            }
 
-//         setContentView(R.layout.activity_main)
+            override fun onFailure(e: TerminalException) {
+                Log.e("StripeTerminal", "Error connecting to reader: ${e.message}")
+                notifyFlutterReaderConnection(false)
+                // Send the error message to Flutter
+                val errorMessage = mapOf("message" to "Error connecting to reader: ${e.message}")
+                result.error("CONNECT_ERROR", errorMessage["message"], null)
+            }
+        })
+    }
+}
 
-//         if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
-//             BluetoothAdapter.getDefaultAdapter().enable()
-//         }
+private fun getConnectedDeviceInfo(result: MethodChannel.Result) {
+    val reader = Terminal.getInstance().connectedReader
+    if (reader != null) {
+        val locationId = reader.location?.id ?: "Unknown"
+        
+        // Explicitly cast the map to Map<String, Any?> to avoid type mismatch issues
+        val deviceInfo: Map<String, Any?> = mapOf(
+            "label" to (reader.label ?: "Unknown"),  // Ensure label is not null
+            "serialNumber" to (reader.serialNumber ?: "Unknown"), // Ensure serialNumber is not null
+            "locationId" to locationId
+        )
+        result.success(deviceInfo)  // Send the device information to Flutter
+    } else {
+        // Handle the case where no reader is connected
+        result.error("NO_READER_CONNECTED", "No reader connected", null)  // Sending an error response to Flutter
+    }
+}
 
-//         findViewById<RecyclerView>(R.id.reader_recycler_view).apply {
-//             adapter = readerAdapter
-//         }
+    private fun fetchLocationId(apiUrl: String, callback: (locationId: String?, error: String?) -> Unit) {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(apiUrl)
+            .post(RequestBody.create(null, ""))
+            .build()
 
-//         findViewById<View>(R.id.discover_button).setOnClickListener {
-//             discoverReaders()
-//         }
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                callback(null, e.message)
+            }
 
-//         findViewById<View>(R.id.collect_payment_button).setOnClickListener {
-//             startPayment()
-//         }
-//     }
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (!response.isSuccessful) {
+                    callback(null, "Failed with HTTP status ${response.code}")
+                    return
+                }
 
-//     override fun onResume() {
-//         super.onResume()
-//         requestPermissionsIfNecessary()
-//     }
+                val responseBody = response.body?.string()
+                if (responseBody != null) {
+                    try {
+                        val jsonObject = org.json.JSONObject(responseBody)
+                        val locationId = jsonObject.optString("locationID", null)
+                        callback(locationId, null)
+                    } catch (e: org.json.JSONException) {
+                        callback(null, "Error parsing response: ${e.message}")
+                    }
+                } else {
+                    callback(null, "Empty response body")
+                }
+            }
+        })
+    }
 
-//     private fun isGranted(permission: String): Boolean {
-//         return ContextCompat.checkSelfPermission(
-//             this,
-//             permission
-//         ) == PackageManager.PERMISSION_GRANTED
-//     }
 
-//     private fun requestPermissionsIfNecessary() {
-//         if (Build.VERSION.SDK_INT >= 31) {
-//             requestPermissionsIfNecessarySdk31()
-//         } else {
-//             requestPermissionsIfNecessarySdkBelow31()
-//         }
-//     }
+    private fun notifyFlutterReaderConnection(isConnected: Boolean) {
+        methodChannel.invokeMethod("updateReaderConnection", isConnected)
+    }
 
-//     private fun requestPermissionsIfNecessarySdkBelow31() {
-//         // Check for location permissions
-//         if (!isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-//             // If we don't have them yet, request them before doing anything else
-//             requestPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
-//         } else if (!Terminal.isInitialized() && verifyGpsEnabled()) {
-//             initialize()
-//         }
-//     }
 
-//     @RequiresApi(Build.VERSION_CODES.S)
-//     private fun requestPermissionsIfNecessarySdk31() {
-//         // Check for location and bluetooth permissions
-//         val deniedPermissions = mutableListOf<String>().apply {
-//             if (!isGranted(Manifest.permission.ACCESS_FINE_LOCATION)) add(Manifest.permission.ACCESS_FINE_LOCATION)
-//             if (!isGranted(Manifest.permission.BLUETOOTH_CONNECT)) add(Manifest.permission.BLUETOOTH_CONNECT)
-//             if (!isGranted(Manifest.permission.BLUETOOTH_SCAN)) add(Manifest.permission.BLUETOOTH_SCAN)
-//         }.toTypedArray()
+   private fun processPayment(amount: Long, currency: String, result: MethodChannel.Result) {
+    val reader = Terminal.getInstance().connectedReader
 
-//         if (deniedPermissions.isNotEmpty()) {
-//             // If we don't have them yet, request them before doing anything else
-//             requestPermissionLauncher.launch(deniedPermissions)
-//         } else if (!Terminal.isInitialized() && verifyGpsEnabled()) {
-//             initialize()
-//         }
-//     }
+    if (reader != null) {
+        val paymentIntentParams = PaymentIntentParameters.Builder(listOf(PaymentMethodType.CARD_PRESENT))
+            .setAmount(amount) // Amount in cents as Long
+            .setCurrency(currency) // Currency passed from Flutter
+            .build()
 
-//     /**
-//      * Receive the result of our permissions check, and initialize if we can
-//      */
-//     private fun onPermissionResult(result: Map<String, Boolean>) {
-//         val deniedPermissions: List<String> = result
-//             .filter { !it.value }
-//             .map { it.key }
+        Terminal.getInstance().createPaymentIntent(paymentIntentParams, object : PaymentIntentCallback {
+            override fun onSuccess(paymentIntent: PaymentIntent) {
+                Terminal.getInstance().collectPaymentMethod(paymentIntent, object : PaymentIntentCallback {
+                    override fun onSuccess(paymentIntent: PaymentIntent) {
+                        Terminal.getInstance().confirmPaymentIntent(paymentIntent, object : PaymentIntentCallback {
+                            override fun onSuccess(paymentIntent: PaymentIntent) {
+                                result.success("Payment Successful")
+                            }
 
-//         // If we receive a response to our permission check, initialize
-//         if (deniedPermissions.isEmpty() && !Terminal.isInitialized() && verifyGpsEnabled()) {
-//             initialize()
-//         }
-//     }
+                            override fun onFailure(e: TerminalException) {
+                                Log.e("StripeTerminal", "Payment confirmation error: ${e.message}")
+                                result.error("PAYMENT_CONFIRM_ERROR", "Error confirming payment: ${e.message}", null)
+                            }
+                        })
+                    }
 
-//     fun updateReaderConnection(isConnected: Boolean) {
-//         val recyclerView = findViewById<RecyclerView>(R.id.reader_recycler_view)
-//         findViewById<View>(R.id.collect_payment_button).visibility =
-//             if (isConnected) View.VISIBLE else View.INVISIBLE
-//         findViewById<View>(R.id.discover_button).visibility =
-//             if (isConnected) View.INVISIBLE else View.VISIBLE
-//         recyclerView.visibility = if (isConnected) View.INVISIBLE else View.VISIBLE
+                    override fun onFailure(e: TerminalException) {
+                        Log.e("StripeTerminal", "Payment method collection error: ${e.message}")
+                        result.error("PAYMENT_METHOD_ERROR", "Error collecting payment method: ${e.message}", null)
+                    }
+                })
+            }
 
-//         if (!isConnected) {
-//             recyclerView.layoutManager = LinearLayoutManager(this)
-//             recyclerView.adapter = readerAdapter
-//         }
-//     }
+            override fun onFailure(e: TerminalException) {
+                Log.e("StripeTerminal", "Payment intent creation error: ${e.message}")
+                result.error("PAYMENT_INTENT_ERROR", "Error creating payment intent: ${e.message}", null)
+            }
+        })
+    } else {
+        result.error("NO_READER", "No reader connected", null)
+    }
+}
 
-//     private fun initialize() {
-//         // Initialize the Terminal as soon as possible
-//         try {
-//             Terminal.initTerminal(
-//                 applicationContext, LogLevel.VERBOSE, TokenProvider(), TerminalEventListener()
-//             )
-//         } catch (e: TerminalException) {
-//             throw RuntimeException(
-//                 "Location services are required in order to initialize " +
-//                         "the Terminal.",
-//                 e
-//             )
-//         }
 
-//         val isConnectedToReader = Terminal.getInstance().connectedReader != null
-//         updateReaderConnection(isConnectedToReader)
-//     }
 
-//     private fun discoverReaders() {
-//         val discoveryCallback = object : Callback {
-//             override fun onSuccess() {
-//                 // Update your UI
-//             }
+    private fun getBatteryLevel(result: MethodChannel.Result) {
+        val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        val batteryLevel = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        result.success(batteryLevel)
+    }
 
-//             override fun onFailure(e: TerminalException) {
-//                 // Update your UI
-//             }
-//         }
 
-//         val discoveryListener = object : DiscoveryListener {
-//             override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
-//                 runOnUiThread {
-//                     readerAdapter.updateReaders(readers)
-//                 }
-//             }
-//         }
+    private fun checkPermissions(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+               ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
+               ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+    }
 
-//         Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, discoveryCallback)
-//     }
-
-//     private fun startPayment() {
-//         // Step 1: create payment intent
-//         Terminal.getInstance().createPaymentIntent(paymentIntentParams, createPaymentIntentCallback)
-//     }
-
-//     private fun verifyGpsEnabled(): Boolean {
-//         val locationManager: LocationManager? =
-//             applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-//         var gpsEnabled = false
-
-//         try {
-//             gpsEnabled = locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) ?: false
-//         } catch (exception: Exception) {}
-
-//         if (!gpsEnabled) {
-//             // notify user
-//             AlertDialog.Builder(ContextThemeWrapper(this, R.style.Theme_MaterialComponents_DayNight_DarkActionBar))
-//                 .setMessage("Please enable location services")
-//                 .setCancelable(false)
-//                 .setPositiveButton("Open location settings") { param, paramInt ->
-//                     this.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-//                 }
-//                 .create()
-//                 .show()
-//         }
-
-//         return gpsEnabled
-//     }
-// }
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ),
+            1
+        )
+    }
+}
