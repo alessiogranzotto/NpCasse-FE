@@ -296,14 +296,14 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       tooltip: "Nuova anagrafica donatore",
                       // heroTag: 'New',
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed(AppRouter.shManageNewEdit);
-                        // PersistentNavBarNavigator.pushNewScreen(
-                        //   context,
-                        //   screen: const ShNewEditScreen(),
-                        //   withNavBar: true,
-                        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                        // );
+                        ShManageMultipleArgument cShManageMultipleArgument =
+                            new ShManageMultipleArgument(
+                                idCart: widget.idCart,
+                                cStakeholderGiveModelSearch: null);
+
+                        Navigator.of(context).pushNamed(
+                            AppRouter.shManageNewEdit,
+                            arguments: cShManageMultipleArgument);
                       },
                       child: const Icon(Icons.add),
                     )),
