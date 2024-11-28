@@ -11,8 +11,11 @@ import 'package:np_casse/screens/cartScreen/widgets/show.GiveSh.data.dart';
 import 'package:provider/provider.dart';
 
 class ShManageScreen extends StatefulWidget {
-  const ShManageScreen({super.key});
-
+  const ShManageScreen({
+    Key? key,
+    required this.idCart,
+  }) : super(key: key);
+  final int idCart;
   @override
   State<ShManageScreen> createState() => _ShManageScreenState();
 }
@@ -62,7 +65,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
     //HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
@@ -226,7 +229,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                             .cartToStakeholder(
                                 context: context,
                                 token: authenticationNotifier.token,
-                                idCart: cartNotifier.getCurrentCart().idCart,
+                                idCart: widget.idCart,
                                 idUserAppInstitution: cUserAppInstitutionModel
                                     .idUserAppInstitution,
                                 idStakeholder: cStakeholderGiveModelSearch!.id,
@@ -236,8 +239,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                           if (value) {
                             Navigator.of(context).pushNamed(
                                 AppRouter.shPdfInvoice,
-                                arguments:
-                                    cartNotifier.getCurrentCart().idCart);
+                                arguments: widget.idCart);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackUtil.stylishSnackBar(
@@ -266,18 +268,15 @@ class _ShManageScreenState extends State<ShManageScreen> {
                           "Modifica anagrafica donatore ${cStakeholderGiveModelSearch?.nome}",
                       // heroTag: 'Edit',
                       onPressed: () {
+                        ShManageMultipleArgument cShManageMultipleArgument =
+                            new ShManageMultipleArgument(
+                                idCart: widget.idCart,
+                                cStakeholderGiveModelSearch:
+                                    cStakeholderGiveModelSearch);
+
                         Navigator.of(context).pushNamed(
                             AppRouter.shManageNewEdit,
-                            arguments: cStakeholderGiveModelSearch);
-                        //           cStakeholderGiveModelSearch );
-                        // PersistentNavBarNavigator.pushNewScreen(
-                        //   context,
-                        //   screen: ShNewEditScreen(
-                        //       editStakeholderGiveModelSearch:
-                        //           cStakeholderGiveModelSearch),
-                        //   withNavBar: true,
-                        //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                        // );
+                            arguments: cShManageMultipleArgument);
                       },
                       backgroundColor: Colors.deepPurpleAccent,
                       child: const Icon(Icons.edit),

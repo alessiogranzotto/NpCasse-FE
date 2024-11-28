@@ -11,7 +11,7 @@ class CartAPI {
       required int idUserAppInstitution,
       required int cartStateEnum}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.cartURL}/find-cart?idUserAppInstitution=$idUserAppInstitution&CartStateEnum=$cartStateEnum');
+        '${ApiRoutes.cartURL}/find-cart?IdUserAppInstitution=$idUserAppInstitution&CartStateEnum=$cartStateEnum');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -34,20 +34,13 @@ class CartAPI {
       {required String? token,
       required int idUserAppInstitution,
       required int idProduct,
+      required int idCategory,
       required int quantity,
       double? price,
       required List<CartProductVariants?> cartProductVariants,
       String? notes}) async {
     final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Add-to-cart');
-    var p = jsonEncode({
-      "idUserAppInstitution": idUserAppInstitution,
-      "idProduct": idProduct,
-      "quantityCartProduct": quantity,
-      "priceCartProduct": price,
-      "notesCartProduct": notes,
-      "cartProductVariants": cartProductVariants
-    });
-    print(p);
+
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +51,7 @@ class CartAPI {
         body: jsonEncode({
           "idUserAppInstitution": idUserAppInstitution,
           "idProduct": idProduct,
+          "idCategory": idCategory,
           "quantityCartProduct": quantity,
           "priceCartProduct": price,
           "notesCartProduct": notes,

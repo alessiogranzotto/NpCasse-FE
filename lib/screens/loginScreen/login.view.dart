@@ -146,11 +146,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   ?.validate(),
                                               validator: (value) {
                                                 return value!.isEmpty
-                                                    ? "AppStrings.pleaseEnterEmailAddress"
+                                                    ? AppStrings
+                                                        .pleaseEnterEmailAddress
                                                     : AppConstants.emailRegex
                                                             .hasMatch(value)
                                                         ? null
-                                                        : "AppStrings.invalidEmailAddress";
+                                                        : AppStrings
+                                                            .invalidEmailAddress;
                                               },
                                             ),
                                             ValueListenableBuilder(

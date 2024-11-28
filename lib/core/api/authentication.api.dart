@@ -159,17 +159,22 @@ class AuthenticationAPI {
     }
   }
 
-  Future updateGeneralSetting(
-      {required String? token,
-      required int idUser,
-      required String otpMode,
-      required int tokenExpiration}) async {
+  Future updateGeneralSetting({
+    required String? token,
+    required int idUser,
+    required String otpMode,
+    required int tokenExpiration,
+    required int maxInactivity,
+  }) async {
     List<UserAttributeModel> cUserAttributeModel = [];
     cUserAttributeModel.add(new UserAttributeModel(
         attributeName: 'User.OtpMode', attributeValue: otpMode));
     cUserAttributeModel.add(new UserAttributeModel(
         attributeName: 'User.TokenExpiration',
         attributeValue: tokenExpiration.toString()));
+    cUserAttributeModel.add(new UserAttributeModel(
+        attributeName: 'User.MaxInactivity',
+        attributeValue: maxInactivity.toString()));
 
     final Uri uri = Uri.parse('${ApiRoutes.updateGeneralSettingsURL}/$idUser');
     final http.Response response = await client.put(uri,

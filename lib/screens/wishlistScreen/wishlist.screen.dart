@@ -19,8 +19,8 @@ class WishlistScreen extends StatelessWidget {
         authenticationNotifier.getSelectedUserAppInstitution();
 
     double widgetWitdh = 325;
-    double widgetHeight = 550;
-    double widgetHeightHalf = 400;
+    double widgetHeight = 580;
+    double widgetHeightHalf = 430;
     double gridMainAxisSpacing = 10;
 
     return Scaffold(
@@ -114,8 +114,10 @@ class WishlistScreen extends StatelessWidget {
                             itemBuilder: (context, index) {
                               ProductCatalogModel product = tSnapshot[index];
                               return ProductCard(
-                                  productCatalog: product,
-                                  areAllWithNoImage: areAllWithNoImage);
+                                productCatalog: product,
+                                areAllWithNoImage: areAllWithNoImage,
+                                comeFrom: "Wishlist",
+                              );
                             });
                       }
                     },

@@ -47,7 +47,7 @@ class _CartScreenState extends State<CartScreen> {
   bool _isButtonDisabled = false;
   bool cartHasData = true;
   bool visible = true;
-
+  int idCart = 0;
   bool disabledFinalizeButton = true;
   int indexPayment = 0;
   late double toBeReturnedCalculation;
@@ -108,7 +108,7 @@ class _CartScreenState extends State<CartScreen> {
 
     //CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -156,530 +156,529 @@ class _CartScreenState extends State<CartScreen> {
                     } else {
                       var tSnapshot =
                           snapshot.data.cartProducts as List<CartProductModel>;
+                      idCart = tSnapshot.first.idCart;
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             flex: 2,
                             child: SingleChildScrollView(
-                              child: Column(children: [
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: tSnapshot.length,
-                                  itemBuilder: (context, index) {
-                                    CartProductModel cartProductModel =
-                                        tSnapshot[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Card(
-                                        elevation: 8,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(4))),
-                                        child: Container(
-                                          decoration: BoxDecoration(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: tSnapshot.length,
+                                itemBuilder: (context, index) {
+                                  CartProductModel cartProductModel =
+                                      tSnapshot[index];
+                                  return Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Card(
+                                          elevation: 8,
+                                          shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.all(
-                                                  Radius.circular(4)),
-                                              border: Border.all(
-                                                  color: Colors.grey.shade200)),
-                                          padding: EdgeInsets.only(
-                                              left: 12,
-                                              top: 8,
-                                              right: 12,
-                                              bottom: 8),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              SizedBox(
-                                                height: 4,
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 0, vertical: 3),
-                                                child: Row(
+                                                  Radius.circular(4))),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4)),
+                                                border: Border.all(
+                                                    color:
+                                                        Colors.grey.shade200)),
+                                            padding: EdgeInsets.only(
+                                                left: 12,
+                                                top: 8,
+                                                right: 12,
+                                                bottom: 8),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                SizedBox(
+                                                  height: 4,
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 3),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        cartProductModel
+                                                            .nameProduct,
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: CustomTextStyle
+                                                            .textFormFieldMedium
+                                                            .copyWith(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          IconButton(
+                                                              onPressed: () {
+                                                                if (_isButtonDisabled ||
+                                                                    cartProductModel
+                                                                            .quantityCartProduct
+                                                                            .value <
+                                                                        1) {
+                                                                  return;
+                                                                } else {
+                                                                  _isButtonDisabled =
+                                                                      true;
+                                                                  int tDecrease =
+                                                                      cartProductModel
+                                                                              .quantityCartProduct
+                                                                              .value -
+                                                                          1;
+                                                                  cartNotifier
+                                                                      .updateItemQuantity(
+                                                                          context:
+                                                                              context,
+                                                                          token: authenticationNotifier
+                                                                              .token,
+                                                                          idUserAppInstitution: cUserAppInstitutionModel
+                                                                              .idUserAppInstitution,
+                                                                          idCart: cartProductModel
+                                                                              .idCart,
+                                                                          idCartProduct: cartProductModel
+                                                                              .idCartProduct,
+                                                                          quantityCartProduct:
+                                                                              tDecrease)
+                                                                      .then(
+                                                                          (value) {
+                                                                    _isButtonDisabled =
+                                                                        false;
+                                                                    if (value) {
+                                                                      cartProductModel
+                                                                          .quantityCartProduct
+                                                                          .value -= 1;
+                                                                      // refreshCartController
+                                                                      //     .refreshMoneyCartFromParent!();
+                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                                                                          title:
+                                                                              "Carrello",
+                                                                          message:
+                                                                              'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.nameProduct} presenti',
+                                                                          contentType:
+                                                                              "success"));
+
+                                                                      // totalPrice.value =
+                                                                      //     cartNotifier.totalPrice;
+                                                                    } else {
+                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                                                                          title:
+                                                                              "Carrello",
+                                                                          message:
+                                                                              "Errore di connessione",
+                                                                          contentType:
+                                                                              "error"));
+                                                                      // Navigator.of(context).pop();
+                                                                    }
+                                                                  });
+                                                                }
+                                                              },
+                                                              icon: const Icon(
+                                                                  size: 20,
+                                                                  Icons
+                                                                      .remove_circle_sharp)),
+                                                          IconButton(
+                                                              onPressed: () {
+                                                                if (_isButtonDisabled) {
+                                                                  return;
+                                                                } else {
+                                                                  _isButtonDisabled =
+                                                                      true;
+                                                                  int tIncrease =
+                                                                      cartProductModel
+                                                                              .quantityCartProduct
+                                                                              .value +
+                                                                          1;
+                                                                  cartNotifier
+                                                                      .updateItemQuantity(
+                                                                          context:
+                                                                              context,
+                                                                          token: authenticationNotifier
+                                                                              .token,
+                                                                          idUserAppInstitution: cUserAppInstitutionModel
+                                                                              .idUserAppInstitution,
+                                                                          idCart: cartProductModel
+                                                                              .idCart,
+                                                                          idCartProduct: cartProductModel
+                                                                              .idCartProduct,
+                                                                          quantityCartProduct:
+                                                                              tIncrease)
+                                                                      .then(
+                                                                          (value) {
+                                                                    _isButtonDisabled =
+                                                                        false;
+                                                                    if (value) {
+                                                                      cartProductModel
+                                                                          .quantityCartProduct
+                                                                          .value += 1;
+                                                                      // refreshCartController
+                                                                      //     .refreshMoneyCartFromParent!();
+                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                                                                          title:
+                                                                              "Carrello",
+                                                                          message:
+                                                                              'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.nameProduct} presenti',
+                                                                          contentType:
+                                                                              "success"));
+
+                                                                      // totalPrice.value =
+                                                                      //     cartNotifier.totalPrice;
+                                                                      // Navigator.of(context).pop();
+                                                                      // productNotifier.refresh();
+                                                                    } else {
+                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                                                                          title:
+                                                                              "Carrello",
+                                                                          message:
+                                                                              "Errore di connessione",
+                                                                          contentType:
+                                                                              "error"));
+                                                                      // Navigator.of(context).pop();
+                                                                    }
+                                                                  });
+                                                                }
+                                                              },
+                                                              icon: const Icon(
+                                                                  size: 20,
+                                                                  Icons
+                                                                      .add_circle_sharp)),
+                                                          IconButton(
+                                                              onPressed: () {
+                                                                if (_isButtonDisabled) {
+                                                                  return;
+                                                                } else {
+                                                                  _isButtonDisabled =
+                                                                      true;
+                                                                  int zero = 0;
+                                                                  cartNotifier
+                                                                      .updateItemQuantity(
+                                                                          context:
+                                                                              context,
+                                                                          token: authenticationNotifier
+                                                                              .token,
+                                                                          idUserAppInstitution: cUserAppInstitutionModel
+                                                                              .idUserAppInstitution,
+                                                                          idCart: cartProductModel
+                                                                              .idCart,
+                                                                          idCartProduct: cartProductModel
+                                                                              .idCartProduct,
+                                                                          quantityCartProduct:
+                                                                              zero)
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value) {
+                                                                      cartProductModel
+                                                                          .quantityCartProduct
+                                                                          .value = 0;
+                                                                      tSnapshot
+                                                                          .remove(
+                                                                              cartProductModel);
+
+                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                                                                          title:
+                                                                              "Carrello",
+                                                                          message:
+                                                                              'Informazioni aggiornate. Prodotto ${cartProductModel.nameProduct} rimosso',
+                                                                          contentType:
+                                                                              "success"));
+
+                                                                      _isButtonDisabled =
+                                                                          false;
+                                                                      // totalPrice.value =
+                                                                      //     cartNotifier.totalPrice;
+                                                                      // Navigator.of(context).pop();
+                                                                      // productNotifier.refresh();
+                                                                    } else {
+                                                                      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                                                                          title:
+                                                                              "Carrello",
+                                                                          message:
+                                                                              "Errore di connessione",
+                                                                          contentType:
+                                                                              "failure"));
+                                                                      // Navigator.of(context).pop();
+                                                                    }
+                                                                  });
+                                                                }
+                                                              },
+                                                              icon: const Icon(
+                                                                  size: 20,
+                                                                  Icons
+                                                                      .delete_sharp)),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: double.infinity,
+                                                  height: 0.5,
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 4),
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                              image: DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  image: (ImageUtils.getImageFromStringBase64(
+                                                                          stringImage: cartProductModel
+                                                                              .imageData)
+                                                                      .image)),
+                                                              borderRadius:
+                                                                  BorderRadius.all(
+                                                                      Radius.circular(
+                                                                          4)),
+                                                              border: Border.all(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade200)),
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 12,
+                                                                  top: 8,
+                                                                  right: 12,
+                                                                  bottom: 8),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      0),
+                                                          height: 120,
+                                                          width: 120,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 28,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal: 0,
+                                                                  vertical: 3),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                'Quantità prodotto: ',
+                                                                style: CustomTextStyle
+                                                                    .textFormFieldMedium
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade700,
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                              ValueListenableBuilder<
+                                                                  int>(
+                                                                builder: (BuildContext
+                                                                        context,
+                                                                    int value,
+                                                                    Widget?
+                                                                        child) {
+                                                                  return Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceAround,
+                                                                    children: <Widget>[
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            2.0),
+                                                                        child: Text(
+                                                                            '$value',
+                                                                            style:
+                                                                                CustomTextStyle.textFormFieldMedium.copyWith(color: Colors.grey.shade700, fontSize: 12)),
+                                                                      )
+                                                                    ],
+                                                                  );
+                                                                },
+                                                                valueListenable:
+                                                                    cartProductModel
+                                                                        .quantityCartProduct,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal: 0,
+                                                                  vertical: 3),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                'Prezzo prodotto: ',
+                                                                style: CustomTextStyle
+                                                                    .textFormFieldMedium
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade700,
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                              Text(
+                                                                MoneyUtils
+                                                                    .getFormattedCurrency(
+                                                                  cartProductModel
+                                                                      .priceCartProduct,
+                                                                ),
+                                                                style: CustomTextStyle
+                                                                    .textFormFieldMedium
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade700,
+                                                                        fontSize:
+                                                                            12),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        Container(
+                                                          padding: EdgeInsets
+                                                              .symmetric(
+                                                                  horizontal: 0,
+                                                                  vertical: 3),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                'Variante prodotto: ',
+                                                                style: CustomTextStyle
+                                                                    .textFormFieldMedium
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade700,
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                              Text(
+                                                                cartProductModel
+                                                                    .productAttributeExplicit,
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style: CustomTextStyle
+                                                                    .textFormFieldMedium
+                                                                    .copyWith(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade700,
+                                                                        fontSize:
+                                                                            12),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Container(
+                                                  width: double.infinity,
+                                                  height: 0.5,
+                                                  margin: EdgeInsets.symmetric(
+                                                      vertical: 4),
+                                                  color: Colors.grey.shade400,
+                                                ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: <Widget>[
-                                                    Text(
-                                                      cartProductModel
-                                                          .nameProduct,
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: CustomTextStyle
-                                                          .textFormFieldMedium
-                                                          .copyWith(
-                                                              fontSize: 12,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        IconButton(
-                                                            onPressed: () {
-                                                              if (_isButtonDisabled ||
-                                                                  cartProductModel
-                                                                          .quantityCartProduct
-                                                                          .value <
-                                                                      1) {
-                                                                return;
-                                                              } else {
-                                                                _isButtonDisabled =
-                                                                    true;
-                                                                int tDecrease =
-                                                                    cartProductModel
-                                                                            .quantityCartProduct
-                                                                            .value -
-                                                                        1;
-                                                                cartNotifier
-                                                                    .updateItemQuantity(
-                                                                        context:
-                                                                            context,
-                                                                        token: authenticationNotifier
-                                                                            .token,
-                                                                        idUserAppInstitution:
-                                                                            cUserAppInstitutionModel
-                                                                                .idUserAppInstitution,
-                                                                        idCart: cartProductModel
-                                                                            .idCart,
-                                                                        idCartProduct:
-                                                                            cartProductModel
-                                                                                .idCartProduct,
-                                                                        quantityCartProduct:
-                                                                            tDecrease)
-                                                                    .then(
-                                                                        (value) {
-                                                                  _isButtonDisabled =
-                                                                      false;
-                                                                  if (value) {
-                                                                    cartProductModel
-                                                                        .quantityCartProduct
-                                                                        .value -= 1;
-                                                                    // refreshCartController
-                                                                    //     .refreshMoneyCartFromParent!();
-                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title:
-                                                                            "Carrello",
-                                                                        message:
-                                                                            'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.nameProduct} presenti',
-                                                                        contentType:
-                                                                            "success"));
-
-                                                                    // totalPrice.value =
-                                                                    //     cartNotifier.totalPrice;
-                                                                  } else {
-                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title:
-                                                                            "Carrello",
-                                                                        message:
-                                                                            "Errore di connessione",
-                                                                        contentType:
-                                                                            "error"));
-                                                                    // Navigator.of(context).pop();
-                                                                  }
-                                                                });
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                size: 20,
-                                                                Icons
-                                                                    .remove_circle_sharp)),
-                                                        IconButton(
-                                                            onPressed: () {
-                                                              if (_isButtonDisabled) {
-                                                                return;
-                                                              } else {
-                                                                _isButtonDisabled =
-                                                                    true;
-                                                                int tIncrease =
-                                                                    cartProductModel
-                                                                            .quantityCartProduct
-                                                                            .value +
-                                                                        1;
-                                                                cartNotifier
-                                                                    .updateItemQuantity(
-                                                                        context:
-                                                                            context,
-                                                                        token: authenticationNotifier
-                                                                            .token,
-                                                                        idUserAppInstitution:
-                                                                            cUserAppInstitutionModel
-                                                                                .idUserAppInstitution,
-                                                                        idCart: cartProductModel
-                                                                            .idCart,
-                                                                        idCartProduct:
-                                                                            cartProductModel
-                                                                                .idCartProduct,
-                                                                        quantityCartProduct:
-                                                                            tIncrease)
-                                                                    .then(
-                                                                        (value) {
-                                                                  _isButtonDisabled =
-                                                                      false;
-                                                                  if (value) {
-                                                                    cartProductModel
-                                                                        .quantityCartProduct
-                                                                        .value += 1;
-                                                                    // refreshCartController
-                                                                    //     .refreshMoneyCartFromParent!();
-                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title:
-                                                                            "Carrello",
-                                                                        message:
-                                                                            'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.nameProduct} presenti',
-                                                                        contentType:
-                                                                            "success"));
-
-                                                                    // totalPrice.value =
-                                                                    //     cartNotifier.totalPrice;
-                                                                    // Navigator.of(context).pop();
-                                                                    // productNotifier.refresh();
-                                                                  } else {
-                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title:
-                                                                            "Carrello",
-                                                                        message:
-                                                                            "Errore di connessione",
-                                                                        contentType:
-                                                                            "error"));
-                                                                    // Navigator.of(context).pop();
-                                                                  }
-                                                                });
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                size: 20,
-                                                                Icons
-                                                                    .add_circle_sharp)),
-                                                        IconButton(
-                                                            onPressed: () {
-                                                              if (_isButtonDisabled) {
-                                                                return;
-                                                              } else {
-                                                                _isButtonDisabled =
-                                                                    true;
-                                                                int zero = 0;
-                                                                cartNotifier
-                                                                    .updateItemQuantity(
-                                                                        context:
-                                                                            context,
-                                                                        token: authenticationNotifier
-                                                                            .token,
-                                                                        idUserAppInstitution:
-                                                                            cUserAppInstitutionModel
-                                                                                .idUserAppInstitution,
-                                                                        idCart: cartProductModel
-                                                                            .idCart,
-                                                                        idCartProduct:
-                                                                            cartProductModel
-                                                                                .idCartProduct,
-                                                                        quantityCartProduct:
-                                                                            zero)
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value) {
-                                                                    cartProductModel
-                                                                        .quantityCartProduct
-                                                                        .value = 0;
-                                                                    tSnapshot
-                                                                        .remove(
-                                                                            cartProductModel);
-
-                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title:
-                                                                            "Carrello",
-                                                                        message:
-                                                                            'Informazioni aggiornate. Prodotto ${cartProductModel.nameProduct} rimosso',
-                                                                        contentType:
-                                                                            "success"));
-
-                                                                    _isButtonDisabled =
-                                                                        false;
-                                                                    // totalPrice.value =
-                                                                    //     cartNotifier.totalPrice;
-                                                                    // Navigator.of(context).pop();
-                                                                    // productNotifier.refresh();
-                                                                  } else {
-                                                                    ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title:
-                                                                            "Carrello",
-                                                                        message:
-                                                                            "Errore di connessione",
-                                                                        contentType:
-                                                                            "failure"));
-                                                                    // Navigator.of(context).pop();
-                                                                  }
-                                                                });
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                size: 20,
-                                                                Icons
-                                                                    .delete_sharp)),
-                                                      ],
+                                                    Text('Note: ',
+                                                        style: CustomTextStyle
+                                                            .textFormFieldMedium
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 12)),
+                                                    Flexible(
+                                                      child: Text(
+                                                        cartProductModel
+                                                            .notesCartProduct,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: CustomTextStyle
+                                                            .textFormFieldMedium
+                                                            .copyWith(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 12),
+                                                      ),
                                                     )
                                                   ],
-                                                ),
-                                              ),
-                                              Container(
-                                                width: double.infinity,
-                                                height: 0.5,
-                                                margin: EdgeInsets.symmetric(
-                                                    vertical: 4),
-                                                color: Colors.grey.shade400,
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Column(
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                            image: DecorationImage(
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                image: (ImageUtils.getImageFromStringBase64(
-                                                                        stringImage:
-                                                                            cartProductModel
-                                                                                .imageData)
-                                                                    .image)),
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        4)),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade200)),
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 12,
-                                                                top: 8,
-                                                                right: 12,
-                                                                bottom: 8),
-                                                        margin: const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 0),
-                                                        height: 120,
-                                                        width: 120,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    width: 28,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 0,
-                                                                vertical: 3),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: <Widget>[
-                                                            Text(
-                                                              'Quantità prodotto: ',
-                                                              style: CustomTextStyle
-                                                                  .textFormFieldMedium
-                                                                  .copyWith(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade700,
-                                                                      fontSize:
-                                                                          12),
-                                                            ),
-                                                            ValueListenableBuilder<
-                                                                int>(
-                                                              builder: (BuildContext
-                                                                      context,
-                                                                  int value,
-                                                                  Widget?
-                                                                      child) {
-                                                                return Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceAround,
-                                                                  children: <Widget>[
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          2.0),
-                                                                      child: Text(
-                                                                          '$value',
-                                                                          style: CustomTextStyle.textFormFieldMedium.copyWith(
-                                                                              color: Colors.grey.shade700,
-                                                                              fontSize: 12)),
-                                                                    )
-                                                                  ],
-                                                                );
-                                                              },
-                                                              valueListenable:
-                                                                  cartProductModel
-                                                                      .quantityCartProduct,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 0,
-                                                                vertical: 3),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: <Widget>[
-                                                            Text(
-                                                              'Prezzo prodotto: ',
-                                                              style: CustomTextStyle
-                                                                  .textFormFieldMedium
-                                                                  .copyWith(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade700,
-                                                                      fontSize:
-                                                                          12),
-                                                            ),
-                                                            Text(
-                                                              MoneyUtils
-                                                                  .getFormattedCurrency(
-                                                                cartProductModel
-                                                                    .priceCartProduct,
-                                                              ),
-                                                              style: CustomTextStyle
-                                                                  .textFormFieldMedium
-                                                                  .copyWith(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade700,
-                                                                      fontSize:
-                                                                          12),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 0,
-                                                                vertical: 3),
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: <Widget>[
-                                                            Text(
-                                                              'Variante prodotto: ',
-                                                              style: CustomTextStyle
-                                                                  .textFormFieldMedium
-                                                                  .copyWith(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade700,
-                                                                      fontSize:
-                                                                          12),
-                                                            ),
-                                                            Text(
-                                                              cartProductModel
-                                                                  .productAttributeExplicit,
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: CustomTextStyle
-                                                                  .textFormFieldMedium
-                                                                  .copyWith(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade700,
-                                                                      fontSize:
-                                                                          12),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Container(
-                                                width: double.infinity,
-                                                height: 0.5,
-                                                margin: EdgeInsets.symmetric(
-                                                    vertical: 4),
-                                                color: Colors.grey.shade400,
-                                              ),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Text('Note: ',
-                                                      style: CustomTextStyle
-                                                          .textFormFieldMedium
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 12)),
-                                                  Flexible(
-                                                    child: Text(
-                                                      cartProductModel
-                                                          .notesCartProduct,
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: CustomTextStyle
-                                                          .textFormFieldMedium
-                                                          .copyWith(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 12),
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ],
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
-                              ]),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                          CartDetailScreen() // Expanded(
+                          CartDetailScreen(idCart: idCart) // Expanded(
                           //   child:
                           //       CheckoutCart(controller: refreshCartController),
                           // )

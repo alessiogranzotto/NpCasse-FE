@@ -6,8 +6,9 @@ import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.mapping.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
-import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -36,6 +37,8 @@ class AppProvider {
         create: (_) => ProductAttributeCombinationNotifier()),
     // ChangeNotifierProvider(create: (_) => HomeNotifier()),
     ChangeNotifierProvider(create: (_) => CategoryCatalogNotifier()),
+    ChangeNotifierProvider(create: (_) => ShopNavigateNotifier()),
+    ChangeNotifierProvider(create: (_) => ShopSearchNotifier()),
     // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];
 }

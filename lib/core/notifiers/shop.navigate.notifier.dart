@@ -9,19 +9,8 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
-class CategoryCatalogNotifier with ChangeNotifier {
-  final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
-  CategoryCatalogModel currentCategoryCatalogModel =
-      CategoryCatalogModel.empty();
+class ShopNavigateNotifier with ChangeNotifier {
   final CommonAPI commonAPI = CommonAPI();
-
-  setCurrentCategoryCatalog(CategoryCatalogModel CategoryCatalogModel) {
-    currentCategoryCatalogModel = CategoryCatalogModel;
-  }
-
-  getCurrentCategoryCatalog() {
-    return currentCategoryCatalogModel;
-  }
 
   Future getCategories(
       {required BuildContext context,
@@ -74,54 +63,6 @@ class CategoryCatalogNotifier with ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
             title: "Categorie",
-            message: "Errore di connessione",
-            contentType: "failure"));
-      }
-    }
-  }
-
-  Future addOrUpdateCategory(
-      {required BuildContext context,
-      required String? token,
-      required CategoryCatalogModel categoryCatalogModel}) async {
-    try {
-      bool isOk = false;
-      //SVUOTO SE IMMAGINE NON IMPOSTATA
-      // if (projectModel.imageProject == AppAssets.noImageString) {
-      //   projectModel.imageProject = '';
-      // }
-      var response = await categoryCatalogAPI.addOrUpdateCategory(
-          token: token, categoryCatalogModel: categoryCatalogModel);
-
-      if (response != null) {
-        final Map<String, dynamic> parseData = await jsonDecode(response);
-        isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Categorie",
-                    message: errorDescription,
-                    contentType: "failure"));
-            // Navigator.pop(context);
-          }
-        } else {
-          // ProjectModel projectDetail =
-          //     ProjectModel.fromJson(parseData['okResult']);
-          //return projectDetail;
-          // notifyListeners();
-        }
-      } else {
-        AuthenticationNotifier authenticationNotifier =
-            Provider.of<AuthenticationNotifier>(context, listen: false);
-        authenticationNotifier.exit(context);
-      }
-      return isOk;
-    } on SocketException catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "progetti",
             message: "Errore di connessione",
             contentType: "failure"));
       }

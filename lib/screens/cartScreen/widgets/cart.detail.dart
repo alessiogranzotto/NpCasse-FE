@@ -14,8 +14,8 @@ import 'package:provider/provider.dart';
 enum PaymentType { contanti, bancomat, cartaCredito, assegni }
 
 class CartDetailScreen extends StatefulWidget {
-  const CartDetailScreen({super.key});
-
+  const CartDetailScreen({Key? key, required this.idCart}) : super(key: key);
+  final int idCart;
   @override
   State<CartDetailScreen> createState() => _CartDetailScreenState();
 }
@@ -111,14 +111,14 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    CartModel cCart = cartNotifier.getCurrentCart();
+    //CartModel cCart = cartNotifier.getCurrentCart();
 
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
         .setCartCheckout(
             context: context,
             token: authenticationNotifier.token,
-            idCart: cCart.idCart,
+            idCart: widget.idCart,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
             totalPriceCart: cartNotifier.totalCartMoney.value,
             percDiscount:
@@ -133,7 +133,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         //       contentType: "success"));
         // }
         // homeNotifier.setHomeIndex(0);
-        Navigator.of(context).pushNamed(AppRouter.shManage);
+        Navigator.of(context)
+            .pushNamed(AppRouter.shManage, arguments: widget.idCart);
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
@@ -154,13 +155,13 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    CartModel cCart = cartNotifier.getCurrentCart();
+    //CartModel cCart = cartNotifier.getCurrentCart();
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
         .setCartCheckout(
             context: context,
             token: authenticationNotifier.token,
-            idCart: cCart.idCart,
+            idCart: widget.idCart,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
             totalPriceCart: cartNotifier.totalCartMoney.value,
             percDiscount:
@@ -231,7 +232,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                   height: 4,
                 ),
                 Text(
-                  "Dettaglio carrello",
+                  "Dettaglio carrello: " + widget.idCart.toString(),
                   style: CustomTextStyle.textFormFieldMedium.copyWith(
                       fontSize: 12,
                       color: Colors.black,

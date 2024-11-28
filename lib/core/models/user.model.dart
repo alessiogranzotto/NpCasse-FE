@@ -15,7 +15,12 @@ class UserModel {
       // required this.role,
       required this.expirationTime,
       required this.userAppInstitutionModelList,
-      required this.userAttributeModelList});
+
+      //PROPERTY FROM USER ATTRIBUTE
+
+      required this.userTokenExpiration,
+      required this.userOtpMode,
+      required this.userMaxInactivity});
   late int idUser;
   // late int idUserAppInstitution;
   late String name;
@@ -27,7 +32,12 @@ class UserModel {
   // late final String role;
   late DateTime expirationTime;
   late List<UserAppInstitutionModel> userAppInstitutionModelList;
-  late List<UserAttributeModel> userAttributeModelList;
+
+  //PROPERTY FROM USER ATTRIBUTE
+
+  late String userTokenExpiration;
+  late String userOtpMode;
+  late String userMaxInactivity;
 
   UserModel.empty() {
     idUser = 0;
@@ -39,7 +49,9 @@ class UserModel {
     // role = "";
     expirationTime = DateTime.now();
     userAppInstitutionModelList = List.empty();
-    userAttributeModelList = List.empty();
+    userTokenExpiration = "";
+    userOtpMode = "";
+    userMaxInactivity = "";
   }
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -54,7 +66,6 @@ class UserModel {
     // role = json['role'];
     expirationTime = DateTime.parse(json['expirationTime']);
 
-    //COMES FROM INIT STRING - START
     if (json.containsKey('userAppInstitutionModelList') &
         json['userAppInstitutionModelList'].toString().isNotEmpty) {
       userAppInstitutionModelList =
@@ -65,26 +76,9 @@ class UserModel {
       userAppInstitutionModelList = List.empty();
     }
 
-    if (json.containsKey('userAttributeModelList') &
-        json['userAttributeModelList'].toString().isNotEmpty) {
-      userAttributeModelList =
-          List.from(jsonDecode(json['userAttributeModelList']))
-              .map((e) => UserAttributeModel.fromJson(e))
-              .toList();
-    } else {
-      userAttributeModelList = List.empty();
-    }
-    //COMES FROM INIT STRING - END
-
-    //COME FROM LOGIN - START
-    if (json.containsKey('userAttribute')) {
-      userAttributeModelList = List.from(json['userAttribute'])
-          .map((e) => UserAttributeModel.fromJson(e))
-          .toList();
-    } else {
-      userAttributeModelList = List.empty();
-    }
-    //COME FROM LOGIN - END
+    userTokenExpiration = json['userTokenExpiration'];
+    userOtpMode = json['userOtpMode'];
+    userMaxInactivity = json['userMaxInactivity'];
   }
 
   Map<String, dynamic> toJson() {

@@ -116,8 +116,13 @@ class CategoryCatalogModel {
     updatedOnUtc = dateLocalU;
     updatedByUserAppInstitution = json['updatedByUserAppInstitution'];
     imageData = json['imageData'] ?? '';
-    giveIdsFlatStructureModel =
-        GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
+
+    if (json['giveIdsFlatStructure'] != null) {
+      giveIdsFlatStructureModel =
+          GiveIdsFlatStructureModel.fromJson(json['giveIdsFlatStructure']);
+    } else {
+      giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
+    }
   }
 
   Map<String, dynamic> toJson() {

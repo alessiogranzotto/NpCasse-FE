@@ -4,17 +4,33 @@ import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
+import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
+import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
+import 'package:np_casse/core/models/product.category.mapping.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
 typedef OnPickImageCallback = void Function(
     double? maxWidth, double? maxHeight, int? quality);
+
+class User {
+  final String name;
+  final int id;
+
+  User({required this.name, required this.id});
+
+  @override
+  String toString() {
+    return 'User(name: $name, id: $id)';
+  }
+}
 
 class ProductCatalogDetailDataScreen extends StatefulWidget {
   final ProductCatalogModel productCatalogModelArgument;
@@ -71,9 +87,11 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       TextEditingController();
   final TextEditingController textEditingControllerIdCatalogo =
       TextEditingController();
-
+  final controller = MultiSelectController<User>();
+  final controllerCategory = MultiSelectController<CategoryCatalogModel>();
   int idCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
+  // List<DropdownItem<CategoryCatalogModel>> availableCategories = [];
 
   Future<void> getAvailableCategories(int cIdCategory) async {
     AuthenticationNotifier authenticationNotifier =
@@ -109,9 +127,50 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
               value: value[i].idCategory.toString()),
         );
       }
+
       setState(() {
         availableCategory = tAvailableLevelCategory;
       });
+    });
+  }
+
+  Future<void> getCategories(
+      List<ProductCategoryMappingModel> productCategoryMappingModel) async {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    CategoryCatalogNotifier categoryCatalogNotifier =
+        Provider.of<CategoryCatalogNotifier>(context, listen: false);
+
+    List<DropdownItem<CategoryCatalogModel>> tAvailableLevelCategory = [];
+
+    await categoryCatalogNotifier
+        .getCategories(
+            context: context,
+            token: authenticationNotifier.token,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+            idCategory: 0,
+            levelCategory: 'SecondLevelCategory',
+            readAlsoDeleted: false,
+            numberResult: 'All',
+            nameDescSearch: '',
+            readImageData: false,
+            orderBy: '')
+        .then((value) {
+      for (int i = 0; i < value.length; i++) {
+        var isPresent = productCategoryMappingModel
+            .map((e) => e.idCategory)
+            .contains(value[i].idCategory);
+        tAvailableLevelCategory.add(
+          DropdownItem(
+              selected: isPresent,
+              label: value[i].nameCategory,
+              value: value[i]),
+        );
+      }
+      controllerCategory.addItems(tAvailableLevelCategory);
     });
   }
 
@@ -121,12 +180,13 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
 
   @override
   void initState() {
-    idCategory = widget.productCatalogModelArgument.idCategory;
     isEdit = widget.productCatalogModelArgument.idProduct != 0;
     getAvailableCategories(0);
-    print(availableCategory);
 
-    if (widget.productCatalogModelArgument.idCategory != 0) {
+    getCategories(
+        widget.productCatalogModelArgument.productCategoryMappingModel);
+
+    if (widget.productCatalogModelArgument.idProduct != 0) {
       textEditingControllerNameProduct.text =
           widget.productCatalogModelArgument.nameProduct;
       textEditingControllerDisplayOrderProduct.text =
@@ -234,11 +294,14 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
     ProductCatalogNotifier productCatalogNotifier =
         Provider.of<ProductCatalogNotifier>(context);
 
+    WishlistProductNotifier wishlistProductNotifier =
+        Provider.of<WishlistProductNotifier>(context);
+
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           centerTitle: true,
           title: Text(
@@ -541,6 +604,48 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     ),
                   ],
                 ),
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Expanded(
+                //       flex: 8,
+                //       child: Column(
+                //         children: [
+                //           Tooltip(
+                //             message: 'Categoria prodotto',
+                //             child: Card(
+                //               color: Theme.of(context).cardColor,
+                //               elevation: 4,
+                //               child: ListTile(
+                //                 subtitle: Row(
+                //                   children: [
+                //                     Expanded(
+                //                         child: CustomDropDownButtonFormField(
+                //                       enabled: true,
+                //                       validator: (value) =>
+                //                           value!.toString().isEmpty
+                //                               ? "Inserire la categoria"
+                //                               : null,
+                //                       actualValue: idCategory.toString(),
+                //                       labelText: '',
+                //                       listOfValue: availableCategory,
+                //                       onItemChanged: (value) {
+                //                         onChangeCategory(value);
+                //                       },
+                //                     )),
+                //                   ],
+                //                 ),
+                //                 trailing: const Icon(Icons.edit),
+                //                 leading: const Icon(Icons.book),
+                //                 onTap: () {},
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -549,36 +654,62 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                       child: Column(
                         children: [
                           Tooltip(
-                            message: 'Categoria prodotto',
+                            message: 'Categorie prodotto',
                             child: Card(
                               color: Theme.of(context).cardColor,
                               elevation: 4,
-                              child: ListTile(
-                                // title: Text(
-                                //   'qui ci va la descrizione del progetto',
-                                //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
-                                // ),
-                                subtitle: Row(
-                                  children: [
-                                    Expanded(
-                                        child: CustomDropDownButtonFormField(
-                                      enabled: true,
-                                      validator: (value) =>
-                                          value!.toString().isEmpty
-                                              ? "Inserire la categoria"
-                                              : null,
-                                      actualValue: idCategory.toString(),
-                                      labelText: '',
-                                      listOfValue: availableCategory,
-                                      onItemChanged: (value) {
-                                        onChangeCategory(value);
-                                      },
-                                    )),
-                                  ],
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MultiDropdown<CategoryCatalogModel>(
+                                  items: [],
+                                  controller: controllerCategory,
+                                  enabled: true,
+                                  searchEnabled: true,
+                                  chipDecoration: const ChipDecoration(
+                                    backgroundColor: Colors.blueGrey,
+                                    wrap: true,
+                                    runSpacing: 2,
+                                    spacing: 10,
+                                  ),
+                                  fieldDecoration: FieldDecoration(
+                                    hintText: 'Selezionare le categorie...',
+                                    hintStyle: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .hintColor
+                                                .withOpacity(0.3)),
+                                    prefixIcon:
+                                        const Icon(Icons.article_outlined),
+                                    showClearIcon: true,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide:
+                                          const BorderSide(color: Colors.grey),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      borderSide: const BorderSide(
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                  dropdownItemDecoration:
+                                      DropdownItemDecoration(
+                                    selectedIcon: const Icon(Icons.check_box,
+                                        color: Colors.green),
+                                    disabledIcon: Icon(Icons.lock,
+                                        color: Colors.grey.shade300),
+                                  ),
+                                  validator: (value) {
+                                    // if (value == null || value.isEmpty) {
+                                    //   return 'Please select a country';
+                                    // }
+                                    return null;
+                                  },
+                                  onSelectionChange: (selectedItems) {},
                                 ),
-                                trailing: const Icon(Icons.edit),
-                                leading: const Icon(Icons.book),
-                                onTap: () {},
                               ),
                             ),
                           ),
@@ -1352,9 +1483,23 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
             child: FloatingActionButton(
               shape: const CircleBorder(eccentricity: 0.5),
               onPressed: () {
+                List<ProductCategoryMappingModel>
+                    cProductCategoryMappingModelList = [];
+                var t = controllerCategory.selectedItems.first.value.idCategory;
+                for (int i = 0;
+                    i < controllerCategory.selectedItems.length;
+                    i++) {
+                  cProductCategoryMappingModelList.add(
+                      ProductCategoryMappingModel(
+                          idProductCategoryMapping: 0,
+                          idProduct:
+                              widget.productCatalogModelArgument.idProduct,
+                          idCategory: controllerCategory
+                              .selectedItems[i].value.idCategory,
+                          categoryModel: controllerCategory.items[i].value));
+                }
                 ProductCatalogModel productCatalogModel = ProductCatalogModel(
                     idProduct: widget.productCatalogModelArgument.idProduct,
-                    idCategory: idCategory,
                     nameProduct: textEditingControllerNameProduct.text,
                     displayOrder: int.tryParse(
                             textEditingControllerDisplayOrderProduct.text) ??
@@ -1373,7 +1518,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     idUserAppInstitution:
                         cUserAppInstitutionModel.idUserAppInstitution,
                     imageData: tImageString,
-                    categoryName: '',
+                    // categoryName: '',
                     giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
                       idFinalizzazione: int.tryParse(
                               textEditingControllerIdFinalizzazione.text) ??
@@ -1395,6 +1540,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                           int.tryParse(textEditingControllerIdCatalogo.text) ??
                               0,
                     ),
+                    productCategoryMappingModel:
+                        cProductCategoryMappingModelList,
                     productAttributeCombination: List.empty(),
                     smartProductAttributeJson: List.empty());
 
@@ -1412,6 +1559,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                             contentType: "success"));
                     Navigator.of(context).pop();
                     productCatalogNotifier.refresh();
+                    // wishlistProductNotifier.refresh();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackUtil.stylishSnackBar(
@@ -1442,23 +1590,19 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                               ProductCatalogModel(
                                   idProduct: widget
                                       .productCatalogModelArgument.idProduct,
-                                  idCategory: idCategory,
                                   nameProduct: textEditingControllerNameProduct
                                       .text,
-                                  displayOrder:
-                                      int.tryParse(
-                                              textEditingControllerDisplayOrderProduct
-                                                  .text) ??
-                                          0,
+                                  displayOrder: int.tryParse(
+                                          textEditingControllerDisplayOrderProduct
+                                              .text) ??
+                                      0,
                                   descriptionProduct:
                                       textEditingControllerDescriptionProduct
                                           .text,
-                                  priceProduct:
-                                      double
-                                              .tryParse(
-                                                  textEditingControllerPriceProduct
-                                                      .text) ??
-                                          0,
+                                  priceProduct: double.tryParse(
+                                          textEditingControllerPriceProduct
+                                              .text) ??
+                                      0,
                                   freePriceProduct: freePriceProduct.value,
                                   outOfAssortment: outOfAssortment.value,
                                   wishlisted: false,
@@ -1468,7 +1612,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   idUserAppInstitution: cUserAppInstitutionModel
                                       .idUserAppInstitution,
                                   imageData: tImageString,
-                                  categoryName: '',
+                                  // categoryName: '',
                                   giveIdsFlatStructureModel:
                                       GiveIdsFlatStructureModel(
                                     idFinalizzazione: int.tryParse(
@@ -1500,9 +1644,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                                 .text) ??
                                         0,
                                   ),
-                                  productAttributeCombination: widget
-                                      .productCatalogModelArgument
-                                      .productAttributeCombination,
+                                  productAttributeCombination: List.empty(),
+                                  productCategoryMappingModel: List.empty(),
                                   smartProductAttributeJson: List.empty());
 
                           productCatalogNotifier

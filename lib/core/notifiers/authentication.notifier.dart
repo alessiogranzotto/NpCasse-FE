@@ -121,14 +121,7 @@ class AuthenticationNotifier with ChangeNotifier {
       } else {
         userModel = UserModel.fromJson(parseData['okResult']);
         setUser(userModel);
-        var itemUserOtpMode = userModel.userAttributeModelList
-            .where((element) => element.attributeName == 'User.OtpMode')
-            .firstOrNull;
-        if (itemUserOtpMode == null) {
-          _stepLoading = "otp";
-          _isLoading = false;
-          notifyListeners();
-        } else if (itemUserOtpMode.attributeValue == 'Email') {
+        if (userModel.userOtpMode == 'Email') {
           _stepLoading = "otp";
           _isLoading = false;
           notifyListeners();
@@ -172,7 +165,7 @@ class AuthenticationNotifier with ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      await Future.delayed(const Duration(seconds: 1));
+      //await Future.delayed(const Duration(seconds: 1));
       UserModel userModel = getUser();
 
       var response = await authentificationAPI.checkOtp(
@@ -313,10 +306,9 @@ class AuthenticationNotifier with ChangeNotifier {
                     .userAppInstitutionModelList
                     .map((e) => e.toJson())
                     .toList()),
-                'userAttributeModelList': jsonEncode(userModel
-                    .userAttributeModelList
-                    .map((e) => e.toJson())
-                    .toList())
+                'userTokenExpiration': userModel.userTokenExpiration,
+                'userOtpMode': userModel.userOtpMode,
+                'userMaxInactivity': userModel.userMaxInactivity,
               })).whenComplete(
             () {
               _isLoading = false;
@@ -389,10 +381,20 @@ class AuthenticationNotifier with ChangeNotifier {
           // Navigator.pop(context);
         }
       } else {
+        userModel.name = parseData2['okResult']['name'];
+        userModel.surname = parseData2['okResult']['surname'];
+        userModel.email = parseData2['okResult']['email'];
+        userModel.phone = parseData2['okResult']['phone'];
         userModel.token = parseData2['okResult']['token'];
         userModel.refreshToken = parseData2['okResult']['refreshToken'];
         userModel.expirationTime =
             DateTime.parse(parseData2['okResult']['expirationTime']);
+        userModel.userTokenExpiration =
+            parseData2['okResult']['userTokenExpiration'];
+        userModel.userOtpMode = parseData2['okResult']['userOtpMode'];
+        userModel.userMaxInactivity =
+            parseData2['okResult']['userMaxInactivity'];
+        setUser(userModel);
       }
 
       bool isAuthenticated = userModel.token.isNotEmpty;
@@ -414,15 +416,14 @@ class AuthenticationNotifier with ChangeNotifier {
                   .userAppInstitutionModelList
                   .map((e) => e.toJson())
                   .toList()),
-              'userAttributeModelList': jsonEncode(userModel
-                  .userAttributeModelList
-                  .map((e) => e.toJson())
-                  .toList())
+              'userTokenExpiration': userModel.userTokenExpiration,
+              'userOtpMode': userModel.userOtpMode,
+              'userMaxInactivity': userModel.userMaxInactivity,
             })).whenComplete(
           () {
             // _isLoading = false;
             // _stepLoading = "user";
-            notifyListeners();
+            //notifyListeners();
             // Navigator.of(context).pushReplacementNamed(AppRouter.homeRoute);
           },
         );
@@ -628,31 +629,31 @@ class AuthenticationNotifier with ChangeNotifier {
         String errorDescription = parseData['errorDescription'];
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Update user detail",
+              title: "Impostazioni utente",
               message: errorDescription,
               contentType: "failure"));
-          _isLoading = false;
-          notifyListeners();
+          // _isLoading = false;
+          // notifyListeners();
         }
       } else {
-        UserModel userModel = getUser();
-        userModel.name = name;
-        userModel.surname = surname;
-        userModel.email = email;
-        userModel.phone = phone;
-        setUser(userModel);
-        notifyListeners();
+        // UserModel userModel = getUser();
+        // userModel.name = name;
+        // userModel.surname = surname;
+        // userModel.email = email;
+        // userModel.phone = phone;
+        // setUser(userModel);
+        // notifyListeners();
       }
       return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Update user detail",
+            title: "Impostazioni utente",
             message: "Errore di connessione",
             contentType: "failure"));
 
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
     } catch (e) {
       if (context.mounted) {
@@ -660,8 +661,8 @@ class AuthenticationNotifier with ChangeNotifier {
             title: "Update user detail",
             message: "Errore di connessione",
             contentType: "failure"));
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
     }
   }
@@ -674,8 +675,8 @@ class AuthenticationNotifier with ChangeNotifier {
       required String confirmPassword}) async {
     try {
       // _actualState = 'LoadingState';
-      _isLoading = true;
-      notifyListeners();
+      // _isLoading = true;
+      // notifyListeners();
 
       var response = await authentificationAPI.changePassword(
           token: token,
@@ -692,13 +693,13 @@ class AuthenticationNotifier with ChangeNotifier {
               title: "Change password",
               message: errorDescription,
               contentType: "failure"));
-          _isLoading = false;
-          notifyListeners();
+          // _isLoading = false;
+          // notifyListeners();
         }
       } else {
         _stepLoading = "otp";
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
       return isOk;
     } on SocketException catch (_) {
@@ -708,8 +709,8 @@ class AuthenticationNotifier with ChangeNotifier {
             message: "Errore di connessione",
             contentType: "failure"));
 
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
     } catch (e) {
       if (context.mounted) {
@@ -717,25 +718,27 @@ class AuthenticationNotifier with ChangeNotifier {
             title: "Change password",
             message: "Errore di connessione",
             contentType: "failure"));
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
     }
   }
 
-  Future updateGeneralSettingData({
+  Future updateUserSettingData({
     required BuildContext context,
     required String? token,
     required int idUser,
     required String otpMode,
     required int tokenExpiration,
+    required int maxInactivity,
   }) async {
     try {
       var response = await authentificationAPI.updateGeneralSetting(
           token: token,
           idUser: idUser,
           otpMode: otpMode,
-          tokenExpiration: tokenExpiration);
+          tokenExpiration: tokenExpiration,
+          maxInactivity: maxInactivity);
 
       final Map<String, dynamic> parseData = await jsonDecode(response);
       bool isOk = parseData['isOk'];
@@ -743,34 +746,34 @@ class AuthenticationNotifier with ChangeNotifier {
         String errorDescription = parseData['errorDescription'];
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Impostazioni generali",
+              title: "Impostazioni utente",
               message: errorDescription,
               contentType: "failure"));
-          _isLoading = false;
-          notifyListeners();
+          // _isLoading = false;
+          // notifyListeners();
         }
       } else {
-        notifyListeners();
+        // notifyListeners();
       }
       return isOk;
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Impostazioni generali",
+            title: "Impostazioni utente",
             message: "Errore di connessione",
             contentType: "failure"));
 
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Impostazioni generali",
+            title: "Impostazioni utente",
             message: "Errore di connessione",
             contentType: "failure"));
-        _isLoading = false;
-        notifyListeners();
+        // _isLoading = false;
+        // notifyListeners();
       }
     }
   }

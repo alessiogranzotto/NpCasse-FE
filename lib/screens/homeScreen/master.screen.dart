@@ -13,6 +13,8 @@ import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
@@ -21,9 +23,10 @@ import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
+import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
 import 'package:np_casse/screens/settingScreen/bluetooth.configuration.screen.dart';
-import 'package:np_casse/screens/settingScreen/general.setting.screen.dart';
+import 'package:np_casse/screens/settingScreen/institution.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/settingScreen/user.setting.screen.dart';
@@ -66,20 +69,19 @@ class MenuList {
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite_outlined), const WishlistScreen(), 1),
-  MenuList(
-    '',
-    'Shop',
-    Icons.shop,
-    const Icon(Icons.shop),
-    const Placeholder(),
-    1,
-    subMenus: [
-      MenuList(AppRouter.categoryOneShopRoute, 'Naviga', Icons.shop,
-          const Icon(Icons.shop), const ShopNavigator(), 1),
-      MenuList(AppRouter.userRoute, 'Ricerca', Icons.search,
-          const Icon(Icons.search), const ProductSearchScreen(), 1),
-    ],
-  ),
+  // MenuList(
+  //   '',
+  //   'Shop',
+  //   Icons.shop,
+  //   const Icon(Icons.shop),
+  //   const Placeholder(),
+  //   1,
+  //   subMenus: [],
+  // ),
+  MenuList(AppRouter.categoryOneShopRoute, 'Naviga shop', Icons.shop,
+      const Icon(Icons.shop), const ShopNavigator(), 1),
+  MenuList(AppRouter.userRoute, 'Ricerca shop', Icons.search,
+      const Icon(Icons.search), const ProductSearchScreen(), 1),
   MenuList(AppRouter.cartRoute, 'Carrello', Icons.shopping_cart,
       const Icon(Icons.shopping_cart), const CartNavigator(), 1),
   MenuList(AppRouter.settingRoute, 'Attributi prodotti', Icons.article_outlined,
@@ -88,36 +90,36 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.book), const CategoryCatalogNavigator(), 2),
   MenuList(AppRouter.settingRoute, 'Catalogo prodotti', Icons.store,
       const Icon(Icons.store), const ProductCatalogNavigator(), 2),
-  MenuList(
-    '',
-    'Impostazioni',
-    Icons.settings,
-    const Icon(Icons.settings),
-    Placeholder(),
-    1,
-    subMenus: [
-      MenuList(AppRouter.userRoute, 'Utente', Icons.account_circle,
-          const Icon(Icons.account_circle), const UserSettingScreen(), 1),
-      MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
-          const Icon(Icons.settings), const GeneralSettingScreen(), 2),
-      MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
-          const Icon(Icons.settings), const BluetoothConfigurationScreen(), 2),
-    ],
-  ),
-  MenuList(
-    '',
-    'Report',
-    Icons.dashboard,
-    const Icon(Icons.dashboard),
-    Placeholder(),
-    1,
-    subMenus: [
-      MenuList(AppRouter.institutionRoute, 'Carrelli', Icons.dashboard,
-          const Icon(Icons.dashboard), const CartHistoryNavigator(), 1),
-      MenuList(AppRouter.institutionRoute, 'Prodotti', Icons.dashboard,
-          const Icon(Icons.dashboard), const ProductHistoryNavigator(), 1),
-    ],
-  ),
+  // MenuList(
+  //   '',
+  //   'Impostazioni',
+  //   Icons.settings,
+  //   const Icon(Icons.settings),
+  //   Placeholder(),
+  //   1,
+  //   subMenus: [],
+  // ),
+
+  MenuList(AppRouter.userRoute, 'Impostazioni utente', Icons.account_circle,
+      const Icon(Icons.account_circle), const UserSettingScreen(), 1),
+  MenuList(AppRouter.settingRoute, 'Impostazioni ente', Icons.settings,
+      const Icon(Icons.settings), const InstitutionSettingScreen(), 2),
+  // MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
+  //     const Icon(Icons.settings), const BluetoothConfigurationScreen(), 2),
+
+  // MenuList(
+  //   '',
+  //   'Report',
+  //   Icons.dashboard,
+  //   const Icon(Icons.dashboard),
+  //   Placeholder(),
+  //   1,
+  //   subMenus: [],
+  // ),
+  MenuList(AppRouter.institutionRoute, 'Report acquisti', Icons.dashboard,
+      const Icon(Icons.dashboard), const CartHistoryNavigator(), 1),
+  MenuList(AppRouter.institutionRoute, 'Report prodotti', Icons.dashboard,
+      const Icon(Icons.dashboard), const ProductHistoryNavigator(), 1),
   MenuList(AppRouter.institutionRoute, 'Associazioni', Icons.settings_outlined,
       const Icon(Icons.settings_outlined), const InstitutionScreen(), 1),
   MenuList(AppRouter.logoutRoute, 'Uscita', Icons.logout_outlined,
@@ -359,12 +361,17 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<ProductCatalogNotifier>(context);
     CategoryCatalogNotifier categoryCatalogNotifier =
         Provider.of<CategoryCatalogNotifier>(context);
+    ShopNavigateNotifier shopNavigateNotifier =
+        Provider.of<ShopNavigateNotifier>(context);
+    ShopSearchNotifier shopSearchNotifier =
+        Provider.of<ShopSearchNotifier>(context);
+
     // ShopCategoryNotifier shopCategoryNotifier =
     //     Provider.of<ShopCategoryNotifier>(context);
     ReportNotifier reportNotifier = Provider.of<ReportNotifier>(context);
-
     return IdleDetector(
-      idleTime: const Duration(minutes: 2),
+      idleTime:
+          Duration(minutes: int.tryParse(cUserModel!.userMaxInactivity) ?? 30),
       onIdle: () {
         signOut(context);
       },
@@ -410,8 +417,10 @@ class _MasterScreenState extends State<MasterScreen> {
                   if (currentIndex == index) {
                     if (menu.label == "Preferiti") {
                       wishlistProductNotifier.refresh();
-                    } else if (menu.label == "Shop") {
-                      categoryCatalogNotifier.refresh();
+                    } else if (menu.label == "Naviga shop") {
+                      shopNavigateNotifier.refresh();
+                    } else if (menu.label == "Ricerca shop") {
+                      shopSearchNotifier.refresh();
                     } else if (menu.label == "Carrello") {
                       cartNotifier.refresh();
                     } else if (menu.label == "Attributi prodotti") {
@@ -420,6 +429,10 @@ class _MasterScreenState extends State<MasterScreen> {
                       productCatalogNotifier.refresh();
                     } else if (menu.label == "Catalogo categorie") {
                       categoryCatalogNotifier.refresh();
+                    } else if (menu.label == "Report acquisti") {
+                      // reportNotifier.refresh();
+                    } else if (menu.label == "Report prodotti") {
+                      // reportNotifier.refresh();
                     }
                     handleMenuTap(i);
                     return;
@@ -427,21 +440,21 @@ class _MasterScreenState extends State<MasterScreen> {
 
                   currentIndex++;
 
-                  if (visibleSubMenus.contains(i) && menu.subMenus != null) {
-                    for (int j = 0; j < menu.subMenus!.length; j++) {
-                      if (currentIndex == index) {
-                        if (menu.subMenus![j].label == "Carrelli") {
-                          reportNotifier.refresh();
-                        }
-                        if (menu.subMenus![j].label == "Prodotti") {
-                          reportNotifier.refresh();
-                        }
-                        handleSubMenuTap(i, j);
-                        return;
-                      }
-                      currentIndex++;
-                    }
-                  }
+                  // if (visibleSubMenus.contains(i) && menu.subMenus != null) {
+                  //   for (int j = 0; j < menu.subMenus!.length; j++) {
+                  //     if (currentIndex == index) {
+                  //       if (menu.subMenus![j].label == "Carrelli") {
+                  //         reportNotifier.refresh();
+                  //       }
+                  //       if (menu.subMenus![j].label == "Prodotti") {
+                  //         reportNotifier.refresh();
+                  //       }
+                  //       handleSubMenuTap(i, j);
+                  //       return;
+                  //     }
+                  //     currentIndex++;
+                  //   }
+                  // }
                 }
               },
             ),

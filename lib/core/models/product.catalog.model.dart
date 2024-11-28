@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
+import 'package:np_casse/core/models/product.category.mapping.model.dart';
 
 // class ProductCatalogDataModel {
 //   ProductCatalogDataModel(
@@ -52,7 +53,6 @@ import 'package:np_casse/core/models/product.attribute.combination.model.dart';
 class ProductCatalogModel {
   ProductCatalogModel(
       {required this.idProduct,
-      required this.idCategory,
       required this.nameProduct,
       required this.displayOrder,
       required this.descriptionProduct,
@@ -67,14 +67,14 @@ class ProductCatalogModel {
       this.updatedOnUtc,
       this.updatedByUserAppInstitution,
       required this.imageData,
-      required this.categoryName,
+      // required this.categoryName,
       required this.giveIdsFlatStructureModel,
       required this.productAttributeCombination,
+      required this.productCategoryMappingModel,
       required this.smartProductAttributeJson,
       required this.wishlisted});
 
   late final int idProduct;
-  late final int idCategory;
   late final String nameProduct;
   late final int displayOrder;
   late final String descriptionProduct;
@@ -89,16 +89,17 @@ class ProductCatalogModel {
   DateTime? updatedOnUtc;
   int? updatedByUserAppInstitution;
   late final String imageData;
-  late String categoryName;
+  // late String categoryName;
   late final GiveIdsFlatStructureModel giveIdsFlatStructureModel;
   late final List<ProductAttributeCombinationModel> productAttributeCombination;
+  late final List<ProductCategoryMappingModel> productCategoryMappingModel;
   late final List<SmartProductAttributeJson> smartProductAttributeJson;
-//CUSTOM
+
+  //CUSTOM
   late bool wishlisted;
 
   ProductCatalogModel.empty() {
     idProduct = 0;
-    idCategory = 0;
     nameProduct = '';
     displayOrder = 0;
     descriptionProduct = '';
@@ -113,13 +114,13 @@ class ProductCatalogModel {
     imageData = '';
     giveIdsFlatStructureModel = GiveIdsFlatStructureModel.empty();
     productAttributeCombination = List.empty();
+    productCategoryMappingModel = List.empty();
     smartProductAttributeJson = List.empty();
     wishlisted = false;
   }
 
   ProductCatalogModel.fromJson(Map<String, dynamic> json) {
     idProduct = json['idProduct'];
-    idCategory = json['idCategory'];
     nameProduct = json['nameProduct'];
     displayOrder = json['displayOrder'];
     descriptionProduct = json['descriptionProduct'];
@@ -132,11 +133,11 @@ class ProductCatalogModel {
     // minStockQuantity = json['minStockQuantity'];
     wishlisted = json['wishlisted'];
     deleted = json['deleted'];
-    if (json['categoryName'] != null) {
-      categoryName = json['categoryName'];
-    } else {
-      categoryName = '';
-    }
+    // if (json['categoryName'] != null) {
+    //   categoryName = json['categoryName'];
+    // } else {
+    //   categoryName = '';
+    // }
     var dateTimeC =
         DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['createdOnUtc'], true);
     var dateLocalC = dateTimeC.toLocal();
@@ -160,6 +161,9 @@ class ProductCatalogModel {
     } else {
       productAttributeCombination = List.empty();
     }
+    productCategoryMappingModel = List.from(json['productCategoryMappings'])
+        .map((e) => ProductCategoryMappingModel.fromJson(e))
+        .toList();
     if (json['smartProductAttributeJson'] != null) {
       smartProductAttributeJson = List.from(json['smartProductAttributeJson'])
           .map((e) => SmartProductAttributeJson.fromJson(e))
@@ -172,7 +176,6 @@ class ProductCatalogModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['idProduct'] = idProduct;
-    data['idCategory'] = idCategory;
     data['nameProduct'] = nameProduct;
     data['displayOrder'] = displayOrder;
     data['descriptionProduct'] = descriptionProduct;
@@ -189,14 +192,16 @@ class ProductCatalogModel {
     data['giveIdsFlatStructure'] = giveIdsFlatStructureModel.toJson();
     data['productAttributeCombinations'] =
         productAttributeCombination.map((e) => e.toJson()).toList();
+    data['productCategoryMappings'] =
+        productCategoryMappingModel.map((e) => e.toJson()).toList();
     return data;
   }
 
-    @override
-  String toString() {
-    return 'ProductCatalogModel(idProduct: $idProduct, nameProduct: "$nameProduct", '
-           'priceProduct: $priceProduct, wishlisted: $wishlisted, '
-           'categoryName: "$categoryName", createdOnUtc: ${createdOnUtc?.toIso8601String()}, '
-           'updatedOnUtc: ${updatedOnUtc?.toIso8601String()})';
-  }
+  // @override
+  // String toString() {
+  //   return 'ProductCatalogModel(idProduct: $idProduct, nameProduct: "$nameProduct", '
+  //       'priceProduct: $priceProduct, wishlisted: $wishlisted, '
+  //       'categoryName: "$categoryName", createdOnUtc: ${createdOnUtc?.toIso8601String()}, '
+  //       'updatedOnUtc: ${updatedOnUtc?.toIso8601String()})';
+  // }
 }

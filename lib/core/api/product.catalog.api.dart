@@ -8,47 +8,6 @@ import 'package:np_casse/core/models/product.catalog.model.dart';
 class ProductCatalogAPI {
   final client = http.Client();
 
-  Future getProducts(
-      {required String? token,
-      required int idUserAppInstitution,
-      int idCategory = 0,
-      bool readAlsoDeleted = false,
-      String numberResult = '',
-      String nameDescSearch = '',
-      bool readImageData = false,
-      String orderBy = '',
-      bool showVariant = false,
-      bool viewOutOfAssortment = false}) async {
-    final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
-        '?IdUserAppInstitution=$idUserAppInstitution' +
-        '&IdCategory=$idCategory' +
-        '&ReadAlsoDeleted=$readAlsoDeleted' +
-        '&NumberResult=$numberResult' +
-        '&NameDescSearch=$nameDescSearch' +
-        '&ReadImageData=$readImageData' +
-        '&OrderBy=$orderBy' +
-        '&ShowVariant=$showVariant' +
-        '&viewOutOfAssortment=$viewOutOfAssortment');
-    print(uri);
-    final http.Response response = await client.get(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Allow-Origin': "*",
-        "Authorization": token ?? ''
-      },
-    );
-    if (response.statusCode == 200) {
-      final dynamic body = response.body;
-      return body;
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      return null;
-    }
-  }
-
   Future getProductPrice(
       {required String? token,
       required int idUserAppInstitution,
@@ -89,11 +48,7 @@ class ProductCatalogAPI {
       {required String? token,
       required ProductCatalogModel productCatalogModel}) async {
     int idProduct = productCatalogModel.idProduct;
-    String x = jsonEncode(productCatalogModel);
-    String y = jsonEncode(productCatalogModel.giveIdsFlatStructureModel);
     if (kDebugMode) {
-      print(x);
-      print(y);
       print(jsonEncode(productCatalogModel));
     }
     final http.Response response;

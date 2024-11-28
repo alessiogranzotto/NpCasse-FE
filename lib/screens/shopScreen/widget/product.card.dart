@@ -1,13 +1,17 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
+import 'package:np_casse/core/models/product.category.mapping.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/disable.focus.node.dart';
@@ -18,9 +22,11 @@ class ProductCard extends StatefulWidget {
   const ProductCard(
       {super.key,
       required this.productCatalog,
-      required this.areAllWithNoImage});
+      required this.areAllWithNoImage,
+      required this.comeFrom});
   final ProductCatalogModel productCatalog;
   final bool areAllWithNoImage;
+  final String comeFrom;
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -29,9 +35,10 @@ class ProductCard extends StatefulWidget {
 class _ProductCardState extends State<ProductCard> {
   ProductCatalogModel productCatalog = ProductCatalogModel.empty();
   List<String?> selectedValueVariant = [];
-
+  List<DropdownMenuItem<ProductCategoryMappingModel>>
+      tAvailableProductCategory = List.empty();
   ValueNotifier<double> priceNotifier = ValueNotifier<double>(0);
-  ValueNotifier<int> quantityForProductNotifier = ValueNotifier<int>(1);
+  // ValueNotifier<int> quantityForProductNotifier = ValueNotifier<int>(1);
   ValueNotifier<double> freePriceProductNotifier = ValueNotifier<double>(0);
   ValueNotifier<bool> wishListedNotifier = ValueNotifier<bool>(false);
   bool enableQuantity = false;
@@ -44,6 +51,11 @@ class _ProductCardState extends State<ProductCard> {
 
   TextEditingController textEditingControllerNoteProduct =
       TextEditingController();
+  TextEditingController textEditingControllerQuantityForProduct =
+      TextEditingController();
+  int idCategory = 0;
+  bool showCategoryProduct = false;
+
   bool checkEnableButton() {
     return enableQuantity && enablePrice && enableVariants;
   }
@@ -67,7 +79,7 @@ class _ProductCardState extends State<ProductCard> {
     addToCartButtonEnabled.value = enablePrice && enableVariants;
   }
 
-    void variantChanged(int index, String? value) {
+  void variantChanged(int index, String? value) {
     // Update the selected value for the variant at the specified index
     selectedValueVariant[index] = value;
 
@@ -83,42 +95,45 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   List<DropdownMenuItem<String>> getSelectableItems(int index) {
-  return productCatalog.smartProductAttributeJson[index].value
-      .where((element) {
-        // Ensure that the current element can be selected based on the existing selections
-        return productCatalog.productAttributeCombination.any((combination) {
-          // Check if the combination matches the selected variants
-          return selectedValueVariant.asMap().entries.every((entry) {
-            int i = entry.key; // Get the index of the variant
-            String? selectedValue = entry.value; // Get the selected value for this index
+    return productCatalog.smartProductAttributeJson[index].value
+        .where((element) {
+          // Ensure that the current element can be selected based on the existing selections
+          return productCatalog.productAttributeCombination.any((combination) {
+            // Check if the combination matches the selected variants
+            return selectedValueVariant.asMap().entries.every((entry) {
+                  int i = entry.key; // Get the index of the variant
+                  String? selectedValue =
+                      entry.value; // Get the selected value for this index
 
-            // Skip the current index since we are evaluating options for it
-            if (i == index) return true; 
+                  // Skip the current index since we are evaluating options for it
+                  if (i == index) return true;
 
-            // If a value is selected for this index, ensure it matches the combination
-            if (selectedValue != null && selectedValue.isNotEmpty) {
-              return combination.productAttributeJson.any((attr) =>
-                  attr.value == selectedValue &&
-                  attr.idProductAttribute == productCatalog.smartProductAttributeJson[i].idProductAttribute);
-            }
+                  // If a value is selected for this index, ensure it matches the combination
+                  if (selectedValue != null && selectedValue.isNotEmpty) {
+                    return combination.productAttributeJson.any((attr) =>
+                        attr.value == selectedValue &&
+                        attr.idProductAttribute ==
+                            productCatalog.smartProductAttributeJson[i]
+                                .idProductAttribute);
+                  }
 
-            return true; // If no value is selected for this index, consider it compatible
-          }) &&
-          // Check if the current element can fit into this combination
-          combination.productAttributeJson.any((attr) =>
-              attr.value == element.value &&
-              attr.idProductAttribute == productCatalog.smartProductAttributeJson[index].idProductAttribute);
-        });
-      })
-      .map<String>((SmartProductAttributeJsonValue e) => e.value ?? '')
-      .toSet() // Convert to Set to remove duplicates
-      .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-            value: value, child: Text(value));
-      })
-      .toList();
-}
-
+                  return true; // If no value is selected for this index, consider it compatible
+                }) &&
+                // Check if the current element can fit into this combination
+                combination.productAttributeJson.any((attr) =>
+                    attr.value == element.value &&
+                    attr.idProductAttribute ==
+                        productCatalog.smartProductAttributeJson[index]
+                            .idProductAttribute);
+          });
+        })
+        .map<String>((SmartProductAttributeJsonValue e) => e.value ?? '')
+        .toSet() // Convert to Set to remove duplicates
+        .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(value: value, child: Text(value));
+        })
+        .toList();
+  }
 
   getProductPrice() {
     double result = priceNotifier.value;
@@ -158,6 +173,16 @@ class _ProductCardState extends State<ProductCard> {
     }
   }
 
+  void quantityChange() {
+    var q = int.tryParse(textEditingControllerQuantityForProduct.text);
+    if (q != null && q > 0) {
+      enableQuantity = true;
+    } else {
+      enableQuantity = false;
+    }
+    addToCartButtonEnabled.value = checkEnableButton();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -168,7 +193,8 @@ class _ProductCardState extends State<ProductCard> {
     if (widget.productCatalog.freePriceProduct) {
       freePriceProductNotifier = ValueNotifier(productCatalog.priceProduct);
     }
-
+    textEditingControllerQuantityForProduct.text = "1";
+    textEditingControllerQuantityForProduct.addListener(quantityChange);
     textEditingControllerFreePriceProduct = CurrencyTextFieldController(
         decimalSymbol: ',',
         thousandSymbol: '',
@@ -191,11 +217,10 @@ class _ProductCardState extends State<ProductCard> {
       }
     }
 
-    enableQuantity = quantityForProductNotifier.value > 0;
+    enableQuantity = true;
     enablePrice =
         (productCatalog.priceProduct > 0 && productCatalog.freePriceProduct) ||
-            (!productCatalog.freePriceProduct &&
-                quantityForProductNotifier.value > 0);
+            (!productCatalog.freePriceProduct);
     enableVariants = selectedValueVariant.length == 0;
     if (selectedValueVariant.length > 0) {
       enableVariants = true;
@@ -205,7 +230,35 @@ class _ProductCardState extends State<ProductCard> {
         }
       }
     }
+    if (productCatalog.productCategoryMappingModel.length > 1) {
+      tAvailableProductCategory = productCatalog.productCategoryMappingModel
+          .map<DropdownMenuItem<ProductCategoryMappingModel>>(
+              (ProductCategoryMappingModel item) {
+        return DropdownMenuItem<ProductCategoryMappingModel>(
+            value: item, child: Text(item.categoryModel.nameCategory));
+      }).toList();
+    }
+
+    if (widget.comeFrom == "Wishlist") {
+      idCategory = productCatalog.productCategoryMappingModel.first.idCategory;
+      showCategoryProduct = true;
+    } else if (widget.comeFrom == "Navigate") {
+      CategoryCatalogNotifier categoryCatalogNotifier =
+          Provider.of<CategoryCatalogNotifier>(context, listen: false);
+      idCategory =
+          categoryCatalogNotifier.getCurrentCategoryCatalog().idCategory;
+      showCategoryProduct = false;
+    } else if (widget.comeFrom == "Search") {
+      idCategory = productCatalog.productCategoryMappingModel.first.idCategory;
+      showCategoryProduct = true;
+    }
     addToCartButtonEnabled = ValueNotifier(checkEnableButton());
+  }
+
+  @override
+  void dispose() {
+    textEditingControllerQuantityForProduct.dispose();
+    super.dispose();
   }
 
   @override
@@ -279,18 +332,39 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 30,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  productCatalog.descriptionProduct,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   height: 30,
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            //     child: Text(
+            //       productCatalog.descriptionProduct,
+            //       maxLines: 1,
+            //       overflow: TextOverflow.ellipsis,
+            //       style: Theme.of(context).textTheme.bodyMedium,
+            //     ),
+            //   ),
+            // ),
+
+            productCatalog.productCategoryMappingModel.length > 1 &&
+                    showCategoryProduct
+                ? Container(
+                    height: 60,
+                    child: CustomDropDownButtonFormField(
+                        actualValue: widget
+                            .productCatalog.productCategoryMappingModel
+                            .where(
+                                (element) => element.idCategory == idCategory)
+                            .first,
+                        enabled: true,
+                        onItemChanged: (value) {
+                          var item = value as ProductCategoryMappingModel;
+                          idCategory = item.idCategory;
+                        },
+                        listOfValue: tAvailableProductCategory))
+                : Container(
+                    height: 60,
+                  ),
+
             Container(
               height: 140,
               child: GridView.builder(
@@ -306,78 +380,84 @@ class _ProductCardState extends State<ProductCard> {
                   var cSmartProductAttributeJson =
                       productCatalog.smartProductAttributeJson[index];
 
-           return SizedBox(
+                  return SizedBox(
                     width: 100,
                     child: GestureDetector(
-                    onTap: () {
-                      // Clear the current selected value for the variant
-                      selectedValueVariant[index] = null;
-                      setState(() {}); // Refresh the UI
-                    },
-child: DropdownButtonFormField<String>(
-                      focusNode: AlwaysDisabledFocusNode(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.shop),
-                        labelText:
-                            cSmartProductAttributeJson.nameProductAttribute,
-                        labelStyle: Theme.of(context)
+                      onTap: () {
+                        // Clear the current selected value for the variant
+                        selectedValueVariant[index] = null;
+                        setState(() {}); // Refresh the UI
+                      },
+                      child: DropdownButtonFormField<String>(
+                        focusNode: AlwaysDisabledFocusNode(),
+                        style: Theme.of(context)
                             .textTheme
                             .labelMedium!
                             .copyWith(color: Colors.blueGrey),
-                        hintText:
-                            cSmartProductAttributeJson.nameProductAttribute,
-                        hintStyle: Theme.of(context)
-                            .textTheme
-                            .labelLarge!
-                            .copyWith(
-                                color: Theme.of(context)
-                                    .hintColor
-                                    .withOpacity(0.3)),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.0),
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.shop),
+                          labelText:
+                              cSmartProductAttributeJson.nameProductAttribute,
+                          labelStyle: Theme.of(context)
+                              .textTheme
+                              .labelMedium!
+                              .copyWith(color: Colors.blueGrey),
+                          hintText:
+                              cSmartProductAttributeJson.nameProductAttribute,
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .hintColor
+                                      .withOpacity(0.3)),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          border: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.grey, width: 1.0),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.blue, width: 1.0),
+                          ),
+                          errorBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide:
+                                BorderSide(color: Colors.red, width: 1.0),
+                          ),
+                          focusedErrorBorder: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                                color: Colors.deepOrangeAccent, width: 1.0),
+                          ),
                         ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.0),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide:
-                              BorderSide(color: Colors.blue, width: 1.0),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.red, width: 1.0),
-                        ),
-                        focusedErrorBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                              color: Colors.deepOrangeAccent, width: 1.0),
-                        ),
-                      ),
-                      // hint: Text(
-                      //   widget.hintText,
-                      // ),
-                      isExpanded: true,
+                        // hint: Text(
+                        //   widget.hintText,
+                        // ),
+                        isExpanded: true,
 
-                      validator: (value) =>
-                          value == null ? 'field required' : null,
+                        validator: (value) =>
+                            value == null ? 'field required' : null,
 
-                      value: selectedValueVariant[index],
+                        value: selectedValueVariant[index],
 
-                      onChanged: (String? value) {
-                        variantChanged(index, value);
+                        onChanged: (String? value) {
+                          variantChanged(index, value);
 
-                        setState(() {});
-                      },
+                          setState(() {});
+                        },
                         items: getSelectableItems(index),
                       ),
                     ),
@@ -397,8 +477,7 @@ child: DropdownButtonFormField<String>(
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -414,8 +493,7 @@ child: DropdownButtonFormField<String>(
                                         double value, Widget? child) {
                                       return TextFormField(
                                         maxLines: 1,
-                                        textAlignVertical:
-                                            TextAlignVertical.top,
+                                        textAlign: TextAlign.center,
                                         controller:
                                             textEditingControllerFreePriceProduct,
                                         keyboardType: const TextInputType
@@ -427,6 +505,7 @@ child: DropdownButtonFormField<String>(
                                             .copyWith(
                                                 fontWeight: FontWeight.w900),
                                         decoration: const InputDecoration(
+                                          contentPadding: EdgeInsets.zero,
                                           suffixIcon: Icon(Icons.euro),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius: BorderRadius.all(
@@ -478,14 +557,86 @@ child: DropdownButtonFormField<String>(
                                 valueListenable: priceNotifier,
                               ),
                             ),
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: Container(
+                            //     decoration: BoxDecoration(
+                            //       border: Border.all(
+                            //         color:
+                            //             Theme.of(context).colorScheme.onSurface,
+                            //       ),
+                            //       borderRadius: BorderRadius.circular(10),
+                            //     ),
+                            //     child: Row(
+                            //       mainAxisAlignment: MainAxisAlignment.end,
+                            //       mainAxisSize: MainAxisSize.min,
+                            //       children: [
+                            //         SizedBox(
+                            //           child: IconButton(
+                            //               onPressed: () {
+                            //                 if (quantityForProductNotifier
+                            //                         .value >
+                            //                     0) {
+                            //                   quantityForProductNotifier
+                            //                       .value--;
+                            //                 }
+                            //                 if (quantityForProductNotifier
+                            //                         .value >
+                            //                     0) {
+                            //                   enableQuantity = true;
+                            //                 } else {
+                            //                   enableQuantity = false;
+                            //                 }
+                            //                 addToCartButtonEnabled.value =
+                            //                     checkEnableButton();
+                            //               },
+                            //               icon: const Icon(
+                            //                   size: 20, Icons.remove)),
+                            //         ),
+                            //         SizedBox(
+                            //           child: ValueListenableBuilder<int>(
+                            //             builder: (BuildContext context,
+                            //                 int value, Widget? child) {
+                            //               return Text('$value',
+                            //                   style: Theme.of(context)
+                            //                       .textTheme
+                            //                       .titleMedium!
+                            //                       .copyWith(
+                            //                           fontWeight:
+                            //                               FontWeight.w900));
+                            //             },
+                            //             valueListenable:
+                            //                 quantityForProductNotifier,
+                            //           ),
+                            //         ),
+                            //         SizedBox(
+                            //           child: IconButton(
+                            //               onPressed: () {
+                            //                 quantityForProductNotifier.value++;
+                            //                 if (quantityForProductNotifier
+                            //                         .value >
+                            //                     0) {
+                            //                   enableQuantity = true;
+                            //                 } else {
+                            //                   enableQuantity = false;
+                            //                 }
+                            //                 addToCartButtonEnabled.value =
+                            //                     checkEnableButton();
+                            //               },
+                            //               icon:
+                            //                   const Icon(size: 20, Icons.add)),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -496,54 +647,62 @@ child: DropdownButtonFormField<String>(
                                     SizedBox(
                                       child: IconButton(
                                           onPressed: () {
-                                            if (quantityForProductNotifier
-                                                    .value >
-                                                0) {
-                                              quantityForProductNotifier
-                                                  .value--;
-                                            }
-                                            if (quantityForProductNotifier
-                                                    .value >
-                                                0) {
-                                              enableQuantity = true;
+                                            var q = int.tryParse(
+                                                textEditingControllerQuantityForProduct
+                                                    .text);
+                                            if (q == null) {
+                                              textEditingControllerQuantityForProduct
+                                                  .text = "1";
                                             } else {
-                                              enableQuantity = false;
+                                              if (q >= 2) {
+                                                q--;
+                                                textEditingControllerQuantityForProduct
+                                                    .text = q.toString();
+                                              }
                                             }
-                                            addToCartButtonEnabled.value =
-                                                checkEnableButton();
                                           },
                                           icon: const Icon(
                                               size: 20, Icons.remove)),
                                     ),
                                     SizedBox(
-                                      child: ValueListenableBuilder<int>(
-                                        builder: (BuildContext context,
-                                            int value, Widget? child) {
-                                          return Text('$value',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w900));
-                                        },
-                                        valueListenable:
-                                            quantityForProductNotifier,
-                                      ),
+                                      width: 40,
+                                      child: TextFormField(
+                                          textAlign: TextAlign.center,
+                                          controller:
+                                              textEditingControllerQuantityForProduct,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          decoration: new InputDecoration(
+                                            contentPadding: EdgeInsets.zero,
+                                            border: InputBorder.none,
+                                            focusedBorder: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            errorBorder: InputBorder.none,
+                                            disabledBorder: InputBorder.none,
+                                          ),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w900)),
                                     ),
                                     SizedBox(
                                       child: IconButton(
                                           onPressed: () {
-                                            quantityForProductNotifier.value++;
-                                            if (quantityForProductNotifier
-                                                    .value >
-                                                0) {
-                                              enableQuantity = true;
+                                            var q = int.tryParse(
+                                                textEditingControllerQuantityForProduct
+                                                    .text);
+                                            if (q == null) {
+                                              textEditingControllerQuantityForProduct
+                                                  .text = "1";
                                             } else {
-                                              enableQuantity = false;
+                                              q++;
+                                              textEditingControllerQuantityForProduct
+                                                  .text = q.toString();
                                             }
-                                            addToCartButtonEnabled.value =
-                                                checkEnableButton();
                                           },
                                           icon:
                                               const Icon(size: 20, Icons.add)),
@@ -596,6 +755,7 @@ child: DropdownButtonFormField<String>(
                                 }
                                 wishListedNotifier.value =
                                     productCatalog.wishlisted;
+                                //wishlistProductNotifier.refresh();
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackUtil.stylishSnackBar(
@@ -632,11 +792,15 @@ child: DropdownButtonFormField<String>(
                               : Colors.grey,
                           onPressed: () {
                             int quantity = 0;
-                            quantity = quantityForProductNotifier.value;
+                            var q = int.tryParse(
+                                textEditingControllerQuantityForProduct.text);
+                            if (q != null) {
+                              quantity = q;
+                            }
+                            if (productCatalog.freePriceProduct) {
+                              quantity = 1;
+                            }
                             if (addToCartButtonEnabled.value) {
-                              if (productCatalog.freePriceProduct) {
-                                quantity = 1;
-                              }
                               List<CartProductVariants> cartProductVariants =
                                   [];
                               for (int i = 0;
@@ -664,6 +828,7 @@ child: DropdownButtonFormField<String>(
                                           cUserAppInstitutionModel
                                               .idUserAppInstitution,
                                       idProduct: productCatalog.idProduct,
+                                      idCategory: idCategory,
                                       quantity: quantity,
                                       price: productCatalog.freePriceProduct
                                           ? freePriceProductNotifier.value
@@ -680,6 +845,7 @@ child: DropdownButtonFormField<String>(
                                               '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
                                           contentType: "success"));
                                   textEditingControllerNoteProduct.clear();
+                                  //cartNotifier.refresh();
                                   // Navigator.of(context)
                                   //     .pushNamed(AppRouter.homeRoute);
                                 } else {

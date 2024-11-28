@@ -11,6 +11,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.mapping.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
@@ -438,6 +439,9 @@ class _ProductAttributeDetailState
     ProductAttributeCombinationNotifier productAttributeCombinationNotifier =
         Provider.of<ProductAttributeCombinationNotifier>(context);
 
+    WishlistProductNotifier wishlistProductNotifier =
+        Provider.of<WishlistProductNotifier>(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -568,6 +572,8 @@ class _ProductAttributeDetailState
                                             "Attributi correttamente creati",
                                         contentType: "success"));
                                 //Navigator.of(context).pop();
+                                // productAttributeMappingNotifier.refresh();
+
                                 setState(() {
                                   cProductAttributeMappingModel = value;
                                   for (int i = 0;
@@ -690,7 +696,9 @@ class _ProductAttributeDetailState
                       message: "Informazioni aggiornate",
                       contentType: "success"));
               Navigator.of(context).pop();
-              productCatalogNotifier.refresh();
+              // productAttributeCombinationNotifier.refresh();
+              // productCatalogNotifier.refresh();
+              // wishlistProductNotifier.refresh();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackUtil.stylishSnackBar(

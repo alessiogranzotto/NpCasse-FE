@@ -58,7 +58,7 @@ class AppStrings {
   static const String registrationComplete = 'Registration Complete!';
   static const String cancel = 'Annulla';
   static const String update = 'Aggiorna';
-  static const String changePassword = 'Change Password';
+  static const String changePassword = 'Modifica Password';
 
   // static const String name = 'Name';
   // static const String pleaseEnterName = 'Please, Enter Name';
@@ -83,8 +83,13 @@ class AppStrings {
 
   static const String otpMode = 'Modalità OTP';
   static const String tokenExpiration =
-      'Durata token di autenticazione (in giorni)';
-  static const String pleaseEnterTokenExpiration = 'Durata token non valida';
+      'Durata token di autenticazione (in minuti)';
+  static const String userMaxInactivity =
+      'Tempo massimo inattività (in minuti)';
+  static const String pleaseEnterTokenExpiration =
+      'Inserire la durata del token';
+  static const String pleaseEnterUserMaxInactivity =
+      'Inserire il tempo massimo di inattività';
 
   static const String password = 'Password';
   static const String pleaseEnterPassword = 'Inserire la password';

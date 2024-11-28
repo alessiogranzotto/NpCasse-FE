@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +17,8 @@ class CartHistoryScreen extends StatefulWidget {
 }
 
 class _CartHistoryScreenState extends State<CartHistoryScreen> {
-  final PagedDataTableController<String, Map<String, dynamic>> tableController =
-      PagedDataTableController();
+  static PagedDataTableController<String, Map<String, dynamic>>
+      tableController = PagedDataTableController();
   UserAppInstitutionModel? cSelectedUserAppInstitution;
   UserAppInstitutionModel? previousSelectedInstitution;
   // @override
@@ -110,6 +111,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
+    CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
@@ -119,7 +121,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Report carrelli ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Report acquisti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -188,7 +190,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   DateFormat("yyyy-MM-ddTHH:mm:ss")
                       .parse(item['dateCreatedCart'], true)
                       .toString()),
-              size: const FixedColumnSize(170),
+              size: const FixedColumnSize(200),
               sortable: true,
             ),
             TableColumn(
@@ -232,10 +234,20 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                       value: 1,
                       child: const Text('Emissione ricevuta'),
                     ),
+                  if (item['idStakeholder'] == null &&
+                      item['docNumberCart'] > 0)
+                    PopupMenuItem<int>(
+                      value: 2,
+                      child: const Text('Associazione donatore'),
+                    ),
                 ],
                 onSelected: (value) {
                   if (value == 1) {
                     Navigator.of(context).pushNamed(AppRouter.shPdfInvoice,
+                        arguments: item['idCart']);
+                  }
+                  if (value == 2) {
+                    Navigator.of(context).pushNamed(AppRouter.shManage,
                         arguments: item['idCart']);
                   }
                 },

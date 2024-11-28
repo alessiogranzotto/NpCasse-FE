@@ -4,8 +4,7 @@ import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/shop.category.notifier.dart';
+import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/screens/shopScreen/widget/category.card.dart';
 import 'package:provider/provider.dart';
 
@@ -55,10 +54,10 @@ class CategoryOneShopScreen extends StatelessWidget {
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.8,
             width: MediaQuery.of(context).size.width,
-            child: Consumer<CategoryCatalogNotifier>(
-              builder: (context, shopCategoryNotifier, _) {
+            child: Consumer<ShopNavigateNotifier>(
+              builder: (context, shopNavigateNotifier, _) {
                 return FutureBuilder(
-                  future: shopCategoryNotifier.getCategories(
+                  future: shopNavigateNotifier.getCategories(
                       context: context,
                       token: authenticationNotifier.token,
                       idUserAppInstitution:
