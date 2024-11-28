@@ -395,6 +395,7 @@ class AuthenticationNotifier with ChangeNotifier {
         userModel.userMaxInactivity =
             parseData2['okResult']['userMaxInactivity'];
         setUser(userModel);
+        notifyListeners();
       }
 
       bool isAuthenticated = userModel.token.isNotEmpty;
