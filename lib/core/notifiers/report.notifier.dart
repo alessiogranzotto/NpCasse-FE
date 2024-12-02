@@ -5,13 +5,13 @@ import 'package:np_casse/core/api/report.api.dart';
 import 'package:np_casse/core/models/cart.history.model.dart';
 import 'package:np_casse/core/models/product.history.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/utils/file_mobile.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:np_casse/core/utils/file_web.dart' 
+import 'package:np_casse/core/utils/file_web.dart'
     if (dart.library.io) 'package:np_casse/core/utils/file_mobile.dart';
-
 
 class ReportNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
@@ -222,7 +222,8 @@ class ReportNotifier with ChangeNotifier {
     }
   }
 
-  Future<void> downloadFile(Map<String, dynamic> okResult, BuildContext context) async {
+  Future<void> downloadFile(
+      Map<String, dynamic> okResult, BuildContext context) async {
     var fileContents = okResult['fileContents'];
 
     // Check if fileContents is a base64-encoded string
@@ -235,17 +236,19 @@ class ReportNotifier with ChangeNotifier {
       fileBytes = fileContents;
     } else {
       // If it's neither, throw an error or handle accordingly
-      throw Exception("File contents is neither a valid base64 string nor a Uint8List");
+      throw Exception(
+          "File contents is neither a valid base64 string nor a Uint8List");
     }
 
     // Proceed with platform-specific logic
     if (kIsWeb) {
       // Web-specific logic
-        downloadFileWeb(fileBytes, okResult['fileDownloadName'], okResult['contentType']);
+      //downloadFileWeb(fileBytes, okResult['fileDownloadName'], okResult['contentType']);
     } else {
       // Mobile-specific logic
-        // await downloadFileMobile(fileBytes, okResult['fileDownloadName'], context);
-      }
+      await downloadFileMobile(
+          fileBytes, okResult['fileDownloadName'], context);
+    }
   }
 
   void refresh() {
