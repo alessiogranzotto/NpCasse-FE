@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/report.notifier.dart';
+import 'package:np_casse/core/notifiers/report.history.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -19,30 +19,25 @@ class CartHistoryScreen extends StatefulWidget {
 class _CartHistoryScreenState extends State<CartHistoryScreen> {
   static PagedDataTableController<String, Map<String, dynamic>>
       tableController = PagedDataTableController();
-  UserAppInstitutionModel? cSelectedUserAppInstitution;
-  UserAppInstitutionModel? previousSelectedInstitution;
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
+  bool isRefreshing = true; // Track if data is refreshing
 
-  //   AuthenticationNotifier authenticationNotifier =
-  //       Provider.of<AuthenticationNotifier>(context, listen: true);
-  //   UserAppInstitutionModel? currentInstitution =
-  //       authenticationNotifier.getSelectedUserAppInstitution();
-
-  //   if (currentInstitution != previousSelectedInstitution) {
-  //     setState(() {
-  //       cSelectedUserAppInstitution = currentInstitution;
-  //       previousSelectedInstitution = currentInstitution;
-  //       tableController.refresh();
-  //     });
-  //   }
-  // }
-
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ReportHistoryNotifier reportNotifier = Provider.of<ReportHistoryNotifier>(context);
+    // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
+    if (reportNotifier.isHistoryUpdated && !isRefreshing) {
+      // Post-frame callback to avoid infinite loop during build phase
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        reportNotifier.setHistoryUpdate(false); // Reset the update flag
+        tableController.refresh();
+      });
+    }
+  }
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
     final cartHistoryNotifier =
-        Provider.of<ReportNotifier>(context, listen: false);
+        Provider.of<ReportHistoryNotifier>(context, listen: false);
     try {
       int pageNumber = (pageToken != null) ? int.parse(pageToken) : 1;
       var authNotifier =
@@ -65,6 +60,11 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       DateTimeRange? dateRange = filterModel?["dateRange"];
       DateTime? startDate = dateRange?.start;
       DateTime? endDate = dateRange?.end;
+
+      // Set refreshing to true before data fetching
+      setState(() {
+        isRefreshing = true;
+      });
 
       var response = await cartHistoryNotifier.findCartList(
         context: context,
@@ -90,11 +90,18 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
     } catch (e) {
       print('Error fetching data: $e');
       return (<Map<String, dynamic>>[], null);
+    } finally {
+      // After fetching data, set isRefreshing to false
+      cartHistoryNotifier.setHistoryUpdate(false); // Reset the update flag
+
+      setState(() {
+        isRefreshing = false;
+      });
     }
   }
 
   void handleDownloadCartList(BuildContext context) async {
-    final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
+    final reportNotifier = Provider.of<ReportHistoryNotifier>(context, listen: false);
     var authNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -111,7 +118,6 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   Widget build(BuildContext context) {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context);
-    CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 

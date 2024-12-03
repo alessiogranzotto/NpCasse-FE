@@ -6,7 +6,7 @@ import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
-import 'package:np_casse/core/notifiers/report.notifier.dart';
+import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
@@ -38,14 +38,25 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   String? sortBy;
   String? sortDirection;
   String sortColumnAndDirection = '';
+  bool isRefreshing = true; // Track if data is refreshing
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ReportProductNotifier reportNotifier = Provider.of<ReportProductNotifier>(context);
+    // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
+    if (reportNotifier.isProductUpdated && !isRefreshing) {
+      // Post-frame callback to avoid infinite loop during build phase
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        reportNotifier.setProductUpdate(false); // Reset the update flag
+        tableController.refresh();
+      });
+    }
   }
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
-    final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
+    final reportNotifier = Provider.of<ReportProductNotifier>(context, listen: false);
     try {
       int pageNumber = (pageToken != null) ? int.parse(pageToken) : 1;
       var authNotifier =
@@ -57,6 +68,10 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       // String? sortDirection;
       sortColumnAndDirection = '';
 
+      // Set refreshing to true before data fetching
+      setState(() {
+        isRefreshing = true;
+      });
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
@@ -116,11 +131,18 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
     } catch (e) {
       print('Error fetching data: $e');
       return (<Map<String, dynamic>>[], null);
+    } finally {
+      // After fetching data, set isRefreshing to false
+      reportNotifier.setProductUpdate(false); // Reset the update flag
+
+      setState(() {
+        isRefreshing = false;
+      });
     }
   }
 
   void handleDownloadProductList(BuildContext context) async {
-    final reportNotifier = Provider.of<ReportNotifier>(context, listen: false);
+    final reportNotifier = Provider.of<ReportProductNotifier>(context, listen: false);
     var authNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -252,7 +274,6 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                   orderBy: 'NameCategory',
                 );
 
-                print("Fetched categories: $categories");
                 return categories;
               },
               chipFormatter: (value) =>
@@ -296,7 +317,6 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                   orderBy: 'NameCategory',
                 );
 
-                print("Fetched subcategories: $categories");
                 return categories;
               },
               chipFormatter: (value) =>
