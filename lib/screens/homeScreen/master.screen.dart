@@ -15,7 +15,8 @@ import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dar
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/report.notifier.dart';
+import 'package:np_casse/core/notifiers/report.history.notifier.dart';
+import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
@@ -388,7 +389,10 @@ class _MasterScreenState extends State<MasterScreen> {
 
     // ShopCategoryNotifier shopCategoryNotifier =
     //     Provider.of<ShopCategoryNotifier>(context);
-    ReportNotifier reportNotifier = Provider.of<ReportNotifier>(context);
+    ReportProductNotifier reportProductNotifier =
+        Provider.of<ReportProductNotifier>(context);
+    ReportCartNotifier reportCartNotifier =
+        Provider.of<ReportCartNotifier>(context);
     return IdleDetector(
       idleTime:
           Duration(minutes: int.tryParse(cUserModel!.userMaxInactivity) ?? 30),
@@ -455,9 +459,9 @@ class _MasterScreenState extends State<MasterScreen> {
                     } else if (menu.label == "Impostazioni di configurazione") {
                       institutionAttributeAdminNotifier.setHistoryUpdate(true);
                     } else if (menu.label == "Report acquisti") {
-                      // reportNotifier.refresh();
+                      reportCartNotifier.setHistoryUpdate(true);
                     } else if (menu.label == "Report prodotti") {
-                      // reportNotifier.refresh();
+                      reportProductNotifier.setProductUpdate(true);
                     }
                     handleMenuTap(i);
                     return;

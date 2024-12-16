@@ -2,7 +2,8 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
-import 'package:np_casse/core/notifiers/report.notifier.dart';
+import 'package:np_casse/core/notifiers/report.history.notifier.dart';
+import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.dart';
@@ -27,7 +28,8 @@ class AppProvider {
     // ChangeNotifierProvider(create: (_) => StoreNotifier()),
     // ChangeNotifierProvider(create: (_) => SizeNotifier()),
     ChangeNotifierProvider(create: (_) => CartNotifier()),
-    ChangeNotifierProvider(create: (_) => ReportNotifier()),
+    ChangeNotifierProvider(create: (_) => ReportProductNotifier()),
+    ChangeNotifierProvider(create: (_) => ReportCartNotifier()),
 
     // ChangeNotifierProvider(create: (_) => PaymentService()),
     // ChangeNotifierProvider(create: (_) => ProductCardNotifier()),
