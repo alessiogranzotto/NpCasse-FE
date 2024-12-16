@@ -159,7 +159,7 @@ class AuthenticationAPI {
     }
   }
 
-  Future updateGeneralSetting({
+  Future updateUserSecurityAttribute({
     required String? token,
     required int idUser,
     required String otpMode,
@@ -176,7 +176,7 @@ class AuthenticationAPI {
         attributeName: 'User.MaxInactivity',
         attributeValue: maxInactivity.toString()));
 
-    final Uri uri = Uri.parse('${ApiRoutes.updateGeneralSettingsURL}/$idUser');
+    final Uri uri = Uri.parse('${ApiRoutes.updateUserAttributeURL}/$idUser');
     final http.Response response = await client.put(uri,
         headers: {
           'Content-Type': 'application/json',
@@ -197,6 +197,7 @@ class AuthenticationAPI {
       return null;
     }
   }
+
   // Future userRegister({required String email, required String password}) async {
   //   final Uri uri = Uri.parse(ApiRoutes.registerURL);
   //   final http.Response response = await client.post(uri,

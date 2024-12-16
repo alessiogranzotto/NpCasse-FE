@@ -35,14 +35,17 @@ class _ShManageScreenState extends State<ShManageScreen> {
   StakeholderGiveModelSearch? cStakeholderGiveModelSearch;
 
   void stakeholderSelected1(StakeholderGiveModelSearch? val) {
-    visibilityEdit.value = !visibilityEdit.value;
-    visibilityReceipt.value = !visibilityReceipt.value;
+    // visibilityEdit.value = !visibilityEdit.value;
+    // visibilityReceipt.value = !visibilityReceipt.value;
     cStakeholderGiveModelSearch = val;
     if (val != null) {
       visibilityEdit.value = true;
       visibilityReceipt.value = true;
     } else {
       visibilityEdit.value = false;
+      visibilityReceipt.value = false;
+    }
+    if (widget.idCart == 0) {
       visibilityReceipt.value = false;
     }
   }

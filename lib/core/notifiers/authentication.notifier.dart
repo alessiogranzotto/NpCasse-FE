@@ -33,9 +33,9 @@ class AuthenticationNotifier with ChangeNotifier {
     return currentUserModel;
   }
 
-  bool canUserAddItem() {
-    return (getSelectedUserAppInstitution().roleUserAppInstitution == "Admin" ||
-        getSelectedUserAppInstitution().roleUserAppInstitution ==
+  bool isUserAdminOrInstitutionAdmin() {
+    return (getSelectedUserAppInstitution().roleUserInstitution == "Admin" ||
+        getSelectedUserAppInstitution().roleUserInstitution ==
             "InstitutionAdmin");
   }
 
@@ -659,7 +659,7 @@ class AuthenticationNotifier with ChangeNotifier {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Update user detail",
+            title: "Impostazioni utente",
             message: "Errore di connessione",
             contentType: "failure"));
         // _isLoading = false;
@@ -691,7 +691,7 @@ class AuthenticationNotifier with ChangeNotifier {
         String errorDescription = parseData['errorDescription'];
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Change password",
+              title: "Impostazioni utente",
               message: errorDescription,
               contentType: "failure"));
           // _isLoading = false;
@@ -706,7 +706,7 @@ class AuthenticationNotifier with ChangeNotifier {
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Change password",
+            title: "Impostazioni utente",
             message: "Errore di connessione",
             contentType: "failure"));
 
@@ -716,7 +716,7 @@ class AuthenticationNotifier with ChangeNotifier {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Change password",
+            title: "Impostazioni utente",
             message: "Errore di connessione",
             contentType: "failure"));
         // _isLoading = false;
@@ -725,7 +725,7 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
-  Future updateUserSettingData({
+  Future updateUserSecurityAttribute({
     required BuildContext context,
     required String? token,
     required int idUser,
@@ -734,7 +734,7 @@ class AuthenticationNotifier with ChangeNotifier {
     required int maxInactivity,
   }) async {
     try {
-      var response = await authentificationAPI.updateGeneralSetting(
+      var response = await authentificationAPI.updateUserSecurityAttribute(
           token: token,
           idUser: idUser,
           otpMode: otpMode,

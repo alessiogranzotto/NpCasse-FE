@@ -5,17 +5,21 @@ import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navi
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
+import 'package:np_casse/core/api/institution.attribute.api.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
@@ -25,11 +29,13 @@ import 'package:np_casse/screens/productAttributeScreen/product.attribute.naviga
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
+import 'package:np_casse/screens/settingScreen/admin.setting.screen.dart';
 import 'package:np_casse/screens/settingScreen/bluetooth.configuration.screen.dart';
 import 'package:np_casse/screens/settingScreen/institution.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/settingScreen/user.setting.screen.dart';
+import 'package:np_casse/screens/stakeholderScreen/stakeholder.navigator.screen.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_lazy_indexed_stack/flutter_lazy_indexed_stack.dart';
@@ -99,11 +105,19 @@ List<MenuList> destinations = <MenuList>[
   //   1,
   //   subMenus: [],
   // ),
-
-  MenuList(AppRouter.userRoute, 'Impostazioni utente', Icons.account_circle,
+  MenuList(AppRouter.userRoute, 'Donatori', Icons.people,
+      const Icon(Icons.people), const StakeholderNavigator(), 1),
+  MenuList(AppRouter.userRoute, 'Impostazioni utente', Icons.settings,
       const Icon(Icons.account_circle), const UserSettingScreen(), 1),
   MenuList(AppRouter.settingRoute, 'Impostazioni ente', Icons.settings,
       const Icon(Icons.settings), const InstitutionSettingScreen(), 2),
+  MenuList(
+      AppRouter.settingRoute,
+      'Impostazioni amministratore',
+      Icons.settings,
+      const Icon(Icons.settings),
+      const AdminSettingScreen(),
+      3),
   // MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
   //     const Icon(Icons.settings), const BluetoothConfigurationScreen(), 2),
 
@@ -184,7 +198,7 @@ class _MasterScreenState extends State<MasterScreen> {
 
   void recalculateMenu() {
     int currentIntGrant = MenuList.calculateGrant(
-        cSelectedUserAppInstitution!.roleUserAppInstitution);
+        cSelectedUserAppInstitution!.roleUserInstitution);
     currentDestinations = filterDestinations(currentIntGrant);
   }
 
@@ -210,6 +224,7 @@ class _MasterScreenState extends State<MasterScreen> {
     ProductCatalogNavigatorKey.currentState?.popUntil((route) => route.isFirst);
     CartHistoryNavigatorKey.currentState?.popUntil((route) => route.isFirst);
     ShopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+    StakeholderNavigatorKey.currentState?.popUntil((route) => route.isFirst);
   }
 
   void getUserData() {
@@ -267,8 +282,8 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<AuthenticationNotifier>(context, listen: true);
     UserAppInstitutionModel selectedUserAppInstitution =
         authenticationNotifier.getSelectedUserAppInstitution();
-    int currentIntGrant = MenuList.calculateGrant(
-        selectedUserAppInstitution.roleUserAppInstitution);
+    int currentIntGrant =
+        MenuList.calculateGrant(selectedUserAppInstitution.roleUserInstitution);
 
     currentDestinations =
         currentDestinations = filterDestinations(currentIntGrant);
@@ -365,6 +380,11 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<ShopNavigateNotifier>(context);
     ShopSearchNotifier shopSearchNotifier =
         Provider.of<ShopSearchNotifier>(context);
+    InstitutionAttributeInstitutionAdminNotifier
+        institutionAttributeInstitutionAdminNotifier =
+        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
+    InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
+        Provider.of<InstitutionAttributeAdminNotifier>(context);
 
     // ShopCategoryNotifier shopCategoryNotifier =
     //     Provider.of<ShopCategoryNotifier>(context);
@@ -395,7 +415,7 @@ class _MasterScreenState extends State<MasterScreen> {
                     ),
                     Text(
                       cSelectedUserAppInstitution!
-                          .roleUserAppInstitution, // Safely unwrap
+                          .roleUserInstitution, // Safely unwrap
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
@@ -429,6 +449,11 @@ class _MasterScreenState extends State<MasterScreen> {
                       productCatalogNotifier.refresh();
                     } else if (menu.label == "Catalogo categorie") {
                       categoryCatalogNotifier.refresh();
+                    } else if (menu.label == "Impostazioni ente") {
+                      institutionAttributeInstitutionAdminNotifier
+                          .setHistoryUpdate(true);
+                    } else if (menu.label == "Impostazioni di configurazione") {
+                      institutionAttributeAdminNotifier.setHistoryUpdate(true);
                     } else if (menu.label == "Report acquisti") {
                       // reportNotifier.refresh();
                     } else if (menu.label == "Report prodotti") {

@@ -23,7 +23,7 @@ class CategoryOneShopScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    bool canAddProject = authenticationNotifier.canUserAddItem();
+    //bool canAddProject = authenticationNotifier.canUserAddItem();
     //canAddProject = true;
     // // Set the default number of columns to 3.
     // int columnsCount = 3;

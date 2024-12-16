@@ -26,3 +26,27 @@ class InstitutionModel {
     return data;
   }
 }
+
+class InstitutionAttributeModel {
+  InstitutionAttributeModel(
+      {required this.attributeName, required this.attributeValue});
+  late String attributeName;
+  late String attributeValue;
+
+  InstitutionAttributeModel.empty() {
+    attributeName = "";
+    attributeValue = "";
+  }
+
+  InstitutionAttributeModel.fromJson(Map<String, dynamic> json) {
+    attributeName = json['attributeName'];
+    attributeValue = json['attributeValue'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['attributeName'] = attributeName;
+    data['attributeValue'] = attributeValue;
+    return data;
+  }
+}

@@ -6,31 +6,37 @@ import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
-import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
+import 'package:np_casse/core/models/user.model.dart';
+import 'package:np_casse/core/utils/snackbar.util.dart';
 
-class InstitutionSettingScreen extends StatefulWidget {
-  const InstitutionSettingScreen({super.key});
+class EmailSettingScreen extends StatefulWidget {
+  const EmailSettingScreen({super.key});
   @override
-  State<InstitutionSettingScreen> createState() =>
-      _InstitutionSettingScreenState();
+  State<EmailSettingScreen> createState() => _EmailSettingScreenState();
 }
 
-class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
+class _EmailSettingScreenState extends State<EmailSettingScreen> {
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
   final _formKey3 = GlobalKey<FormState>();
 
-  final ValueNotifier<bool> paymentMethodValidNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> stripeValidNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> securityFieldValidNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
+  final ValueNotifier<bool> confirmPasswordNotifier = ValueNotifier(true);
 
-  late final TextEditingController idContantiController;
-  late final TextEditingController idBancomatController;
-  late final TextEditingController idCartaCreditoController;
-  late final TextEditingController idAssegnoController;
-  late final TextEditingController stripeApiKeyController;
+  final ValueNotifier<bool> userDataFieldValidNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> passwordFieldValidNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> securityFieldValidNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> emailValidNotifier = ValueNotifier(false);
+
+  late final TextEditingController firstNameController;
+  late final TextEditingController lastNameController;
+  late final TextEditingController emailController;
+  late final TextEditingController phoneController;
+  late final TextEditingController passwordController;
+  late final TextEditingController confirmPasswordController;
   late TextEditingController tokenExpirationController =
       TextEditingController();
   late TextEditingController maxInactivityController = TextEditingController();
@@ -38,21 +44,26 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     DropdownMenuItem(child: Text("No"), value: "No"),
     DropdownMenuItem(child: Text("Email"), value: "Email"),
   ];
-  String valueOtpMode = 'No';
+  String valueOtpMode = '';
+
   List<bool> panelOpen = [false, false, false];
-  bool isRefreshing = true; // Track if data is refreshing
+
+  bool canViewSecurity = false;
+  UserModel cUserModel = UserModel.empty();
 
   void initializeControllers() {
-    idContantiController = TextEditingController()
-      ..addListener(paymentMethodControllerListener);
-    idBancomatController = TextEditingController()
-      ..addListener(paymentMethodControllerListener);
-    idCartaCreditoController = TextEditingController()
-      ..addListener(paymentMethodControllerListener);
-    idAssegnoController = TextEditingController()
-      ..addListener(paymentMethodControllerListener);
-    stripeApiKeyController = TextEditingController()
-      ..addListener(stripeControllerListener);
+    firstNameController = TextEditingController()
+      ..addListener(userDataControllerListener);
+    lastNameController = TextEditingController()
+      ..addListener(userDataControllerListener);
+    emailController = TextEditingController()
+      ..addListener(userDataControllerListener);
+    phoneController = TextEditingController()
+      ..addListener(userDataControllerListener);
+    passwordController = TextEditingController()
+      ..addListener(passwordControllerListener);
+    confirmPasswordController = TextEditingController()
+      ..addListener(passwordControllerListener);
     tokenExpirationController = TextEditingController()
       ..addListener(securityControllerListener);
     maxInactivityController = TextEditingController()
@@ -60,31 +71,40 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   }
 
   void disposeControllers() {
-    idContantiController.dispose();
-    idBancomatController.dispose();
-    idCartaCreditoController.dispose();
-    idAssegnoController.dispose();
-    stripeApiKeyController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     tokenExpirationController.dispose();
     maxInactivityController.dispose();
   }
 
-  void paymentMethodControllerListener() {
-    if (idContantiController.text.isEmpty ||
-        idBancomatController.text.isEmpty ||
-        idCartaCreditoController.text.isEmpty ||
-        idAssegnoController.text.isEmpty) {
-      paymentMethodValidNotifier.value = false;
+  void userDataControllerListener() {
+    final email = emailController.text;
+
+    if (email.isEmpty) return;
+
+    if (AppConstants.emailRegex.hasMatch(email)) {
+      userDataFieldValidNotifier.value = true;
     } else {
-      paymentMethodValidNotifier.value = true;
+      userDataFieldValidNotifier.value = false;
     }
   }
 
-  void stripeControllerListener() {
-    if (stripeApiKeyController.text.isEmpty) {
-      stripeValidNotifier.value = false;
+  void passwordControllerListener() {
+    final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    if (password.isEmpty && confirmPassword.isEmpty) return;
+
+    if (AppConstants.passwordRegex.hasMatch(password) &&
+        AppConstants.passwordRegex.hasMatch(confirmPassword) &&
+        password == confirmPassword) {
+      passwordFieldValidNotifier.value = true;
     } else {
-      stripeValidNotifier.value = true;
+      passwordFieldValidNotifier.value = false;
     }
   }
 
@@ -99,224 +119,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     securityFieldValidNotifier.value = result;
   }
 
-  Future<void> getInstitutionAttributes() async {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-            listen: false);
-    UserAppInstitutionModel cUserAppInstitutionModel =
-        authenticationNotifier.getSelectedUserAppInstitution();
-
-    await institutionAttributeInstitutionAdminNotifier
-        .getInstitutionAttribute(
-            context: context,
-            token: authenticationNotifier.token,
-            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-            idInstitution:
-                cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
-            role: 'InstitutionAdmin')
-        .then((value) {
-      if (value != null) {
-        List<InstitutionAttributeModel> cValue =
-            value as List<InstitutionAttributeModel>;
-
-        //ID PAYMENT
-        var itemIdContanti = cValue
-            .where((element) =>
-                element.attributeName == 'Give.IdPaymentType.Contanti')
-            .firstOrNull;
-        if (itemIdContanti != null) {
-          idContantiController.text = itemIdContanti.attributeValue;
-        }
-
-        var itemIdBancomat = cValue
-            .where((element) =>
-                element.attributeName == 'Give.IdPaymentType.Bancomat')
-            .firstOrNull;
-        if (itemIdBancomat != null) {
-          idBancomatController.text = itemIdBancomat.attributeValue;
-        }
-
-        var itemIdCartaCredito = cValue
-            .where((element) =>
-                element.attributeName == 'Give.IdPaymentType.CartaCredito')
-            .firstOrNull;
-        if (itemIdCartaCredito != null) {
-          idCartaCreditoController.text = itemIdCartaCredito.attributeValue;
-        }
-
-        var itemIdAssegno = cValue
-            .where((element) =>
-                element.attributeName == 'Give.IdPaymentType.Assegni')
-            .firstOrNull;
-        if (itemIdAssegno != null) {
-          idAssegnoController.text = itemIdAssegno.attributeValue;
-        }
-
-        //STRIPE
-        var itemStripeApiKey = cValue
-            .where((element) => element.attributeName == 'Stripe.ApiKey')
-            .firstOrNull;
-        if (itemStripeApiKey != null) {
-          stripeApiKeyController.text = itemStripeApiKey.attributeValue;
-        }
-
-        //SECURITY
-        var itemValueOtpMode = cValue
-            .where((element) => element.attributeName == 'User.OtpMode')
-            .firstOrNull;
-        if (itemValueOtpMode != null) {
-          valueOtpMode = itemValueOtpMode.attributeValue;
-        }
-
-        var itemTokenExpiration = cValue
-            .where((element) => element.attributeName == 'User.TokenExpiration')
-            .firstOrNull;
-        if (itemTokenExpiration != null) {
-          tokenExpirationController.text = itemTokenExpiration.attributeValue;
-        }
-
-        var itemMaxInactivity = cValue
-            .where((element) => element.attributeName == 'User.MaxInactivity')
-            .firstOrNull;
-        if (itemMaxInactivity != null) {
-          maxInactivityController.text = itemMaxInactivity.attributeValue;
-        }
-      }
-    });
-  }
-
-  updateInstitutionPaymentMethodData() {
-    if (_formKey1.currentState!.validate()) {
-      var authNotifier =
-          Provider.of<AuthenticationNotifier>(context, listen: false);
-      UserAppInstitutionModel cUserAppInstitutionModel =
-          authNotifier.getSelectedUserAppInstitution();
-
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
-
-      institutionAttributeInstitutionAdminNotifier
-          .updateInstitutionPaymentMethodAttribute(
-              context: context,
-              token: authNotifier.token,
-              idUserAppInstitution:
-                  cUserAppInstitutionModel.idUserAppInstitution,
-              idInstitution: cUserAppInstitutionModel
-                  .idInstitutionNavigation.idInstitution,
-              idPaymentTypeContanti: int.parse(idContantiController.text),
-              idPaymentTypeBancomat: int.parse(idBancomatController.text),
-              idPaymentTypeCartaCredito:
-                  int.parse(idCartaCreditoController.text),
-              idPaymentTypeAssegni: int.parse(idAssegnoController.text))
-          .then((value) {
-        if (value) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Impostazioni ente",
-                    message: "Metodi di pagamento aggiornati correttamente",
-                    contentType: "success"));
-          }
-        }
-      });
-    }
-  }
-
-  updateInstitutionStripeData() {
-    if (_formKey2.currentState!.validate()) {
-      var authNotifier =
-          Provider.of<AuthenticationNotifier>(context, listen: false);
-      UserAppInstitutionModel cUserAppInstitutionModel =
-          authNotifier.getSelectedUserAppInstitution();
-
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
-
-      institutionAttributeInstitutionAdminNotifier
-          .updateInstitutionStripeAttribute(
-        context: context,
-        token: authNotifier.token,
-        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-        idInstitution:
-            cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
-        stripeApiKey: stripeApiKeyController.text,
-      )
-          .then((value) {
-        if (value) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Impostazioni ente",
-                    message: "Parametri Stripe aggiornati correttamente",
-                    contentType: "success"));
-          }
-        }
-      });
-    }
-  }
-
-  updateInstitutionSecurityData() {
-    if (_formKey3.currentState!.validate()) {
-      var authNotifier =
-          Provider.of<AuthenticationNotifier>(context, listen: false);
-      UserAppInstitutionModel cUserAppInstitutionModel =
-          authNotifier.getSelectedUserAppInstitution();
-
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
-
-      institutionAttributeInstitutionAdminNotifier
-          .updateInstitutionSecurityAttribute(
-              context: context,
-              token: authNotifier.token,
-              idUserAppInstitution:
-                  cUserAppInstitutionModel.idUserAppInstitution,
-              idInstitution: cUserAppInstitutionModel
-                  .idInstitutionNavigation.idInstitution,
-              otpMode: valueOtpMode,
-              tokenExpiration: int.parse(tokenExpirationController.text),
-              maxInactivity: int.parse(maxInactivityController.text))
-          .then((value) {
-        if (value) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Impostazioni ente",
-                    message: "Criteri di sicurezza aggiornati correttamente",
-                    contentType: "success"));
-          }
-        }
-      });
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
-    // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
-    if (institutionAttributeInstitutionAdminNotifier.isHistoryUpdated) {
-      // Post-frame callback to avoid infinite loop during build phase
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        institutionAttributeInstitutionAdminNotifier
-            .setHistoryUpdate(false); // Reset the update flag
-        getInstitutionAttributes();
-      });
-    }
-  }
-
   @override
   void initState() {
     initializeControllers();
-    // getInstitutionAttributes();
+    getUserAttribute();
     super.initState();
   }
 
@@ -326,20 +132,121 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  updateUserData() {
+    if (_formKey1.currentState!.validate()) {
+      var authNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserModel cUserModel = authNotifier.getUser();
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authNotifier.getSelectedUserAppInstitution();
+      authNotifier
+          .updateUserDetails(
+              context: context,
+              token: authNotifier.token,
+              idUser: cUserModel.idUser,
+              idUserAppInstitution:
+                  cUserAppInstitutionModel.idUserAppInstitution,
+              name: firstNameController.text,
+              surname: lastNameController.text,
+              email: emailController.text,
+              phone: phoneController.text)
+          .then((value) {
+        if (value) {
+          authNotifier.reinitAccount(context: context);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni utente",
+                    message: "Anagrafica utente aggiornata correttamente",
+                    contentType: "success"));
+          }
+        }
+      });
+    }
+  }
+
+  changePassword() {
+    if (_formKey2.currentState!.validate()) {
+      var authNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserModel cUserModel = authNotifier.getUser();
+
+      authNotifier
+          .changeUserPassword(
+              context: context,
+              token: authNotifier.token,
+              idUser: cUserModel.idUser,
+              password: passwordController.text,
+              confirmPassword: confirmPasswordController.text)
+          .then((value) {
+        if (value) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni utente",
+                    message: "La password è stata modificata correttamente",
+                    contentType: "success"));
+          }
+        }
+      });
+    }
+  }
+
+  updateSecurityData() {
+    if (_formKey3.currentState!.validate()) {
+      var authNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserModel cUserModel = authNotifier.getUser();
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authNotifier.getSelectedUserAppInstitution();
+      authNotifier
+          .updateUserSecurityAttribute(
+              context: context,
+              token: authNotifier.token,
+              idUser: cUserModel.idUser,
+              otpMode: valueOtpMode,
+              tokenExpiration: int.parse(tokenExpirationController.text),
+              maxInactivity: int.parse(maxInactivityController.text))
+          .then((value) {
+        if (value) {
+          authNotifier.reinitAccount(context: context);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni utente",
+                    message: "Criteri di sicurezza aggiornati correttamente",
+                    contentType: "success"));
+          }
+        }
+      });
+    }
+  }
+
+  Future<void> getUserAttribute() async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
-    UserAppInstitutionModel cUserAppInstitutionModel =
-        authenticationNotifier.getSelectedUserAppInstitution();
+    cUserModel = authenticationNotifier.getUser();
+    firstNameController.text = cUserModel.name;
+    lastNameController.text = cUserModel.surname;
+    emailController.text = cUserModel.email;
+    phoneController.text = cUserModel.phone;
+    valueOtpMode = cUserModel.userOtpMode;
+    tokenExpirationController.text = cUserModel.userTokenExpiration.toString();
+    maxInactivityController.text = cUserModel.userMaxInactivity.toString();
+    canViewSecurity = authenticationNotifier.isUserAdminOrInstitutionAdmin();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Impostazioni ente ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution} ',
+          'Impostazioni utente ${cUserModel.name} ${cUserModel.surname} ',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -368,8 +275,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                               headerBuilder:
                                   (BuildContext context, bool isExpanded) {
                                 return ListTile(
-                                  title: Text('Metodi di pagamento Shop Casse'),
-                                  leading: const Icon(Icons.payment_sharp),
+                                  title: Text('Anagrafica utente'),
+                                  leading: const Icon(Icons.account_circle),
                                 );
                               },
                               body: Form(
@@ -384,14 +291,9 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
-                                          controller: idContantiController,
-                                          labelText:
-                                              AppStrings.IdPaymentTypeContanti,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatter: <TextInputFormatter>[
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
+                                          controller: firstNameController,
+                                          labelText: AppStrings.firstName,
+                                          keyboardType: TextInputType.name,
                                           textInputAction: TextInputAction.next,
                                           onChanged: (_) => _formKey1
                                               .currentState
@@ -400,7 +302,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                             return value!.isNotEmpty
                                                 ? null
                                                 : AppStrings
-                                                    .pleaseEnterIdPaymentTypeContanti;
+                                                    .pleaseEnterFirstName;
                                           },
                                         ),
                                       ),
@@ -408,15 +310,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
-                                          controller: idBancomatController,
-                                          labelText:
-                                              AppStrings.IdPaymentTypeBancomat,
-                                          keyboardType: TextInputType.number,
+                                          controller: lastNameController,
+                                          labelText: AppStrings.lastName,
+                                          keyboardType: TextInputType.name,
                                           textInputAction: TextInputAction.next,
-                                          inputFormatter: <TextInputFormatter>[
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
                                           onChanged: (_) => _formKey1
                                               .currentState
                                               ?.validate(),
@@ -424,7 +321,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                             return value!.isNotEmpty
                                                 ? null
                                                 : AppStrings
-                                                    .pleaseEnterIdPaymentTypeBancomat;
+                                                    .pleaseEnterLastName;
                                           },
                                         ),
                                       ),
@@ -432,23 +329,23 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
-                                          controller: idCartaCreditoController,
-                                          labelText: AppStrings
-                                              .IdPaymentTypeCartaCredito,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatter: <TextInputFormatter>[
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
+                                          controller: emailController,
+                                          labelText: AppStrings.email,
+                                          keyboardType:
+                                              TextInputType.emailAddress,
                                           textInputAction: TextInputAction.next,
                                           onChanged: (_) => _formKey1
                                               .currentState
                                               ?.validate(),
                                           validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterIdPaymentTypeCartaCredito;
+                                            return value!.isEmpty
+                                                ? AppStrings
+                                                    .pleaseEnterEmailAddress
+                                                : AppConstants.emailRegex
+                                                        .hasMatch(value)
+                                                    ? null
+                                                    : AppStrings
+                                                        .invalidEmailAddress;
                                           },
                                         ),
                                       ),
@@ -456,23 +353,18 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
-                                          controller: idAssegnoController,
-                                          labelText:
-                                              AppStrings.IdPaymentTypeAssegno,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatter: <TextInputFormatter>[
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
+                                          controller: phoneController,
+                                          labelText: AppStrings.telephoneNumber,
+                                          keyboardType: TextInputType.phone,
                                           textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey1
+                                          onChanged: (_) => _formKey2
                                               .currentState
                                               ?.validate(),
                                           validator: (value) {
                                             return value!.isNotEmpty
                                                 ? null
                                                 : AppStrings
-                                                    .pleaseEnterIdPaymentTypeAssegno;
+                                                    .pleaseEnterTelephoneNumber;
                                           },
                                         ),
                                       ),
@@ -482,12 +374,12 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: ValueListenableBuilder(
                                               valueListenable:
-                                                  paymentMethodValidNotifier,
+                                                  userDataFieldValidNotifier,
                                               builder: (_, isValid, __) {
                                                 return ElevatedButton(
                                                   onPressed: isValid
                                                       ? () {
-                                                          updateInstitutionPaymentMethodData();
+                                                          updateUserData();
                                                         }
                                                       : null,
                                                   style:
@@ -519,8 +411,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                               headerBuilder:
                                   (BuildContext context, bool isExpanded) {
                                 return ListTile(
-                                  title: Text('Stripe'),
-                                  leading: const Icon(Icons.extension_rounded),
+                                  title: Text('Password'),
+                                  leading: const Icon(Icons.password),
                                 );
                               },
                               body: Form(
@@ -531,24 +423,108 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          controller: stripeApiKeyController,
-                                          labelText: AppStrings.stripeApiKey,
-                                          keyboardType: TextInputType.name,
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey1
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterstripeApiKey;
-                                          },
-                                        ),
+                                      ValueListenableBuilder(
+                                        valueListenable: passwordNotifier,
+                                        builder: (_, passwordObscure, __) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 20),
+                                            child: CustomTextFormField(
+                                              obscureText: passwordObscure,
+                                              controller: passwordController,
+                                              labelText: AppStrings.password,
+                                              textInputAction:
+                                                  TextInputAction.next,
+                                              keyboardType:
+                                                  TextInputType.visiblePassword,
+                                              onChanged: (_) => _formKey2
+                                                  .currentState
+                                                  ?.validate(),
+                                              validator: (value) {
+                                                return value!.isEmpty
+                                                    ? AppStrings
+                                                        .pleaseEnterPassword
+                                                    : AppConstants.passwordRegex
+                                                            .hasMatch(value)
+                                                        ? null
+                                                        : AppStrings
+                                                            .invalidPassword;
+                                              },
+                                              suffixIcon: IconButton(
+                                                onPressed: () =>
+                                                    passwordNotifier.value =
+                                                        !passwordObscure,
+                                                style: IconButton.styleFrom(
+                                                  minimumSize:
+                                                      const Size.square(48),
+                                                ),
+                                                icon: Icon(
+                                                  passwordObscure
+                                                      ? Icons
+                                                          .visibility_off_outlined
+                                                      : Icons
+                                                          .visibility_outlined,
+                                                  size: 20,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      ValueListenableBuilder(
+                                        valueListenable:
+                                            confirmPasswordNotifier,
+                                        builder: (_, passwordObscure, __) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 20),
+                                            child: CustomTextFormField(
+                                              obscureText: passwordObscure,
+                                              controller:
+                                                  confirmPasswordController,
+                                              labelText:
+                                                  AppStrings.confirmPassword,
+                                              textInputAction:
+                                                  TextInputAction.done,
+                                              keyboardType:
+                                                  TextInputType.visiblePassword,
+                                              onChanged: (_) => _formKey2
+                                                  .currentState
+                                                  ?.validate(),
+                                              validator: (value) {
+                                                return value!.isEmpty
+                                                    ? AppStrings
+                                                        .pleaseReEnterPassword
+                                                    : value !=
+                                                            passwordController
+                                                                .text
+                                                        ? AppStrings
+                                                            .passwordNotMatched
+                                                        : null;
+                                              },
+                                              suffixIcon: IconButton(
+                                                onPressed: () =>
+                                                    confirmPasswordNotifier
+                                                            .value =
+                                                        !passwordObscure,
+                                                style: IconButton.styleFrom(
+                                                  minimumSize:
+                                                      const Size.square(48),
+                                                ),
+                                                icon: Icon(
+                                                  passwordObscure
+                                                      ? Icons
+                                                          .visibility_off_outlined
+                                                      : Icons
+                                                          .visibility_outlined,
+                                                  size: 20,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                       Row(
                                         children: [
@@ -556,12 +532,12 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                             padding: const EdgeInsets.all(8.0),
                                             child: ValueListenableBuilder(
                                               valueListenable:
-                                                  stripeValidNotifier,
+                                                  passwordFieldValidNotifier,
                                               builder: (_, isValid, __) {
                                                 return ElevatedButton(
                                                   onPressed: isValid
                                                       ? () {
-                                                          updateInstitutionStripeData();
+                                                          changePassword();
                                                         }
                                                       : null,
                                                   style:
@@ -571,7 +547,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                                     ),
                                                   ),
                                                   child: const Text(
-                                                    AppStrings.update,
+                                                    AppStrings.changePassword,
                                                     style: TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 14),
@@ -593,7 +569,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                               headerBuilder:
                                   (BuildContext context, bool isExpanded) {
                                 return ListTile(
-                                  title: Text('Sicurezza utenti'),
+                                  title: Text('Sicurezza'),
                                   leading: const Icon(Icons.security),
                                 );
                               },
@@ -609,7 +585,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomDropDownButtonFormField(
-                                          enabled: true,
+                                          enabled: canViewSecurity,
                                           actualValue: valueOtpMode,
                                           labelText: AppStrings.otpMode,
                                           listOfValue: availableOtpMode,
@@ -623,6 +599,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
+                                          enabled: canViewSecurity,
                                           controller: tokenExpirationController,
                                           labelText: AppStrings.tokenExpiration,
                                           keyboardType: TextInputType.number,
@@ -646,6 +623,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
+                                          enabled: canViewSecurity,
                                           controller: maxInactivityController,
                                           labelText:
                                               AppStrings.userMaxInactivity,
@@ -677,7 +655,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                                 return ElevatedButton(
                                                   onPressed: isValid
                                                       ? () {
-                                                          updateInstitutionSecurityData();
+                                                          updateSecurityData();
                                                         }
                                                       : null,
                                                   style:

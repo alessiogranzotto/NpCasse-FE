@@ -3,17 +3,17 @@ import 'package:np_casse/core/models/institution.model.dart';
 class UserAppInstitutionModel {
   UserAppInstitutionModel(
       {required this.idUserAppInstitution,
-      required this.roleUserAppInstitution,
+      required this.roleUserInstitution,
       required this.idInstitutionNavigation});
   late final int idUserAppInstitution;
-  late final String roleUserAppInstitution;
+  late final String roleUserInstitution;
   late final InstitutionModel idInstitutionNavigation;
   // late final List<UserTeamModel> userTeamModel;
   late bool selected = false;
 
   UserAppInstitutionModel.empty() {
     idUserAppInstitution = 0;
-    roleUserAppInstitution = '';
+    roleUserInstitution = '';
     idInstitutionNavigation = InstitutionModel.empty();
     // userTeamModel = List.empty();
     selected = false;
@@ -21,7 +21,7 @@ class UserAppInstitutionModel {
 
   UserAppInstitutionModel.fromJson(Map<String, dynamic> json) {
     idUserAppInstitution = json['idUserAppInstitution'];
-    roleUserAppInstitution = json['roleUserAppInstitution'];
+    roleUserInstitution = json['roleUserInstitution'];
     idInstitutionNavigation =
         InstitutionModel.fromJson(json['idInstitutionNavigation']);
 
@@ -36,7 +36,7 @@ class UserAppInstitutionModel {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['idUserAppInstitution'] = idUserAppInstitution;
-    data['roleUserAppInstitution'] = roleUserAppInstitution;
+    data['roleUserInstitution'] = roleUserInstitution;
     data['idInstitutionNavigation'] = idInstitutionNavigation.toJson();
     // data['userModelOther'] = userTeamModel;
     data['selected'] = selected;

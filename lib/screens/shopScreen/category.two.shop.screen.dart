@@ -28,7 +28,7 @@ class CategoryTwoShopScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    bool canAddProject = authenticationNotifier.canUserAddItem();
+    //bool canAddProject = authenticationNotifier.canUserAddItem();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,

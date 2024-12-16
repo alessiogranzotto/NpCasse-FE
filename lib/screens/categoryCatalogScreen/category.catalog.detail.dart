@@ -210,7 +210,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    bool canAddProduct = authenticationNotifier.canUserAddItem();
+    //bool canAddProduct = authenticationNotifier.canUserAddItem();
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,

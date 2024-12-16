@@ -11,14 +11,17 @@ class AppKeys {
   static String appName = 'np_casse';
 }
 
-class AppRegex {
-  const AppRegex._();
+// class AppRegex {
+//   const AppRegex._();
 
-  static final RegExp emailRegex = RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.([a-zA-Z]{2,})+");
-  static final RegExp passwordRegex = RegExp(
-      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&_])[A-Za-z\d@#$!%*?&_].{7,}$');
-}
+//   static final RegExp emailRegex = RegExp(
+//       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.([a-zA-Z]{2,})+");
+//   // static final RegExp passwordRegex = RegExp(
+//   //     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&_])[A-Za-z\d@#$!%*?&_].{7,}$');
+
+//   static final RegExp passwordRegex =
+//       RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,}$');
+// }
 
 class AppConstants {
   AppConstants._();
@@ -29,9 +32,12 @@ class AppConstants {
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.([a-zA-Z]{2,})+",
   );
 
-  static final RegExp passwordRegex = RegExp(
-    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&_])[A-Za-z\d@#$!%*?&_].{7,}$',
-  );
+  // static final RegExp passwordRegex = RegExp(
+  //   r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&_])[A-Za-z\d@#$!%*?&_].{7,}$',
+  // );
+
+  static final RegExp passwordRegex =
+      RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,}$');
 }
 
 class AppStrings {
@@ -98,6 +104,42 @@ class AppStrings {
   static const String confirmPassword = 'Conferma Password';
   static const String pleaseReEnterPassword = 'Reinserire la password';
   static const String passwordNotMatched = 'Password non coincidenti!';
+
+  static const String IdPaymentTypeContanti = 'Id pagamento contanti';
+  static const String pleaseEnterIdPaymentTypeContanti =
+      'Inserire Id di pagamento';
+  static const String IdPaymentTypeBancomat = 'Id pagamento bancomat';
+  static const String pleaseEnterIdPaymentTypeBancomat =
+      'Inserire Id di pagamento';
+  static const String IdPaymentTypeAssegno = 'Id pagamento assegno';
+  static const String pleaseEnterIdPaymentTypeAssegno =
+      'Inserire Id di pagamento';
+  static const String IdPaymentTypeCartaCredito =
+      'Id pagamento carta di credito';
+  static const String pleaseEnterIdPaymentTypeCartaCredito =
+      'Inserire Id di pagamento';
+
+  static const String stripeApiKey = 'Stripe api key';
+  static const String pleaseEnterstripeApiKey = 'Inserire api key di Stripe';
+
+  static const GiveNomeLogin = 'Nome login Give Api';
+  static const pleaseEnterGiveNomeLogin = 'Inserire nome login Api Give';
+
+  static const GiveUsername = 'Username Give Api';
+  static const pleaseEnterGiveUsername = 'Inserire username Api Give';
+  static const GiveBaseAddress = 'Url di riferimento Api Give';
+  static const pleaseEnterGiveBaseAddress =
+      'Inserire Url di riferimento Api Give';
+
+  static const GivePassword = 'Password Api Key';
+  static const pleaseEnterGivePassword = 'Inserire password Api Give';
+
+  static const emailSendAccompaniment = 'Id mail di accompagnamento';
+  static const pleaseEnterEmailSendAccompaniment =
+      'Inseire id email di accompagnamento';
+
+  static const emailSendFrom = 'Email di invio';
+  static const pleaseEnterEmailSendFrom = 'Inserire email di invio';
 }
 
 class AppColors {

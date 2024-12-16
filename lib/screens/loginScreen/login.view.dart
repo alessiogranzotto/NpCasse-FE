@@ -42,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (email.isEmpty && password.isEmpty) return;
 
-    if (AppRegex.emailRegex.hasMatch(email) &&
-        AppRegex.passwordRegex.hasMatch(password)) {
+    if (AppConstants.emailRegex.hasMatch(email) &&
+        AppConstants.passwordRegex.hasMatch(password)) {
       fieldValidNotifier.value = true;
     } else {
       fieldValidNotifier.value = false;

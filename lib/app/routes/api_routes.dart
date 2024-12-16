@@ -6,6 +6,10 @@ class ApiRoutes {
   static const String devCasseURL = "https://localhost:7263";
   static const String devWhURL = "https://localhost:7264";
 
+  static const String testAuthURL = "https://auth-test.giveapp.it";
+  static const String testCasseURL = "https://apicasse-test.giveapp.it";
+  static const String testWhURL = "https://wh-test.giveapp.it";
+
   static const String prodAuthURL = "https://auth.giveapp.it";
   static const String prodCasseURL = "https://apicasse.giveapp.it";
   static const String prodWhURL = "https://wh.giveapp.it";
@@ -15,9 +19,9 @@ class ApiRoutes {
   // static const String localWebAuthURL = "http://31.14.141.7:8084";
   // static const String testBaseURL = "http://31.14.141.7:8443";
 
-  static const String authURL = prodAuthURL;
-  static const String casseURL = prodCasseURL;
-  static const String whURL = prodWhURL;
+  static const String authURL = testAuthURL;
+  static const String casseURL = testCasseURL;
+  static const String whURL = testWhURL;
 
   static const String authenticateURL =
       "$authURL/api/user/utility/authenticate";
@@ -30,12 +34,18 @@ class ApiRoutes {
       "$authURL/api/User/Utility/get-user-app-institution-grant";
 
   static const String updateUserDetailsURL =
-      "$authURL/api/User/Utility/update-user";
-  static const String updateGeneralSettingsURL =
-      "$authURL/api/User/Utility/update-user-attribute";
+      "$authURL/api/User/Utility/Update-user";
   static const String changePasswordURL =
-      "$authURL/api/User/Utility/update-user-password";
+      "$authURL/api/User/Utility/Update-user-password";
 
+  static const String updateUserAttributeURL =
+      "$authURL/api/User/Utility/Update-user-attribute";
+
+  static const String updateInstitutionAttributeURL =
+      "$authURL/api/Institution/Utility/Update-institution-admin-attribute";
+
+  static const String baseInstitutionAttributeURL =
+      "$authURL/api/Institution/Utility";
   static const String baseUserAppInstitutionURL =
       "$casseURL/api/UserAppInstitution";
 

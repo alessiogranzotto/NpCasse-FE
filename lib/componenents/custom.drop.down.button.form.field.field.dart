@@ -99,10 +99,17 @@ class _CustomDropDownButtonFormField
           //     ? (dynamic value) => {_selectedValue = widget.actualValue;
           //     widget.onItemChanged(value ?? '');}
           //     : null,
-          onChanged: (value) {
-            // _selectedValue = widget.actualValue;
-            widget.onItemChanged(value ?? '');
-          },
+          onChanged:
+              // (value) {
+              //   widget.enabled
+              //       ?
+              //       // _selectedValue = widget.actualValue;
+              //       widget.onItemChanged(value ?? '')
+              //       : null;
+              // },
+              widget.enabled
+                  ? (dynamic value) => widget.onItemChanged(value ?? '')
+                  : null,
           // onChanged: (value) {
           //   if (widget.enabled) {
           //     _selectedValue = widget.actualValue;

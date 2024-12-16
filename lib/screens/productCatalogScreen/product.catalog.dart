@@ -316,7 +316,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                 Expanded(
                     flex: 1,
                     child: CustomDropDownButtonFormField(
-                      enabled: selectedIdCategory != null,
+                      enabled: true,
                       actualValue: numberResult,
                       labelText: 'Mostra risultati',
                       listOfValue: availableNumberResult,

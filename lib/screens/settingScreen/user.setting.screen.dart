@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
+import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -44,6 +47,9 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
 
   List<bool> panelOpen = [false, false, false];
 
+  bool canViewSecurity = false;
+  UserModel cUserModel = UserModel.empty();
+
   void initializeControllers() {
     firstNameController = TextEditingController()
       ..addListener(userDataControllerListener);
@@ -79,7 +85,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
 
     if (email.isEmpty) return;
 
-    if (AppRegex.emailRegex.hasMatch(email)) {
+    if (AppConstants.emailRegex.hasMatch(email)) {
       userDataFieldValidNotifier.value = true;
     } else {
       userDataFieldValidNotifier.value = false;
@@ -92,8 +98,8 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
 
     if (password.isEmpty && confirmPassword.isEmpty) return;
 
-    if (AppRegex.passwordRegex.hasMatch(password) &&
-        AppRegex.passwordRegex.hasMatch(confirmPassword) &&
+    if (AppConstants.passwordRegex.hasMatch(password) &&
+        AppConstants.passwordRegex.hasMatch(confirmPassword) &&
         password == confirmPassword) {
       passwordFieldValidNotifier.value = true;
     } else {
@@ -115,6 +121,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
   @override
   void initState() {
     initializeControllers();
+    getUserAttribute();
     super.initState();
   }
 
@@ -193,7 +200,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
       authNotifier
-          .updateUserSettingData(
+          .updateUserSecurityAttribute(
               context: context,
               token: authNotifier.token,
               idUser: cUserModel.idUser,
@@ -216,11 +223,10 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Future<void> getUserAttribute() async {
     AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context);
-    UserModel cUserModel = authenticationNotifier.getUser();
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    cUserModel = authenticationNotifier.getUser();
     firstNameController.text = cUserModel.name;
     lastNameController.text = cUserModel.surname;
     emailController.text = cUserModel.email;
@@ -228,7 +234,11 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
     valueOtpMode = cUserModel.userOtpMode;
     tokenExpirationController.text = cUserModel.userTokenExpiration.toString();
     maxInactivityController.text = cUserModel.userMaxInactivity.toString();
+    canViewSecurity = authenticationNotifier.isUserAdminOrInstitutionAdmin();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -346,7 +356,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
                                           labelText: AppStrings.telephoneNumber,
                                           keyboardType: TextInputType.phone,
                                           textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey1
+                                          onChanged: (_) => _formKey2
                                               .currentState
                                               ?.validate(),
                                           validator: (value) {
@@ -574,7 +584,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomDropDownButtonFormField(
-                                          enabled: true,
+                                          enabled: canViewSecurity,
                                           actualValue: valueOtpMode,
                                           labelText: AppStrings.otpMode,
                                           listOfValue: availableOtpMode,
@@ -588,6 +598,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
+                                          enabled: canViewSecurity,
                                           controller: tokenExpirationController,
                                           labelText: AppStrings.tokenExpiration,
                                           keyboardType: TextInputType.number,
@@ -611,6 +622,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
+                                          enabled: canViewSecurity,
                                           controller: maxInactivityController,
                                           labelText:
                                               AppStrings.userMaxInactivity,
