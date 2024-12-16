@@ -104,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final isMobile = constraints.maxWidth <= 510; // Check if width is <= 510
           if (constraints.maxWidth >= 800) {
             return Row(
               children: [
@@ -514,7 +515,58 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   ),
                                                 )
                                               : const SizedBox(height: 5),
-                                          Row(
+                                       isMobile
+                                        ? Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              // Login button (appears first on mobile)
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 30), // Add horizontal margin
+                                                child: ValueListenableBuilder(
+                                                  valueListenable: fieldValidNotifier,
+                                                  builder: (_, isValid, __) {
+                                                    return SizedBox(
+                                                      width: 250, // Set the same width for both buttons
+                                                      child: ElevatedButton(
+                                                        onPressed: isValid
+                                                            ? () {
+                                                                authenticateAccount();
+                                                              }
+                                                            : null,
+                                                        style: ElevatedButton.styleFrom(
+                                                          side: BorderSide(width: 1.0),
+                                                        ),
+                                                        child: const Text(
+                                                          AppStrings.login,
+                                                          style: TextStyle(color: Colors.black, fontSize: 14),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10), // Space between buttons
+                                              // Forgot Password button (appears second on mobile)
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 30), // Add horizontal margin
+                                                child: SizedBox(
+                                                  width: 250, // Set the same width for both buttons
+                                                  child: ElevatedButton(
+                                                    onPressed: () {},
+                                                    style: ElevatedButton.styleFrom(
+                                                      side: BorderSide(width: 1.0),
+                                                    ),
+                                                    child: const Text(
+                                                      AppStrings.forgotPassword,
+                                                      style: TextStyle(color: Colors.black, fontSize: 14),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                          : Row(
                                             children: [
                                               Expanded(
                                                 child: ElevatedButton(

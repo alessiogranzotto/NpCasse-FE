@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/componenents/table.filter.dart';
+import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   static PagedDataTableController<String, Map<String, dynamic>>
       tableController = PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
-
+  List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
+  List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
+  List<String> filterStringModel = [];
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -56,10 +59,31 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         sortColumnAndDirection = '$sortBy;$sortDirection';
       }
 
-      // Date range filter logic
-      DateTimeRange? dateRange = filterModel?["dateRange"];
-      DateTime? startDate = dateRange?.start;
-      DateTime? endDate = dateRange?.end;
+      filterStringModel = [];
+      if (filterModel != null) {
+        if (filterModel['stateFilter'] != null) {
+          StateModel stateModel =
+              filterModel['stateFilter'];
+          filterStringModel.add('Filter=stateFilter:' +
+              stateModel.id.toString());
+        }
+        if (filterModel['paymentTypeFilter'] != null) {
+          StateModel stateModel =
+              filterModel['paymentTypeFilter'];
+          filterStringModel.add('Filter=paymentTypeFilter:' +
+              stateModel.name.toString());
+        }
+
+        if (filterModel['startDate'] != null) {
+          String cStartDate = filterModel['startDate'];
+          filterStringModel.add('Filter=startDate:' + cStartDate);
+        }
+        if (filterModel['endDate'] != null) {
+          String cEndDate = filterModel['endDate'];
+          filterStringModel.add('Filter=endDate:' + cEndDate);
+        }
+      }
+
 
       // Set refreshing to true before data fetching
       setState(() {
@@ -73,9 +97,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         pageNumber: pageNumber,
         pageSize: pageSize,
         orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
-        // startDate: startDate,   // Pass start date
-        // endDate: endDate,       // Pass end date
-      );
+        filter: filterStringModel);
 
       if (response is CartHistoryModel) {
         List<Map<String, dynamic>> data =
@@ -262,17 +284,59 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             ),
           ],
           filters: [
-            DateRangePickerTableFilter(
-              id: "dateRange",
-              name: "",
-              chipFormatter: (range) =>
-                  "From ${DateFormat("yyyy-MM-dd").format(range.start)} to ${DateFormat("yyyy-MM-dd").format(range.end)}",
-              firstDate: DateTime(DateTime.now().year - 5, 1,
-                  1), // Start from January last year
-              lastDate: DateTime.now(),
-              initialValue: null, // No default selection
-              formatter: (range) =>
-                  "${DateFormat("yyyy-MM-dd").format(range.start)} - ${DateFormat("yyyy-MM-dd").format(range.end)}",
+            CustomDropdownTableFilter<StateModel>(
+              loadOptions: () async {
+                final states = [
+                  StateModel(id: 1, name: '1-Creato'),
+                  StateModel(id: 2, name: '2-Pagato'),
+                  StateModel(id: 4, name: '4-Nominativo'),
+                  StateModel(id: 5, name: '5-Inviato'),
+                  StateModel(id: 9, name: '9Errore'),
+                ];
+
+                return states;
+              },
+              chipFormatter: (value) => 'State: ${value?.name ?? "None"}',
+              id: "stateFilter",
+              name: "State",
+              onChanged: (StateModel? newValue) {
+                setState(() {
+                });
+              },
+              displayStringForOption: (state) => state.name,
+            ),
+
+              CustomDropdownTableFilter<StateModel>(
+               loadOptions: () async {
+                  final states = [
+                    StateModel(id: 1, name: 'Bancomat'),
+                    StateModel(id: 2, name: 'Carta Di Credito'),
+                    StateModel(id: 3, name: 'Contanti'),
+                    StateModel(id: 4, name: 'Assegni'),
+                  ];
+
+                  return states;
+                },
+                chipFormatter: (value) => 'Tipo pagamento: ${value?.name ?? "None"}',
+                id: "paymentTypeFilter",
+                name: "Tipo pagamento",
+                onChanged: (StateModel? newValue) {
+                  setState(() {
+                  });
+                },
+                displayStringForOption: (state) => state.name,
+            ),
+
+           
+            DateTextTableFilter(
+              id: "startDate",
+              chipFormatter: (value) => 'Da "$value"',
+              name: "Da",
+            ),
+            DateTextTableFilter(
+              id: "endDate",
+              chipFormatter: (value) => 'A "$value"',
+              name: "A",
             ),
           ],
         ),
@@ -281,69 +345,4 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   }
 }
 
-class DateRangePickerTableFilter extends TableFilter<DateTimeRange> {
-  final String id;
-  final String name;
-  final DateTime firstDate;
-  final DateTime lastDate;
-  final String Function(DateTimeRange) chipFormatter;
-  final String Function(DateTimeRange) formatter;
-
-  const DateRangePickerTableFilter({
-    required this.id,
-    required this.name,
-    required this.chipFormatter,
-    required this.firstDate,
-    required this.lastDate,
-    DateTimeRange? initialValue, // Allow for initial value
-    required this.formatter,
-    super.enabled = true,
-  }) : super(
-            initialValue: initialValue,
-            id: id,
-            name: name,
-            chipFormatter:
-                chipFormatter); // Pass required parameters to superclass
-
-  @override
-  Widget buildPicker(BuildContext context, FilterState<DateTimeRange> state) {
-    return TextButton(
-      onPressed: () async {
-        final DateTimeRange? picked = await showDateRangePicker(
-          context: context,
-          firstDate: firstDate,
-          lastDate: lastDate,
-          initialDateRange: state.value ?? initialValue,
-          builder: (BuildContext context, Widget? child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: const ColorScheme.light(
-                  primary: Colors.blueAccent, // <-- SEE HERE
-                  onPrimary: Colors.white, // <-- SEE HERE
-                  onSurface: Colors.blueAccent, // <-- SEE HERE
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blueAccent, // button text color
-                  ),
-                ),
-              ),
-              child: child ?? const SizedBox(),
-            );
-          },
-        );
-
-        if (picked != null &&
-            picked !=
-                DateTimeRange(start: DateTime.now(), end: DateTime.now())) {
-          state.value = picked; // Update the selected date range
-        }
-      },
-      child: Text(
-        state.value == null
-            ? 'Select date range'
-            : chipFormatter(state.value!), // Format the chip text
-      ),
-    );
-  }
-}
+  

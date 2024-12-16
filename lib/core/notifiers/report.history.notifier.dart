@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:np_casse/core/api/category.catalog.api.dart';
+import 'package:np_casse/core/api/common.api.dart';
 import 'package:np_casse/core/api/report.api.dart';
 import 'package:np_casse/core/models/cart.history.model.dart';
+import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +17,10 @@ import 'package:np_casse/core/utils/file_web.dart'
 
 class ReportHistoryNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
+    final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
+  CategoryCatalogModel currentCategoryCatalogModel =
+      CategoryCatalogModel.empty();
+  final CommonAPI commonAPI = CommonAPI();
 
   CartHistoryModel currentCartHistoryModel = CartHistoryModel.empty();
   bool _isHistoryUpdated = false;
@@ -30,7 +37,8 @@ class ReportHistoryNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int pageNumber,
       required int pageSize,
-      required List<String> orderBy}) async {
+      required List<String> orderBy,
+      required List<String> filter}) async {
     try {
       bool isOk = false;
       var response = await reportAPI.findCartList(
@@ -38,7 +46,8 @@ class ReportHistoryNotifier with ChangeNotifier {
           idUserAppInstitution: idUserAppInstitution,
           pageNumber: pageNumber,
           pageSize: pageSize,
-          orderBy: orderBy);
+          orderBy: orderBy,
+          filter: filter);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
