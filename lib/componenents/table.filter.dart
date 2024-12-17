@@ -189,7 +189,7 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
   // Adding a ValueNotifier to track changes
   final ValueNotifier<List<T>> _optionsNotifier = ValueNotifier<List<T>>([]);
   bool _isLoading = true;
-  bool _isVisible = false;  // To track visibility
+  bool _isVisible = false;
 
   CustomDropdownTableFilter({
     this.decoration,
@@ -208,18 +208,16 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
     _isLoading = true;
     final options = await loadOptions();
     _isLoading = false;
-
-    // Notify listeners when the options are updated
     _optionsNotifier.value = options;
   }
 
   @override
   Widget buildPicker(BuildContext context, FilterState<T> state) {
     return VisibilityDetector(
-      key: Key(id),  // Use a unique key for each filter
+      key: Key(id),
       onVisibilityChanged: (visibilityInfo) {
         if (visibilityInfo.visibleFraction > 0 && !_isVisible) {
-          // If the widget is now visible, start loading options
+          // The widget has become visible, so load the options
           _isVisible = true;
           _loadOptions();  // Load options when the widget becomes visible
         }
@@ -231,58 +229,76 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
       child: ValueListenableBuilder<List<T>>(
         valueListenable: _optionsNotifier,
         builder: (context, loadedOptions, child) {
-          // Don't reload options if options are already loaded or loading
           if (loadedOptions.isEmpty && !_isLoading && _isVisible) {
             _loadOptions();  // Ensure we load options only if empty and widget is visible
           }
-
-          return GestureDetector(
-            onTap: () async {
-              // Reload options if they are empty and widget is visible
-              if (loadedOptions.isEmpty && !_isLoading && _isVisible) {
-                await _loadOptions();
-              }
-            },
-            child: DropdownButtonFormField<T>(
-              items: _isLoading || loadedOptions.isEmpty
-                  ? null // Show no items if still loading or no options
-                  : loadedOptions.map<DropdownMenuItem<T>>((T item) {
-                      return DropdownMenuItem<T>(
-                        value: item,
-                        child: Text(
-                          displayStringForOption(item),
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-                        ),
-                      );
-                    }).toList(),
-              value: state.value,
-              onChanged: loadedOptions.isNotEmpty
-                  ? (newValue) {
-                      if (onChanged != null) {
-                        onChanged!(newValue); // Trigger onChanged if set
-                      }
-                      state.value = newValue; // Update the filter state
+          // Ensure that the filter is always shown, regardless of loading state
+          return Column(
+            children: [
+              // The actual dropdown (visible only when the widget is visible)
+                GestureDetector(
+                  onTap: () async {
+                    if (loadedOptions.isEmpty && !_isLoading && _isVisible) {
+                      await _loadOptions();
                     }
-                  : null, // Disable onChanged if no options are available
-              onSaved: (newValue) {
-                state.value = newValue;
-              },
-              decoration: (decoration ?? InputDecoration(labelText: name)).copyWith(
-                hintText: _isLoading ? 'Loading options...' : 'Select an option',
-                // Add a border to ensure only the bottom line is visible
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Bottom border color
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2),
-                ),
-              ),
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
-            ),
+                  },
+                  child: DropdownButtonFormField<T>(
+                    items: _isLoading || loadedOptions.isEmpty
+                        ? null // Show no items if still loading or no options available
+                        : loadedOptions.map<DropdownMenuItem<T>>((T item) {
+                            return DropdownMenuItem<T>(
+                              value: item,
+                              child: Text(
+                                displayStringForOption(item),
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                              ),
+                            );
+                          }).toList(),
+                    value: _getValueFromDisplayString(state.value, loadedOptions),
+                    onChanged: loadedOptions.isNotEmpty
+                        ? (newValue) {
+                            if (onChanged != null) {
+                              onChanged!(newValue); // Trigger onChanged if set
+                            }
+                            state.value = newValue; // Update the filter state
+                          }
+                        : null, // Disable onChanged if no options are available
+                    onSaved: (newValue) {
+                      state.value = newValue;
+                    },
+                    decoration: (decoration ?? InputDecoration(labelText: name)).copyWith(
+                      hintText: _isLoading ? 'Loading options...' : 'Select an option',
+                      // Add a border to ensure only the bottom line is visible
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black), // Bottom border color
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                      ),
+                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                  ),
+                )
+            ],
           );
         },
       ),
     );
+  }
+
+  // Helper method to get the correct value based on displayStringForOption
+  T? _getValueFromDisplayString(T? currentValue, List<T> loadedOptions) {
+    if (currentValue == null) {
+      return null;
+    }
+
+    // Check if the current value is part of the loaded options and matches the display string
+    for (T option in loadedOptions) {
+      if (displayStringForOption(option) == displayStringForOption(currentValue)) {
+        return option;
+      }
+    }
+    return null;
   }
 }
 
