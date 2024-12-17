@@ -106,7 +106,7 @@ List<MenuList> destinations = <MenuList>[
   //   1,
   //   subMenus: [],
   // ),
-  MenuList(AppRouter.userRoute, 'Donatori', Icons.people,
+  MenuList(AppRouter.userRoute, 'Stakeholder', Icons.people,
       const Icon(Icons.people), const StakeholderNavigator(), 1),
   MenuList(AppRouter.userRoute, 'Impostazioni utente', Icons.settings,
       const Icon(Icons.account_circle), const UserSettingScreen(), 1),

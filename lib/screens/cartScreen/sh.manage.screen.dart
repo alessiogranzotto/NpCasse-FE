@@ -72,7 +72,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Gestione donatore",
+        title: Text("Gestione stakeholder",
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: Column(
