@@ -1,5 +1,5 @@
 class StateModel {
-  final int id;
+  final dynamic id;
   final String name;
 
   StateModel({required this.id, required this.name});
@@ -7,7 +7,7 @@ class StateModel {
   // Factory constructor to create a StateModel from a JSON map
   factory StateModel.fromJson(Map<String, dynamic> json) {
     return StateModel(
-      id: json['id'] as int,
+      id: json['id'] as dynamic,
       name: json['name'] as String,
     );
   }

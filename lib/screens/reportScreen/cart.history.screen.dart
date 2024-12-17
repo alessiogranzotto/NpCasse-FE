@@ -71,7 +71,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         if (filterModel['paymentTypeFilter'] != null) {
           StateModel stateModel = filterModel['paymentTypeFilter'];
           filterStringModel
-              .add('Filter=paymentTypeFilter:' + stateModel.name.toString());
+              .add('Filter=paymentTypeFilter:' + stateModel.id.toString());
         }
 
         if (filterModel['startDate'] != null) {
@@ -291,7 +291,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   StateModel(id: 2, name: '2-Pagato'),
                   StateModel(id: 4, name: '4-Nominativo'),
                   StateModel(id: 5, name: '5-Inviato'),
-                  StateModel(id: 9, name: '9Errore'),
+                  StateModel(id: 9, name: '9-Errore'),
                 ];
 
                 return states;
@@ -307,10 +307,11 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             CustomDropdownTableFilter<StateModel>(
               loadOptions: () async {
                 final states = [
-                  StateModel(id: 1, name: 'Bancomat'),
-                  StateModel(id: 2, name: 'Carta Di Credito'),
-                  StateModel(id: 3, name: 'Contanti'),
-                  StateModel(id: 4, name: 'Assegni'),
+                  StateModel(id: 'PaymentType.bancomat', name: 'Bancomat'),
+                  StateModel(
+                      id: 'PaymentType.cartaCredito', name: 'Carta di Credito'),
+                  StateModel(id: 'PaymentType.contanti', name: 'Contanti'),
+                  StateModel(id: 'PaymentType.assegni', name: 'Assegni'),
                 ];
 
                 return states;
