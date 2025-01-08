@@ -26,39 +26,51 @@ class MainActivity : FlutterActivity() {
     private var terminalInitialized = false
     private lateinit var methodChannel: MethodChannel
 
-override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-    super.configureFlutterEngine(flutterEngine)
-    methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
-    methodChannel.setMethodCallHandler { call, result ->
-        when (call.method) {
-            "initializeStripe" -> initializeTerminal(result)
-            "discoverReaders" -> {
-                if (terminalInitialized) discoverReaders(result)
-                else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
-            }
-            "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
-            "processPayment" -> {
-                // Extract amount and currency from Flutter arguments
-                val amount = (call.argument<Int>("amount") ?: 0) // Default to 0 if not provided
-                val currency = call.argument<String>("currency") ?: "EUR" // Default to EUR if not provided
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        methodChannel.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "initializeStripe" -> {
+                    val idUserAppInstitution = call.argument<Int>("idUserAppInstitution")
+                    val token = call.argument<String>("token")  // Extract token from Flutter side
+                    
+                    if (idUserAppInstitution != null && token != null) {
+                        // Pass both idUserAppInstitution and token to the method that initializes Stripe
+                        initializeTerminal(idUserAppInstitution, token, result)
+                    } else {
+                        result.error("MISSING_PARAM", "idUserAppInstitution and token are required", null)
+                    }
+                }
+                "discoverReaders" -> {
+                    if (terminalInitialized) discoverReaders(result)
+                    else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
+                }
+                "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
+                "processPayment" -> {
+                    // Extract amount and currency from Flutter arguments
+                    val amount = (call.argument<Int>("amount") ?: 0) // Default to 0 if not provided
+                    val currency = call.argument<String>("currency") ?: "EUR" // Default to EUR if not provided
 
-                // Convert amount to Long, as required by the Stripe terminal API
-                val amountInLong: Long = amount.toLong()
+                    // Convert amount to Long, as required by the Stripe terminal API
+                    val amountInLong: Long = amount.toLong()
 
-                // Pass the amount and currency to the processPayment method
-                processPayment(amountInLong, currency, result)
+                    // Pass the amount and currency to the processPayment method
+                    processPayment(amountInLong, currency, result)
+                }
+                else -> result.notImplemented()
             }
-            else -> result.notImplemented()
         }
     }
-}
 
+    private fun initializeTerminal(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
+        // Set the token globally in ApiClient
+        ApiClient.setToken(token)
 
-
-    private fun initializeTerminal(result: MethodChannel.Result) {
         if (!Terminal.isInitialized()) {
             try {
-                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, TokenProvider(), TerminalEventListener())
+                // Initialize the terminal, passing the idUserAppInstitution to TokenProvider
+                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, TokenProvider(idUserAppInstitution), TerminalEventListener())
                 terminalInitialized = true
                 result.success("Stripe Initialized")
             } catch (e: TerminalException) {

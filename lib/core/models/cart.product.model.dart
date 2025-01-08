@@ -20,6 +20,7 @@ class CartProductModel {
     required this.percDiscount,
     required this.priceDiscounted,
   });
+  
   late final int idCartProduct;
   late final int idCart;
   late final int idProduct;
@@ -28,7 +29,6 @@ class CartProductModel {
   late final bool freePriceProduct;
   late final String productAttributeJson;
   late final String productAttributeExplicit;
-  // late final int quantityCartProduct;
   late ValueNotifier<int> quantityCartProduct;
   late final double priceCartProduct;
   late final String imageData;
@@ -48,15 +48,14 @@ class CartProductModel {
     productAttributeJson = json['productAttributeJson'];
     productAttributeExplicit = json['productAttributeExplicit'];
     quantityCartProduct = ValueNotifier<int>(json['quantityCartProduct']);
-    priceCartProduct = json['priceCartProduct'];
+    priceCartProduct = json['priceCartProduct'] + .000000000000001;
     imageData = json['imageData'];
     notesCartProduct = json['notesCartProduct'];
     docNumberCart = json['docNumberCart'];
-    var dateTimeC =
-        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCart'], true);
+    var dateTimeC = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCart'], true);
     dateCart = dateTimeC.toLocal();
-    percDiscount = json['percDiscount'];
-    priceDiscounted = json['priceDiscounted'];
+    percDiscount = json['percDiscount'] + .000000000000001;
+    priceDiscounted = json['priceDiscounted'] + .000000000000001;
   }
 
   Map<String, dynamic> toJson() {
@@ -69,7 +68,7 @@ class CartProductModel {
     data['freePriceProduct'] = freePriceProduct;
     data['productAttributeJson'] = productAttributeJson;
     data['productAttributeExplicit'] = productAttributeExplicit;
-    data['quantityCartProduct'] = quantityCartProduct;
+    data['quantityCartProduct'] = quantityCartProduct; // Access the value
     data['priceCartProduct'] = priceCartProduct;
     data['imageData'] = imageData;
     data['notesCartProduct'] = notesCartProduct;
@@ -78,6 +77,12 @@ class CartProductModel {
     data['percDiscount'] = percDiscount;
     data['priceDiscounted'] = priceDiscounted;
     return data;
+  }
+
+  // Override toString to print the real values
+  @override
+  String toString() {
+    return 'CartProductModel(idCartProduct: $idCartProduct, idCart: $idCart, idProduct: $idProduct, nameProduct: $nameProduct, descriptionProduct: $descriptionProduct, freePriceProduct: $freePriceProduct, productAttributeJson: $productAttributeJson, productAttributeExplicit: $productAttributeExplicit, quantityCartProduct: ${quantityCartProduct.value}, priceCartProduct: $priceCartProduct, imageData: $imageData, notesCartProduct: $notesCartProduct, docNumberCart: $docNumberCart, dateCart: $dateCart, percDiscount: $percDiscount, priceDiscounted: $priceDiscounted)';
   }
 }
 
