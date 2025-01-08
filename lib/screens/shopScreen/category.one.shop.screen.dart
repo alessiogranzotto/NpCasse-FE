@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
@@ -42,6 +43,7 @@ class CategoryOneShopScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text(
           'Naviga shop ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',

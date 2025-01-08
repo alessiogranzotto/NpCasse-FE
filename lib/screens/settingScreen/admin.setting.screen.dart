@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
@@ -19,7 +20,6 @@ class AdminSettingScreen extends StatefulWidget {
 
 class _AdminSettingScreenState extends State<AdminSettingScreen> {
   final _formKey1 = GlobalKey<FormState>();
-  final _formKey2 = GlobalKey<FormState>();
 
   final ValueNotifier<bool> giveValidNotifier = ValueNotifier(false);
 
@@ -154,11 +154,11 @@ class _AdminSettingScreenState extends State<AdminSettingScreen> {
         institutionAttributeInstitutionAdminNotifier =
         Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
     // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
-    if (institutionAttributeInstitutionAdminNotifier.isHistoryUpdated) {
+    if (institutionAttributeInstitutionAdminNotifier.isUpdated) {
       // Post-frame callback to avoid infinite loop during build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
         institutionAttributeInstitutionAdminNotifier
-            .setHistoryUpdate(false); // Reset the update flag
+            .setUpdate(false); // Reset the update flag
         getInstitutionAttributes();
       });
     }
@@ -187,6 +187,7 @@ class _AdminSettingScreenState extends State<AdminSettingScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
@@ -211,7 +212,7 @@ class _AdminSettingScreenState extends State<AdminSettingScreen> {
                               panelOpen[index] = isExpanded;
                             });
                           },
-                          animationDuration: Duration(seconds: 2),
+                          animationDuration: Duration(milliseconds: 500),
                           elevation: 1,
                           children: [
                             ExpansionPanel(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
@@ -115,6 +116,7 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       // drawer: const CustomDrawerWidget(),
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text(
           'Ricerca shop ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',

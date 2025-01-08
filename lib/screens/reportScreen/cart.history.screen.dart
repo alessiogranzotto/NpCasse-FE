@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
@@ -30,10 +31,10 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
     ReportCartNotifier reportCartNotifier =
         Provider.of<ReportCartNotifier>(context);
     // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
-    if (reportCartNotifier.isHistoryUpdated && !isRefreshing) {
+    if (reportCartNotifier.isUpdated && !isRefreshing) {
       // Post-frame callback to avoid infinite loop during build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        reportCartNotifier.setHistoryUpdate(false); // Reset the update flag
+        reportCartNotifier.setUpdate(false); // Reset the update flag
         tableController.refresh();
       });
     }
@@ -113,7 +114,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       return (<Map<String, dynamic>>[], null);
     } finally {
       // After fetching data, set isRefreshing to false
-      cartHistoryNotifier.setHistoryUpdate(false); // Reset the update flag
+      cartHistoryNotifier.setUpdate(false); // Reset the update flag
 
       setState(() {
         isRefreshing = false;
@@ -146,6 +147,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(

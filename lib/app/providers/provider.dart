@@ -1,5 +1,6 @@
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/notifiers/comunication.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
@@ -46,6 +47,7 @@ class AppProvider {
     ChangeNotifierProvider(
         create: (_) => InstitutionAttributeInstitutionAdminNotifier()),
     ChangeNotifierProvider(create: (_) => InstitutionAttributeAdminNotifier()),
+    ChangeNotifierProvider(create: (_) => ComunicationNotifier()),
 
     // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];

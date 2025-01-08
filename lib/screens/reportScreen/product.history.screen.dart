@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/product.history.model.dart';
@@ -42,12 +43,13 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ReportProductNotifier reportNotifier = Provider.of<ReportProductNotifier>(context);
+    ReportProductNotifier reportProductNotifier =
+        Provider.of<ReportProductNotifier>(context);
     // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
-    if (reportNotifier.isProductUpdated && !isRefreshing) {
+    if (reportProductNotifier.isUpdated && !isRefreshing) {
       // Post-frame callback to avoid infinite loop during build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        reportNotifier.setProductUpdate(false); // Reset the update flag
+        reportProductNotifier.setUpdate(false); // Reset the update flag
         tableController.refresh();
       });
     }
@@ -55,7 +57,8 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
-    final reportNotifier = Provider.of<ReportProductNotifier>(context, listen: false);
+    final reportNotifier =
+        Provider.of<ReportProductNotifier>(context, listen: false);
     try {
       int pageNumber = (pageToken != null) ? int.parse(pageToken) : 1;
       var authNotifier =
@@ -96,11 +99,9 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
           filterStringModel.add('Filter=productFilter:' +
               cProductCatalogModel.idProduct.toString());
         }
-         if (filterModel['orderNumberFilter'] != null) {
-          ProductCatalogModel cProductCatalogModel =
-              filterModel['orderNumberFilter'];
-          filterStringModel.add('Filter=orderNumberFilter:' +
-              cProductCatalogModel.idProduct.toString());
+        if (filterModel['orderNumber'] != null) {
+          int orderNumber = filterModel['orderNumber'];
+          filterStringModel.add('Filter=orderNumber:' + orderNumber.toString());
         }
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
@@ -138,7 +139,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       return (<Map<String, dynamic>>[], null);
     } finally {
       // After fetching data, set isRefreshing to false
-      reportNotifier.setProductUpdate(false); // Reset the update flag
+      reportNotifier.setUpdate(false); // Reset the update flag
 
       setState(() {
         isRefreshing = false;
@@ -147,7 +148,8 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   }
 
   void handleDownloadProductList(BuildContext context) async {
-    final reportNotifier = Provider.of<ReportProductNotifier>(context, listen: false);
+    final reportNotifier =
+        Provider.of<ReportProductNotifier>(context, listen: false);
     var authNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -174,6 +176,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
@@ -279,7 +282,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                   orderBy: 'NameCategory',
                 );
 
-                return categories  ?? [CategoryCatalogModel.empty()];
+                return categories ?? [CategoryCatalogModel.empty()];
               },
               chipFormatter: (value) =>
                   'Category: ${value?.nameCategory ?? "None"}',
@@ -296,8 +299,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             // Subcategory filter
             CustomDropdownTableFilter<CategoryCatalogModel>(
               loadOptions: () async {
-                if (selectedCategory == null) 
-                  return [];
+                if (selectedCategory == null) return [];
                 final categoryCatalogNotifier =
                     Provider.of<CategoryCatalogNotifier>(context,
                         listen: false);
@@ -401,4 +403,3 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
     );
   }
 }
-

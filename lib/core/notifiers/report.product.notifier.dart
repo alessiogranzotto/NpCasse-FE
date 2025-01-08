@@ -14,11 +14,11 @@ import 'package:np_casse/core/utils/file_web.dart'
 class ReportProductNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
 
-  bool _isProductUpdated = false;
-  bool get isProductUpdated => _isProductUpdated;
+  bool _isUpdated = false;
+  bool get isUpdated => _isUpdated;
 
-  void setProductUpdate(bool value) {
-    _isProductUpdated = value;
+  void setUpdate(bool value) {
+    _isUpdated = value;
     notifyListeners();
   }
 

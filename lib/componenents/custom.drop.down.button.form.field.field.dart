@@ -118,7 +118,7 @@ class _CustomDropDownButtonFormField
           //     null;
           //   }
           // },
-          validator: (value) => value == null ? 'field required' : null,
+          validator: (value) => value == null ? 'Selezione obbligatoria' : null,
           items: widget.listOfValue),
     );
   }

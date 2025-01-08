@@ -25,11 +25,11 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
   final InstitutionAttributeAPI institutionAttributeAPI =
       InstitutionAttributeAPI();
 
-  bool _isHistoryUpdated = false;
-  bool get isHistoryUpdated => _isHistoryUpdated;
+  bool _isUpdated = false;
+  bool get isUpdated => _isUpdated;
 
-  void setHistoryUpdate(bool value) {
-    _isHistoryUpdated = value;
+  void setUpdate(bool value) {
+    _isUpdated = value;
     notifyListeners();
   }
 
