@@ -61,8 +61,8 @@ class CartModel {
     stateCart = json['stateCart'];
     stateCartDescription = json['stateCartDescription'];
     notesCart = json['notesCart'] ?? '';
-    totalPriceCart = json['totalPriceCart'];
-    percDiscount = json['percDiscount'];
+    totalPriceCart = json['totalPriceCart'] + .000000000000001;
+    percDiscount = json['percDiscount'] + .000000000000001;
     idStakeholder = json['idStakeholder'];
     denominationStakeholder = json['denominationStakeholder'];
     cartProducts = List.from(json['cartProducts'])
