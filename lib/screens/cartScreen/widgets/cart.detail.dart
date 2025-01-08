@@ -235,7 +235,15 @@ Future<void> _discoverReaders() async {
     return;  // Skip discovering if readers are already discovered
   }
 
+  // Check if the terminal is already connected to a reader
+  if (await platform.invokeMethod('isReaderConnected')) {
+   isReaderDiscovered = true;
+   getConnectedReaderInfo();
+   return;
+  }
+
   try {
+    // Now, attempt to discover readers
     final result = await platform.invokeMethod('discoverReaders');
 
     if (result != null) {
@@ -245,17 +253,10 @@ Future<void> _discoverReaders() async {
       });
 
       // Delay calling getConnectedReaderInfo by 1 second
-      Future<void> delayedGetConnectedReaderInfo() async {
-        // Wait for 1 second
-        await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 2));
 
-        // Call the getConnectedReaderInfo method after the delay
-        getConnectedReaderInfo();
-      }
-
-      // Call delayed function to retrieve connected reader info
-      delayedGetConnectedReaderInfo();
-
+      // Call getConnectedReaderInfo method after the delay
+      getConnectedReaderInfo();
     } else {
       setState(() {
         _stripeStatus = 'No readers found.';

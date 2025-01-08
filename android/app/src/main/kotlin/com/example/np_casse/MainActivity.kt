@@ -46,7 +46,14 @@ class MainActivity : FlutterActivity() {
                     if (terminalInitialized) discoverReaders(result)
                     else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
                 }
+                "isReaderConnected" -> {
+                    val isConnected = Terminal.getInstance().connectedReader != null
+                    result.success(isConnected)
+                }
                 "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
+                "disconnectReader" -> {
+                    disconnectReader(result) // Native method to disconnect the reader
+                }
                 "processPayment" -> {
                     // Extract amount and currency from Flutter arguments
                     val amount = (call.argument<Int>("amount") ?: 0) // Default to 0 if not provided
@@ -83,53 +90,92 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun discoverReaders(result: MethodChannel.Result) {
-        if (checkPermissions()) {
-            if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
-                BluetoothAdapter.getDefaultAdapter().enable()
+    private fun disconnectReader(result: MethodChannel.Result) {
+    val connectedReader = Terminal.getInstance().connectedReader
+    if (connectedReader != null) {
+        Terminal.getInstance().disconnectReader(object : Callback {
+            override fun onSuccess() {
+                Log.d("StripeTerminal", "Successfully disconnected the reader.")
+                result.success("Reader disconnected successfully.")
             }
 
-            val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
-            val discoveredReaders = mutableListOf<Reader>()
-
-            val discoveryListener = object : DiscoveryListener {
-    override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
-        if (readers.isNotEmpty()) {
-             val readerToConnect = readers.firstOrNull()
-        if (readerToConnect != null) {
-            connectToReader(readerToConnect, result)
-        }
-            val firstReader = readers.first()
-
-            // Sending the first reader's details
-            val readerInfo = mapOf(
-                "serialNumber" to (firstReader.serialNumber ?: "Unknown"),
-                "deviceType" to (firstReader.deviceType.name ?: "Unknown")
-            )
-            
-            // Send the first reader to Flutter
-            result.success(readerInfo)
-            
-        } else {
-            result.success(null) // Send null if no readers are found
-        }
+            override fun onFailure(e: TerminalException) {
+                Log.e("StripeTerminal", "Failed to disconnect: ${e.message}")
+                result.error("DISCONNECT_ERROR", "Failed to disconnect reader: ${e.message}", null)
+            }
+        })
+    } else {
+        result.error("NO_READER_CONNECTED", "No reader is currently connected.", null)
     }
 }
 
 
-            Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, object : Callback {
+private fun discoverReaders(result: MethodChannel.Result) {
+    if (checkPermissions()) {
+        if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
+            BluetoothAdapter.getDefaultAdapter().enable()
+        }
+
+        // Check if terminal is already connected to a reader
+        if (Terminal.getInstance().connectedReader != null) {
+            // Disconnect from the current reader before discovering new ones
+            Terminal.getInstance().disconnectReader(object : Callback {
                 override fun onSuccess() {
-                    Log.d("StripeTerminal", "Reader discovery completed")
+                    Log.d("StripeTerminal", "Successfully disconnected from the reader.")
+                    startDiscoveringReaders(result)
                 }
 
                 override fun onFailure(e: TerminalException) {
-                    result.error("DISCOVERY_ERROR", "Failed to discover readers: ${e.message}", null)
+                    result.error("DISCONNECT_ERROR", "Failed to disconnect: ${e.message}", null)
                 }
             })
         } else {
-            requestPermissions()
+            startDiscoveringReaders(result)
+        }
+    } else {
+        requestPermissions()
+    }
+}
+
+
+private fun startDiscoveringReaders(result: MethodChannel.Result) {
+    val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
+    val discoveredReaders = mutableListOf<Reader>()
+
+    val discoveryListener = object : DiscoveryListener {
+        override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
+            if (readers.isNotEmpty()) {
+                val readerToConnect = readers.firstOrNull()
+                if (readerToConnect != null) {
+                    connectToReader(readerToConnect, result)
+                }
+                val firstReader = readers.first()
+
+                // Sending the first reader's details
+                val readerInfo = mapOf(
+                    "serialNumber" to (firstReader.serialNumber ?: "Unknown"),
+                    "deviceType" to (firstReader.deviceType.name ?: "Unknown")
+                )
+                
+                // Send the first reader to Flutter
+                result.success(readerInfo)
+            } else {
+                result.success(null) // Send null if no readers are found
+            }
         }
     }
+
+    Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, object : Callback {
+        override fun onSuccess() {
+            Log.d("StripeTerminal", "Reader discovery completed")
+        }
+
+        override fun onFailure(e: TerminalException) {
+            result.error("DISCOVERY_ERROR", "Failed to discover readers: ${e.message}", null)
+        }
+    })
+}
+
 
     private fun connectToReader(reader: Reader, result: MethodChannel.Result) {
     val apiUrl = "https://apicasse.giveapp.it/api/StripeTerminal/Get-location-id"
