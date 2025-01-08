@@ -30,8 +30,16 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   late double toBeReturnedCalculation;
   late String _toBeReturned = '---';
   late bool _isSelectedPaymentVisible = true;
+  late bool _isStripePayment = false;
   var rateDiscounted = 0.0;
   var totalDiscount = 0.0;
+  var totalCartMoney = 0;
+
+  static const platform = MethodChannel('com.example.npcasse/stripe');
+  String resultText = '';
+  String _stripeStatus = 'Terminal is not initialized yet.';
+  bool isTerminalInitialized = false;
+  bool isReaderDiscovered = false;  // This will track if the reader has already been discovered.
 
   final List<bool> _selectedPayment = <bool>[true, false, false, false];
   CurrencyTextFieldController textEditingControllerCashInserted =
@@ -95,7 +103,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     setState(() {
       indexPayment = index;
       disabledFinalizeButton = true;
-      if (index > 0 && cartNotifier.subTotalCartMoney.value > 0) {
+      if (index == 3 && cartNotifier.subTotalCartMoney.value > 0) {
         disabledFinalizeButton = false;
         textEditingControllerCashInserted.text = '';
       }
@@ -133,7 +141,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         //       contentType: "success"));
         // }
         // homeNotifier.setHomeIndex(0);
-        Navigator.of(context)
+               Navigator.of(context)
             .pushNamed(AppRouter.shManage, arguments: widget.idCart);
       } else {
         if (context.mounted) {
@@ -189,6 +197,132 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     });
   }
 
+    // Method to initialize Stripe terminal
+  Future<void> initializeStripe(int idUserAppInstitution, String? token) async {
+  try {
+    // Send the idUserAppInstitution to the native side when calling 'initializeStripe'
+    final result = await platform.invokeMethod('initializeStripe', {
+      'idUserAppInstitution': idUserAppInstitution, // Pass the idUserAppInstitution
+      'token': token,  // Pass token as part of the method arguments
+
+    });
+
+    // On success, mark the terminal as initialized
+    setState(() {
+      isTerminalInitialized = true;
+    });
+
+    // Optionally print the result from the native side
+    print(result);
+  } catch (e) {
+    // On error, handle initialization failure
+    setState(() {
+      isTerminalInitialized = false;
+    });
+  }
+}
+
+Future<void> _discoverReaders() async {
+  if (!isTerminalInitialized) {
+    setState(() {
+      _stripeStatus = 'Terminal is not initialized yet.';
+    });
+    return;
+  }
+
+  // Check if readers are already discovered
+  if (isReaderDiscovered) {
+    return;  // Skip discovering if readers are already discovered
+  }
+
+  // Check if the terminal is already connected to a reader
+  if (await platform.invokeMethod('isReaderConnected')) {
+   isReaderDiscovered = true;
+   getConnectedReaderInfo();
+   return;
+  }
+
+  try {
+    // Now, attempt to discover readers
+    final result = await platform.invokeMethod('discoverReaders');
+
+    if (result != null) {
+      // Mark the reader as discovered to avoid discovering again
+      setState(() {
+        isReaderDiscovered = true;
+      });
+
+      // Delay calling getConnectedReaderInfo by 1 second
+      await Future.delayed(Duration(seconds: 2));
+
+      // Call getConnectedReaderInfo method after the delay
+      getConnectedReaderInfo();
+    } else {
+      setState(() {
+        _stripeStatus = 'No readers found.';
+        isReaderDiscovered = false;
+      });
+    }
+
+  } catch (e) {
+    setState(() {
+      _stripeStatus = 'Error discovering readers';
+    });
+  }
+}
+
+
+Future<void> getConnectedReaderInfo() async {
+  try {
+    // Fetch connected device info
+    final connectedDevice = await platform.invokeMethod('getConnectedDeviceInfo');
+
+    if (connectedDevice != null && connectedDevice is Map) {
+      // Safely cast map values to String and handle potential null values
+      final serialNumber = connectedDevice["serialNumber"] ?? "Unknown";
+
+      setState(() {
+        _stripeStatus =  'Connected to $serialNumber';
+      });
+    } else {
+      setState(() {
+        _stripeStatus = 'No connected device information available';
+      });
+    }
+  } catch (e) {
+    setState(() {
+      _stripeStatus = 'Error connecting reader';
+    });
+  }
+}
+
+  Future<void> _makePayment() async {
+    int amount = totalCartMoney; // Example: 100 cents = $1.00
+    String currency = 'EUR';
+
+    if (!isTerminalInitialized) {
+      setState(() {
+        _stripeStatus = 'Terminal or Reader is not connected.';
+      });
+      return;
+    }
+
+    try {
+      final paymentResult = await platform.invokeMethod('processPayment', {
+        'amount': amount,
+        'currency': currency,
+      });
+      setState(() {
+        _stripeStatus = paymentResult;
+      });
+      disabledFinalizeButton = false;
+      textEditingControllerCashInserted.text = '';
+    } catch (e) {
+      setState(() {
+        _stripeStatus = 'Error processing payment';
+      });
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -197,6 +331,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     toBeReturnedCalculation = 0;
     _toBeReturned = '---';
     _isSelectedPaymentVisible = true;
+    _isStripePayment = false;
   }
 
   @override
@@ -208,6 +343,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   @override
   Widget build(BuildContext context) {
     CartNotifier cartNotifier = Provider.of<CartNotifier>(context);
+    AuthenticationNotifier authenticationNotifier = Provider.of<AuthenticationNotifier>(context);
+    UserAppInstitutionModel? cUserAppInstitutionModel = authenticationNotifier.getSelectedUserAppInstitution();
 
     return Expanded(
       flex: 2,
@@ -391,6 +528,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                   BorderSide(color: Colors.red, width: 0.2),
                             ),
                           ),
+                          enabled: !_isStripePayment,
                         ),
                       ),
                       // Slider(
@@ -478,8 +616,26 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                               }
                               if (index == 0) {
                                 _isSelectedPaymentVisible = true;
+                                _isStripePayment = false;
+                              } else  if (index == 1 || index == 2) {
+                                _isSelectedPaymentVisible = false;
+                                _isStripePayment = true;
+                                totalCartMoney = (cartNotifier.totalCartMoney.value * 100).toInt();
+                                if (!isTerminalInitialized) {
+                                  initializeStripe(cUserAppInstitutionModel.idUserAppInstitution, authenticationNotifier.token);
+                                }
+                                if (!isReaderDiscovered) {
+                                  Future.delayed(Duration(seconds: 2), () {
+                                    // This callback is executed after the delay
+                                    _discoverReaders();
+                                  });                                
+                                } else {
+                                  getConnectedReaderInfo();
+                                }                               
+                                
                               } else {
                                 _isSelectedPaymentVisible = false;
+                                _isStripePayment = false;
                               }
                               checkImport(index);
                             });
@@ -646,6 +802,41 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                 ),
                 SizedBox(
                   height: 4,
+                ),
+                Visibility(
+                  maintainSize: false,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: _isStripePayment,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _stripeStatus,
+                          style: CustomTextStyle.textFormFieldBold
+                              .copyWith(color: Colors.black, fontSize: 14),
+                        ),
+                         Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                textStyle: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold)),
+                            onPressed:  isReaderDiscovered ?_makePayment : null, 
+                            child: const Column(
+                              children: [
+                                Text("Segui Pagamento"),
+                              ],
+                            )),
+                      ),
+                      ],
+                    ),
+                  ),
                 ),
                 Container(
                   width: double.infinity,

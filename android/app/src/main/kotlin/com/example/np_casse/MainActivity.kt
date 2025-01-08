@@ -26,39 +26,58 @@ class MainActivity : FlutterActivity() {
     private var terminalInitialized = false
     private lateinit var methodChannel: MethodChannel
 
-override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-    super.configureFlutterEngine(flutterEngine)
-    methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
-    methodChannel.setMethodCallHandler { call, result ->
-        when (call.method) {
-            "initializeStripe" -> initializeTerminal(result)
-            "discoverReaders" -> {
-                if (terminalInitialized) discoverReaders(result)
-                else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
-            }
-            "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
-            "processPayment" -> {
-                // Extract amount and currency from Flutter arguments
-                val amount = (call.argument<Int>("amount") ?: 0) // Default to 0 if not provided
-                val currency = call.argument<String>("currency") ?: "EUR" // Default to EUR if not provided
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        methodChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        methodChannel.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "initializeStripe" -> {
+                    val idUserAppInstitution = call.argument<Int>("idUserAppInstitution")
+                    val token = call.argument<String>("token")  // Extract token from Flutter side
+                    
+                    if (idUserAppInstitution != null && token != null) {
+                        // Pass both idUserAppInstitution and token to the method that initializes Stripe
+                        initializeTerminal(idUserAppInstitution, token, result)
+                    } else {
+                        result.error("MISSING_PARAM", "idUserAppInstitution and token are required", null)
+                    }
+                }
+                "discoverReaders" -> {
+                    if (terminalInitialized) discoverReaders(result)
+                    else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
+                }
+                "isReaderConnected" -> {
+                    val isConnected = Terminal.getInstance().connectedReader != null
+                    result.success(isConnected)
+                }
+                "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
+                "disconnectReader" -> {
+                    disconnectReader(result) // Native method to disconnect the reader
+                }
+                "processPayment" -> {
+                    // Extract amount and currency from Flutter arguments
+                    val amount = (call.argument<Int>("amount") ?: 0) // Default to 0 if not provided
+                    val currency = call.argument<String>("currency") ?: "EUR" // Default to EUR if not provided
 
-                // Convert amount to Long, as required by the Stripe terminal API
-                val amountInLong: Long = amount.toLong()
+                    // Convert amount to Long, as required by the Stripe terminal API
+                    val amountInLong: Long = amount.toLong()
 
-                // Pass the amount and currency to the processPayment method
-                processPayment(amountInLong, currency, result)
+                    // Pass the amount and currency to the processPayment method
+                    processPayment(amountInLong, currency, result)
+                }
+                else -> result.notImplemented()
             }
-            else -> result.notImplemented()
         }
     }
-}
 
+    private fun initializeTerminal(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
+        // Set the token globally in ApiClient
+        ApiClient.setToken(token)
 
-
-    private fun initializeTerminal(result: MethodChannel.Result) {
         if (!Terminal.isInitialized()) {
             try {
-                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, TokenProvider(), TerminalEventListener())
+                // Initialize the terminal, passing the idUserAppInstitution to TokenProvider
+                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, TokenProvider(idUserAppInstitution), TerminalEventListener())
                 terminalInitialized = true
                 result.success("Stripe Initialized")
             } catch (e: TerminalException) {
@@ -71,53 +90,92 @@ override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         }
     }
 
-    private fun discoverReaders(result: MethodChannel.Result) {
-        if (checkPermissions()) {
-            if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
-                BluetoothAdapter.getDefaultAdapter().enable()
+    private fun disconnectReader(result: MethodChannel.Result) {
+    val connectedReader = Terminal.getInstance().connectedReader
+    if (connectedReader != null) {
+        Terminal.getInstance().disconnectReader(object : Callback {
+            override fun onSuccess() {
+                Log.d("StripeTerminal", "Successfully disconnected the reader.")
+                result.success("Reader disconnected successfully.")
             }
 
-            val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
-            val discoveredReaders = mutableListOf<Reader>()
-
-            val discoveryListener = object : DiscoveryListener {
-    override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
-        if (readers.isNotEmpty()) {
-             val readerToConnect = readers.firstOrNull()
-        if (readerToConnect != null) {
-            connectToReader(readerToConnect, result)
-        }
-            val firstReader = readers.first()
-
-            // Sending the first reader's details
-            val readerInfo = mapOf(
-                "serialNumber" to (firstReader.serialNumber ?: "Unknown"),
-                "deviceType" to (firstReader.deviceType.name ?: "Unknown")
-            )
-            
-            // Send the first reader to Flutter
-            result.success(readerInfo)
-            
-        } else {
-            result.success(null) // Send null if no readers are found
-        }
+            override fun onFailure(e: TerminalException) {
+                Log.e("StripeTerminal", "Failed to disconnect: ${e.message}")
+                result.error("DISCONNECT_ERROR", "Failed to disconnect reader: ${e.message}", null)
+            }
+        })
+    } else {
+        result.error("NO_READER_CONNECTED", "No reader is currently connected.", null)
     }
 }
 
 
-            Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, object : Callback {
+private fun discoverReaders(result: MethodChannel.Result) {
+    if (checkPermissions()) {
+        if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
+            BluetoothAdapter.getDefaultAdapter().enable()
+        }
+
+        // Check if terminal is already connected to a reader
+        if (Terminal.getInstance().connectedReader != null) {
+            // Disconnect from the current reader before discovering new ones
+            Terminal.getInstance().disconnectReader(object : Callback {
                 override fun onSuccess() {
-                    Log.d("StripeTerminal", "Reader discovery completed")
+                    Log.d("StripeTerminal", "Successfully disconnected from the reader.")
+                    startDiscoveringReaders(result)
                 }
 
                 override fun onFailure(e: TerminalException) {
-                    result.error("DISCOVERY_ERROR", "Failed to discover readers: ${e.message}", null)
+                    result.error("DISCONNECT_ERROR", "Failed to disconnect: ${e.message}", null)
                 }
             })
         } else {
-            requestPermissions()
+            startDiscoveringReaders(result)
+        }
+    } else {
+        requestPermissions()
+    }
+}
+
+
+private fun startDiscoveringReaders(result: MethodChannel.Result) {
+    val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
+    val discoveredReaders = mutableListOf<Reader>()
+
+    val discoveryListener = object : DiscoveryListener {
+        override fun onUpdateDiscoveredReaders(readers: List<Reader>) {
+            if (readers.isNotEmpty()) {
+                val readerToConnect = readers.firstOrNull()
+                if (readerToConnect != null) {
+                    connectToReader(readerToConnect, result)
+                }
+                val firstReader = readers.first()
+
+                // Sending the first reader's details
+                val readerInfo = mapOf(
+                    "serialNumber" to (firstReader.serialNumber ?: "Unknown"),
+                    "deviceType" to (firstReader.deviceType.name ?: "Unknown")
+                )
+                
+                // Send the first reader to Flutter
+                result.success(readerInfo)
+            } else {
+                result.success(null) // Send null if no readers are found
+            }
         }
     }
+
+    Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, object : Callback {
+        override fun onSuccess() {
+            Log.d("StripeTerminal", "Reader discovery completed")
+        }
+
+        override fun onFailure(e: TerminalException) {
+            result.error("DISCOVERY_ERROR", "Failed to discover readers: ${e.message}", null)
+        }
+    })
+}
+
 
     private fun connectToReader(reader: Reader, result: MethodChannel.Result) {
     val apiUrl = "https://apicasse.giveapp.it/api/StripeTerminal/Get-location-id"
