@@ -5,7 +5,6 @@ import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navi
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
 import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
-import 'package:np_casse/core/api/institution.attribute.api.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -20,7 +19,6 @@ import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
-import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
@@ -28,10 +26,8 @@ import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
-import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
 import 'package:np_casse/screens/settingScreen/admin.setting.screen.dart';
-import 'package:np_casse/screens/settingScreen/bluetooth.configuration.screen.dart';
 import 'package:np_casse/screens/settingScreen/institution.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
@@ -76,15 +72,6 @@ class MenuList {
 List<MenuList> destinations = <MenuList>[
   MenuList(AppRouter.wishListRoute, 'Preferiti', Icons.favorite_outlined,
       const Icon(Icons.favorite_outlined), const WishlistScreen(), 1),
-  // MenuList(
-  //   '',
-  //   'Shop',
-  //   Icons.shop,
-  //   const Icon(Icons.shop),
-  //   const Placeholder(),
-  //   1,
-  //   subMenus: [],
-  // ),
   MenuList(AppRouter.categoryOneShopRoute, 'Naviga shop', Icons.shop,
       const Icon(Icons.shop), const ShopNavigator(), 1),
   MenuList(AppRouter.userRoute, 'Ricerca shop', Icons.search,
@@ -119,18 +106,6 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.settings),
       const AdminSettingScreen(),
       3),
-  // MenuList(AppRouter.settingRoute, 'Generali', Icons.settings,
-  //     const Icon(Icons.settings), const BluetoothConfigurationScreen(), 2),
-
-  // MenuList(
-  //   '',
-  //   'Report',
-  //   Icons.dashboard,
-  //   const Icon(Icons.dashboard),
-  //   Placeholder(),
-  //   1,
-  //   subMenus: [],
-  // ),
   MenuList(AppRouter.institutionRoute, 'Report acquisti', Icons.dashboard,
       const Icon(Icons.dashboard), const CartHistoryNavigator(), 1),
   MenuList(AppRouter.institutionRoute, 'Report prodotti', Icons.dashboard,
@@ -386,9 +361,6 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
     InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
         Provider.of<InstitutionAttributeAdminNotifier>(context);
-
-    // ShopCategoryNotifier shopCategoryNotifier =
-    //     Provider.of<ShopCategoryNotifier>(context);
     ReportProductNotifier reportProductNotifier =
         Provider.of<ReportProductNotifier>(context);
     ReportCartNotifier reportCartNotifier =
@@ -455,13 +427,13 @@ class _MasterScreenState extends State<MasterScreen> {
                       categoryCatalogNotifier.refresh();
                     } else if (menu.label == "Impostazioni ente") {
                       institutionAttributeInstitutionAdminNotifier
-                          .setHistoryUpdate(true);
+                          .setUpdate(true);
                     } else if (menu.label == "Impostazioni di configurazione") {
-                      institutionAttributeAdminNotifier.setHistoryUpdate(true);
+                      institutionAttributeAdminNotifier.setUpdate(true);
                     } else if (menu.label == "Report acquisti") {
-                      reportCartNotifier.setHistoryUpdate(true);
+                      reportCartNotifier.setUpdate(true);
                     } else if (menu.label == "Report prodotti") {
-                      reportProductNotifier.setProductUpdate(true);
+                      reportProductNotifier.setUpdate(true);
                     }
                     handleMenuTap(i);
                     return;

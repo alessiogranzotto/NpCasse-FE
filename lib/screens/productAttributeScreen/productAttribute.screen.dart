@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
@@ -79,6 +80,7 @@ class _ProductAttributeScreenState extends State<ProductAttributeScreen> {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: CustomColors.darkBlue,
           centerTitle: true,
           title: Text(
             'Attributi prodotti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',

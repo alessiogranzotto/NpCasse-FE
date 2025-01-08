@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
@@ -10,6 +11,8 @@ import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.detail.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.dart';
+import 'package:np_casse/screens/comunicationScreen/template.comunication.html.screen.dart';
+import 'package:np_casse/screens/homeScreen/home.screen.dart';
 import 'package:np_casse/screens/homeScreen/master.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
@@ -89,6 +92,8 @@ class AppRouter {
   static const String categoryTwoShopRoute = "/categorytwoshop";
   static const String categoryProductShopRoute = "/categoryproductshop";
 
+  static const String templateComunicationHtml = "/templatecomunicationhtml";
+
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -118,7 +123,7 @@ class AppRouter {
       case homeRoute:
         {
           return MaterialPageRoute(
-            builder: (_) => const MasterScreen(),
+            builder: (_) => HomeScreen(),
           );
           // return PageRouteBuilder(
           //   pageBuilder: (context, animation, secondaryAnimation) =>
@@ -297,6 +302,19 @@ class AppRouter {
             builder: (_) => const ProductThreeShopScreen(),
           );
         }
+
+      case templateComunicationHtml:
+        {
+          return MaterialPageRoute(
+            builder: (context) => TemplateComunicationHtmlScreen(
+              templateComunicationModel: ModalRoute.of(context)!
+                  .settings
+                  .arguments as TemplateComunicationModel,
+            ),
+            settings: settings,
+          );
+        }
+
       case onBoardRoute:
         {
           return MaterialPageRoute(

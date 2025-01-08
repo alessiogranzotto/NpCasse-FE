@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -71,6 +72,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text("Gestione stakeholder",
             style: Theme.of(context).textTheme.headlineLarge),

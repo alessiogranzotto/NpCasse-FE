@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
@@ -85,17 +86,21 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
     required BuildContext context,
   }) {
     return CheckboxListTile(
-        side: const BorderSide(color: Colors.blueGrey),
-        checkColor: Colors.blueAccent,
-        checkboxShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        activeColor: Colors.blueAccent,
-        controlAffinity: ListTileControlAffinity.leading,
-        value: value,
-        onChanged: onChanged,
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.blueGrey),
-        ),
+      side: const BorderSide(color: Colors.blueGrey),
+      checkColor: Colors.blueAccent,
+      checkboxShape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      activeColor: Colors.blueAccent,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: value,
+      onChanged: onChanged,
+      title: Text(
+        title,
+        style: Theme.of(context)
+            .textTheme
+            .labelMedium!
+            .copyWith(color: Colors.blueGrey),
+      ),
     );
   }
 
@@ -110,8 +115,9 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text(
           'Categorie ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
@@ -158,33 +164,31 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
                     )),
                 if (screenWidth > 1002) ...[
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readAlsoDeleted,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readAlsoDeleted = value!;
-                      });
-                    },
-                    title: 'Mostra anche cancellate',
-                    context: context,
-                  )
-                 ),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )
-                ),
-              ],    
-              Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readAlsoDeleted,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readAlsoDeleted = value!;
+                          });
+                        },
+                        title: 'Mostra anche cancellate',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
+                ],
+                Expanded(
                   flex: 1,
                   child: TextFormField(
                     style: Theme.of(context)
@@ -263,29 +267,29 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
               Row(
                 children: [
                   Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readAlsoDeleted,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readAlsoDeleted = value!;
-                      });
-                    },
-                    title: 'Mostra anche cancellate',
-                    context: context,
-                  )),
-                 Expanded(
-                  flex: 1,
-                  child:_buildCheckboxTile(
-                    value: readImageData,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        readImageData = value!;
-                      });
-                    },
-                    title: 'Visualizza immagine',
-                    context: context,
-                  )),
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readAlsoDeleted,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readAlsoDeleted = value!;
+                          });
+                        },
+                        title: 'Mostra anche cancellate',
+                        context: context,
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: _buildCheckboxTile(
+                        value: readImageData,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            readImageData = value!;
+                          });
+                        },
+                        title: 'Visualizza immagine',
+                        context: context,
+                      )),
                 ],
               ),
             ],

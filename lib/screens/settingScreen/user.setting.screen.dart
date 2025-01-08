@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
@@ -242,6 +243,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
@@ -266,7 +268,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
                               panelOpen[index] = isExpanded;
                             });
                           },
-                          animationDuration: Duration(seconds: 2),
+                          animationDuration: Duration(milliseconds: 500),
                           elevation: 1,
                           children: [
                             ExpansionPanel(

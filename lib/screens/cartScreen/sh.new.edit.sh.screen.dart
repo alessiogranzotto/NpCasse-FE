@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/api/geo.autocomplete.api.dart';
@@ -649,6 +650,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text(widget.editStakeholderGiveModelSearch == null
             ? "Nuova anagrafica"
@@ -1026,7 +1028,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                                   return null;
                                                 }
                                                 if (value!.isEmpty) {
-                                                  return "Inserire l'email";
+                                                  return "Inserire Email";
                                                 } else if (!regExp
                                                     .hasMatch(value)) {
                                                   return 'Email non valida';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/models/institution.model.dart';
@@ -67,11 +68,13 @@ class _InstitutionScreenState extends State<InstitutionScreen> {
         backgroundColor: Theme.of(context).colorScheme.background,
         //drawer: const CustomDrawerWidget(),
         appBar: AppBar(
+          backgroundColor: CustomColors.darkBlue,
           centerTitle: true,
           title: Text(
             'Associazioni',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
+          automaticallyImplyLeading: false,
         ),
         body: SingleChildScrollView(
           child: Column(children: [

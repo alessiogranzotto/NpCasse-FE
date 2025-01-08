@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -25,8 +26,8 @@ class WishlistScreen extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        // const CustomDrawerWidget(),
         appBar: AppBar(
+          backgroundColor: CustomColors.darkBlue,
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: Text(

@@ -9,6 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
+  static String version = '1.13';
 }
 
 // class AppRegex {
@@ -63,6 +64,7 @@ class AppStrings {
   static const String loggedIn = 'Logged In!';
   static const String registrationComplete = 'Registration Complete!';
   static const String cancel = 'Annulla';
+  static const String generate = 'Genera';
   static const String update = 'Aggiorna';
   static const String changePassword = 'Modifica Password';
 
@@ -84,7 +86,7 @@ class AppStrings {
   static const String invalidTelephoneNumber = 'Numero di telefono invalido';
 
   static const String email = 'Email';
-  static const String pleaseEnterEmailAddress = 'Inserire l' 'email';
+  static const String pleaseEnterEmailAddress = 'Inserire Email';
   static const String invalidEmailAddress = 'Email invalida';
 
   static const String otpMode = 'Modalità OTP';
@@ -140,6 +142,23 @@ class AppStrings {
 
   static const emailSendFrom = 'Email di invio';
   static const pleaseEnterEmailSendFrom = 'Inserire email di invio';
+
+  //COMUNICATION
+  static const nameComunication = 'Nome comunicazione';
+  static const pleaseEnterNameComunication = 'Inserire nome comunicazione';
+
+  static const senderComunication = 'Mittente comunicazione';
+  static const pleaseEnterSenderComunication =
+      'Inserire mittente comunicazione';
+
+  static const emailSenderComunication = 'Email mittente comunicazione';
+  static const pleaseEnterEmailSenderComunication =
+      'Inserire email mittente comunicazione';
+  static const subjectEmailComunication = 'Oggetto comunicazione';
+  static const pleaseEnterSubjectEmailComunication =
+      'Inserire oggetto comunicazione';
+
+  static const comunicationTemplate = 'Template comunicazione';
 }
 
 class AppColors {

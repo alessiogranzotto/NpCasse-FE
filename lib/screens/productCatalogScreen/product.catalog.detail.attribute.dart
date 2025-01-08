@@ -1,5 +1,6 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
@@ -443,8 +444,9 @@ class _ProductAttributeDetailState
         Provider.of<WishlistProductNotifier>(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text(
           '',

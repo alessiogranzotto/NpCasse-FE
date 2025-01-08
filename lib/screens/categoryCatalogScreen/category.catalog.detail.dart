@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
@@ -215,6 +216,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
+          backgroundColor: CustomColors.darkBlue,
           centerTitle: true,
           title: Text(
             'Dettaglio categoria: ${widget.categoryCatalogModelArgument.nameCategory}',

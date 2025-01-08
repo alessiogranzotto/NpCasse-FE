@@ -1,5 +1,6 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/app/utilities/money_formatter.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
@@ -110,6 +111,7 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
         title: Text(
           'Carrello ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
