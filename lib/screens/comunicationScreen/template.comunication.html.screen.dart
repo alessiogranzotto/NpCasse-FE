@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -363,7 +362,7 @@ class TemplateComunicationHtmlScreen extends StatelessWidget {
                       TemplateDetailComunicationModel tSnapshot =
                           snapshot.data as TemplateDetailComunicationModel;
                       return SingleChildScrollView(
-                          child: HtmlWidget(tSnapshot.html_body));
+                          child: Text(tSnapshot.html_body));
                     }
                   },
                 ),
