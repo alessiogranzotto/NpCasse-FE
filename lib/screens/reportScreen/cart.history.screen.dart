@@ -19,8 +19,8 @@ class CartHistoryScreen extends StatefulWidget {
 }
 
 class _CartHistoryScreenState extends State<CartHistoryScreen> {
-  static PagedDataTableController<String, Map<String, dynamic>>
-      tableController = PagedDataTableController();
+  final PagedDataTableController<String, Map<String, dynamic>> tableController =
+      PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
   List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
   List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
@@ -39,6 +39,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       });
     }
   }
+  
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
