@@ -10,6 +10,7 @@ import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 enum PaymentType { contanti, bancomat, cartaCredito, assegni }
 
@@ -40,6 +41,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   String _stripeStatus = 'Terminal is not initialized yet.';
   bool isTerminalInitialized = false;
   bool isReaderDiscovered = false;  // This will track if the reader has already been discovered.
+  bool isReaderConnected = false;  
 
   final List<bool> _selectedPayment = <bool>[true, false, false, false];
   CurrencyTextFieldController textEditingControllerCashInserted =
@@ -59,7 +61,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
     rateDiscounted =
-        double.tryParse(rateDiscoutTextEditingController.text) ?? 0;
+        double.tryParse(rateDiscoutTextEditingController.text) ?? 0;   
     if (rateDiscounted > 100) {
       rateDiscoutTextEditingController.text = '';
       rateDiscounted = 0;
@@ -217,12 +219,13 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   } catch (e) {
     // On error, handle initialization failure
     setState(() {
+      _stripeStatus = 'Error initializing terminal';
       isTerminalInitialized = false;
     });
   }
 }
 
-Future<void> _discoverReaders() async {
+Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
   if (!isTerminalInitialized) {
     setState(() {
       _stripeStatus = 'Terminal is not initialized yet.';
@@ -244,16 +247,19 @@ Future<void> _discoverReaders() async {
 
   try {
     // Now, attempt to discover readers
-    final result = await platform.invokeMethod('discoverReaders');
+    final result = await platform.invokeMethod('discoverReaders', {
+      'idUserAppInstitution': idUserAppInstitution, // Pass the idUserAppInstitution
+      'token': token,  // Pass token as part of the method arguments
+
+    });
 
     if (result != null) {
-      // Mark the reader as discovered to avoid discovering again
+      // Delay calling getConnectedReaderInfo by 1 second
+      await Future.delayed(Duration(seconds: 2));
+            // Mark the reader as discovered to avoid discovering again
       setState(() {
         isReaderDiscovered = true;
       });
-
-      // Delay calling getConnectedReaderInfo by 1 second
-      await Future.delayed(Duration(seconds: 2));
 
       // Call getConnectedReaderInfo method after the delay
       getConnectedReaderInfo();
@@ -283,15 +289,18 @@ Future<void> getConnectedReaderInfo() async {
 
       setState(() {
         _stripeStatus =  'Connected to $serialNumber';
+        isReaderConnected = true;
       });
     } else {
       setState(() {
         _stripeStatus = 'No connected device information available';
+        isReaderConnected = false;
       });
     }
   } catch (e) {
     setState(() {
       _stripeStatus = 'Error connecting reader';
+      isReaderConnected = false;
     });
   }
 }
@@ -314,15 +323,35 @@ Future<void> getConnectedReaderInfo() async {
       });
       setState(() {
         _stripeStatus = paymentResult;
+        disabledFinalizeButton = false;
+        textEditingControllerCashInserted.text = '';
       });
-      disabledFinalizeButton = false;
-      textEditingControllerCashInserted.text = '';
+      disconnectReader();
+  
     } catch (e) {
       setState(() {
         _stripeStatus = 'Error processing payment';
       });
     }
   }
+  
+    Future<void> disconnectReader() async {
+    try {
+      final String result = await platform.invokeMethod('disconnectReader');
+      print(result); // This will print the success message from the native code
+    } on PlatformException catch (e) {
+      print("Error disconnectReader reader");
+    }
+  }
+  Future<void> uninitializeStripe() async {
+    try {
+      final String result = await platform.invokeMethod('uninitializeStripe');
+      print(result); // This will print the success message from the native code
+    } on PlatformException catch (e) {
+      print("Error uninitializing terminal: ${e.message}");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -336,8 +365,12 @@ Future<void> getConnectedReaderInfo() async {
 
   @override
   void dispose() {
-    textEditingControllerCashInserted.dispose();
     super.dispose();
+    textEditingControllerCashInserted.dispose();
+    rateDiscoutTextEditingController.dispose();
+    if (!kIsWeb) {
+      uninitializeStripe();
+    }  
   }
 
   @override
@@ -627,7 +660,7 @@ Future<void> getConnectedReaderInfo() async {
                                 if (!isReaderDiscovered) {
                                   Future.delayed(Duration(seconds: 2), () {
                                     // This callback is executed after the delay
-                                    _discoverReaders();
+                                    _discoverReaders(cUserAppInstitutionModel.idUserAppInstitution, authenticationNotifier.token);
                                   });                                
                                 } else {
                                   getConnectedReaderInfo();
@@ -827,7 +860,7 @@ Future<void> getConnectedReaderInfo() async {
                                     .inversePrimary,
                                 textStyle: const TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.bold)),
-                            onPressed:  isReaderDiscovered ?_makePayment : null, 
+                            onPressed:  isReaderConnected && disabledFinalizeButton ?_makePayment : null, 
                             child: const Column(
                               children: [
                                 Text("Segui Pagamento"),

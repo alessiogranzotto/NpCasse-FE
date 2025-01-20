@@ -48,7 +48,6 @@ class CartModel {
     denominationStakeholder = null;
     cartProducts = List.empty();
   }
-
   // JSON deserialization
   CartModel.fromJson(Map<String, dynamic> json) {
     idCart = json['idCart'];
@@ -61,8 +60,10 @@ class CartModel {
     stateCart = json['stateCart'];
     stateCartDescription = json['stateCartDescription'];
     notesCart = json['notesCart'] ?? '';
-    totalPriceCart = json['totalPriceCart'] + .000000000000001;
-    percDiscount = json['percDiscount'] + .000000000000001;
+    totalPriceCart = (json['totalPriceCart'] != null)
+        ? double.parse((json['totalPriceCart']).toStringAsFixed(2))
+        : json['totalPriceCart'];    
+    percDiscount = double.parse((json['percDiscount']).toStringAsFixed(2));
     idStakeholder = json['idStakeholder'];
     denominationStakeholder = json['denominationStakeholder'];
     cartProducts = List.from(json['cartProducts'])

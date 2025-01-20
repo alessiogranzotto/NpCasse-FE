@@ -23,6 +23,10 @@ class IntegerTextTableFilter extends TableFilter<int> {
 
   @override
   Widget buildPicker(BuildContext context, FilterState<int> state) {
+    if (_controller.text != state.value?.toString()) {
+      _controller.text = state.value?.toString() ?? '';
+    }
+
     return TextFormField(
       controller: _controller,
       keyboardType: TextInputType.number,  // Set keyboard type to number
@@ -66,6 +70,7 @@ class IntegerTextTableFilter extends TableFilter<int> {
 class DateTextTableFilter extends TableFilter<String> {
   final InputDecoration? decoration;
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   DateTextTableFilter({
     required super.id,
@@ -77,12 +82,27 @@ class DateTextTableFilter extends TableFilter<String> {
   }) {
     // Initialize the controller with the initial value if present
     _controller.text = initialValue ?? '';
+
+    // Attach a listener to the focus node to handle onEditingComplete
   }
 
   @override
   Widget buildPicker(BuildContext context, FilterState<String> state) {
+    // Store the state for later access when needed
+    // We will use this state reference inside _onEditingComplete()
+
+    if (_controller.text != state.value) {
+      _controller.text = state.value ?? '';
+    }
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        // Call _onEditingComplete when the field loses focus
+        _onEditingComplete(state);
+      }
+    });
     return TextFormField(
       controller: _controller,
+      focusNode: _focusNode, // Attach the focus node to detect when the field loses focus
       keyboardType: TextInputType.datetime,
       inputFormatters: [
         DateInputFormatter(), // Custom formatter for date input
@@ -90,7 +110,7 @@ class DateTextTableFilter extends TableFilter<String> {
       decoration: InputDecoration(
         labelText: name,
         hintText: 'dd/MM/yyyy', // Placeholder format
-        hintStyle: TextStyle(color: Colors.grey), // Set hint text color to grey
+        hintStyle: TextStyle(color: Colors.grey),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.black, width: 2),
         ),
@@ -101,19 +121,41 @@ class DateTextTableFilter extends TableFilter<String> {
           borderSide: BorderSide(color: Colors.black),
         ),
       ).copyWith(
-        hintText: decoration?.hintText ??
-            'dd/MM/yyyy', // Fallback to custom hintText if provided
+        hintText: decoration?.hintText ?? 'dd/MM/yyyy', // Fallback to custom hintText if provided
       ),
       onChanged: (value) {
         // Update the state only if the date is valid
         if (_isValidDate(value)) {
           state.value = value;
         } else {
-          // Clear the state value if invalid
           state.value = null;
         }
       },
     );
+  }
+
+  // This function is triggered when the user leaves the field (onEditingComplete)
+  void _onEditingComplete(FilterState<String> state) {
+    // Directly access the state from the parent class (TableFilter<String>)
+    String value = _controller.text.trim();
+
+    // Check if the user has entered only the day (e.g., '04') and there are no slashes
+    if (value.isNotEmpty && value.length == 3 && value.contains('/')) {
+      String day = value.replaceAll("/", "");
+      DateTime now = DateTime.now();
+
+      // Only update if the entered day is less than or equal to today's day
+      if (int.parse(day) <= now.day) {
+        // Format the current date with today's month and year
+        String currentDate = '$day/${now.month.toString().padLeft(2, '0')}/${now.year}';
+
+        // Update the controller text with the new date
+        _controller.text = currentDate;
+
+        // Manually update the state with the new date
+        state.value = currentDate;
+      }
+    }
   }
 
   // Method to validate the date format strictly
@@ -127,13 +169,8 @@ class DateTextTableFilter extends TableFilter<String> {
         return false;
       }
 
-      // Check if the date is less than or equal to today
-      // if (parsedDate.isAfter(DateTime.now())) {
-      //   return false; // Reject future dates
-      // }
-
-      return _isValidDayMonth(
-          parsedDate.day, parsedDate.month, parsedDate.year);
+      // Check if the date is valid
+      return _isValidDayMonth(parsedDate.day, parsedDate.month, parsedDate.year);
     } catch (e) {
       return false;
     }
@@ -142,8 +179,7 @@ class DateTextTableFilter extends TableFilter<String> {
   // Method to check if the day and month are valid
   bool _isValidDayMonth(int day, int month, int year) {
     if (month < 1 || month > 12) return false; // Invalid month
-    if (year < 1900 || year > 2100)
-      return false; // Adjust year limits as necessary
+    if (year < 1900 || year > 2100) return false; // Adjust year limits as necessary
     if (day < 1 || day > _daysInMonth(month, year)) return false; // Invalid day
     return true;
   }
@@ -158,27 +194,55 @@ class DateTextTableFilter extends TableFilter<String> {
   }
 }
 
+// Custom input formatter for the date field
 class DateInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final text = newValue.text;
+    String text = newValue.text;
 
-    // Pattern to allow only numbers and forward slashes in dd/MM/yyyy format
+    // If the user is backspacing and removing a slash, allow that to happen
+    if (oldValue.text.length > newValue.text.length) {
+      // If the last character is a slash, remove it
+      if (oldValue.text.endsWith('/')) {
+        text = text.substring(0, text.length - 1);
+      }
+    }
+
+    // Allow only numbers and slashes, and make sure there are no more than two slashes
     if (!RegExp(r'^\d{0,2}\/?\d{0,2}\/?\d{0,4}$').hasMatch(text)) {
       return oldValue; // Reject if it doesn't match the pattern
     }
 
-    // Prevent multiple slashes
-    if (text.split('/').length > 3) {
-      return oldValue; // Reject if more than two slashes are found
+    // Add the first slash after two digits (for day)
+    if (text.length == 2 && !text.contains('/')) {
+      text = '$text/';
+    }
+    // Add the second slash after the month (5th character)
+    if (text.length == 5 && !text.contains('/', 3)) {
+      text = '$text/';
     }
 
-    return newValue; // Allow the input as is
+    // Prevent adding a second slash in any place
+    if (text.contains('//')) {
+      text = oldValue.text; // Restore to old value if there's more than one slash
+    }
+
+    // Ensure the length doesn't exceed 10 characters (dd/MM/yyyy)
+    if (text.length > 10) {
+      text = text.substring(0, 10);
+    }
+
+    // Return the modified text with the caret at the end of the input
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
   }
 }
+
 
 class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
   final InputDecoration? decoration;
@@ -236,49 +300,57 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
           return Column(
             children: [
               // The actual dropdown (visible only when the widget is visible)
-                GestureDetector(
-                  onTap: () async {
-                    if (loadedOptions.isEmpty && !_isLoading && _isVisible) {
-                      await _loadOptions();
-                    }
-                  },
-                  child: DropdownButtonFormField<T>(
-                    items: _isLoading || loadedOptions.isEmpty
-                        ? null // Show no items if still loading or no options available
-                        : loadedOptions.map<DropdownMenuItem<T>>((T item) {
-                            return DropdownMenuItem<T>(
-                              value: item,
-                              child: Text(
-                                displayStringForOption(item),
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+              GestureDetector(
+                onTap: () async {
+                  if (loadedOptions.isEmpty && !_isLoading && _isVisible) {
+                    await _loadOptions();
+                  }
+                },
+                child: DropdownButtonFormField<T>(
+                  items: _isLoading || loadedOptions.isEmpty
+                      ? null // Show no items if still loading or no options available
+                      : loadedOptions.map<DropdownMenuItem<T>>((T item) {
+                          return DropdownMenuItem<T>(
+                            value: item,
+                            child: Text(
+                              displayStringForOption(item),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black, // Set a color for the item text
                               ),
-                            );
-                          }).toList(),
-                    value: _getValueFromDisplayString(state.value, loadedOptions),
-                    onChanged: loadedOptions.isNotEmpty
-                        ? (newValue) {
-                            if (onChanged != null) {
-                              onChanged!(newValue); // Trigger onChanged if set
-                            }
-                            state.value = newValue; // Update the filter state
+                            ),
+                          );
+                        }).toList(),
+                  value: _getValueFromDisplayString(state.value, loadedOptions),
+                  onChanged: loadedOptions.isNotEmpty
+                      ? (newValue) {
+                          if (onChanged != null) {
+                            onChanged!(newValue); // Trigger onChanged if set
                           }
-                        : null, // Disable onChanged if no options are available
-                    onSaved: (newValue) {
-                      state.value = newValue;
-                    },
-                    decoration: (decoration ?? InputDecoration(labelText: name)).copyWith(
-                      hintText: _isLoading ? 'Loading options...' : 'Select an option',
-                      // Add a border to ensure only the bottom line is visible
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black), // Bottom border color
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 2),
-                      ),
+                          state.value = newValue; // Update the filter state
+                        }
+                      : null, // Disable onChanged if no options are available
+                  onSaved: (newValue) {
+                    state.value = newValue;
+                  },
+                  decoration: (decoration ?? InputDecoration(labelText: name)).copyWith(
+                    hintText: _isLoading ? 'Loading options...' : 'Select an option',
+                    // Add a border to ensure only the bottom line is visible
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black), // Bottom border color
                     ),
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 2),
+                    ),
                   ),
-                )
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black, // Make the selected text color black
+                  ),
+                ),
+              )
             ],
           );
         },

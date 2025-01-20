@@ -38,8 +38,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         tableController.refresh();
       });
     }
-  }
-  
+  } 
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {

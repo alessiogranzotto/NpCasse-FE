@@ -48,14 +48,14 @@ class CartProductModel {
     productAttributeJson = json['productAttributeJson'];
     productAttributeExplicit = json['productAttributeExplicit'];
     quantityCartProduct = ValueNotifier<int>(json['quantityCartProduct']);
-    priceCartProduct = json['priceCartProduct'] + .000000000000001;
+    priceCartProduct = double.parse((json['priceCartProduct']).toStringAsFixed(2));
     imageData = json['imageData'];
     notesCartProduct = json['notesCartProduct'];
     docNumberCart = json['docNumberCart'];
     var dateTimeC = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCart'], true);
     dateCart = dateTimeC.toLocal();
-    percDiscount = json['percDiscount'] + .000000000000001;
-    priceDiscounted = json['priceDiscounted'] + .000000000000001;
+    percDiscount = double.parse((json['percDiscount']).toStringAsFixed(2));
+    priceDiscounted = double.parse((json['priceDiscounted']).toStringAsFixed(2));
   }
 
   Map<String, dynamic> toJson() {

@@ -37,7 +37,11 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.debug
-        }
+            // Enable code shrinking
+            minifyEnabled false
+
+            // Enable resource shrinking
+            shrinkResources false        }
     }
 }
 
@@ -59,4 +63,6 @@ dependencies {
     implementation 'org.json:json:20230618' 
      
     kapt "androidx.lifecycle:lifecycle-compiler:2.2.0"  // Ensure kapt is used correctly
+    //  implementation 'org.slf4j:slf4j-api:1.7.32' // Add SLF4J API
+    // implementation 'org.slf4j:slf4j-log4j12:1.7.32' // SLF4J binding for Log4j
 }

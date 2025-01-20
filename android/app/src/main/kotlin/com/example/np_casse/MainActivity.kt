@@ -25,6 +25,9 @@ class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.example.npcasse/stripe"
     private var terminalInitialized = false
     private lateinit var methodChannel: MethodChannel
+    // Create your token provider.
+    var tokenProvider: TokenProvider? = null
+    private var variableConnectionTokenProvider: VariableConnectionTokenProvider? = null // No default initialization
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -42,8 +45,21 @@ class MainActivity : FlutterActivity() {
                         result.error("MISSING_PARAM", "idUserAppInstitution and token are required", null)
                     }
                 }
+                "uninitializeStripe" -> {
+                    uninitializeTerminal(result)
+                }
                 "discoverReaders" -> {
-                    if (terminalInitialized) discoverReaders(result)
+                    if (terminalInitialized) {
+                        val idUserAppInstitution = call.argument<Int>("idUserAppInstitution")
+                        val token = call.argument<String>("token")  // Extract token from Flutter side
+                        
+                        if (idUserAppInstitution != null && token != null) {
+                            // Pass both idUserAppInstitution and token to the method that initializes Stripe
+                            discoverReaders(idUserAppInstitution, token, result)                    
+                        } else {
+                            result.error("MISSING_PARAM", "idUserAppInstitution and token are required", null)
+                        } 
+                    } 
                     else result.error("TERMINAL_NOT_INITIALIZED", "Terminal must be initialized first", null)
                 }
                 "isReaderConnected" -> {
@@ -73,20 +89,69 @@ class MainActivity : FlutterActivity() {
     private fun initializeTerminal(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
         // Set the token globally in ApiClient
         ApiClient.setToken(token)
+        val tokenProvider = TokenProvider(idUserAppInstitution)
 
         if (!Terminal.isInitialized()) {
             try {
+                variableConnectionTokenProvider = VariableConnectionTokenProvider(tokenProvider)
                 // Initialize the terminal, passing the idUserAppInstitution to TokenProvider
-                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, TokenProvider(idUserAppInstitution), TerminalEventListener())
+                Terminal.initTerminal(applicationContext, LogLevel.VERBOSE, variableConnectionTokenProvider!!, TerminalEventListener())
                 terminalInitialized = true
                 result.success("Stripe Initialized")
             } catch (e: TerminalException) {
                 terminalInitialized = false
                 result.error("INITIALIZATION_ERROR", "Error initializing Terminal: ${e.message}", null)
             }
+        } else { 
+if (variableConnectionTokenProvider != null) {
+        // Safely update the provider
+        variableConnectionTokenProvider!!.provider = tokenProvider
+        terminalInitialized = true
+        result.success("Stripe Already Initialized")
+    } else {
+        // Handle the rare case where the provider is null unexpectedly
+        result.error(
+            "PROVIDER_ERROR", 
+            "Connection token provider is not initialized.", 
+            null
+        )
+    }          
+        }
+    }
+
+    // Uninitialize the terminal and clear cached credentials
+    private fun uninitializeTerminal(result: MethodChannel.Result) {
+        if (terminalInitialized) {
+            try {
+                // Clear any cached credentials
+                Terminal.getInstance().clearCachedCredentials()
+
+                // Disconnect from the current reader if any
+                val connectedReader = Terminal.getInstance().connectedReader
+                if (connectedReader != null) {
+                    Terminal.getInstance().disconnectReader(object : Callback {
+                        override fun onSuccess() {
+                            Log.d("StripeTerminal", "Successfully disconnected from the reader.")
+                            terminalInitialized = false
+                            result.success("Stripe Terminal Uninitialized and Reader Disconnected.")
+                        }
+
+                        override fun onFailure(e: TerminalException) {
+                            Log.e("StripeTerminal", "Failed to disconnect: ${e.message}")
+                            result.error("DISCONNECT_ERROR", "Failed to disconnect reader: ${e.message}", null)
+                        }
+                    })
+                } else {
+                    result.success("Stripe Terminal Uninitialized.")
+                }
+
+                terminalInitialized = false
+            } catch (e: Exception) {
+                Log.e("StripeTerminal", "Error uninitializing terminal: ${e.message}")
+                result.error("UNINITIALIZATION_ERROR", "Error uninitializing terminal: ${e.message}", null)
+            }
         } else {
-            terminalInitialized = true
-            result.success("Stripe Already Initialized")
+            result.success("Stripe Terminal Not Initialized.")
         }
     }
 
@@ -110,7 +175,7 @@ class MainActivity : FlutterActivity() {
 }
 
 
-private fun discoverReaders(result: MethodChannel.Result) {
+private fun discoverReaders(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
     if (checkPermissions()) {
         if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
             BluetoothAdapter.getDefaultAdapter().enable()
@@ -122,7 +187,7 @@ private fun discoverReaders(result: MethodChannel.Result) {
             Terminal.getInstance().disconnectReader(object : Callback {
                 override fun onSuccess() {
                     Log.d("StripeTerminal", "Successfully disconnected from the reader.")
-                    startDiscoveringReaders(result)
+                    startDiscoveringReaders(idUserAppInstitution, token, result)
                 }
 
                 override fun onFailure(e: TerminalException) {
@@ -130,7 +195,7 @@ private fun discoverReaders(result: MethodChannel.Result) {
                 }
             })
         } else {
-            startDiscoveringReaders(result)
+            startDiscoveringReaders(idUserAppInstitution, token, result)
         }
     } else {
         requestPermissions()
@@ -138,7 +203,7 @@ private fun discoverReaders(result: MethodChannel.Result) {
 }
 
 
-private fun startDiscoveringReaders(result: MethodChannel.Result) {
+private fun startDiscoveringReaders(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
     val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
     val discoveredReaders = mutableListOf<Reader>()
 
@@ -147,7 +212,7 @@ private fun startDiscoveringReaders(result: MethodChannel.Result) {
             if (readers.isNotEmpty()) {
                 val readerToConnect = readers.firstOrNull()
                 if (readerToConnect != null) {
-                    connectToReader(readerToConnect, result)
+                    connectToReader(idUserAppInstitution, token, readerToConnect, result)
                 }
                 val firstReader = readers.first()
 
@@ -177,49 +242,52 @@ private fun startDiscoveringReaders(result: MethodChannel.Result) {
 }
 
 
-    private fun connectToReader(reader: Reader, result: MethodChannel.Result) {
+private fun connectToReader(idUserAppInstitution: Int, token: String?, reader: Reader, result: MethodChannel.Result) {
+    if (token == null) {
+        // Token is null, return an error
+        Log.e("StripeTerminal", "Error: Token is null")
+        result.error("TOKEN_ERROR", "Token is null and cannot be used.", null)
+        return
+    }
+
     val apiUrl = "https://apicasse.giveapp.it/api/StripeTerminal/Get-location-id"
 
-    fetchLocationId(apiUrl) { locationId, error ->
-        if (error != null) {
-            Log.e("StripeTerminal", "Error fetching location ID: $error")
-            result.error("LOCATION_ID_FETCH_ERROR", "Failed to fetch location ID: $error", null)
-            return@fetchLocationId
+    // Fetch location ID asynchronously
+    fetchLocationId(idUserAppInstitution, token, apiUrl) { locationId, error ->
+        if (error != null || locationId.isNullOrBlank() || locationId == null) {
+            val errorMessage = error ?: "Location ID is blank or null"
+            Log.e("StripeTerminal", "Error fetching location ID: $errorMessage")
+            result.error("LOCATION_ID_FETCH_ERROR", "Failed to fetch location ID: $errorMessage", null)
+            return@fetchLocationId  // Exit the function after handling the error
         }
 
-        if (locationId.isNullOrBlank()) {
-            Log.e("StripeTerminal", "Received blank location ID")
-            result.error("INVALID_LOCATION_ID", "Location ID is blank or null", null)
-            return@fetchLocationId
-        }
-
+        // If we successfully got the location ID, proceed with the reader connection
         val bluetoothReaderListener = TerminalBluetoothReaderListener()
-
         val connectionConfig = ConnectionConfiguration.BluetoothConnectionConfiguration(
             locationId = locationId,
             autoReconnectOnUnexpectedDisconnect = true,
             bluetoothReaderListener = bluetoothReaderListener
         )
 
+        // Try to connect to the reader
         Terminal.getInstance().connectReader(reader, connectionConfig, object : ReaderCallback {
             override fun onSuccess(connectedReader: Reader) {
                 Log.d("StripeTerminal", "Reader connected: ${connectedReader.serialNumber}")
                 notifyFlutterReaderConnection(true)
-                // Send the success message to Flutter
                 val successMessage = mapOf("message" to "Reader connected successfully: ${connectedReader.serialNumber}")
-                result.success(successMessage)
+                result.success(successMessage)  // Return success result
             }
 
             override fun onFailure(e: TerminalException) {
                 Log.e("StripeTerminal", "Error connecting to reader: ${e.message}")
                 notifyFlutterReaderConnection(false)
-                // Send the error message to Flutter
                 val errorMessage = mapOf("message" to "Error connecting to reader: ${e.message}")
-                result.error("CONNECT_ERROR", errorMessage["message"], null)
+                result.error("CONNECT_ERROR", errorMessage["message"], null)  // Return failure result
             }
         })
     }
 }
+
 
 private fun getConnectedDeviceInfo(result: MethodChannel.Result) {
     val reader = Terminal.getInstance().connectedReader
@@ -239,39 +307,70 @@ private fun getConnectedDeviceInfo(result: MethodChannel.Result) {
     }
 }
 
-    private fun fetchLocationId(apiUrl: String, callback: (locationId: String?, error: String?) -> Unit) {
-        val client = OkHttpClient()
-        val request = Request.Builder()
-            .url(apiUrl)
-            .post(RequestBody.create(null, ""))
-            .build()
+private fun fetchLocationId(
+    idUserAppInstitution: Int,
+    token: String,
+    apiUrl: String,
+    callback: (locationId: String?, error: String?) -> Unit
+) {
+    val urlWithParams = "$apiUrl?idUserAppInstitution=$idUserAppInstitution"
+    val client = OkHttpClient()
+    val request = Request.Builder()
+        .url(urlWithParams)
+        .addHeader("Authorization", "Bearer $token")
+        .post(RequestBody.create(null, ""))  // Assuming the body is empty
+        .build()
 
-        client.newCall(request).enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                callback(null, e.message)
-            }
+    var callbackInvoked = false
 
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+    client.newCall(request).enqueue(object : okhttp3.Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
+            if (callbackInvoked) return
+            callbackInvoked = true
+            // Call the callback with error message
+            callback(null, e.message ?: "Unknown error")
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+            if (callbackInvoked) return
+            callbackInvoked = true
+
+            try {
+                // If the response is not successful, return an error
                 if (!response.isSuccessful) {
-                    callback(null, "Failed with HTTP status ${response.code}")
+                    callback("Location Id is null", "Failed with HTTP status ${response.code}")
                     return
                 }
 
+                // Read response body
                 val responseBody = response.body?.string()
-                if (responseBody != null) {
-                    try {
-                        val jsonObject = org.json.JSONObject(responseBody)
-                        val locationId = jsonObject.optString("locationID", null)
-                        callback(locationId, null)
-                    } catch (e: org.json.JSONException) {
-                        callback(null, "Error parsing response: ${e.message}")
-                    }
-                } else {
-                    callback(null, "Empty response body")
+                if (responseBody.isNullOrBlank()) {
+                    callback("Location Id is null", "Empty response body")
+                    return
                 }
+
+                try {
+                    // Parse JSON response
+                    val jsonObject = org.json.JSONObject(responseBody)
+                    val locationId = jsonObject.optString("locationID", null)
+
+                    if (locationId.isNullOrBlank()) {
+                        callback("Location Id is null", "Received blank or invalid locationID")
+                    } else {
+                        callback(locationId, null)
+                    }
+                } catch (e: org.json.JSONException) {
+                    // JSON parsing error
+                    callback("Location Id is null", "Error parsing response: ${e.message}")
+                }
+            } catch (e: Exception) {
+                // Any other unexpected error
+
             }
-        })
-    }
+        }
+    })
+}
+
 
 
     private fun notifyFlutterReaderConnection(isConnected: Boolean) {
