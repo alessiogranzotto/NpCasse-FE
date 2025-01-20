@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
-import 'package:np_casse/app/constants/assets.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/comunication.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
@@ -26,14 +20,12 @@ import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/comunicationScreen/finalize.comunication.screen.dart';
 import 'package:np_casse/screens/comunicationScreen/prepare.comunication.navigator.dart';
-import 'package:np_casse/screens/comunicationScreen/prepare.comunication.screen.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
 import 'package:np_casse/screens/reportScreen/product.history.navigator.dart';
-import 'package:np_casse/screens/settingScreen/admin.setting.screen.dart';
 import 'package:np_casse/screens/settingScreen/institution.setting.screen.dart';
 import 'package:np_casse/screens/settingScreen/user.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
@@ -109,8 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
           1, null),
       MenuList('Impostazioni ente', Icons.settings,
           const InstitutionSettingScreen(), 2, null),
-      MenuList('Impostazioni amministratore', Icons.settings,
-          const AdminSettingScreen(), 3, null),
+      // MenuList('Impostazioni amministratore', Icons.settings,
+      //     const AdminSettingScreen(), 3, null),
     ]),
     MenuList('Comunicazioni', Icons.email, null, 3, [
       MenuList('Predisponi comunicazione', Icons.email,
@@ -170,12 +162,14 @@ class _HomeScreenState extends State<HomeScreen> {
           Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
               listen: false);
       institutionAttributeInstitutionAdminNotifier.setUpdate(true);
-    } else if (subMenu == "Impostazioni amministratore") {
-      InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
-          Provider.of<InstitutionAttributeAdminNotifier>(context,
-              listen: false);
-      institutionAttributeAdminNotifier.setUpdate(true);
-    } else if (subMenu == "Predisponi comunicazione") {
+    }
+    // else if (subMenu == "Impostazioni amministratore") {
+    //   InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
+    //       Provider.of<InstitutionAttributeAdminNotifier>(context,
+    //           listen: false);
+    //   institutionAttributeAdminNotifier.setUpdate(true);
+    // }
+    else if (subMenu == "Predisponi comunicazione") {
       ComunicationNotifier comunicationNotifier =
           Provider.of<ComunicationNotifier>(context, listen: false);
       comunicationNotifier.refresh();
@@ -215,7 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
             iconColor: Theme.of(context).colorScheme.primary,
             collapsedIconColor: Theme.of(context).colorScheme.primary,
             title: Text(cDestinations.label,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 10)),
             leading: Icon(cDestinations.icon),
             children:
                 _generateSubMenuItems(cDestinations.subMenus!, popContext),
@@ -224,7 +220,9 @@ class _HomeScreenState extends State<HomeScreen> {
           _items.add(ListTile(
             iconColor: Theme.of(context).colorScheme.primary,
             title: Text(cDestinations.label,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 10)),
             leading: Icon(cDestinations.icon),
             onTap: () {
               _onItemTapped(cDestinations.label);
@@ -251,7 +249,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListTile(
             iconColor: Theme.of(context).colorScheme.primary,
             title: Text(cDestinations.label,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 10)),
             leading: Icon(cDestinations.icon),
             onTap: () {
               _onItemTapped(cDestinations.label);
@@ -354,85 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (width <= 800) {
           return Scaffold(
             appBar: AppBar(),
-            drawer: Drawer(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.zero, bottomRight: Radius.zero),
-              ),
-              child: Column(
-                children: [
-                  UserAccountsDrawerHeader(
-                    margin: EdgeInsets.all(0),
-                    accountName: Text(cSelectedUserAppInstitution!
-                        .idInstitutionNavigation.nameInstitution),
-                    accountEmail: Text(
-                      cUserModel!.email,
-                    ),
-                    // currentAccountPicture: CircleAvatar(
-                    //     backgroundImage: AssetImage(AppAssets.splashImage)
-                    //     // NetworkImage(
-                    //     //     "https://appmaking.co/wp-content/uploads/2021/08/appmaking-logo-colored.png"),
-                    //     ),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: Image.network(
-                          cSelectedUserAppInstitution != null
-                              ? cSelectedUserAppInstitution!
-                                  .idInstitutionNavigation.urlLogoInstitution
-                              : '',
-                        ).image,
-
-                        //AssetImage(AppAssets.splashImage),
-
-                        // NetworkImage(
-                        //   "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
-                        // ),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    otherAccountsPictures: [
-                      CircleAvatar(
-                        backgroundColor: CustomColors.darkBlue,
-                        child: getIconByRole(
-                            cSelectedUserAppInstitution!.roleUserInstitution),
-                      ),
-                      // CircleAvatar(
-                      //   backgroundColor: Colors.white,
-                      //   backgroundImage: NetworkImage(
-                      //       "https://randomuser.me/api/portraits/men/47.jpg"),
-                      // ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Container(
-                        color: CustomColors.darkBlue,
-                        child: ListView(children: _generateMenuItems(true))),
-                  ),
-                  Container(
-                    width: 300,
-                    color: CustomColors.darkBlue,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          cSelectedUserAppInstitution!
-                              .idInstitutionNavigation.nameInstitution,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                        Text(cUserModel!.email,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary)),
-                        Text('Versione:' + AppKeys.version,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            drawer: getDrawer(),
             body: Center(
               child: findDestination(selectedScreen),
             ),
@@ -441,92 +363,9 @@ class _HomeScreenState extends State<HomeScreen> {
           return Scaffold(
             body: Row(
               children: [
-                Drawer(
-                  width: 300,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.zero, bottomRight: Radius.zero),
-                  ),
-                  child: Column(
-                    children: [
-                      UserAccountsDrawerHeader(
-                        margin: EdgeInsets.all(0),
-                        accountName: Text(cSelectedUserAppInstitution!
-                            .idInstitutionNavigation.nameInstitution),
-                        accountEmail: Text(
-                          cUserModel!.email,
-                        ),
-                        // currentAccountPicture: CircleAvatar(
-                        //     backgroundImage: AssetImage(AppAssets.splashImage)
-                        //     // NetworkImage(
-                        //     //     "https://appmaking.co/wp-content/uploads/2021/08/appmaking-logo-colored.png"),
-                        //     ),
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: Image.network(
-                                    cSelectedUserAppInstitution != null
-                                        ? cSelectedUserAppInstitution!
-                                            .idInstitutionNavigation
-                                            .urlLogoInstitution
-                                        : '')
-                                .image,
-
-                            //AssetImage(AppAssets.splashImage),
-
-                            // NetworkImage(
-                            //   "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
-                            // ),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        otherAccountsPictures: [
-                          CircleAvatar(
-                            backgroundColor: CustomColors.darkBlue,
-                            child: getIconByRole(cSelectedUserAppInstitution!
-                                .roleUserInstitution),
-                          ),
-                          // CircleAvatar(
-                          //   backgroundColor: Colors.white,
-                          //   backgroundImage: NetworkImage(
-                          //       "https://randomuser.me/api/portraits/men/47.jpg"),
-                          // ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Container(
-                            color: CustomColors.darkBlue,
-                            child:
-                                ListView(children: _generateMenuItems(false))),
-                      ),
-                      Container(
-                        width: 300,
-                        color: CustomColors.darkBlue,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              cSelectedUserAppInstitution!
-                                  .idInstitutionNavigation.nameInstitution,
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                            Text(cUserModel!.email,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary)),
-                            Text('Versione:' + AppKeys.version,
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                getDrawer(),
                 SizedBox(
-                  width: width - 300,
+                  width: width - 200,
                   child: findDestination(selectedScreen),
                 ),
               ],
@@ -534,6 +373,104 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
       }),
+    );
+  }
+
+  getDrawer() {
+    return Drawer(
+      width: 200,
+      shape: const RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.only(topRight: Radius.zero, bottomRight: Radius.zero),
+      ),
+      child: Column(
+        children: [
+          UserAccountsDrawerHeader(
+            margin: EdgeInsets.all(0),
+            accountName: Text(
+              cSelectedUserAppInstitution!
+                  .idInstitutionNavigation.nameInstitution,
+              style: TextStyle(color: CustomColors.darkBlue, fontSize: 10),
+            ),
+            accountEmail: Text(cUserModel!.email,
+                style: TextStyle(color: CustomColors.darkBlue, fontSize: 10)),
+            // currentAccountPicture: CircleAvatar(
+            //     backgroundImage: AssetImage(AppAssets.splashImage)
+            //     // NetworkImage(
+            //     //     "https://appmaking.co/wp-content/uploads/2021/08/appmaking-logo-colored.png"),
+            //     ),
+            // decoration: BoxDecoration(
+
+            //     // image: DecorationImage(
+            //     //   image: Image.network(cSelectedUserAppInstitution != null
+            //     //           ? cSelectedUserAppInstitution!
+            //     //               .idInstitutionNavigation.urlLogoInstitution
+            //     //           : '')
+            //     //       .image,
+
+            //     //   //AssetImage(AppAssets.splashImage),
+
+            //     //   // NetworkImage(
+            //     //   //   "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
+            //     //   // ),
+            //     //   fit: BoxFit.fill,
+            //     // ),
+            //     ),
+            currentAccountPicture: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(cSelectedUserAppInstitution != null
+                      ? cSelectedUserAppInstitution!
+                          .idInstitutionNavigation.urlLogoInstitution
+                      : ''),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              child: null,
+            ),
+            // currentAccountPicture: CircleAvatar(
+            //   backgroundImage: NetworkImage(cSelectedUserAppInstitution != null
+            //       ? cSelectedUserAppInstitution!
+            //           .idInstitutionNavigation.urlLogoInstitution
+            //       : ''),
+            //   radius: 40,
+            // ),
+
+            otherAccountsPictures: [
+              CircleAvatar(
+                backgroundColor: CustomColors.darkBlue,
+                child: getIconByRole(
+                    cSelectedUserAppInstitution!.roleUserInstitution),
+              ),
+              // CircleAvatar(
+              //   backgroundColor: Colors.white,
+              //   backgroundImage: NetworkImage(
+              //       "https://randomuser.me/api/portraits/men/47.jpg"),
+              // ),
+            ],
+          ),
+          Expanded(
+            child: Container(
+                color: CustomColors.darkBlue,
+                child: ListView(
+                    padding: EdgeInsets.all(0),
+                    children: _generateMenuItems(false))),
+          ),
+          Container(
+            width: 200,
+            color: CustomColors.darkBlue,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Versione:' + AppKeys.version,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary)),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

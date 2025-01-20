@@ -61,6 +61,7 @@ dependencies:
   # flutter_reactive_ble: ^5.3.1 
   visibility_detector: ^0.4.0
   adaptive_navigation: ^0.0.10
+  jumping_dot: ^0.0.7
   # flutter_widget_from_html: ^0.15.3
 
 

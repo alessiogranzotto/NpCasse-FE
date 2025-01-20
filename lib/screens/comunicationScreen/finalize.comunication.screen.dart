@@ -203,14 +203,6 @@ class _FinalizeComunicationScreenState
                           idInstitution: cUserAppInstitutionModel
                               .idInstitutionNavigation.idInstitution,
                         ),
-                        comunicationNotifier.getEmailTemplates(
-                          context: context,
-                          token: authenticationNotifier.token,
-                          idUserAppInstitution:
-                              cUserAppInstitutionModel.idUserAppInstitution,
-                          idInstitution: cUserAppInstitutionModel
-                              .idInstitutionNavigation.idInstitution,
-                        ),
                       ]),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
