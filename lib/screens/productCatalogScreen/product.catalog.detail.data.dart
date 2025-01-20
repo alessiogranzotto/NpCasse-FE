@@ -1069,7 +1069,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                                     .colorScheme
                                                     .secondaryContainer,
                                                 child: Center(
-                                                  child: Text("Id Evento",
+                                                  child: Text("Id Campagna",
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: Theme.of(context)
@@ -1228,7 +1228,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                                     .colorScheme
                                                     .secondaryContainer,
                                                 child: Center(
-                                                  child: Text("Id Agenda",
+                                                  child: Text("Id Evento",
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: Theme.of(context)

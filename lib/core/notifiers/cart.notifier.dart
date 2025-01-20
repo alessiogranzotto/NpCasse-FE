@@ -219,7 +219,9 @@ class CartNotifier with ChangeNotifier {
       required int idCart,
       required String typePayment,
       required double totalPriceCart,
-      required double percDiscount}) async {
+      required double percDiscount,
+      required int fiscalization,
+      required int modeCartCheckout}) async {
     try {
       bool isOk = false;
       int savedIdCart = 0;
@@ -229,7 +231,9 @@ class CartNotifier with ChangeNotifier {
           idUserAppInstitution: idUserAppInstitution,
           totalPriceCart: totalPriceCart,
           percDiscount: percDiscount,
-          typePayment: typePayment);
+          typePayment: typePayment,
+          fiscalization: fiscalization,
+          modeCartCheckout: modeCartCheckout);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);

@@ -38,13 +38,15 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
       required String? token,
       required int idUserAppInstitution,
       required int idInstitution,
-      required String role}) async {
+      bool? isDelayed}) async {
     try {
+      if (isDelayed != null && isDelayed) {
+        await Future.delayed(const Duration(seconds: 2));
+      }
       var response = await institutionAttributeAPI.getInstitutionAttribute(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
-          idInstitution: idInstitution,
-          role: role);
+          idInstitution: idInstitution);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
@@ -243,6 +245,67 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
             title: "Impostazioni ente",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        // _isLoading = false;
+        // notifyListeners();
+      }
+    }
+  }
+
+  Future updateCasseModuleDataAttribute(
+      {required BuildContext context,
+      String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required bool institutionFiscalized,
+      required bool posAuthorization}) async {
+    try {
+      var response =
+          await institutionAttributeAPI.updateCasseModuleDataAttribute(
+              token: token,
+              idUserAppInstitution: idUserAppInstitution,
+              idInstitution: idInstitution,
+              institutionFiscalized: institutionFiscalized,
+              posAuthorization: posAuthorization);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni modulo casse",
+                    message: errorDescription,
+                    contentType: "failure"));
+            // _isLoading = false;
+            // notifyListeners();
+          }
+        } else {
+          // notifyListeners();
+        }
+        return isOk;
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni modulo casse",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        // _isLoading = false;
+        // notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni modulo casse",
             message: "Errore di connessione",
             contentType: "failure"));
         // _isLoading = false;

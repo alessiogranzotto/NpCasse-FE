@@ -55,7 +55,7 @@ class _ProductCardState extends State<ProductCard> {
       TextEditingController();
   int idCategory = 0;
   bool showCategoryProduct = false;
-
+  bool _isCartButtonDisabled = false;
   bool checkEnableButton() {
     return enableQuantity && enablePrice && enableVariants;
   }
@@ -186,6 +186,7 @@ class _ProductCardState extends State<ProductCard> {
   @override
   void initState() {
     super.initState();
+    _isCartButtonDisabled = false;
     productCatalog = widget.productCatalog;
     wishListedNotifier = ValueNotifier<bool>(productCatalog.wishlisted);
     priceNotifier = ValueNotifier<double>(productCatalog.priceProduct);
@@ -791,73 +792,80 @@ class _ProductCardState extends State<ProductCard> {
                               ? Colors.black
                               : Colors.grey,
                           onPressed: () {
-                            int quantity = 0;
-                            var q = int.tryParse(
-                                textEditingControllerQuantityForProduct.text);
-                            if (q != null) {
-                              quantity = q;
-                            }
-                            if (productCatalog.freePriceProduct) {
-                              quantity = 1;
-                            }
-                            if (addToCartButtonEnabled.value) {
-                              List<CartProductVariants> cartProductVariants =
-                                  [];
-                              for (int i = 0;
-                                  i <
-                                      productCatalog
-                                          .smartProductAttributeJson.length;
-                                  i++) {
-                                CartProductVariants v = CartProductVariants(
-                                    idProductAttribute: productCatalog
-                                        .smartProductAttributeJson[i]
-                                        .idProductAttribute,
-                                    nameProductAttribute: productCatalog
-                                        .smartProductAttributeJson[i]
-                                        .nameProductAttribute,
-                                    valueVariant:
-                                        selectedValueVariant[i] ?? '');
-
-                                cartProductVariants.add(v);
-                              }
-                              cartNotifier
-                                  .addToCart(
-                                      context: context,
-                                      token: authenticationNotifier.token,
-                                      idUserAppInstitution:
-                                          cUserAppInstitutionModel
-                                              .idUserAppInstitution,
-                                      idProduct: productCatalog.idProduct,
-                                      idCategory: idCategory,
-                                      quantity: quantity,
-                                      price: productCatalog.freePriceProduct
-                                          ? freePriceProductNotifier.value
-                                          : priceNotifier.value,
-                                      cartProductVariants: cartProductVariants,
-                                      notes:
-                                          textEditingControllerNoteProduct.text)
-                                  .then((value) {
-                                if (value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackUtil.stylishSnackBar(
-                                          title: "Prodotti",
-                                          message:
-                                              '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
-                                          contentType: "success"));
-                                  textEditingControllerNoteProduct.clear();
-                                  //cartNotifier.refresh();
-                                  // Navigator.of(context)
-                                  //     .pushNamed(AppRouter.homeRoute);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackUtil.stylishSnackBar(
-                                          title: "Prodotti",
-                                          message: "Errore di connessione",
-                                          contentType: "failure"));
-                                }
-                              });
+                            if (!addToCartButtonEnabled.value) {
+                              return;
                             } else {
-                              null;
+                              _isCartButtonDisabled = true;
+                              int quantity = 0;
+                              var q = int.tryParse(
+                                  textEditingControllerQuantityForProduct.text);
+                              if (q != null) {
+                                quantity = q;
+                              }
+                              if (productCatalog.freePriceProduct) {
+                                quantity = 1;
+                              }
+                              if (addToCartButtonEnabled.value) {
+                                List<CartProductVariants> cartProductVariants =
+                                    [];
+                                for (int i = 0;
+                                    i <
+                                        productCatalog
+                                            .smartProductAttributeJson.length;
+                                    i++) {
+                                  CartProductVariants v = CartProductVariants(
+                                      idProductAttribute: productCatalog
+                                          .smartProductAttributeJson[i]
+                                          .idProductAttribute,
+                                      nameProductAttribute: productCatalog
+                                          .smartProductAttributeJson[i]
+                                          .nameProductAttribute,
+                                      valueVariant:
+                                          selectedValueVariant[i] ?? '');
+
+                                  cartProductVariants.add(v);
+                                }
+                                cartNotifier
+                                    .addToCart(
+                                        context: context,
+                                        token: authenticationNotifier.token,
+                                        idUserAppInstitution:
+                                            cUserAppInstitutionModel
+                                                .idUserAppInstitution,
+                                        idProduct: productCatalog.idProduct,
+                                        idCategory: idCategory,
+                                        quantity: quantity,
+                                        price: productCatalog.freePriceProduct
+                                            ? freePriceProductNotifier.value
+                                            : priceNotifier.value,
+                                        cartProductVariants:
+                                            cartProductVariants,
+                                        notes: textEditingControllerNoteProduct
+                                            .text)
+                                    .then((value) {
+                                  _isCartButtonDisabled = false;
+                                  if (value) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackUtil.stylishSnackBar(
+                                            title: "Prodotti",
+                                            message:
+                                                '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
+                                            contentType: "success"));
+                                    textEditingControllerNoteProduct.clear();
+                                    //cartNotifier.refresh();
+                                    // Navigator.of(context)
+                                    //     .pushNamed(AppRouter.homeRoute);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackUtil.stylishSnackBar(
+                                            title: "Prodotti",
+                                            message: "Errore di connessione",
+                                            contentType: "failure"));
+                                  }
+                                });
+                              } else {
+                                null;
+                              }
                             }
                           },
                           icon: const Icon(Icons.shopping_cart),

@@ -46,7 +46,7 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => ShopSearchNotifier()),
     ChangeNotifierProvider(
         create: (_) => InstitutionAttributeInstitutionAdminNotifier()),
-    ChangeNotifierProvider(create: (_) => InstitutionAttributeAdminNotifier()),
+    // ChangeNotifierProvider(create: (_) => InstitutionAttributeAdminNotifier()),
     ChangeNotifierProvider(create: (_) => ComunicationNotifier()),
 
     // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),

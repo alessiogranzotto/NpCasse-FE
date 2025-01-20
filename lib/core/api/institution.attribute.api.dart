@@ -11,10 +11,9 @@ class InstitutionAttributeAPI {
   Future getInstitutionAttribute(
       {String? token,
       required int idUserAppInstitution,
-      required int idInstitution,
-      required String role}) async {
+      required int idInstitution}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseInstitutionAttributeURL}/Get-institution-attribute?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&Role=$role');
+        '${ApiRoutes.baseInstitutionAttributeURL}/Get-institution-attribute?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -202,6 +201,44 @@ class InstitutionAttributeAPI {
         attributeValue: emailSendAccompaniment));
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Smtp2Go.SendingEmail', attributeValue: emailSendFrom));
+
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode({
+          "updateInstitutionAttributeRequest": cInstitutionAttributeModel,
+        }));
+
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  Future updateCasseModuleDataAttribute(
+      {String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required bool institutionFiscalized,
+      required bool posAuthorization}) async {
+    List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Institution.Fiscalized',
+        attributeValue: institutionFiscalized.toString()));
+
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Institution.PosAuthorization',
+        attributeValue: institutionFiscalized.toString()));
 
     final Uri uri = Uri.parse(
         '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');

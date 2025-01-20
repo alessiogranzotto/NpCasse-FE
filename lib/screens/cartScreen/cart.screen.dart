@@ -125,11 +125,11 @@ class _CartScreenState extends State<CartScreen> {
               builder: (context, cartNotifier, _) {
                 return FutureBuilder(
                   future: cartNotifier.findCart(
-                    context: context,
-                    token: authenticationNotifier.token,
-                    idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-                    cartStateEnum: 1
-                  ),
+                      context: context,
+                      token: authenticationNotifier.token,
+                      idUserAppInstitution:
+                          cUserAppInstitutionModel.idUserAppInstitution,
+                      cartStateEnum: 1),
                   builder: (context, snapshot) {
                     // Waiting state - Show loading indicator
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -168,8 +168,10 @@ class _CartScreenState extends State<CartScreen> {
                     // Data is available, process it
                     else {
                       // Extracting the cart data
-                      var tSnapshot = snapshot.data.cartProducts as List<CartProductModel>;
-                      idCart = tSnapshot.isNotEmpty ? tSnapshot.first.idCart : 0;
+                      var tSnapshot =
+                          snapshot.data.cartProducts as List<CartProductModel>;
+                      idCart =
+                          tSnapshot.isNotEmpty ? tSnapshot.first.idCart : 0;
 
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +183,8 @@ class _CartScreenState extends State<CartScreen> {
                                 shrinkWrap: true,
                                 itemCount: tSnapshot.length,
                                 itemBuilder: (context, index) {
-                                  CartProductModel cartProductModel = tSnapshot[index];
+                                  CartProductModel cartProductModel =
+                                      tSnapshot[index];
                                   return Column(
                                     children: [
                                       Padding(
@@ -189,71 +192,118 @@ class _CartScreenState extends State<CartScreen> {
                                         child: Card(
                                           elevation: 8,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(4)),
                                           ),
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(4)),
-                                                border: Border.all(color: Colors.grey.shade200)),
-                                            padding: EdgeInsets.only(left: 12, top: 8, right: 12, bottom: 8),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4)),
+                                                border: Border.all(
+                                                    color:
+                                                        Colors.grey.shade200)),
+                                            padding: EdgeInsets.only(
+                                                left: 12,
+                                                top: 8,
+                                                right: 12,
+                                                bottom: 8),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 SizedBox(height: 4),
                                                 Container(
-                                                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 0,
+                                                      vertical: 3),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: <Widget>[
                                                       Text(
-                                                        cartProductModel.nameProduct,
+                                                        cartProductModel
+                                                            .nameProduct,
                                                         maxLines: 2,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: CustomTextStyle.textFormFieldMedium.copyWith(
-                                                            fontSize: 12,
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.w600),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: CustomTextStyle
+                                                            .textFormFieldMedium
+                                                            .copyWith(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
                                                       ),
                                                       Row(
                                                         children: [
                                                           IconButton(
                                                             onPressed: () {
                                                               if (_isButtonDisabled ||
-                                                                  cartProductModel.quantityCartProduct.value < 1) {
+                                                                  cartProductModel
+                                                                          .quantityCartProduct
+                                                                          .value <
+                                                                      1) {
                                                                 return;
                                                               } else {
-                                                                _isButtonDisabled = true;
-                                                                int tDecrease = cartProductModel.quantityCartProduct.value - 1;
+                                                                _isButtonDisabled =
+                                                                    true;
+                                                                int tDecrease =
+                                                                    cartProductModel
+                                                                            .quantityCartProduct
+                                                                            .value -
+                                                                        1;
                                                                 cartNotifier
                                                                     .updateItemQuantity(
-                                                                        context: context,
-                                                                        token: authenticationNotifier.token,
+                                                                        context:
+                                                                            context,
+                                                                        token: authenticationNotifier
+                                                                            .token,
                                                                         idUserAppInstitution:
-                                                                            cUserAppInstitutionModel.idUserAppInstitution,
-                                                                        idCart: cartProductModel.idCart,
-                                                                        idCartProduct: cartProductModel.idCartProduct,
-                                                                        quantityCartProduct: tDecrease)
-                                                                    .then((value) {
-                                                                  _isButtonDisabled = false;
+                                                                            cUserAppInstitutionModel
+                                                                                .idUserAppInstitution,
+                                                                        idCart: cartProductModel
+                                                                            .idCart,
+                                                                        idCartProduct:
+                                                                            cartProductModel
+                                                                                .idCartProduct,
+                                                                        quantityCartProduct:
+                                                                            tDecrease)
+                                                                    .then(
+                                                                        (value) {
+                                                                  _isButtonDisabled =
+                                                                      false;
                                                                   if (value) {
-                                                                    cartProductModel.quantityCartProduct.value -= 1;
+                                                                    cartProductModel
+                                                                        .quantityCartProduct
+                                                                        .value -= 1;
                                                                     ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title: "Carrello",
+                                                                        title:
+                                                                            "Carrello",
                                                                         message:
                                                                             'Informazioni aggiornate. ${cartProductModel.quantityCartProduct.value.toString()} x ${cartProductModel.nameProduct} presenti',
-                                                                        contentType: "success"));
+                                                                        contentType:
+                                                                            "success"));
                                                                   } else {
                                                                     ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                                                                        title: "Carrello",
-                                                                        message: "Errore di connessione",
-                                                                        contentType: "error"));
+                                                                        title:
+                                                                            "Carrello",
+                                                                        message:
+                                                                            "Errore di connessione",
+                                                                        contentType:
+                                                                            "error"));
                                                                   }
                                                                 });
                                                               }
                                                             },
-                                                            icon: const Icon(size: 20, Icons.remove_circle_sharp),
+                                                            icon: const Icon(
+                                                                size: 20,
+                                                                Icons
+                                                                    .remove_circle_sharp),
                                                           ),
-                            IconButton(
+                                                          IconButton(
                                                               onPressed: () {
                                                                 if (_isButtonDisabled) {
                                                                   return;
@@ -317,8 +367,8 @@ class _CartScreenState extends State<CartScreen> {
                                                               icon: const Icon(
                                                                   size: 20,
                                                                   Icons
-                                                                      .add_circle_sharp)),                                                          
-                                                                      IconButton(
+                                                                      .add_circle_sharp)),
+                                                          IconButton(
                                                               onPressed: () {
                                                                 if (_isButtonDisabled) {
                                                                   return;

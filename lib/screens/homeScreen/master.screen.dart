@@ -99,13 +99,13 @@ List<MenuList> destinations = <MenuList>[
       const Icon(Icons.account_circle), const UserSettingScreen(), 1),
   MenuList(AppRouter.settingRoute, 'Impostazioni ente', Icons.settings,
       const Icon(Icons.settings), const InstitutionSettingScreen(), 2),
-  MenuList(
-      AppRouter.settingRoute,
-      'Impostazioni amministratore',
-      Icons.settings,
-      const Icon(Icons.settings),
-      const AdminSettingScreen(),
-      3),
+  // MenuList(
+  //     AppRouter.settingRoute,
+  //     'Impostazioni amministratore',
+  //     Icons.settings,
+  //     const Icon(Icons.settings),
+  //     const AdminSettingScreen(),
+  //     3),
   MenuList(AppRouter.institutionRoute, 'Report acquisti', Icons.dashboard,
       const Icon(Icons.dashboard), const CartHistoryNavigator(), 1),
   MenuList(AppRouter.institutionRoute, 'Report prodotti', Icons.dashboard,
@@ -359,8 +359,8 @@ class _MasterScreenState extends State<MasterScreen> {
     InstitutionAttributeInstitutionAdminNotifier
         institutionAttributeInstitutionAdminNotifier =
         Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
-    InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
-        Provider.of<InstitutionAttributeAdminNotifier>(context);
+    // InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
+    //     Provider.of<InstitutionAttributeAdminNotifier>(context);
     ReportProductNotifier reportProductNotifier =
         Provider.of<ReportProductNotifier>(context);
     ReportCartNotifier reportCartNotifier =
@@ -428,9 +428,11 @@ class _MasterScreenState extends State<MasterScreen> {
                     } else if (menu.label == "Impostazioni ente") {
                       institutionAttributeInstitutionAdminNotifier
                           .setUpdate(true);
-                    } else if (menu.label == "Impostazioni di configurazione") {
-                      institutionAttributeAdminNotifier.setUpdate(true);
-                    } else if (menu.label == "Report acquisti") {
+                    }
+                    // else if (menu.label == "Impostazioni di configurazione") {
+                    //   institutionAttributeAdminNotifier.setUpdate(true);
+                    // }
+                    else if (menu.label == "Report acquisti") {
                       reportCartNotifier.setUpdate(true);
                     } else if (menu.label == "Report prodotti") {
                       reportProductNotifier.setUpdate(true);

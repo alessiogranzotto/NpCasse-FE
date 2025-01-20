@@ -149,8 +149,8 @@ class ReportProductNotifier with ChangeNotifier {
     // Proceed with platform-specific logic
     if (kIsWeb) {
       // Web-specific logic
-      downloadFileWeb(
-          fileBytes, okResult['fileDownloadName'], okResult['contentType']);
+      // downloadFileWeb(
+      //     fileBytes, okResult['fileDownloadName'], okResult['contentType']);
     } else {
       // Mobile-specific logic
       // await downloadFileMobile(fileBytes, okResult['fileDownloadName'], context);

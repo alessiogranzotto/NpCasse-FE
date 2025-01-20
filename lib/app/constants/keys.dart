@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.13';
+  static String version = '1.17';
 }
 
 // class AppRegex {
