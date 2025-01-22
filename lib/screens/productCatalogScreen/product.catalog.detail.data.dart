@@ -1,6 +1,7 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
@@ -8,11 +9,14 @@ import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.d
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
+import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/product.category.mapping.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
+import 'package:np_casse/core/models/vat.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -20,18 +24,6 @@ import 'package:provider/provider.dart';
 
 typedef OnPickImageCallback = void Function(
     double? maxWidth, double? maxHeight, int? quality);
-
-class User {
-  final String name;
-  final int id;
-
-  User({required this.name, required this.id});
-
-  @override
-  String toString() {
-    return 'User(name: $name, id: $id)';
-  }
-}
 
 class ProductCatalogDetailDataScreen extends StatefulWidget {
   final ProductCatalogModel productCatalogModelArgument;
@@ -88,52 +80,15 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       TextEditingController();
   final TextEditingController textEditingControllerIdCatalogo =
       TextEditingController();
-  final controller = MultiSelectController<User>();
   final controllerCategory = MultiSelectController<CategoryCatalogModel>();
   int idCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
-  // List<DropdownItem<CategoryCatalogModel>> availableCategories = [];
 
-  Future<void> getAvailableCategories(int cIdCategory) async {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-    UserAppInstitutionModel cUserAppInstitutionModel =
-        authenticationNotifier.getSelectedUserAppInstitution();
+  List<DropdownMenuItem<String>> availableVat = [];
 
-    CategoryCatalogNotifier categoryCatalogNotifier =
-        Provider.of<CategoryCatalogNotifier>(context, listen: false);
-
-    List<DropdownMenuItem<String>> tAvailableLevelCategory = [];
-
-    await categoryCatalogNotifier
-        .getCategories(
-            context: context,
-            token: authenticationNotifier.token,
-            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-            idCategory: cIdCategory,
-            levelCategory: 'SecondLevelCategory',
-            readAlsoDeleted: false,
-            numberResult: 'All',
-            nameDescSearch: '',
-            readImageData: false,
-            orderBy: '')
-        .then((value) {
-      tAvailableLevelCategory.add(
-        DropdownMenuItem(child: Text('Selezionare la categoria'), value: '0'),
-      );
-      for (int i = 0; i < value.length; i++) {
-        tAvailableLevelCategory.add(
-          DropdownMenuItem(
-              child: Text(value[i].nameCategory),
-              value: value[i].idCategory.toString()),
-        );
-      }
-
-      setState(() {
-        availableCategory = tAvailableLevelCategory;
-      });
-    });
-  }
+  String? selectedVat;
+  bool isLoadingVat = true;
+  bool institutionFiscalized = false;
 
   Future<void> getCategories(
       List<ProductCategoryMappingModel> productCategoryMappingModel) async {
@@ -175,6 +130,54 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
     });
   }
 
+  onVatChanged(value) {
+    selectedVat = value;
+  }
+
+  Future<void> getVat() async {
+    setState(() {
+      isLoadingVat = true;
+    });
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    ProductCatalogNotifier productCatalogNotifier =
+        Provider.of<ProductCatalogNotifier>(context, listen: false);
+
+    await productCatalogNotifier
+        .getVat(
+            context: context,
+            token: authenticationNotifier.token,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+            isDelayed: true)
+        .then((value) {
+      VatDataModel cVatDataModel = value as VatDataModel;
+      if (cVatDataModel.institutionFiscalized) {
+        setState(() {
+          institutionFiscalized = true;
+        });
+        List<VatModel>? cValue = cVatDataModel.vatModelList;
+        for (int i = 0; i < cValue.length; i++) {
+          availableVat.add(
+            DropdownMenuItem(
+                child: Text(cValue[i].descriptionVat),
+                value: cValue[i].valueVat),
+          );
+        }
+      } else {
+        setState(() {
+          institutionFiscalized = false;
+        });
+      }
+
+      setState(() {
+        isLoadingVat = false;
+      });
+    });
+  }
+
   void onChangeCategory(String? value) {
     idCategory = value == null ? 0 : int.tryParse(value) ?? 0;
   }
@@ -182,11 +185,11 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
   @override
   void initState() {
     isEdit = widget.productCatalogModelArgument.idProduct != 0;
-    getAvailableCategories(0);
+    // getAvailableCategories(0);
 
     getCategories(
         widget.productCatalogModelArgument.productCategoryMappingModel);
-
+    getVat();
     if (widget.productCatalogModelArgument.idProduct != 0) {
       textEditingControllerNameProduct.text =
           widget.productCatalogModelArgument.nameProduct;
@@ -208,6 +211,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
           widget.productCatalogModelArgument.outOfAssortment;
       deleted = widget.productCatalogModelArgument.deleted;
       tImageString = widget.productCatalogModelArgument.imageData;
+      selectedVat = widget.productCatalogModelArgument.valueVat;
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
               .idFinalizzazione >
           0) {
@@ -514,7 +518,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                       ),
                     ),
                     Expanded(
-                      flex: 3,
+                      flex: 5,
                       child: Column(
                         children: [
                           Tooltip(
@@ -606,53 +610,11 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     ),
                   ],
                 ),
-                // Row(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: [
-                //     Expanded(
-                //       flex: 8,
-                //       child: Column(
-                //         children: [
-                //           Tooltip(
-                //             message: 'Categoria prodotto',
-                //             child: Card(
-                //               color: Theme.of(context).cardColor,
-                //               elevation: 4,
-                //               child: ListTile(
-                //                 subtitle: Row(
-                //                   children: [
-                //                     Expanded(
-                //                         child: CustomDropDownButtonFormField(
-                //                       enabled: true,
-                //                       validator: (value) =>
-                //                           value!.toString().isEmpty
-                //                               ? "Inserire la categoria"
-                //                               : null,
-                //                       actualValue: idCategory.toString(),
-                //                       labelText: '',
-                //                       listOfValue: availableCategory,
-                //                       onItemChanged: (value) {
-                //                         onChangeCategory(value);
-                //                       },
-                //                     )),
-                //                   ],
-                //                 ),
-                //                 trailing: const Icon(Icons.edit),
-                //                 leading: const Icon(Icons.book),
-                //                 onTap: () {},
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 8,
+                      flex: 12,
                       child: Column(
                         children: [
                           Tooltip(
@@ -662,55 +624,58 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                               elevation: 4,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: MultiDropdown<CategoryCatalogModel>(
-                                  items: [],
-                                  controller: controllerCategory,
-                                  enabled: true,
-                                  searchEnabled: true,
-                                  chipDecoration: const ChipDecoration(
-                                    backgroundColor: Colors.blueGrey,
-                                    wrap: true,
-                                    runSpacing: 2,
-                                    spacing: 10,
-                                  ),
-                                  fieldDecoration: FieldDecoration(
-                                    hintText: 'Selezionare le categorie...',
-                                    hintStyle: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .hintColor
-                                                .withOpacity(0.3)),
-                                    prefixIcon:
-                                        const Icon(Icons.article_outlined),
-                                    showClearIcon: true,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide:
-                                          const BorderSide(color: Colors.grey),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: MultiDropdown<CategoryCatalogModel>(
+                                    items: [],
+                                    controller: controllerCategory,
+                                    enabled: true,
+                                    searchEnabled: true,
+                                    chipDecoration: const ChipDecoration(
+                                      backgroundColor: Colors.blueGrey,
+                                      wrap: true,
+                                      runSpacing: 2,
+                                      spacing: 10,
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(
-                                        color: Colors.black87,
+                                    fieldDecoration: FieldDecoration(
+                                      hintText: 'Selezionare le categorie...',
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .hintColor
+                                                  .withOpacity(0.3)),
+                                      prefixIcon:
+                                          const Icon(Icons.article_outlined),
+                                      showClearIcon: true,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                            color: Colors.grey),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: const BorderSide(
+                                          color: Colors.black87,
+                                        ),
                                       ),
                                     ),
+                                    dropdownItemDecoration:
+                                        DropdownItemDecoration(
+                                      selectedIcon: const Icon(Icons.check_box,
+                                          color: Colors.green),
+                                      disabledIcon: Icon(Icons.lock,
+                                          color: Colors.grey.shade300),
+                                    ),
+                                    validator: (value) {
+                                      // if (value == null || value.isEmpty) {
+                                      //   return 'Please select a country';
+                                      // }
+                                      return null;
+                                    },
+                                    onSelectionChange: (selectedItems) {},
                                   ),
-                                  dropdownItemDecoration:
-                                      DropdownItemDecoration(
-                                    selectedIcon: const Icon(Icons.check_box,
-                                        color: Colors.green),
-                                    disabledIcon: Icon(Icons.lock,
-                                        color: Colors.grey.shade300),
-                                  ),
-                                  validator: (value) {
-                                    // if (value == null || value.isEmpty) {
-                                    //   return 'Please select a country';
-                                    // }
-                                    return null;
-                                  },
-                                  onSelectionChange: (selectedItems) {},
                                 ),
                               ),
                             ),
@@ -718,6 +683,44 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                         ],
                       ),
                     ),
+                    isLoadingVat
+                        ? Expanded(
+                            flex: 4,
+                            child: Padding(
+                              padding: const EdgeInsets.all(32.0),
+                              child: JumpingDots(
+                                color: CustomColors.darkBlue,
+                                radius: 10,
+                                numberOfDots: 5,
+                              ),
+                            ))
+                        : institutionFiscalized
+                            ? Expanded(
+                                flex: 4,
+                                child: Column(
+                                  children: [
+                                    Tooltip(
+                                      message: 'Iva',
+                                      child: Card(
+                                        color: Theme.of(context).cardColor,
+                                        elevation: 4,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CustomDropDownButtonFormField(
+                                              enabled: true,
+                                              actualValue: selectedVat,
+                                              labelText: 'IVA',
+                                              listOfValue: availableVat,
+                                              onItemChanged: (value) {
+                                                onVatChanged(value);
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Expanded(flex: 4, child: SizedBox.shrink()),
                   ],
                 ),
                 Row(
@@ -1487,7 +1490,6 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
               onPressed: () {
                 List<ProductCategoryMappingModel>
                     cProductCategoryMappingModelList = [];
-                var t = controllerCategory.selectedItems.first.value.idCategory;
                 for (int i = 0;
                     i < controllerCategory.selectedItems.length;
                     i++) {
@@ -1516,6 +1518,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     outOfAssortment: outOfAssortment.value,
                     wishlisted: false,
                     barcode: textEditingControllerBarcodeProduct.text,
+                    valueVat: selectedVat,
                     deleted: deleted,
                     idUserAppInstitution:
                         cUserAppInstitutionModel.idUserAppInstitution,
@@ -1610,6 +1613,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   wishlisted: false,
                                   barcode:
                                       textEditingControllerBarcodeProduct.text,
+                                  valueVat: selectedVat,
                                   deleted: deleted,
                                   idUserAppInstitution: cUserAppInstitutionModel
                                       .idUserAppInstitution,

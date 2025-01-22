@@ -7,6 +7,7 @@ import 'package:np_casse/core/api/common.api.dart';
 import 'package:np_casse/core/api/product.catalog.api.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
+import 'package:np_casse/core/models/vat.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
@@ -124,6 +125,51 @@ class ProductCatalogNotifier with ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
             title: "Prodotti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future getVat(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      bool? isDelayed}) async {
+    try {
+      if (isDelayed != null && isDelayed) {
+        await Future.delayed(const Duration(seconds: 2));
+      }
+      var response = await commonAPI.getVat(
+        token: token,
+        idUserAppInstitution: idUserAppInstitution,
+      );
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "vat",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          VatDataModel vat = VatDataModel.fromJson(parseData['okResult']);
+          return vat;
+          // notifyListeners();
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "vat",
             message: "Errore di connessione",
             contentType: "failure"));
       }

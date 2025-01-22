@@ -66,6 +66,7 @@ class ProductCatalogModel {
       this.createdByUserAppInstitution,
       this.updatedOnUtc,
       this.updatedByUserAppInstitution,
+      this.valueVat,
       required this.imageData,
       // required this.categoryName,
       required this.giveIdsFlatStructureModel,
@@ -84,6 +85,7 @@ class ProductCatalogModel {
   late final String barcode;
   late final bool deleted;
   late final int idUserAppInstitution;
+  late final String? valueVat;
   DateTime? createdOnUtc;
   int? createdByUserAppInstitution;
   DateTime? updatedOnUtc;
@@ -128,6 +130,7 @@ class ProductCatalogModel {
     freePriceProduct = json['freePriceProduct'];
     outOfAssortment = json['outOfAssortment'];
     barcode = json['barcode'];
+    valueVat = json['valueVat'];
     // idWarehouse = json['idWarehouse'];
     // stockQuantity = json['stockQuantity'];
     // minStockQuantity = json['minStockQuantity'];
@@ -183,6 +186,7 @@ class ProductCatalogModel {
     data['freePriceProduct'] = freePriceProduct;
     data['outOfAssortment'] = outOfAssortment;
     data['barcode'] = barcode;
+    data['valueVat'] = valueVat;
     // data['idWarehouse'] = idWarehouse;
     // data['stockQuantity'] = stockQuantity;
     // data['minStockQuantity'] = minStockQuantity;

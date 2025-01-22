@@ -44,8 +44,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   String resultText = '';
   String _stripeStatus = 'Terminal is not initialized yet.';
   bool isTerminalInitialized = false;
-  bool isReaderDiscovered = false;  // This will track if the reader has already been discovered.
-  bool isReaderConnected = false;  
+  bool isReaderDiscovered =
+      false; // This will track if the reader has already been discovered.
+  bool isReaderConnected = false;
 
   final List<bool> _selectedPayment = <bool>[true, false, false, false];
   String selectedFiscalization = "0";
@@ -75,7 +76,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
     rateDiscounted =
-        double.tryParse(rateDiscoutTextEditingController.text) ?? 0;   
+        double.tryParse(rateDiscoutTextEditingController.text) ?? 0;
     if (rateDiscounted > 100) {
       rateDiscoutTextEditingController.text = '';
       rateDiscounted = 0;
@@ -123,7 +124,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         disabledFinalizeButton = false;
         textEditingControllerCashInserted.text = '';
       } else if (index == 1 || index == 2) {
-        posAuthorization ? disabledFinalizeButton = true : disabledFinalizeButton = false;
+        posAuthorization
+            ? disabledFinalizeButton = true
+            : disabledFinalizeButton = false;
       }
     });
   }
@@ -166,7 +169,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       }
     });
   }
- void finalizeStripePayment() {
+
+  void finalizeStripePayment() {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
 
@@ -175,15 +179,13 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
         .setCartCheckout(
-             context: context,
+            context: context,
             token: authenticationNotifier.token,
             idCart: widget.idCart,
-            idUserAppInstitution:
-                cUserAppInstitutionModel.idUserAppInstitution,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
             totalPriceCart: cartNotifier.totalCartMoney.value,
             percDiscount:
                 double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
@@ -191,20 +193,20 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
             fiscalization: int.parse(selectedFiscalization),
             modeCartCheckout: 0)
         .then((value) {
-        if (value > 0) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Carrello",
-                    message: "Carrello chiuso correttamente",
-                    contentType: "success"));
-          }
-          cartNotifier.refresh();
-        } else {
-          showCartErrorSnackbar();
+      if (value > 0) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Carrello",
+              message: "Carrello chiuso correttamente",
+              contentType: "success"));
         }
-      });
+        cartNotifier.refresh();
+      } else {
+        showCartErrorSnackbar();
+      }
+    });
   }
+
   void finalizeFunctionUnknown() {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
@@ -259,9 +261,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   void showCartErrorSnackbar() {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-        title: "Carrello",
-        message: "Errore di connessione",
-        contentType: "failure"));
+          title: "Carrello",
+          message: "Errore di connessione",
+          contentType: "failure"));
     }
   }
 
@@ -280,24 +282,24 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         isTerminalInitialized = true;
       });
 
-    // Optionally print the result from the native side
-    print(result);
-  } catch (e) {
-    // On error, handle initialization failure
-    setState(() {
-      _stripeStatus = 'Error initializing terminal';
-      isTerminalInitialized = false;
-    });
+      // Optionally print the result from the native side
+      print(result);
+    } catch (e) {
+      // On error, handle initialization failure
+      setState(() {
+        _stripeStatus = 'Error initializing terminal';
+        isTerminalInitialized = false;
+      });
+    }
   }
-}
 
-Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
-  if (!isTerminalInitialized) {
-    setState(() {
-      _stripeStatus = 'Terminal is not initialized yet.';
-    });
-    return;
-  }
+  Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
+    if (!isTerminalInitialized) {
+      setState(() {
+        _stripeStatus = 'Terminal is not initialized yet.';
+      });
+      return;
+    }
 
     // Check if readers are already discovered
     if (isReaderDiscovered) {
@@ -311,21 +313,21 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
       return;
     }
 
-  try {
-    // Now, attempt to discover readers
-    final result = await platform.invokeMethod('discoverReaders', {
-      'idUserAppInstitution': idUserAppInstitution, // Pass the idUserAppInstitution
-      'token': token,  // Pass token as part of the method arguments
-
-    });
-
-    if (result != null) {
-      // Delay calling getConnectedReaderInfo by 1 second
-      await Future.delayed(Duration(seconds: 2));
-            // Mark the reader as discovered to avoid discovering again
-      setState(() {
-        isReaderDiscovered = true;
+    try {
+      // Now, attempt to discover readers
+      final result = await platform.invokeMethod('discoverReaders', {
+        'idUserAppInstitution':
+            idUserAppInstitution, // Pass the idUserAppInstitution
+        'token': token, // Pass token as part of the method arguments
       });
+
+      if (result != null) {
+        // Delay calling getConnectedReaderInfo by 1 second
+        await Future.delayed(Duration(seconds: 2));
+        // Mark the reader as discovered to avoid discovering again
+        setState(() {
+          isReaderDiscovered = true;
+        });
 
         // Call getConnectedReaderInfo method after the delay
         getConnectedReaderInfo();
@@ -352,23 +354,23 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
         // Safely cast map values to String and handle potential null values
         final serialNumber = connectedDevice["serialNumber"] ?? "Unknown";
 
+        setState(() {
+          _stripeStatus = 'Connected to $serialNumber';
+          isReaderConnected = true;
+        });
+      } else {
+        setState(() {
+          _stripeStatus = 'No connected device information available';
+          isReaderConnected = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        _stripeStatus =  'Connected to $serialNumber';
-        isReaderConnected = true;
-      });
-    } else {
-      setState(() {
-        _stripeStatus = 'No connected device information available';
+        _stripeStatus = 'Error connecting reader';
         isReaderConnected = false;
       });
     }
-  } catch (e) {
-    setState(() {
-      _stripeStatus = 'Error connecting reader';
-      isReaderConnected = false;
-    });
   }
-}
 
   Future<void> _makePayment() async {
     int amount = totalCartMoney; // Example: 100 cents = $1.00
@@ -393,15 +395,14 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
       });
       disconnectReader();
       finalizeStripePayment();
-
     } catch (e) {
       setState(() {
         _stripeStatus = 'Error processing payment';
       });
     }
   }
-  
-    Future<void> disconnectReader() async {
+
+  Future<void> disconnectReader() async {
     try {
       final String result = await platform.invokeMethod('disconnectReader');
       setState(() {
@@ -412,6 +413,7 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
       print("Error disconnectReader reader");
     }
   }
+
   Future<void> uninitializeStripe() async {
     try {
       final String result = await platform.invokeMethod('uninitializeStripe');
@@ -425,7 +427,7 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
     selectedFiscalization = value;
   }
 
-  Future<void> getAttributes() async {
+  Future<void> getInstitutionAttribute() async {
     setState(() {
       isLoadingFiscalization = true;
     });
@@ -485,7 +487,7 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
   @override
   void initState() {
     super.initState();
-    getAttributes();
+    getInstitutionAttribute();
     rateDiscoutTextEditingController.addListener(adjustPrice);
     textEditingControllerCashInserted.addListener(cashInsertedOnChange);
     toBeReturnedCalculation = 0;
@@ -501,7 +503,7 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
     rateDiscoutTextEditingController.dispose();
     if (!kIsWeb) {
       uninitializeStripe();
-    }  
+    }
   }
 
   @override
@@ -794,7 +796,9 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
                                   _isSelectedPaymentVisible = true;
                                   _isStripePayment = false;
                                 } else if (index == 1 || index == 2) {
-                                  posAuthorization ? disabledFinalizeButton = true : disabledFinalizeButton = false;
+                                  posAuthorization
+                                      ? disabledFinalizeButton = true
+                                      : disabledFinalizeButton = false;
                                   _isSelectedPaymentVisible = false;
                                   _isStripePayment = true;
                                   totalCartMoney =
@@ -809,7 +813,10 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
                                   if (!isReaderDiscovered) {
                                     Future.delayed(Duration(seconds: 2), () {
                                       // This callback is executed after the delay
-                                      _discoverReaders(cUserAppInstitutionModel.idUserAppInstitution, authenticationNotifier.token);
+                                      _discoverReaders(
+                                          cUserAppInstitutionModel
+                                              .idUserAppInstitution,
+                                          authenticationNotifier.token);
                                     });
                                   } else {
                                     getConnectedReaderInfo();
@@ -1015,8 +1022,9 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
                                     textStyle: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold)),
-                                onPressed:
-                                    isReaderConnected && _isStripePayment ?_makePayment : null,
+                                onPressed: isReaderConnected && _isStripePayment
+                                    ? _makePayment
+                                    : null,
                                 child: const Column(
                                   children: [
                                     Text("Invia Pagamento"),
