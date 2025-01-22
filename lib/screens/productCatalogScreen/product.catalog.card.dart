@@ -137,6 +137,7 @@ class ProductCatalogCard extends StatelessWidget {
                                     outOfAssortment: product.outOfAssortment,
                                     wishlisted: product.wishlisted,
                                     barcode: product.barcode,
+                                    valueVat: product.valueVat,
                                     deleted: product.deleted,
                                     idUserAppInstitution:
                                         cUserAppInstitutionModel
