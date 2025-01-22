@@ -123,7 +123,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         disabledFinalizeButton = false;
         textEditingControllerCashInserted.text = '';
       } else if (index == 1 || index == 2) {
-        disabledFinalizeButton = false;
+        posAuthorization ? disabledFinalizeButton = true : disabledFinalizeButton = false;
       }
     });
   }
@@ -162,16 +162,49 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         Navigator.of(context)
             .pushNamed(AppRouter.shManage, arguments: widget.idCart);
       } else {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Carrello",
-              message: "Errore di connessione",
-              contentType: "failure"));
-        }
+        showCartErrorSnackbar();
       }
     });
   }
+ void finalizeStripePayment() {
+    CartNotifier cartNotifier =
+        Provider.of<CartNotifier>(context, listen: false);
 
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+
+    var strTypePayment = PaymentType.values[indexPayment].toString();
+    cartNotifier
+        .setCartCheckout(
+             context: context,
+            token: authenticationNotifier.token,
+            idCart: widget.idCart,
+            idUserAppInstitution:
+                cUserAppInstitutionModel.idUserAppInstitution,
+            totalPriceCart: cartNotifier.totalCartMoney.value,
+            percDiscount:
+                double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
+            typePayment: strTypePayment,
+            fiscalization: int.parse(selectedFiscalization),
+            modeCartCheckout: 0)
+        .then((value) {
+        if (value > 0) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Carrello",
+                    message: "Carrello chiuso correttamente",
+                    contentType: "success"));
+          }
+          cartNotifier.refresh();
+        } else {
+          showCartErrorSnackbar();
+        }
+      });
+  }
   void finalizeFunctionUnknown() {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
@@ -217,15 +250,18 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           Navigator.of(context).popUntil((route) => route.isFirst);
           cartNotifier.refresh();
         } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Carrello",
-                    message: "Errore di connessione",
-                    contentType: "failure"));
-          }
+          showCartErrorSnackbar();
         }
       });
+    }
+  }
+
+  void showCartErrorSnackbar() {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+        title: "Carrello",
+        message: "Errore di connessione",
+        contentType: "failure"));
     }
   }
 
@@ -356,7 +392,8 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
         textEditingControllerCashInserted.text = '';
       });
       disconnectReader();
-  
+      finalizeStripePayment();
+
     } catch (e) {
       setState(() {
         _stripeStatus = 'Error processing payment';
@@ -367,6 +404,9 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
     Future<void> disconnectReader() async {
     try {
       final String result = await platform.invokeMethod('disconnectReader');
+      setState(() {
+        isReaderConnected = false;
+      });
       print(result); // This will print the success message from the native code
     } on PlatformException catch (e) {
       print("Error disconnectReader reader");
@@ -754,6 +794,7 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
                                   _isSelectedPaymentVisible = true;
                                   _isStripePayment = false;
                                 } else if (index == 1 || index == 2) {
+                                  posAuthorization ? disabledFinalizeButton = true : disabledFinalizeButton = false;
                                   _isSelectedPaymentVisible = false;
                                   _isStripePayment = true;
                                   totalCartMoney =
@@ -975,7 +1016,7 @@ Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold)),
                                 onPressed:
-                                    isReaderConnected && disabledFinalizeButton ?_makePayment : null,
+                                    isReaderConnected && _isStripePayment ?_makePayment : null,
                                 child: const Column(
                                   children: [
                                     Text("Invia Pagamento"),

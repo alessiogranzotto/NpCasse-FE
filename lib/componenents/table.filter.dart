@@ -133,16 +133,23 @@ class DateTextTableFilter extends TableFilter<String> {
       },
     );
   }
+  String removeLastSlash(String input) {
+    int lastSlashIndex = input.lastIndexOf('/');
+    if (lastSlashIndex != -1) {
+      return input.substring(0, lastSlashIndex) + input.substring(lastSlashIndex + 1);
+    }
+    return input; // Return the original string if no slash is found
+  }
 
   // This function is triggered when the user leaves the field (onEditingComplete)
   void _onEditingComplete(FilterState<String> state) {
     // Directly access the state from the parent class (TableFilter<String>)
     String value = _controller.text.trim();
+    DateTime now = DateTime.now();
 
     // Check if the user has entered only the day (e.g., '04') and there are no slashes
     if (value.isNotEmpty && value.length == 3 && value.contains('/')) {
       String day = value.replaceAll("/", "");
-      DateTime now = DateTime.now();
 
       // Only update if the entered day is less than or equal to today's day
       if (int.parse(day) <= now.day) {
@@ -155,7 +162,30 @@ class DateTextTableFilter extends TableFilter<String> {
         // Manually update the state with the new date
         state.value = currentDate;
       }
+    } else if (value.isNotEmpty && value.length == 6 && value.contains('/')) {
+    List<String> parts = removeLastSlash(value).split('/');
+
+    if (parts.length == 2) {
+      String dayStr = parts[0];
+      String monthStr = parts[1];
+
+      int day = int.tryParse(dayStr) ?? -1;
+      int month = int.tryParse(monthStr) ?? -1;
+
+       if ((day <= now.day && month <= now.month) || (day >= now.day && day <= 31 && month < now.month))  {
+        // Check if entered day/month is before today
+        // Format the date to dd/MM/yyyy
+        String currentDate =
+            '${dayStr}/${monthStr}/${now.year}';
+
+        // Update the controller text with the new date
+        _controller.text = currentDate;
+
+        // Manually update the state
+        state.value = currentDate;
+      }
     }
+  } 
   }
 
   // Method to validate the date format strictly

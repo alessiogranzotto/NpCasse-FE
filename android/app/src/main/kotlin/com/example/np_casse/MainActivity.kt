@@ -15,6 +15,8 @@ import com.stripe.stripeterminal.Terminal
 import com.stripe.stripeterminal.external.callable.*
 import com.stripe.stripeterminal.external.models.*
 import com.stripe.stripeterminal.log.LogLevel
+import com.stripe.stripeterminal.external.models.PaymentIntentParameters
+import com.stripe.stripeterminal.external.models.CaptureMethod
 import android.bluetooth.BluetoothAdapter
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -378,49 +380,60 @@ private fun fetchLocationId(
     }
 
 
-   private fun processPayment(amount: Long, currency: String, result: MethodChannel.Result) {
-    val reader = Terminal.getInstance().connectedReader
+private fun processPayment(amount: Long, currency: String, result: MethodChannel.Result) {
+    val terminalInstance = Terminal.getInstance()
+    val reader = terminalInstance.connectedReader
 
     if (reader != null) {
-        val paymentIntentParams = PaymentIntentParameters.Builder(listOf(PaymentMethodType.CARD_PRESENT))
-            .setAmount(amount) // Amount in cents as Long
-            .setCurrency(currency) // Currency passed from Flutter
+        val paymentIntentParams = PaymentIntentParameters.Builder()
+            .setAmount(amount) // Amount in cents
+            .setCurrency(currency) // Currency
+            .setCaptureMethod(CaptureMethod.Automatic) // Set to automatic capture
             .build()
 
-        Terminal.getInstance().createPaymentIntent(paymentIntentParams, object : PaymentIntentCallback {
+        terminalInstance.createPaymentIntent(paymentIntentParams, object : PaymentIntentCallback {
             override fun onSuccess(paymentIntent: PaymentIntent) {
-                Terminal.getInstance().collectPaymentMethod(paymentIntent, object : PaymentIntentCallback {
-                    override fun onSuccess(paymentIntent: PaymentIntent) {
-                        Terminal.getInstance().confirmPaymentIntent(paymentIntent, object : PaymentIntentCallback {
-                            override fun onSuccess(paymentIntent: PaymentIntent) {
-                                result.success("Payment Successful")
+                terminalInstance.collectPaymentMethod(paymentIntent, object : PaymentIntentCallback {
+                    override fun onSuccess(collectedIntent: PaymentIntent) {
+                        terminalInstance.confirmPaymentIntent(collectedIntent, object : PaymentIntentCallback {
+                            override fun onSuccess(confirmedIntent: PaymentIntent) {
+                                if (confirmedIntent.status == PaymentIntentStatus.SUCCEEDED) {
+                                    result.success("Payment Successful")
+                                } else {
+                                    Log.e("PAYMENT_UNEXPECTED_STATUS",
+                                        "Unexpected status: ${confirmedIntent.status}")
+                                    result.error(
+                                        "PAYMENT_UNEXPECTED_STATUS",
+                                        "Unexpected status: ${confirmedIntent.status}",
+                                        null
+                                    )
+                                }
                             }
 
                             override fun onFailure(e: TerminalException) {
-                                Log.e("StripeTerminal", "Payment confirmation error: ${e.message}")
+                                Log.e("StripeTerminal", "Error confirming payment: ${e.message}")
                                 result.error("PAYMENT_CONFIRM_ERROR", "Error confirming payment: ${e.message}", null)
                             }
                         })
                     }
 
                     override fun onFailure(e: TerminalException) {
-                        Log.e("StripeTerminal", "Payment method collection error: ${e.message}")
+                        Log.e("StripeTerminal", "Error collecting payment method: ${e.message}")
                         result.error("PAYMENT_METHOD_ERROR", "Error collecting payment method: ${e.message}", null)
                     }
                 })
             }
 
             override fun onFailure(e: TerminalException) {
-                Log.e("StripeTerminal", "Payment intent creation error: ${e.message}")
-                result.error("PAYMENT_INTENT_ERROR", "Error creating payment intent: ${e.message}", null)
+                Log.e("StripeTerminal", "Error creating PaymentIntent: ${e.message}")
+                result.error("PAYMENT_INTENT_ERROR", "Error creating PaymentIntent: ${e.message}", null)
             }
         })
     } else {
+        Log.e("StripeTerminal", "No connected reader available.")
         result.error("NO_READER", "No reader connected", null)
     }
 }
-
-
 
     private fun getBatteryLevel(result: MethodChannel.Result) {
         val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
