@@ -148,11 +148,10 @@ class DateTextTableFilter extends TableFilter<String> {
     DateTime now = DateTime.now();
 
     // Check if the user has entered only the day (e.g., '04') and there are no slashes
-    if (value.isNotEmpty && value.length == 3 && value.contains('/')) {
+    if (value.isNotEmpty && value.length == 3 && value.contains('/') && value.indexOf('/') == 2) {
       String day = value.replaceAll("/", "");
 
-      // Only update if the entered day is less than or equal to today's day
-      if (int.parse(day) <= now.day) {
+      if (int.parse(day) >= 1 && int.parse(day) <= 31) {
         // Format the current date with today's month and year
         String currentDate = '$day/${now.month.toString().padLeft(2, '0')}/${now.year}';
 
@@ -162,30 +161,58 @@ class DateTextTableFilter extends TableFilter<String> {
         // Manually update the state with the new date
         state.value = currentDate;
       }
-    } else if (value.isNotEmpty && value.length == 6 && value.contains('/')) {
-    List<String> parts = removeLastSlash(value).split('/');
+    } else if (value.isNotEmpty && value.length == 6 && value.contains('/') 
+      && value.indexOf('/') == 2 && value.lastIndexOf('/') == 5)  {
+      List<String> parts = removeLastSlash(value).split('/');
 
-    if (parts.length == 2) {
-      String dayStr = parts[0];
-      String monthStr = parts[1];
+      if (parts.length == 2) {
+        String dayStr = parts[0];
+        String monthStr = parts[1];
 
-      int day = int.tryParse(dayStr) ?? -1;
-      int month = int.tryParse(monthStr) ?? -1;
+        int day = int.tryParse(dayStr) ?? -1;
+        int month = int.tryParse(monthStr) ?? -1;
 
-       if ((day <= now.day && month <= now.month) || (day >= now.day && day <= 31 && month < now.month))  {
-        // Check if entered day/month is before today
-        // Format the date to dd/MM/yyyy
-        String currentDate =
-            '${dayStr}/${monthStr}/${now.year}';
+        if ((day > 0 && day <= 31  && month > 0 && month <= 12))  {
+          // Format the date to dd/MM/yyyy
+          String currentDate =
+              '${dayStr}/${monthStr}/${now.year}';
 
-        // Update the controller text with the new date
-        _controller.text = currentDate;
+          // Update the controller text with the new date
+          _controller.text = currentDate;
 
-        // Manually update the state
-        state.value = currentDate;
+          // Manually update the state
+          state.value = currentDate;
+        }
       }
+    } else if (value.isNotEmpty &&
+      value.length == 8 &&
+      value.contains('/') &&
+      value.indexOf('/') == 2 &&
+      value.lastIndexOf('/') == 5) {
+    String day = value.substring(0, 2); // Extract the day (first two characters)
+    String month = value.substring(3, 5); // Extract the month (fourth and fifth characters)
+    String year = value.substring(6, 8); // Extract the year (last two characters)
+    // DateTime now = DateTime.now();
+
+    // Check if the day, month, and year are valid
+    if (int.parse(day) > 0 && int.parse(day) <= 31 && int.parse(month) > 0 
+    && int.parse(month) <= 12 && int.parse(year) >= 0 && int.parse(month) <= 99) {
+      // Add the current millennium and century to the year
+      int fullYear = int.parse('20$year');
+
+      // // Check if the entered date is in the valid past or current date range
+      // DateTime enteredDate = DateTime(fullYear, int.parse(month), int.parse(day));
+      // if (enteredDate.isBefore(now) || enteredDate.isAtSameMomentAs(now)) {
+        String formattedDate = '$day/$month/$fullYear';
+
+        // Update the controller text with the new formatted date
+        _controller.text = formattedDate;
+
+        // Manually update the state with the new date
+        state.value = formattedDate;
+      // }
     }
-  } 
+  }
   }
 
   // Method to validate the date format strictly
