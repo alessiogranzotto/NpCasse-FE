@@ -63,4 +63,6 @@ class ApiRoutes {
   static const String baseCategoryURL = "$whURL/api/Category";
   static const String baseProductAttributeURL = "$whURL/api/ProductAttribute";
   static const String wishlistProductURL = "$whURL/api/Wishlist/utility";
+
+  static const String baseVatURL = "$whURL/api/Vat";
 }
