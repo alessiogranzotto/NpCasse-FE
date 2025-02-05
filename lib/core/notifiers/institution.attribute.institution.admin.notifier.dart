@@ -259,6 +259,9 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int idInstitution,
       required bool institutionFiscalized,
+      required String institutionFiscalizationCf,
+      required String institutionFiscalizationPassword,
+      required String institutionFiscalizationPin,
       required bool posAuthorization}) async {
     try {
       var response =
@@ -267,6 +270,10 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
               idUserAppInstitution: idUserAppInstitution,
               idInstitution: idInstitution,
               institutionFiscalized: institutionFiscalized,
+              institutionFiscalizationCf: institutionFiscalizationCf,
+              institutionFiscalizationPassword:
+                  institutionFiscalizationPassword,
+              institutionFiscalizationPin: institutionFiscalizationPin,
               posAuthorization: posAuthorization);
 
       if (response != null) {

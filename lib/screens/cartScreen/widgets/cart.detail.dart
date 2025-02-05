@@ -456,6 +456,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           .firstOrNull;
       if (itemInstitutionFiscalized != null &&
           itemInstitutionFiscalized.attributeValue == "true") {
+        selectedFiscalization = "1";
         setState(() {
           fiscalizationVisible = true;
         });

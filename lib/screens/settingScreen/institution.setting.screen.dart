@@ -25,9 +25,9 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   final _formKey4 = GlobalKey<FormState>();
 
   final ValueNotifier<bool> paymentMethodValidNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> stripeValidNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> stripeValidNotifier = ValueNotifier(true);
   final ValueNotifier<bool> securityFieldValidNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> casseModuleValidNotifier = ValueNotifier(true);
+  final ValueNotifier<bool> casseModuleValidNotifier = ValueNotifier(false);
 
   late final TextEditingController idContantiController;
   late final TextEditingController idBancomatController;
@@ -43,6 +43,9 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   ];
   String valueOtpMode = 'No';
   bool institutionFiscalized = false;
+  late final TextEditingController institutionFiscalizationCfController;
+  late final TextEditingController institutionFiscalizationPasswordController;
+  late final TextEditingController institutionFiscalizationPinController;
   bool posAuthorization = false;
 
   List<bool> panelOpen = [false, false, false, false];
@@ -63,6 +66,13 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       ..addListener(securityControllerListener);
     maxInactivityController = TextEditingController()
       ..addListener(securityControllerListener);
+
+    institutionFiscalizationCfController = TextEditingController()
+      ..addListener(casseModuleControllerListener);
+    institutionFiscalizationPasswordController = TextEditingController()
+      ..addListener(casseModuleControllerListener);
+    institutionFiscalizationPinController = TextEditingController()
+      ..addListener(casseModuleControllerListener);
   }
 
   void disposeControllers() {
@@ -73,6 +83,9 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     stripeApiKeyController.dispose();
     tokenExpirationController.dispose();
     maxInactivityController.dispose();
+    institutionFiscalizationCfController.dispose();
+    institutionFiscalizationPasswordController.dispose();
+    institutionFiscalizationPinController.dispose();
   }
 
   void paymentMethodControllerListener() {
@@ -86,12 +99,27 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     }
   }
 
-  void stripeControllerListener() {
-    if (stripeApiKeyController.text.isEmpty) {
-      stripeValidNotifier.value = false;
+  void casseModuleControllerListener() {
+    if (institutionFiscalized) {
+      if (institutionFiscalizationCfController.text.isEmpty ||
+          institutionFiscalizationPasswordController.text.isEmpty ||
+          institutionFiscalizationPinController.text.isEmpty) {
+        casseModuleValidNotifier.value = false;
+      } else {
+        casseModuleValidNotifier.value = true;
+      }
     } else {
-      stripeValidNotifier.value = true;
+      casseModuleValidNotifier.value = true;
     }
+  }
+
+  void stripeControllerListener() {
+    stripeValidNotifier.value = true;
+    // if (stripeApiKeyController.text.isEmpty) {
+    //   stripeValidNotifier.value = false;
+    // } else {
+    //   stripeValidNotifier.value = true;
+    // }
   }
 
   void securityControllerListener() {
@@ -200,6 +228,30 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
           institutionFiscalized = true;
         }
 
+        var itemInstitutionFiscalizationCf = cValue
+            .where((element) =>
+                element.attributeName == 'Institution.Fiscalization-Cf')
+            .firstOrNull;
+        if (itemInstitutionFiscalizationCf != null) {
+          institutionFiscalizationCfController.text =
+              itemInstitutionFiscalizationCf.attributeValue;
+        }
+        var itemInstitutionFiscalizationPassword = cValue
+            .where((element) =>
+                element.attributeName == 'Institution.Fiscalization-Password')
+            .firstOrNull;
+        if (itemInstitutionFiscalizationPassword != null) {
+          institutionFiscalizationPasswordController.text =
+              itemInstitutionFiscalizationPassword.attributeValue;
+        }
+        var itemInstitutionFiscalizationPin = cValue
+            .where((element) =>
+                element.attributeName == 'Institution.Fiscalization-Pin')
+            .firstOrNull;
+        if (itemInstitutionFiscalizationPin != null) {
+          institutionFiscalizationPinController.text =
+              itemInstitutionFiscalizationPin.attributeValue;
+        }
         var itemPosAuthorization = cValue
             .where((element) =>
                 element.attributeName == 'Institution.PosAuthorization')
@@ -340,6 +392,12 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
               idInstitution: cUserAppInstitutionModel
                   .idInstitutionNavigation.idInstitution,
               institutionFiscalized: institutionFiscalized,
+              institutionFiscalizationCf:
+                  institutionFiscalizationCfController.text,
+              institutionFiscalizationPassword:
+                  institutionFiscalizationPasswordController.text,
+              institutionFiscalizationPin:
+                  institutionFiscalizationPinController.text,
               posAuthorization: posAuthorization)
           .then((value) {
         if (value) {
@@ -595,6 +653,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         padding:
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
+                                          obscureText: true,
                                           controller: stripeApiKeyController,
                                           labelText: AppStrings.stripeApiKey,
                                           keyboardType: TextInputType.name,
@@ -791,10 +850,83 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                               setState(() {
                                                 institutionFiscalized = value!;
                                               });
+                                              casseModuleControllerListener();
                                             },
                                             controlAffinity:
                                                 ListTileControlAffinity
                                                     .leading),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomTextFormField(
+                                          enabled: institutionFiscalized,
+                                          controller:
+                                              institutionFiscalizationCfController,
+                                          labelText: AppStrings
+                                              .institutionFiscalizationCf,
+                                          keyboardType: TextInputType.name,
+                                          textInputAction: TextInputAction.next,
+                                          onChanged: (_) => _formKey4
+                                              .currentState
+                                              ?.validate(),
+                                          validator: (value) {
+                                            return value!.isNotEmpty
+                                                ? null
+                                                : AppStrings
+                                                    .pleaseEnterInstitutionFiscalizationCf;
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomTextFormField(
+                                          enabled: institutionFiscalized,
+                                          obscureText: true,
+                                          controller:
+                                              institutionFiscalizationPasswordController,
+                                          labelText: AppStrings
+                                              .institutionFiscalizationPassword,
+                                          keyboardType: TextInputType.name,
+                                          textInputAction: TextInputAction.next,
+                                          onChanged: (_) => _formKey4
+                                              .currentState
+                                              ?.validate(),
+                                          validator: (value) {
+                                            return value!.isNotEmpty
+                                                ? null
+                                                : AppStrings
+                                                    .pleaseEnterInstitutionFiscalizationPassword;
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomTextFormField(
+                                          enabled: institutionFiscalized,
+                                          obscureText: true,
+                                          controller:
+                                              institutionFiscalizationPinController,
+                                          labelText: AppStrings
+                                              .institutionFiscalizationPin,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatter: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          textInputAction: TextInputAction.next,
+                                          onChanged: (_) => _formKey4
+                                              .currentState
+                                              ?.validate(),
+                                          validator: (value) {
+                                            return value!.isNotEmpty
+                                                ? null
+                                                : AppStrings
+                                                    .pleaseEnterInstitutionFiscalizationPin;
+                                          },
+                                        ),
                                       ),
                                       Padding(
                                         padding:
@@ -807,6 +939,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                               setState(() {
                                                 posAuthorization = value!;
                                               });
+                                              casseModuleControllerListener();
                                             },
                                             controlAffinity:
                                                 ListTileControlAffinity

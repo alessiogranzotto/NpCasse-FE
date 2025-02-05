@@ -69,6 +69,14 @@ class ImageUtils {
     return Image.memory(base64Decode(strImage));
   }
 
+  static Image getImageFromStringBase64ForLogo({required String stringImage}) {
+    try {
+      return Image.memory(base64Decode(stringImage));
+    } catch (e) {
+      return Image.memory(base64Decode(AppAssets.noLogoString));
+    }
+  }
+
   static Future<String> imageSelectorCamera() async {
     var imageFile = await getFileFromImage(source: ImageSource.camera);
     return imageFile;

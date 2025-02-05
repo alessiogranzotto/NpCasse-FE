@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/report.api.dart';
 import 'package:np_casse/core/models/product.history.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
@@ -107,7 +108,7 @@ class ReportProductNotifier with ChangeNotifier {
           }
         } else {
           if (parseData['okResult'] != null) {
-            await downloadFile(parseData['okResult'], context);
+            await DownloadFile.downloadFile(parseData['okResult'], context);
             return null;
           } else {
             return null;
@@ -125,35 +126,6 @@ class ReportProductNotifier with ChangeNotifier {
             message: "Errore di connessione",
             contentType: "failure"));
       }
-    }
-  }
-
-  Future<void> downloadFile(
-      Map<String, dynamic> okResult, BuildContext context) async {
-    var fileContents = okResult['fileContents'];
-
-    // Check if fileContents is a base64-encoded string
-    Uint8List fileBytes;
-    if (fileContents is String) {
-      // Decode base64 string to Uint8List
-      fileBytes = base64Decode(fileContents);
-    } else if (fileContents is Uint8List) {
-      // If fileContents is already Uint8List, just use it
-      fileBytes = fileContents;
-    } else {
-      // If it's neither, throw an error or handle accordingly
-      throw Exception(
-          "File contents is neither a valid base64 string nor a Uint8List");
-    }
-
-    // Proceed with platform-specific logic
-    if (kIsWeb) {
-      // Web-specific logic
-      // downloadFileWeb(
-      //     fileBytes, okResult['fileDownloadName'], okResult['contentType']);
-    } else {
-      // Mobile-specific logic
-      // await downloadFileMobile(fileBytes, okResult['fileDownloadName'], context);
     }
   }
 

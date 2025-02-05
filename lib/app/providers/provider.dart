@@ -1,6 +1,7 @@
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/comunication.notifier.dart';
+import 'package:np_casse/core/notifiers/download.app.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
@@ -21,6 +22,7 @@ class AppProvider {
   static List<SingleChildWidget> providers = [
     // ChangeNotifierProvider(create: (_) => ThemeNotifier()),
     ChangeNotifierProvider(create: (_) => AuthenticationNotifier()),
+    ChangeNotifierProvider(create: (_) => DownloadAppNotifier()),
     // ChangeNotifierProvider(create: (_) => UserNotifier()),
     // ChangeNotifierProvider(create: (_) => UserAppInstitutionNotifier()),
     // ChangeNotifierProvider(create: (_) => ProjectNotifier()),

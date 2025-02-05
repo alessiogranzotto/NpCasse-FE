@@ -38,7 +38,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         tableController.refresh();
       });
     }
-  } 
+  }
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
@@ -199,10 +199,10 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             ),
             TableColumn(
               id: 'stateCartDescription',
-              title: const Text('State'),
+              title: const Text('Stato carrello'),
               cellBuilder: (context, item, index) =>
                   Text(item['stateCartDescription'].toString()),
-              size: const FixedColumnSize(150),
+              size: const FixedColumnSize(200),
               sortable: true,
             ),
             TableColumn(
@@ -254,6 +254,14 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               sortable: true,
             ),
             TableColumn(
+              id: 'stateFiscalization',
+              title: const Text('Fiscalizzazione'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['stateFiscalization'].toString()),
+              size: const FixedColumnSize(200),
+              sortable: true,
+            ),
+            TableColumn(
               id: 'actions',
               title: const Text('Azioni'),
               cellBuilder: (context, item, index) => PopupMenuButton<int>(
@@ -269,6 +277,16 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                     PopupMenuItem<int>(
                       value: 2,
                       child: const Text('Associazione donatore'),
+                    ),
+                  if (item['fiscalization'] > 0)
+                    PopupMenuItem<int>(
+                      value: 3,
+                      child: const Text('Visualizza scontrino'),
+                    ),
+                  if (item['fiscalization'] > 0)
+                    PopupMenuItem<int>(
+                      value: 4,
+                      child: const Text('Annulla carrello'),
                     ),
                 ],
                 onSelected: (value) {
@@ -291,8 +309,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                 final states = [
                   StateModel(id: 1, name: '1-Creato'),
                   StateModel(id: 2, name: '2-Pagato'),
-                  StateModel(id: 4, name: '4-Nominativo'),
-                  StateModel(id: 5, name: '5-Inviato'),
+                  StateModel(id: 4, name: '4-In acquisizione'),
+                  StateModel(id: 5, name: '5-Acquisito'),
+                  StateModel(id: 8, name: '8-Annullato'),
                   StateModel(id: 9, name: '9-Errore'),
                 ];
 

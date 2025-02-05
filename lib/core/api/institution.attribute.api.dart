@@ -230,6 +230,9 @@ class InstitutionAttributeAPI {
       required int idUserAppInstitution,
       required int idInstitution,
       required bool institutionFiscalized,
+      required String institutionFiscalizationCf,
+      required String institutionFiscalizationPassword,
+      required String institutionFiscalizationPin,
       required bool posAuthorization}) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
@@ -238,7 +241,17 @@ class InstitutionAttributeAPI {
 
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Institution.PosAuthorization',
-        attributeValue: institutionFiscalized.toString()));
+        attributeValue: posAuthorization.toString()));
+
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Institution.Fiscalization-Cf',
+        attributeValue: institutionFiscalizationCf));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Institution.Fiscalization-Password',
+        attributeValue: institutionFiscalizationPassword));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Institution.Fiscalization-Pin',
+        attributeValue: institutionFiscalizationPin));
 
     final Uri uri = Uri.parse(
         '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');

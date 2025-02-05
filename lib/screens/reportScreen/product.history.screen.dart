@@ -218,7 +218,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('Nome prodotto'),
               cellBuilder: (context, item, index) =>
                   Text(item['nameProduct'].toString()),
-              size: const FixedColumnSize(150),
+              size: const FixedColumnSize(300),
               sortable: true,
             ),
             TableColumn(
@@ -226,7 +226,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('Variante'),
               cellBuilder: (context, item, index) =>
                   Text(item['productAttributeExplicit'].toString()),
-              size: const FixedColumnSize(350),
+              size: const FixedColumnSize(300),
               sortable: false,
             ),
             TableColumn(
@@ -384,8 +384,8 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             ),
             IntegerTextTableFilter(
               id: "orderNumber",
-              chipFormatter: (value) => "Numero Ordine: $value",
-              name: "Numero Ordine",
+              chipFormatter: (value) => "Carrello: $value",
+              name: "Carrello",
             ),
             DateTextTableFilter(
               id: "startDate",

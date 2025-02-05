@@ -223,7 +223,16 @@ class _CartScreenState extends State<CartScreen> {
                                                     children: <Widget>[
                                                       Text(
                                                         cartProductModel
-                                                            .nameProduct,
+                                                                    .valueVat !=
+                                                                null
+                                                            ? (cartProductModel
+                                                                    .nameProduct +
+                                                                ' (IVA: ' +
+                                                                cartProductModel
+                                                                    .valueVat! +
+                                                                ')')
+                                                            : cartProductModel
+                                                                .nameProduct,
                                                         maxLines: 2,
                                                         overflow: TextOverflow
                                                             .ellipsis,

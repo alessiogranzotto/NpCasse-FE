@@ -131,7 +131,11 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
   }
 
   onVatChanged(value) {
-    selectedVat = value;
+    if (value == '') {
+      selectedVat = null;
+    } else {
+      selectedVat = value;
+    }
   }
 
   Future<void> getVat() async {
@@ -158,6 +162,9 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         setState(() {
           institutionFiscalized = true;
         });
+        availableVat.add(
+          DropdownMenuItem(child: Text(''), value: null),
+        );
         List<VatModel>? cValue = cVatDataModel.vatModelList;
         for (int i = 0; i < cValue.length; i++) {
           availableVat.add(

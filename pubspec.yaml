@@ -93,6 +93,7 @@ flutter:
 
   assets:
     - assets/images/splash/
+    - assets/images/logo/
     - assets/images/various/
     - assets/images/snackbar/
     - assets/vectors/

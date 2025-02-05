@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:np_casse/app/constants/assets.dart';
+import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/notifiers/download.app.notifier.dart';
 import 'package:np_casse/helpers/snackbar.helper.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late final TextEditingController passwordController;
   // late final String email, password;
   String otpCode = "";
+  bool isDownloadingApk = false;
 
   void initializeControllers() {
     emailController = TextEditingController()..addListener(controllerListener);
@@ -60,6 +64,19 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     disposeControllers();
     super.dispose();
+  }
+
+  downloadAndroidApp() {
+    setState(() {
+      isDownloadingApk = true;
+    });
+    DownloadAppNotifier downloadAppNotifier =
+        Provider.of<DownloadAppNotifier>(context, listen: false);
+    downloadAppNotifier.downloadAndroidApp(context: context).then((value) {
+      setState(() {
+        isDownloadingApk = false;
+      });
+    });
   }
 
   authenticateAccount() {
@@ -104,7 +121,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final isMobile = constraints.maxWidth <= 510; // Check if width is <= 510
+          final isMobile =
+              constraints.maxWidth <= 510; // Check if width is <= 510
           if (constraints.maxWidth >= 800) {
             return Row(
               children: [
@@ -392,6 +410,32 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              side: BorderSide(width: 1.0),
+                            ),
+                            onPressed: () {
+                              isDownloadingApk ? null : downloadAndroidApp();
+                            },
+                            child: Wrap(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.android,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  isDownloadingApk
+                                      ? 'Attendere...'
+                                      : AppStrings.downloadApp,
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -515,117 +559,233 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   ),
                                                 )
                                               : const SizedBox(height: 5),
-                                       isMobile
-                                        ? Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              // Login button (appears first on mobile)
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 30), // Add horizontal margin
-                                                child: ValueListenableBuilder(
-                                                  valueListenable: fieldValidNotifier,
-                                                  builder: (_, isValid, __) {
-                                                    return SizedBox(
-                                                      width: 250, // Set the same width for both buttons
-                                                      child: ElevatedButton(
-                                                        onPressed: isValid
-                                                            ? () {
-                                                                authenticateAccount();
-                                                              }
-                                                            : null,
-                                                        style: ElevatedButton.styleFrom(
-                                                          side: BorderSide(width: 1.0),
-                                                        ),
-                                                        child: const Text(
-                                                          AppStrings.login,
-                                                          style: TextStyle(color: Colors.black, fontSize: 14),
+                                          isMobile
+                                              ? Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    // Login button (appears first on mobile)
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal:
+                                                              30), // Add horizontal margin
+                                                      child:
+                                                          ValueListenableBuilder(
+                                                        valueListenable:
+                                                            fieldValidNotifier,
+                                                        builder:
+                                                            (_, isValid, __) {
+                                                          return SizedBox(
+                                                            width:
+                                                                250, // Set the same width for both buttons
+                                                            child:
+                                                                ElevatedButton(
+                                                              onPressed: isValid
+                                                                  ? () {
+                                                                      authenticateAccount();
+                                                                    }
+                                                                  : null,
+                                                              style:
+                                                                  ElevatedButton
+                                                                      .styleFrom(
+                                                                side: BorderSide(
+                                                                    width: 1.0),
+                                                              ),
+                                                              child: const Text(
+                                                                AppStrings
+                                                                    .login,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        14),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                        height:
+                                                            10), // Space between buttons
+                                                    // Forgot Password button (appears second on mobile)
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal:
+                                                              30), // Add horizontal margin
+                                                      child: SizedBox(
+                                                        width:
+                                                            250, // Set the same width for both buttons
+                                                        child: ElevatedButton(
+                                                          onPressed: () {},
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            side: BorderSide(
+                                                                width: 1.0),
+                                                          ),
+                                                          child: const Text(
+                                                            AppStrings
+                                                                .forgotPassword,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 14),
+                                                          ),
                                                         ),
                                                       ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10), // Space between buttons
-                                              // Forgot Password button (appears second on mobile)
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 30), // Add horizontal margin
-                                                child: SizedBox(
-                                                  width: 250, // Set the same width for both buttons
-                                                  child: ElevatedButton(
-                                                    onPressed: () {},
-                                                    style: ElevatedButton.styleFrom(
-                                                      side: BorderSide(width: 1.0),
                                                     ),
-                                                    child: const Text(
-                                                      AppStrings.forgotPassword,
-                                                      style: TextStyle(color: Colors.black, fontSize: 14),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                          : Row(
-                                            children: [
-                                              Expanded(
-                                                child: ElevatedButton(
-                                                  onPressed: () {},
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          side: BorderSide(
-                                                    width: 1.0,
-                                                    // color: Colors.grey,
-                                                  )),
-                                                  child: const Text(
-                                                    AppStrings.forgotPassword,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 20),
-                                              Expanded(
-                                                child: ValueListenableBuilder(
-                                                  valueListenable:
-                                                      fieldValidNotifier,
-                                                  builder: (_, isValid, __) {
-                                                    return ElevatedButton(
-                                                      onPressed: isValid
-                                                          ? () {
-                                                              authenticateAccount();
-                                                              // email =
-                                                              //     emailController
-                                                              //         .text;
-                                                              // emailController
-                                                              //     .clear();
-                                                              // password =
-                                                              //     passwordController
-                                                              //         .text;
-                                                              // passwordController
-                                                              //     .clear();
-                                                            }
-                                                          : null,
+                                                    SizedBox(height: 20),
+                                                    ElevatedButton(
                                                       style: ElevatedButton
                                                           .styleFrom(
                                                         side: BorderSide(
-                                                          width: 1.0,
-                                                          // color: Colors.grey,
+                                                            width: 1.0),
+                                                      ),
+                                                      onPressed: () {
+                                                        isDownloadingApk
+                                                            ? null
+                                                            : downloadAndroidApp();
+                                                      },
+                                                      child: Wrap(
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.android,
+                                                            color: Colors.green,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                            isDownloadingApk
+                                                                ? 'Attendere...'
+                                                                : AppStrings
+                                                                    .downloadApp,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: ElevatedButton(
+                                                            onPressed: () {},
+                                                            style: ElevatedButton
+                                                                .styleFrom(
+                                                                    side:
+                                                                        BorderSide(
+                                                              width: 1.0,
+                                                              // color: Colors.grey,
+                                                            )),
+                                                            child: const Text(
+                                                              AppStrings
+                                                                  .forgotPassword,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 14),
+                                                            ),
+                                                          ),
                                                         ),
+                                                        const SizedBox(
+                                                            width: 20),
+                                                        Expanded(
+                                                          child:
+                                                              ValueListenableBuilder(
+                                                            valueListenable:
+                                                                fieldValidNotifier,
+                                                            builder: (_,
+                                                                isValid, __) {
+                                                              return ElevatedButton(
+                                                                onPressed:
+                                                                    isValid
+                                                                        ? () {
+                                                                            authenticateAccount();
+                                                                            // email =
+                                                                            //     emailController
+                                                                            //         .text;
+                                                                            // emailController
+                                                                            //     .clear();
+                                                                            // password =
+                                                                            //     passwordController
+                                                                            //         .text;
+                                                                            // passwordController
+                                                                            //     .clear();
+                                                                          }
+                                                                        : null,
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  side:
+                                                                      BorderSide(
+                                                                    width: 1.0,
+                                                                    // color: Colors.grey,
+                                                                  ),
+                                                                ),
+                                                                child:
+                                                                    const Text(
+                                                                  AppStrings
+                                                                      .login,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          14),
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        side: BorderSide(
+                                                            width: 1.0),
                                                       ),
-                                                      child: const Text(
-                                                        AppStrings.login,
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 14),
+                                                      onPressed: () {
+                                                        isDownloadingApk
+                                                            ? null
+                                                            : downloadAndroidApp();
+                                                      },
+                                                      child: Wrap(
+                                                        children: <Widget>[
+                                                          Icon(
+                                                            Icons.android,
+                                                            color: Colors.green,
+                                                          ),
+                                                          SizedBox(
+                                                            width: 10,
+                                                          ),
+                                                          Text(
+                                                            isDownloadingApk
+                                                                ? 'Attendere...'
+                                                                : AppStrings
+                                                                    .downloadApp,
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 14),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    );
-                                                  },
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                            ],
-                                          ),
                                           const SizedBox(height: 20),
                                           // Row(
                                           //   children: [

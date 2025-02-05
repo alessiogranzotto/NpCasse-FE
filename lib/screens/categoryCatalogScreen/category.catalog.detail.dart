@@ -220,7 +220,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
           centerTitle: true,
           title: Text(
             'Dettaglio categoria: ${widget.categoryCatalogModelArgument.nameCategory}',
-            style: Theme.of(context).textTheme.headlineLarge,
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
         body: ListView(

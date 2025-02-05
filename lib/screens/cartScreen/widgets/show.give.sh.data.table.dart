@@ -47,7 +47,8 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
         'tel': stakeholder.tel,
         'cell': stakeholder.cell,
         'codfisc': stakeholder.codfisc,
-        'address': '${stakeholder.recapitoGiveModel.indirizzo} ${stakeholder.recapitoGiveModel.nCivico} ${stakeholder.recapitoGiveModel.cap} ${stakeholder.recapitoGiveModel.citta} ${stakeholder.recapitoGiveModel.prov}',
+        'address':
+            '${stakeholder.recapitoGiveModel.indirizzo} ${stakeholder.recapitoGiveModel.nCivico} ${stakeholder.recapitoGiveModel.cap} ${stakeholder.recapitoGiveModel.citta} ${stakeholder.recapitoGiveModel.prov}',
         'contacts': stakeholder.contattiGiveModel.isNotEmpty ? 'C' : 'SH',
       };
     }).toList();
@@ -58,7 +59,6 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
@@ -150,7 +150,6 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
                 id: 'address',
                 title: const Text('Recapito'),
                 cellBuilder: (context, item, index) {
-                  
                   return _buildSelectableRow(index, item['address']);
                 },
                 size: const FixedColumnSize(350),
@@ -163,46 +162,49 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
     );
   }
 
- // Helper method to build a selectable row
-  Widget _buildSelectableRow(int index, String displayText, {bool isCircleAvatar = false,
-  Icon? optionalIcon}) {
+  // Helper method to build a selectable row
+  Widget _buildSelectableRow(int index, String displayText,
+      {bool isCircleAvatar = false, Icon? optionalIcon}) {
     return GestureDetector(
       onTap: () {
         setState(() {
           idRowSelected = widget.snapshot[index].id;
-          StakeholderGiveModelSearch cStakeholderGiveModel = widget.snapshot[index];
+          StakeholderGiveModelSearch cStakeholderGiveModel =
+              widget.snapshot[index];
           widget.callback2(cStakeholderGiveModel);
           if (idRowSelected != 0) {
-              editAndReceiptVisible == true;
+            editAndReceiptVisible == true;
           } else {
-              editAndReceiptVisible == false;
+            editAndReceiptVisible == false;
           }
         });
       },
       child: Container(
-          height: 40, // Make sure to define a consistent row height
-          child: Row(
-            children: [
-              if (isCircleAvatar) ...[
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(displayText, style: Theme.of(context).textTheme.bodySmall),
-                  ),
+        height: 40, // Make sure to define a consistent row height
+        child: Row(
+          children: [
+            if (isCircleAvatar) ...[
+              CircleAvatar(
+                radius: 16,
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Text(displayText,
+                      style: Theme.of(context).textTheme.bodySmall),
                 ),
-                SizedBox(width: 8),
+              ),
+              SizedBox(width: 8),
+            ],
+            // Add Text only if CircleAvatar is not being displayed
+            if (!isCircleAvatar) ...[
+              if (optionalIcon != null) ...[
+                optionalIcon,
               ],
-              // Add Text only if CircleAvatar is not being displayed
-          if (!isCircleAvatar) ...[
-            if (optionalIcon != null) ...[
-              optionalIcon,
+              Expanded(child: Text(displayText)),
             ],
-            Expanded(child: Text(displayText)),
-            ],
-            ],
-          ),
+          ],
+        ),
       ),
     );
   }
@@ -212,7 +214,7 @@ class ShowGiveShDataTableDeduplica extends StatefulWidget {
   final List<StakeholderDeduplicaResult> snapshot;
   final double width;
   final Function stakeholderDeduplicaSelected;
-  
+
   const ShowGiveShDataTableDeduplica({
     Key? key,
     required this.snapshot,
@@ -221,10 +223,12 @@ class ShowGiveShDataTableDeduplica extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ShowGiveShDataTableDeduplica> createState() => _ShowGiveShDataTableDeduplica();
+  State<ShowGiveShDataTableDeduplica> createState() =>
+      _ShowGiveShDataTableDeduplica();
 }
 
-class _ShowGiveShDataTableDeduplica extends State<ShowGiveShDataTableDeduplica> {
+class _ShowGiveShDataTableDeduplica
+    extends State<ShowGiveShDataTableDeduplica> {
   int? idRowSelected; // To track the selected row's ID
   bool editAndReceiptVisible = false;
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
@@ -235,45 +239,50 @@ class _ShowGiveShDataTableDeduplica extends State<ShowGiveShDataTableDeduplica> 
     super.initState();
   }
 
-Future<(List<Map<String, dynamic>>, String?)> fetchData(
-  int pageSize,
-  SortModel? sortModel,
-  FilterModel filterModel,
-  String? pageToken,
-) async {
-  widget.stakeholderDeduplicaSelected(null);
+  Future<(List<Map<String, dynamic>>, String?)> fetchData(
+    int pageSize,
+    SortModel? sortModel,
+    FilterModel filterModel,
+    String? pageToken,
+  ) async {
+    widget.stakeholderDeduplicaSelected(null);
 
-  // Mapping data from the snapshot
-  List<Map<String, dynamic>> data = widget.snapshot.map((stakeholderDeduplicaResult) {
-    // Ensure we access 'id' from 'stakeholderGiveModelSearch'
-    var stakeholder = stakeholderDeduplicaResult.stakeholderGiveModelSearch;
-    
-    return {
-      'id': stakeholder.id, // Accessing 'id' from the nested StakeholderGiveModelSearch
-      'name': stakeholder.ragionesociale.isNotEmpty
-          ? stakeholder.ragionesociale
-          : "${stakeholder.nome} ${stakeholder.cognome}",
-      'email': stakeholder.email,
-      'tel': stakeholder.tel,
-      'cell': stakeholder.cell,
-      'codfisc': stakeholder.codfisc,
-      'contacts': stakeholder.contattiGiveModel.isNotEmpty ? 'C' : 'SH',
-      'address': '${stakeholder.recapitoGiveModel.indirizzo} ${stakeholder.recapitoGiveModel.nCivico} ${stakeholder.recapitoGiveModel.cap} ${stakeholder.recapitoGiveModel.citta} ${stakeholder.recapitoGiveModel.prov}',
-    };
-  }).toList();
+    // Mapping data from the snapshot
+    List<Map<String, dynamic>> data =
+        widget.snapshot.map((stakeholderDeduplicaResult) {
+      // Ensure we access 'id' from 'stakeholderGiveModelSearch'
+      var stakeholder = stakeholderDeduplicaResult.stakeholderGiveModelSearch;
 
-  String? nextPageToken = null;
-  return Future.delayed(Duration(seconds: 1), () => (data, nextPageToken));
-}
+      return {
+        'id': stakeholder
+            .id, // Accessing 'id' from the nested StakeholderGiveModelSearch
+        'name': stakeholder.ragionesociale.isNotEmpty
+            ? stakeholder.ragionesociale
+            : "${stakeholder.nome} ${stakeholder.cognome}",
+        'email': stakeholder.email,
+        'tel': stakeholder.tel,
+        'cell': stakeholder.cell,
+        'codfisc': stakeholder.codfisc,
+        'contacts': stakeholder.contattiGiveModel.isNotEmpty ? 'C' : 'SH',
+        'address':
+            '${stakeholder.recapitoGiveModel.indirizzo} ${stakeholder.recapitoGiveModel.nCivico} ${stakeholder.recapitoGiveModel.cap} ${stakeholder.recapitoGiveModel.citta} ${stakeholder.recapitoGiveModel.prov}',
+        'rules': stakeholderDeduplicaResult.rules
+      };
+    }).toList();
 
+    String? nextPageToken = null;
+    return Future.delayed(Duration(seconds: 1), () => (data, nextPageToken));
+  }
 
   // Helper method to build a selectable row
-  Widget _buildSelectableRow(int index, String displayText, {bool isCircleAvatar = false}) {
+  Widget _buildSelectableRow(int index, String displayText,
+      {bool isCircleAvatar = false}) {
     return GestureDetector(
       onTap: () {
         setState(() {
           idRowSelected = widget.snapshot[index].stakeholderGiveModelSearch.id;
-          StakeholderGiveModelSearch cStakeholderGiveModel = widget.snapshot[index].stakeholderGiveModelSearch;
+          StakeholderGiveModelSearch cStakeholderGiveModel =
+              widget.snapshot[index].stakeholderGiveModelSearch;
           widget.stakeholderDeduplicaSelected(cStakeholderGiveModel);
           editAndReceiptVisible = idRowSelected != 0;
         });
@@ -285,10 +294,12 @@ Future<(List<Map<String, dynamic>>, String?)> fetchData(
             if (isCircleAvatar) ...[
               CircleAvatar(
                 radius: 16,
-                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Text(displayText, style: Theme.of(context).textTheme.bodySmall),
+                  child: Text(displayText,
+                      style: Theme.of(context).textTheme.bodySmall),
                 ),
               ),
               SizedBox(width: 8),
@@ -313,7 +324,8 @@ Future<(List<Map<String, dynamic>>, String?)> fetchData(
             selectedRow: Colors.blueAccent[100], // Set the selected row color
             rowColor: (index) {
               // Highlight the row if it's selected
-              return idRowSelected == widget.snapshot[index].stakeholderGiveModelSearch.id
+              return idRowSelected ==
+                      widget.snapshot[index].stakeholderGiveModelSearch.id
                   ? Colors.blueAccent[100]
                   : Colors.transparent;
             },
@@ -342,6 +354,15 @@ Future<(List<Map<String, dynamic>>, String?)> fetchData(
                 title: const Text('Id'),
                 cellBuilder: (context, item, index) {
                   return _buildSelectableRow(index, item['id'].toString());
+                },
+                size: const FixedColumnSize(150),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'rules',
+                title: const Text('Regola'),
+                cellBuilder: (context, item, index) {
+                  return _buildSelectableRow(index, item['rules'].toString());
                 },
                 size: const FixedColumnSize(150),
                 sortable: true,

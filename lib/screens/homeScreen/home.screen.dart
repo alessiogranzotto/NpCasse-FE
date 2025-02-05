@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:np_casse/app/constants/assets.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
+import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -419,11 +421,15 @@ class _HomeScreenState extends State<HomeScreen> {
             currentAccountPicture: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(cSelectedUserAppInstitution != null
-                      ? cSelectedUserAppInstitution!
-                          .idInstitutionNavigation.urlLogoInstitution
-                      : ''),
-                  fit: BoxFit.fill,
+                  image: (ImageUtils.getImageFromStringBase64ForLogo(
+                          stringImage: cSelectedUserAppInstitution!
+                              .idInstitutionNavigation.logoInstitution)
+                      .image),
+                  // image: NetworkImage(cSelectedUserAppInstitution != null
+                  //     ? cSelectedUserAppInstitution!
+                  //         .idInstitutionNavigation.urlLogoInstitution
+                  //     : ''),
+                  fit: BoxFit.contain,
                 ),
               ),
               child: null,
@@ -463,9 +469,19 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Versione:' + AppKeys.version,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary)),
+                Row(
+                  children: [
+                    Image(
+                        image: AssetImage(AppAssets.logoGivePro_scritta_lato),
+                        fit: BoxFit.fill,
+                        // height: 50,
+                        width: 100,
+                        alignment: Alignment.center),
+                    Text('(' + AppKeys.version + ')',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary)),
+                  ],
+                ),
               ],
             ),
           ),

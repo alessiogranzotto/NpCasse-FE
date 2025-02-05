@@ -10,6 +10,9 @@ class CartModel {
     required this.docNumberCart,
     required this.stateCart,
     required this.stateCartDescription,
+    required this.fiscalization,
+    required this.stateFiscalization,
+    required this.fiscalizationId,
     required this.notesCart,
     required this.cartProducts,
     required this.totalPriceCart,
@@ -25,6 +28,11 @@ class CartModel {
   late final int docNumberCart;
   late final int stateCart;
   late final String stateCartDescription;
+
+  late final int fiscalization;
+  late final String stateFiscalization;
+  late final String? fiscalizationId;
+
   late final String notesCart;
   late final double? totalPriceCart;
   late final double? percDiscount;
@@ -41,6 +49,9 @@ class CartModel {
     docNumberCart = 0;
     stateCart = 0;
     stateCartDescription = '';
+    fiscalization = 0;
+    stateFiscalization = '';
+    fiscalizationId = null;
     notesCart = '';
     totalPriceCart = null;
     percDiscount = null;
@@ -59,10 +70,15 @@ class CartModel {
     docNumberCart = json['docNumberCart'];
     stateCart = json['stateCart'];
     stateCartDescription = json['stateCartDescription'];
+
+    fiscalization = json['fiscalization'];
+    stateFiscalization = json['fiscalizationDescription'];
+    fiscalizationId = json['fiscalizationId'];
+
     notesCart = json['notesCart'] ?? '';
     totalPriceCart = (json['totalPriceCart'] != null)
         ? double.parse((json['totalPriceCart']).toStringAsFixed(2))
-        : json['totalPriceCart'];    
+        : json['totalPriceCart'];
     percDiscount = double.parse((json['percDiscount']).toStringAsFixed(2));
     idStakeholder = json['idStakeholder'];
     denominationStakeholder = json['denominationStakeholder'];
@@ -82,6 +98,11 @@ class CartModel {
     data['docNumberCart'] = docNumberCart;
     data['stateCart'] = stateCart;
     data['stateCartDescription'] = stateCartDescription;
+
+    data['fiscalization'] = fiscalization;
+    data['stateFiscalization'] = stateFiscalization;
+    data['fiscalizationId'] = fiscalizationId;
+
     data['notesCart'] = notesCart;
     data['totalPriceCart'] = totalPriceCart;
     data['percDiscount'] = percDiscount;

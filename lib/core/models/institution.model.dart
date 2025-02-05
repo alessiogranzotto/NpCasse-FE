@@ -3,23 +3,27 @@ class InstitutionModel {
       {required this.idInstitution,
       required this.keyInstitution,
       required this.nameInstitution,
-      required this.urlLogoInstitution});
+      required this.logoInstitution,
+      required this.pIvaInstitution});
   late final int idInstitution;
   late final String keyInstitution;
   late final String nameInstitution;
-  late final String urlLogoInstitution;
+  late final String logoInstitution;
+  late final String pIvaInstitution;
 
   InstitutionModel.empty() {
     idInstitution = 0;
     keyInstitution = '';
     nameInstitution = '';
-    urlLogoInstitution = '';
+    logoInstitution = '';
+    pIvaInstitution = '';
   }
   InstitutionModel.fromJson(Map<String, dynamic> json) {
     idInstitution = json['idInstitution'];
     keyInstitution = json['keyInstitution'];
     nameInstitution = json['nameInstitution'];
-    urlLogoInstitution = json['urlLogoInstitution'];
+    logoInstitution = json['logoInstitution'];
+    pIvaInstitution = json['pIvaInstitution'];
   }
 
   Map<String, dynamic> toJson() {
@@ -27,7 +31,8 @@ class InstitutionModel {
     data['idInstitution'] = idInstitution;
     data['keyInstitution'] = keyInstitution;
     data['nameInstitution'] = nameInstitution;
-    data['urlLogoInstitution'] = urlLogoInstitution;
+    data['logoInstitution'] = logoInstitution;
+    data['pIvaInstitution'] = pIvaInstitution;
     return data;
   }
 }

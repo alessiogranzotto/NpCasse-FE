@@ -38,7 +38,7 @@ class Core extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Np casse',
+      title: 'Give Pro',
       localizationsDelegates: [
         PagedDataTableLocalization.delegate, // Add this line
       ],

@@ -29,7 +29,7 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
   Icon icona = const Icon(Icons.search);
   TextEditingController nameDescSearchController = TextEditingController();
   bool viewOutOfAssortment = false;
-  bool readImageData = true;
+  bool readImageData = false;
   bool readAlsoDeleted = false;
   int selectedCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];

@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.17';
+  static String version = '1.20.003';
 }
 
 // class AppRegex {
@@ -60,6 +60,7 @@ class AppStrings {
   static const String iHaveAnAccount = 'I have an account?';
   static const String forgotPassword = 'Forgot Password?';
   static const String orLoginWith = 'or Login with';
+  static const String downloadApp = 'Download Android App';
 
   static const String loggedIn = 'Logged In!';
   static const String registrationComplete = 'Registration Complete!';
@@ -159,6 +160,17 @@ class AppStrings {
       'Inserire oggetto comunicazione';
 
   static const comunicationTemplate = 'Template comunicazione';
+
+  static const institutionFiscalizationCf = 'Codice fiscale amministratore';
+  static const pleaseEnterInstitutionFiscalizationCf =
+      'Inserire codice fiscale amministratore';
+  static const institutionFiscalizationPassword =
+      'Password Agenzia delle Entrate';
+  static const pleaseEnterInstitutionFiscalizationPin =
+      'Inserire password Agenzia delle Entrate';
+  static const institutionFiscalizationPin = 'PIN Agenzia delle Entrate';
+  static const pleaseEnterInstitutionFiscalizationPassword =
+      'Inserire PIN Agenzia delle Entrate';
 }
 
 class AppColors {

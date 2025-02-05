@@ -85,6 +85,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
   bool editMode = false;
   int idSh = 0;
   bool isDeduplica = false;
+  bool enableNormalization = true;
 
   ValueNotifier<bool> visibilityDeduplicationButton =
       ValueNotifier<bool>(false);
@@ -167,6 +168,8 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
 
       provinceCodeController.text =
           widget.editStakeholderGiveModelSearch!.recapitoGiveModel.prov;
+      regionController.text =
+          widget.editStakeholderGiveModelSearch!.recapitoGiveModel.regione;
 
       comCartacee = widget.editStakeholderGiveModelSearch!.comCartacee == 1
           ? true
@@ -226,247 +229,451 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authenticationNotifier.getSelectedUserAppInstitution();
       geoNormItemModelVisible = false;
-      //PERFORM NORMALIZATION
-      GeoAutocompleteAPI.executeNormalization(
-              token: authenticationNotifier.token,
-              idUserAppInstitution:
-                  cUserAppInstitutionModel.idUserAppInstitution,
-              iso3: cGeoCountryItemModel.iso3,
-              country: countryController.text,
-              state: stateController.text,
-              region: regionController.text,
-              province: provinceCodeController.text,
-              city: cityController.text,
-              district1: district1Controller.text,
-              district2: district2Controller.text,
-              district3: district3Controller.text,
-              postalCode: zipCodeController.text,
-              streetName: streetController.text,
-              streetNumber: streetNumberController.text)
-          .then((value) {
-        final Map<String, dynamic> parseData = jsonDecode(value as String);
-        bool isOk = parseData['isOk'];
-        if (isOk) {
-          final GeoNormItemModel geoNormItemModel =
-              GeoNormItemModel.fromJson(parseData['okResult']);
-          if (geoNormItemModel.type == "C") {
-            setState(() {
-              cGeoNormItemModel = geoNormItemModel;
-              geoNormItemModelVisible = true;
-            });
-          } else if (geoNormItemModel.type == "E") {
-            onGeoNormExactModel(geoNormItemModel.exact);
-            if (editMode) {
-              result = giveNotifier
-                  .updateStakeholder(
-                      context: context,
-                      token: authenticationNotifier.token,
-                      mustForce: mustForce,
-                      forcingId: forcingId,
-                      idUserAppInstitution:
-                          cUserAppInstitutionModel.idUserAppInstitution,
-                      id: idSh,
-                      nome: nameController.text,
-                      cognome: surnameController.text,
-                      ragSoc: ragSocController.text,
-                      codfisc: cFController.text,
-                      sesso: _characterGender == GenderCharacter.male ? 1 : 2,
-                      email: emailController.text,
-                      tel: phoneNumberController.text,
-                      cell: mobileNumberController.text,
-                      nazione_nn_norm: countryController.text,
-                      regione_nn_norm: regionController.text,
-                      prov_nn_norm: provinceCodeController.text,
-                      statoFederale_nn_norm: stateController.text,
-                      cap_nn_norm: zipCodeController.text,
-                      citta_nn_norm: cityController.text,
-                      suddivisioneComune_2_nn_norm: district2Controller.text,
-                      suddivisioneComune_3_nn_norm: district3Controller.text,
-                      indirizzo_nn_norm: streetController.text,
-                      localita_nn_norm: district1Controller.text,
-                      n_civico_nn_norm: streetNumberController.text,
-                      row4: geoNormItemModel.exact.row4,
-                      row5: geoNormItemModel.exact.row5,
-                      cdxcnl: geoNormItemModel.exact.cdxcnl,
-                      x: geoNormItemModel.exact.x,
-                      y: geoNormItemModel.exact.y,
-                      com_cartacee: comCartacee ? 1 : 0,
-                      com_email: comEmail ? 1 : 0,
-                      consenso_ringrazia: consensoRingrazia ? 1 : 0,
-                      consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
-                      consenso_com_espresso: consensoComEspresso ? 1 : 0,
-                      consenso_marketing: consensoMarketing ? 1 : 0,
-                      consenso_sms: consensoSms ? 1 : 0,
-                      datanascita: borndateController.text,
-                      tipo_donatore:
-                          _characterType == TypeCharacter.personaFisica
-                              ? "1"
-                              : "0")
-                  .then((value) {
-                if (value == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackUtil.stylishSnackBar(
-                          title: "Anagrafiche",
-                          message: "Errore di connessione",
-                          contentType: "failure"));
-                } else {
-                  var typedValue = value;
-                  if (typedValue.operationResult == "Ok") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackUtil.stylishSnackBar(
-                            title: "Anagrafiche",
-                            message: "Informazioni aggiornate",
-                            contentType: "success"));
-
-                    GiveNotifier giveNotifier =
-                        Provider.of<GiveNotifier>(context, listen: false);
-                    giveNotifier.setStakeholder(typedValue.donatoriOk ??
-                        StakeholderGiveModelSearch.empty());
-                    Navigator.pop(context);
-                  } else if (typedValue.operationResult == "Errore deduplica") {
-                    if (forcingId > 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackUtil.stylishSnackBar(
-                              title: "Anagrafiche",
-                              message: "Errore di connessione",
-                              contentType: "failure"));
-                    } else {
-                      stakeholderDeduplicaResult =
-                          typedValue.donatoriWithRulesDeduplica ??
-                              List<StakeholderDeduplicaResult>.empty();
-                      if (stakeholderDeduplicaResult.isNotEmpty) {
-                        visibilityDeduplicationButton.value = true;
-                        visibilityForceSaveButton.value = true;
-                      }
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackUtil.stylishSnackBar(
-                              title: "Anagrafiche",
-                              message:
-                                  "Alcuni dati risultano già presenti. Azione necessaria",
-                              contentType: "warning"));
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackUtil.stylishSnackBar(
-                            title: "Anagrafiche",
-                            message:
-                                "Errore di connessione ${typedValue.operationResult.isNotEmpty ? "(${typedValue.operationResult})" : ""}",
-                            contentType: "failure"));
-                  }
-                }
+      if (enableNormalization) {
+        //PERFORM NORMALIZATION
+        GeoAutocompleteAPI.executeNormalization(
+                token: authenticationNotifier.token,
+                idUserAppInstitution:
+                    cUserAppInstitutionModel.idUserAppInstitution,
+                iso3: cGeoCountryItemModel.iso3,
+                country: countryController.text,
+                state: stateController.text,
+                region: regionController.text,
+                province: provinceCodeController.text,
+                city: cityController.text,
+                district1: district1Controller.text,
+                district2: district2Controller.text,
+                district3: district3Controller.text,
+                postalCode: zipCodeController.text,
+                streetName: streetController.text,
+                streetNumber: streetNumberController.text)
+            .then((value) {
+          final Map<String, dynamic> parseData = jsonDecode(value as String);
+          bool isOk = parseData['isOk'];
+          if (isOk) {
+            final GeoNormItemModel geoNormItemModel =
+                GeoNormItemModel.fromJson(parseData['okResult']);
+            if (geoNormItemModel.type == "C") {
+              setState(() {
+                cGeoNormItemModel = geoNormItemModel;
+                geoNormItemModelVisible = true;
               });
-            } else {
-              result = giveNotifier
-                  .addStakeholder(
-                      context: context,
-                      token: authenticationNotifier.token,
-                      mustForce: mustForce,
-                      idUserAppInstitution:
-                          cUserAppInstitutionModel.idUserAppInstitution,
-                      nome: nameController.text,
-                      cognome: surnameController.text,
-                      ragSoc: ragSocController.text,
-                      codfisc: cFController.text,
-                      sesso: _characterGender == GenderCharacter.male ? 1 : 2,
-                      email: emailController.text,
-                      tel: phoneNumberController.text,
-                      cell: mobileNumberController.text,
-                      nazione_nn_norm: countryController.text,
-                      regione_nn_norm: regionController.text,
-                      statoFederale_nn_norm: stateController.text,
-                      prov_nn_norm: provinceCodeController.text,
-                      cap_nn_norm: zipCodeController.text,
-                      citta_nn_norm: cityController.text,
-                      suddivisioneComune_2_nn_norm: district2Controller.text,
-                      suddivisioneComune_3_nn_norm: district3Controller.text,
-                      indirizzo_nn_norm: streetController.text,
-                      localita_nn_norm: district1Controller.text,
-                      n_civico_nn_norm: streetNumberController.text,
-                      row4: geoNormItemModel.exact.row4,
-                      row5: geoNormItemModel.exact.row5,
-                      cdxcnl: geoNormItemModel.exact.cdxcnl,
-                      x: geoNormItemModel.exact.x,
-                      y: geoNormItemModel.exact.y,
-                      com_cartacee: comCartacee ? 1 : 0,
-                      com_email: comEmail ? 1 : 0,
-                      consenso_ringrazia: consensoRingrazia ? 1 : 0,
-                      consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
-                      consenso_com_espresso: consensoComEspresso ? 1 : 0,
-                      consenso_marketing: consensoMarketing ? 1 : 0,
-                      consenso_sms: consensoSms ? 1 : 0,
-                      datanascita: borndateController.text,
-                      tipo_donatore:
-                          _characterType == TypeCharacter.personaFisica
-                              ? "1"
-                              : "0")
-                  .then((value) {
-                if (value == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackUtil.stylishSnackBar(
-                          title: "Anagrafiche",
-                          message: "Errore di connessione",
-                          contentType: "failure"));
-                } else {
-                  var typedValue = value;
-                  if (typedValue.operationResult == "Ok") {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackUtil.stylishSnackBar(
-                            title: "Anagrafiche",
-                            message: "Informazioni aggiornate",
-                            contentType: "success"));
-
-                    GiveNotifier giveNotifier =
-                        Provider.of<GiveNotifier>(context, listen: false);
-                    giveNotifier.setStakeholder(typedValue.donatoriOk ??
-                        StakeholderGiveModelSearch.empty());
-                    Navigator.pop(context);
-                    // PersistentNavBarNavigator.pushNewScreen(
-                    //   context,
-                    //   screen: const ShManageScreen(),
-                    //   withNavBar: true,
-                    //   pageTransitionAnimation: PageTransitionAnimation.fade,
-                    // );
-                  } else if (typedValue.operationResult == "Errore deduplica") {
-                    if (forcingId > 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackUtil.stylishSnackBar(
-                              title: "Anagrafiche",
-                              message: "Errore di connessione",
-                              contentType: "failure"));
-                    } else {
-                      stakeholderDeduplicaResult =
-                          typedValue.donatoriWithRulesDeduplica ??
-                              List<StakeholderDeduplicaResult>.empty();
-
-                      visibilityDeduplicationButton.value = true;
-                      visibilityForceSaveButton.value = true;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackUtil.stylishSnackBar(
-                              title: "Anagrafiche",
-                              message:
-                                  "Alcuni dati risultano già presenti. Azione necessaria",
-                              contentType: "warning"));
-                    }
-                  } else {
+            } else if (geoNormItemModel.type == "E") {
+              onGeoNormExactModel(geoNormItemModel.exact);
+              if (editMode) {
+                result = giveNotifier
+                    .updateStakeholder(
+                        context: context,
+                        token: authenticationNotifier.token,
+                        mustForce: mustForce,
+                        forcingId: forcingId,
+                        idUserAppInstitution:
+                            cUserAppInstitutionModel.idUserAppInstitution,
+                        id: idSh,
+                        nome: nameController.text,
+                        cognome: surnameController.text,
+                        ragSoc: ragSocController.text,
+                        codfisc: cFController.text,
+                        sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                        email: emailController.text,
+                        tel: phoneNumberController.text,
+                        cell: mobileNumberController.text,
+                        nazione_nn_norm: countryController.text,
+                        regione_nn_norm: regionController.text,
+                        prov_nn_norm: provinceCodeController.text,
+                        statoFederale_nn_norm: stateController.text,
+                        cap_nn_norm: zipCodeController.text,
+                        citta_nn_norm: cityController.text,
+                        suddivisioneComune_2_nn_norm: district2Controller.text,
+                        suddivisioneComune_3_nn_norm: district3Controller.text,
+                        indirizzo_nn_norm: streetController.text,
+                        localita_nn_norm: district1Controller.text,
+                        n_civico_nn_norm: streetNumberController.text,
+                        row4: geoNormItemModel.exact.row4,
+                        row5: geoNormItemModel.exact.row5,
+                        cdxcnl: geoNormItemModel.exact.cdxcnl,
+                        x: geoNormItemModel.exact.x,
+                        y: geoNormItemModel.exact.y,
+                        com_cartacee: comCartacee ? 1 : 0,
+                        com_email: comEmail ? 1 : 0,
+                        consenso_ringrazia: consensoRingrazia ? 1 : 0,
+                        consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
+                        consenso_com_espresso: consensoComEspresso ? 1 : 0,
+                        consenso_marketing: consensoMarketing ? 1 : 0,
+                        consenso_sms: consensoSms ? 1 : 0,
+                        datanascita: borndateController.text,
+                        tipo_donatore:
+                            _characterType == TypeCharacter.personaFisica
+                                ? "1"
+                                : "0")
+                    .then((value) {
+                  if (value == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackUtil.stylishSnackBar(
                             title: "Anagrafiche",
                             message: "Errore di connessione",
                             contentType: "failure"));
+                  } else {
+                    var typedValue = value;
+                    if (typedValue.operationResult == "Ok") {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackUtil.stylishSnackBar(
+                              title: "Anagrafiche",
+                              message: "Informazioni aggiornate",
+                              contentType: "success"));
+
+                      GiveNotifier giveNotifier =
+                          Provider.of<GiveNotifier>(context, listen: false);
+                      giveNotifier.setStakeholder(typedValue.donatoriOk ??
+                          StakeholderGiveModelSearch.empty());
+                      Navigator.pop(context);
+                    } else if (typedValue.operationResult ==
+                        "Errore deduplica") {
+                      if (forcingId > 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackUtil.stylishSnackBar(
+                                title: "Anagrafiche",
+                                message: "Errore di connessione",
+                                contentType: "failure"));
+                      } else {
+                        stakeholderDeduplicaResult =
+                            typedValue.donatoriWithRulesDeduplica ??
+                                List<StakeholderDeduplicaResult>.empty();
+                        if (stakeholderDeduplicaResult.isNotEmpty) {
+                          visibilityDeduplicationButton.value = true;
+                          visibilityForceSaveButton.value = true;
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackUtil.stylishSnackBar(
+                                title: "Anagrafiche",
+                                message:
+                                    "Alcuni dati risultano già presenti. Azione necessaria",
+                                contentType: "warning"));
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackUtil.stylishSnackBar(
+                              title: "Anagrafiche",
+                              message:
+                                  "Errore di connessione ${typedValue.operationResult.isNotEmpty ? "(${typedValue.operationResult})" : ""}",
+                              contentType: "failure"));
+                    }
                   }
-                }
-              });
+                });
+              } else {
+                result = giveNotifier
+                    .addStakeholder(
+                        context: context,
+                        token: authenticationNotifier.token,
+                        mustForce: mustForce,
+                        idUserAppInstitution:
+                            cUserAppInstitutionModel.idUserAppInstitution,
+                        nome: nameController.text,
+                        cognome: surnameController.text,
+                        ragSoc: ragSocController.text,
+                        codfisc: cFController.text,
+                        sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                        email: emailController.text,
+                        tel: phoneNumberController.text,
+                        cell: mobileNumberController.text,
+                        nazione_nn_norm: countryController.text,
+                        regione_nn_norm: regionController.text,
+                        statoFederale_nn_norm: stateController.text,
+                        prov_nn_norm: provinceCodeController.text,
+                        cap_nn_norm: zipCodeController.text,
+                        citta_nn_norm: cityController.text,
+                        suddivisioneComune_2_nn_norm: district2Controller.text,
+                        suddivisioneComune_3_nn_norm: district3Controller.text,
+                        indirizzo_nn_norm: streetController.text,
+                        localita_nn_norm: district1Controller.text,
+                        n_civico_nn_norm: streetNumberController.text,
+                        row4: geoNormItemModel.exact.row4,
+                        row5: geoNormItemModel.exact.row5,
+                        cdxcnl: geoNormItemModel.exact.cdxcnl,
+                        x: geoNormItemModel.exact.x,
+                        y: geoNormItemModel.exact.y,
+                        com_cartacee: comCartacee ? 1 : 0,
+                        com_email: comEmail ? 1 : 0,
+                        consenso_ringrazia: consensoRingrazia ? 1 : 0,
+                        consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
+                        consenso_com_espresso: consensoComEspresso ? 1 : 0,
+                        consenso_marketing: consensoMarketing ? 1 : 0,
+                        consenso_sms: consensoSms ? 1 : 0,
+                        datanascita: borndateController.text,
+                        tipo_donatore:
+                            _characterType == TypeCharacter.personaFisica
+                                ? "1"
+                                : "0")
+                    .then((value) {
+                  if (value == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackUtil.stylishSnackBar(
+                            title: "Anagrafiche",
+                            message: "Errore di connessione",
+                            contentType: "failure"));
+                  } else {
+                    var typedValue = value;
+                    if (typedValue.operationResult == "Ok") {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackUtil.stylishSnackBar(
+                              title: "Anagrafiche",
+                              message: "Informazioni aggiornate",
+                              contentType: "success"));
+
+                      GiveNotifier giveNotifier =
+                          Provider.of<GiveNotifier>(context, listen: false);
+                      giveNotifier.setStakeholder(typedValue.donatoriOk ??
+                          StakeholderGiveModelSearch.empty());
+                      Navigator.pop(context);
+                      // PersistentNavBarNavigator.pushNewScreen(
+                      //   context,
+                      //   screen: const ShManageScreen(),
+                      //   withNavBar: true,
+                      //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                      // );
+                    } else if (typedValue.operationResult ==
+                        "Errore deduplica") {
+                      if (forcingId > 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackUtil.stylishSnackBar(
+                                title: "Anagrafiche",
+                                message: "Errore di connessione",
+                                contentType: "failure"));
+                      } else {
+                        stakeholderDeduplicaResult =
+                            typedValue.donatoriWithRulesDeduplica ??
+                                List<StakeholderDeduplicaResult>.empty();
+
+                        visibilityDeduplicationButton.value = true;
+                        visibilityForceSaveButton.value = true;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackUtil.stylishSnackBar(
+                                title: "Anagrafiche",
+                                message:
+                                    "Alcuni dati risultano già presenti. Azione necessaria",
+                                contentType: "warning"));
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackUtil.stylishSnackBar(
+                              title: "Anagrafiche",
+                              message: "Errore di connessione",
+                              contentType: "failure"));
+                    }
+                  }
+                });
+              }
             }
+          } else {
+            String errorDescription = parseData['errorDescription'];
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Anagrafiche",
+                    message: errorDescription,
+                    contentType: "failure"));
           }
+        });
+      } else {
+        if (editMode) {
+          result = giveNotifier
+              .updateStakeholder(
+                  context: context,
+                  token: authenticationNotifier.token,
+                  mustForce: mustForce,
+                  forcingId: forcingId,
+                  idUserAppInstitution:
+                      cUserAppInstitutionModel.idUserAppInstitution,
+                  id: idSh,
+                  nome: nameController.text,
+                  cognome: surnameController.text,
+                  ragSoc: ragSocController.text,
+                  codfisc: cFController.text,
+                  sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                  email: emailController.text,
+                  tel: phoneNumberController.text,
+                  cell: mobileNumberController.text,
+                  nazione_nn_norm: countryController.text,
+                  regione_nn_norm: regionController.text,
+                  prov_nn_norm: provinceCodeController.text,
+                  statoFederale_nn_norm: stateController.text,
+                  cap_nn_norm: zipCodeController.text,
+                  citta_nn_norm: cityController.text,
+                  suddivisioneComune_2_nn_norm: district2Controller.text,
+                  suddivisioneComune_3_nn_norm: district3Controller.text,
+                  indirizzo_nn_norm: streetController.text,
+                  localita_nn_norm: district1Controller.text,
+                  n_civico_nn_norm: streetNumberController.text,
+                  row4: '',
+                  row5: '',
+                  cdxcnl: '',
+                  x: '',
+                  y: '',
+                  com_cartacee: comCartacee ? 1 : 0,
+                  com_email: comEmail ? 1 : 0,
+                  consenso_ringrazia: consensoRingrazia ? 1 : 0,
+                  consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
+                  consenso_com_espresso: consensoComEspresso ? 1 : 0,
+                  consenso_marketing: consensoMarketing ? 1 : 0,
+                  consenso_sms: consensoSms ? 1 : 0,
+                  datanascita: borndateController.text,
+                  tipo_donatore:
+                      _characterType == TypeCharacter.personaFisica ? "1" : "0")
+              .then((value) {
+            if (value == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackUtil.stylishSnackBar(
+                      title: "Anagrafiche",
+                      message: "Errore di connessione",
+                      contentType: "failure"));
+            } else {
+              var typedValue = value;
+              if (typedValue.operationResult == "Ok") {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackUtil.stylishSnackBar(
+                        title: "Anagrafiche",
+                        message: "Informazioni aggiornate",
+                        contentType: "success"));
+
+                GiveNotifier giveNotifier =
+                    Provider.of<GiveNotifier>(context, listen: false);
+                giveNotifier.setStakeholder(typedValue.donatoriOk ??
+                    StakeholderGiveModelSearch.empty());
+                Navigator.pop(context);
+              } else if (typedValue.operationResult == "Errore deduplica") {
+                if (forcingId > 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackUtil.stylishSnackBar(
+                          title: "Anagrafiche",
+                          message: "Errore di connessione",
+                          contentType: "failure"));
+                } else {
+                  stakeholderDeduplicaResult =
+                      typedValue.donatoriWithRulesDeduplica ??
+                          List<StakeholderDeduplicaResult>.empty();
+                  if (stakeholderDeduplicaResult.isNotEmpty) {
+                    visibilityDeduplicationButton.value = true;
+                    visibilityForceSaveButton.value = true;
+                  }
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackUtil.stylishSnackBar(
+                          title: "Anagrafiche",
+                          message:
+                              "Alcuni dati risultano già presenti. Azione necessaria",
+                          contentType: "warning"));
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackUtil.stylishSnackBar(
+                        title: "Anagrafiche",
+                        message:
+                            "Errore di connessione ${typedValue.operationResult.isNotEmpty ? "(${typedValue.operationResult})" : ""}",
+                        contentType: "failure"));
+              }
+            }
+          });
         } else {
-          String errorDescription = parseData['errorDescription'];
-          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Anagrafiche",
-              message: errorDescription,
-              contentType: "failure"));
+          result = giveNotifier
+              .addStakeholder(
+                  context: context,
+                  token: authenticationNotifier.token,
+                  mustForce: mustForce,
+                  idUserAppInstitution:
+                      cUserAppInstitutionModel.idUserAppInstitution,
+                  nome: nameController.text,
+                  cognome: surnameController.text,
+                  ragSoc: ragSocController.text,
+                  codfisc: cFController.text,
+                  sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                  email: emailController.text,
+                  tel: phoneNumberController.text,
+                  cell: mobileNumberController.text,
+                  nazione_nn_norm: countryController.text,
+                  regione_nn_norm: regionController.text,
+                  statoFederale_nn_norm: stateController.text,
+                  prov_nn_norm: provinceCodeController.text,
+                  cap_nn_norm: zipCodeController.text,
+                  citta_nn_norm: cityController.text,
+                  suddivisioneComune_2_nn_norm: district2Controller.text,
+                  suddivisioneComune_3_nn_norm: district3Controller.text,
+                  indirizzo_nn_norm: streetController.text,
+                  localita_nn_norm: district1Controller.text,
+                  n_civico_nn_norm: streetNumberController.text,
+                  row4: '',
+                  row5: '',
+                  cdxcnl: '',
+                  x: '',
+                  y: '',
+                  com_cartacee: comCartacee ? 1 : 0,
+                  com_email: comEmail ? 1 : 0,
+                  consenso_ringrazia: consensoRingrazia ? 1 : 0,
+                  consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
+                  consenso_com_espresso: consensoComEspresso ? 1 : 0,
+                  consenso_marketing: consensoMarketing ? 1 : 0,
+                  consenso_sms: consensoSms ? 1 : 0,
+                  datanascita: borndateController.text,
+                  tipo_donatore:
+                      _characterType == TypeCharacter.personaFisica ? "1" : "0")
+              .then((value) {
+            if (value == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackUtil.stylishSnackBar(
+                      title: "Anagrafiche",
+                      message: "Errore di connessione",
+                      contentType: "failure"));
+            } else {
+              var typedValue = value;
+              if (typedValue.operationResult == "Ok") {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackUtil.stylishSnackBar(
+                        title: "Anagrafiche",
+                        message: "Informazioni aggiornate",
+                        contentType: "success"));
+
+                GiveNotifier giveNotifier =
+                    Provider.of<GiveNotifier>(context, listen: false);
+                giveNotifier.setStakeholder(typedValue.donatoriOk ??
+                    StakeholderGiveModelSearch.empty());
+                Navigator.pop(context);
+                // PersistentNavBarNavigator.pushNewScreen(
+                //   context,
+                //   screen: const ShManageScreen(),
+                //   withNavBar: true,
+                //   pageTransitionAnimation: PageTransitionAnimation.fade,
+                // );
+              } else if (typedValue.operationResult == "Errore deduplica") {
+                if (forcingId > 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackUtil.stylishSnackBar(
+                          title: "Anagrafiche",
+                          message: "Errore di connessione",
+                          contentType: "failure"));
+                } else {
+                  stakeholderDeduplicaResult =
+                      typedValue.donatoriWithRulesDeduplica ??
+                          List<StakeholderDeduplicaResult>.empty();
+
+                  visibilityDeduplicationButton.value = true;
+                  visibilityForceSaveButton.value = true;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackUtil.stylishSnackBar(
+                          title: "Anagrafiche",
+                          message:
+                              "Alcuni dati risultano già presenti. Azione necessaria",
+                          contentType: "warning"));
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackUtil.stylishSnackBar(
+                        title: "Anagrafiche",
+                        message: "Errore di connessione",
+                        contentType: "failure"));
+              }
+            }
+          });
         }
-      });
+      }
     }
     return result;
   }
@@ -652,9 +859,12 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
       appBar: AppBar(
         backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
-        title: Text(widget.editStakeholderGiveModelSearch == null
-            ? "Nuova anagrafica"
-            : "Modifica anagrafica (id: ${widget.editStakeholderGiveModelSearch?.id})"),
+        title: Text(
+          widget.editStakeholderGiveModelSearch == null
+              ? "Nuova anagrafica"
+              : "Modifica anagrafica (id: ${widget.editStakeholderGiveModelSearch?.id})",
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -1547,6 +1757,16 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                   ],
                                 ),
                               ),
+                              CheckboxListTile(
+                                  title: Text("Abilita normalizzazione"),
+                                  value: enableNormalization,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      enableNormalization = value!;
+                                    });
+                                  },
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading),
                               Row(
                                 children: [
                                   Expanded(

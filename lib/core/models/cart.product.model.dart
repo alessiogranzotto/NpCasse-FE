@@ -15,12 +15,13 @@ class CartProductModel {
     required this.priceCartProduct,
     required this.imageData,
     required this.notesCartProduct,
+    required this.valueVat,
     required this.docNumberCart,
     required this.dateCart,
     required this.percDiscount,
     required this.priceDiscounted,
   });
-  
+
   late final int idCartProduct;
   late final int idCart;
   late final int idProduct;
@@ -33,6 +34,7 @@ class CartProductModel {
   late final double priceCartProduct;
   late final String imageData;
   late final String notesCartProduct;
+  late final String? valueVat;
   late final int docNumberCart;
   late final DateTime dateCart;
   late final double percDiscount;
@@ -46,16 +48,20 @@ class CartProductModel {
     descriptionProduct = json['descriptionProduct'];
     freePriceProduct = json['freePriceProduct'];
     productAttributeJson = json['productAttributeJson'];
-    productAttributeExplicit = json['productAttributeExplicit'];
+    productAttributeExplicit = json['productAttributeExplicit'] ?? '';
     quantityCartProduct = ValueNotifier<int>(json['quantityCartProduct']);
-    priceCartProduct = double.parse((json['priceCartProduct']).toStringAsFixed(2));
+    priceCartProduct =
+        double.parse((json['priceCartProduct']).toStringAsFixed(2));
     imageData = json['imageData'];
     notesCartProduct = json['notesCartProduct'];
+    valueVat = json['valueVat'];
     docNumberCart = json['docNumberCart'];
-    var dateTimeC = DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCart'], true);
+    var dateTimeC =
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateCart'], true);
     dateCart = dateTimeC.toLocal();
     percDiscount = double.parse((json['percDiscount']).toStringAsFixed(2));
-    priceDiscounted = double.parse((json['priceDiscounted']).toStringAsFixed(2));
+    priceDiscounted =
+        double.parse((json['priceDiscounted']).toStringAsFixed(2));
   }
 
   Map<String, dynamic> toJson() {
