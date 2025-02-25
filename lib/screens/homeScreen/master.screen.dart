@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_footer.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar_footer.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar_item.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar_theme.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';

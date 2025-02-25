@@ -777,10 +777,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                   .copyWith(
                                       color: Colors.grey.shade700,
                                       fontSize: 12),
-                            ),
-                            posAuthorization
-                                ? Icon(Icons.trending_neutral)
-                                : SizedBox.shrink()
+                            )
                           ],
                         ),
                         ToggleButtons(

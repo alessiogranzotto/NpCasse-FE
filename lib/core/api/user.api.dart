@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import 'package:np_casse/app/routes/api_routes.dart';
 
 class UserAPI {
   final client = http.Client();

@@ -81,14 +81,13 @@ class _Dropdown<T> extends StatelessWidget {
         skipTraversal: true,
         child: Container(
           decoration: BoxDecoration(
+            border: Border.all(width: 1.0),
             borderRadius: decoration.borderRadius,
             color: decoration.backgroundColor,
             backgroundBlendMode: BlendMode.dstATop,
           ),
           constraints: BoxConstraints(
-            maxWidth: width,
-            maxHeight: decoration.maxHeight,
-          ),
+              maxWidth: width, maxHeight: decoration.maxHeight, minHeight: 50),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

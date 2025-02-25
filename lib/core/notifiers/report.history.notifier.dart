@@ -85,17 +85,23 @@ class ReportCartNotifier with ChangeNotifier {
     }
   }
 
-  Future<void> downloadCartList({
-    required BuildContext context,
-    required String? token,
-    required int idUserAppInstitution,
-  }) async {
+  Future<void> downloadCartList(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int pageNumber,
+      required int pageSize,
+      required List<String> orderBy,
+      required List<String> filter}) async {
     try {
       bool isOk = false;
       var response = await reportAPI.downloadCartList(
-        token: token,
-        idUserAppInstitution: idUserAppInstitution,
-      );
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+          orderBy: orderBy,
+          filter: filter);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         isOk = parseData['isOk'];

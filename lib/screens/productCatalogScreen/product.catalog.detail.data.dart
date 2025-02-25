@@ -638,8 +638,14 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                     controller: controllerCategory,
                                     enabled: true,
                                     searchEnabled: true,
-                                    chipDecoration: const ChipDecoration(
-                                      backgroundColor: Colors.blueGrey,
+                                    chipDecoration: ChipDecoration(
+                                      labelStyle: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8)),
+                                      border: Border.all(width: 1.5),
+                                      backgroundColor: Colors.transparent,
                                       wrap: true,
                                       runSpacing: 2,
                                       spacing: 10,
@@ -664,7 +670,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: const BorderSide(
-                                          color: Colors.black87,
+                                          color: Colors.black,
                                         ),
                                       ),
                                     ),

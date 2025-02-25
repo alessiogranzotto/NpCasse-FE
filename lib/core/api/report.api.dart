@@ -14,7 +14,7 @@ class ReportApi {
     String filterJoined = "";
     for (var item in filter) {
       filterJoined = filterJoined + "&" + item;
-    }    
+    }
     final Uri uri = Uri.parse(
         '${ApiRoutes.reportURL}/find-cart-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
@@ -67,9 +67,18 @@ class ReportApi {
   }
 
   Future downloadCartList(
-      {required String? token, required int idUserAppInstitution}) async {
+      {required String? token,
+      required int idUserAppInstitution,
+      required int pageNumber,
+      required int pageSize,
+      required List<String> orderBy,
+      required List<String> filter}) async {
+    String filterJoined = "";
+    for (var item in filter) {
+      filterJoined = filterJoined + "&" + item;
+    }
     final Uri uri = Uri.parse(
-        '${ApiRoutes.reportURL}/download-cart-list?idUserAppInstitution=$idUserAppInstitution');
+        '${ApiRoutes.reportURL}/download-cart-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
       uri,
       headers: {

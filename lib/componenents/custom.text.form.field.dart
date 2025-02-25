@@ -70,48 +70,30 @@ class CustomTextFormField extends StatelessWidget {
           suffixIcon: suffixIcon,
           labelText: labelText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          labelStyle: Theme.of(context).textTheme.labelLarge!
-          // .copyWith(color: Colors.blueGrey)
-          ,
+          labelStyle: Theme.of(context).textTheme.labelLarge!,
           hintStyle: Theme.of(context)
               .textTheme
               .labelLarge!
               .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(
-                color: Theme.of(context)
-                    .colorScheme
-                    .inversePrimary
-                    .withOpacity(0.8),
-                // color: Colors.grey,
-                width: 1.0),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 1.0),
           ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(
-                color: Theme.of(context)
-                    .colorScheme
-                    .inversePrimary
-                    .withOpacity(0.5),
-                // color: Colors.grey,
-                width: 1.0),
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 1.0),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.inversePrimary,
-                // color: Colors.blue,
-                width: 1.0),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.black, width: 1.0),
           ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-            borderSide:
-                BorderSide(color: Colors.red.withOpacity(0.5), width: 1.0),
+          errorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.red, width: 1.0),
           ),
           focusedErrorBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: Colors.red, width: 1.0),
+            borderSide: BorderSide(color: Colors.deepOrangeAccent, width: 1.0),
           ),
         ),
         onTapOutside: (event) => FocusScope.of(context).unfocus(),

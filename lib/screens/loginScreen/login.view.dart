@@ -142,6 +142,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          Image(
+                              image: AssetImage(AppAssets.logoGivePro),
+                              fit: BoxFit.fill,
+                              // height: 50,
+                              width: 100,
+                              alignment: Alignment.center),
                           Form(
                             key: _formKey,
                             child: Padding(

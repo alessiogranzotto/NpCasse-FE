@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_bar_toggler.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_bar_toggler.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar_theme.dart';
 
 /// Represents the toggler widget which is used to change expanded state of [SideNavigationBar]
 class SideBarTogglerWidget extends StatefulWidget {

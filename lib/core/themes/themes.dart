@@ -242,6 +242,7 @@ class AppTheme {
       TextSelectionThemeData(
     cursorColor: _lightonBackground,
     selectionHandleColor: _lighthintColor,
+    selectionColor: Colors.blueAccent,
   );
 
   // *****************

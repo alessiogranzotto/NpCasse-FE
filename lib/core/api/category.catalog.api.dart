@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';

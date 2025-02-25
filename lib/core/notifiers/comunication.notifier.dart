@@ -2,15 +2,11 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/comunication.api.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
-import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
-import 'package:np_casse/core/utils/file_web.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 

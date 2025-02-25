@@ -1,13 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/utils/download.file.dart';
-import 'package:np_casse/core/api/authentication.api.dart';
 import 'package:np_casse/core/api/download.app.dart.dart';
-import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 
 class DownloadAppNotifier with ChangeNotifier {

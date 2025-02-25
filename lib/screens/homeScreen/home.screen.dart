@@ -11,6 +11,7 @@ import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/comunication.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
@@ -24,6 +25,7 @@ import 'package:np_casse/screens/comunicationScreen/finalize.comunication.screen
 import 'package:np_casse/screens/comunicationScreen/prepare.comunication.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.navigator.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
@@ -114,6 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
       MenuList('Pianifica comunicazione', Icons.email,
           const PrepareComunicationNavigator(), 3, null),
     ]),
+    MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
+        const MyosotisConfigurationNavigator(), 3, null),
     MenuList('Report', Icons.dashboard, null, 1, [
       MenuList('Report acquisti', Icons.dashboard, const CartHistoryNavigator(),
           1, null),
@@ -164,6 +168,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
               listen: false);
       institutionAttributeInstitutionAdminNotifier.setUpdate(true);
+    }
+    if (subMenu == "Configurazioni Myosotis") {
+      MyosotisConfigurationNotifier myosotisConfigurationNotifier =
+          Provider.of<MyosotisConfigurationNotifier>(context, listen: false);
+      myosotisConfigurationNotifier.refresh();
     }
     // else if (subMenu == "Impostazioni amministratore") {
     //   InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =

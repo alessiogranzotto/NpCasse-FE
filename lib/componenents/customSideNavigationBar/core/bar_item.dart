@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_item.dart';
-import 'package:np_casse/componenents/customSideNavigationBar.dart/api/side_navigation_bar_theme.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar_item.dart';
+import 'package:np_casse/componenents/customSideNavigationBar/api/side_navigation_bar_theme.dart';
 
 /// This widget uses information obtained from [SideNavigationBarItem]
 /// to generate the widget which provides an [onTap] callback while
@@ -62,7 +62,8 @@ class _SideNavigationBarItemWidgetState
               child: ListTile(
                 tileColor: _evaluateBackgroundColor(isSelected),
                 leading: Container(
-                  margin: widget.itemData.margin ?? EdgeInsets.zero, // Apply margin if provided
+                  margin: widget.itemData.margin ??
+                      EdgeInsets.zero, // Apply margin if provided
                   child: Icon(
                     widget.itemData.icon,
                     color: currentColor,
@@ -88,7 +89,8 @@ class _SideNavigationBarItemWidgetState
                     shape: widget.itemTheme.iconShape,
                   ),
                   child: Container(
-                    margin: widget.itemData.margin ?? EdgeInsets.zero, // Apply margin if provided
+                    margin: widget.itemData.margin ??
+                        EdgeInsets.zero, // Apply margin if provided
                     child: IconButton(
                       icon: Icon(
                         widget.itemData.icon,
@@ -107,7 +109,7 @@ class _SideNavigationBarItemWidgetState
   }
 
   /// Determines if this tile is currently selected
-   ///
+  ///
   /// Looks at the both item labels to compare whether they are equal
   /// and compares the parents [index] with this tiles index
   bool _isTileSelected(
@@ -122,11 +124,11 @@ class _SideNavigationBarItemWidgetState
 
   /// Check if this item [isSelected] and return the passed [widget.selectedColor]
   /// If it is not selected return either [Colors.white] or [Colors.grey] based on the
-  /// [Brightness]  
+  /// [Brightness]
   Color? _evaluateColor(final BuildContext context, final bool isSelected) {
     final Brightness brightness = Theme.of(context).brightness;
     return isSelected
-            // If selectedItemColor is null we pass the default
+        // If selectedItemColor is null we pass the default
         ? widget.itemTheme.selectedItemColor ??
             SideNavigationBarItemTheme.defaultSelectedItemColor
         // If unselectedItemColor is null we evaluate current brightness and return either grey or white

@@ -1,7 +1,4 @@
 class ApiRoutes {
-  static const String androidCasseURL = "https://10.0.2.2:7263";
-  static const String androidAuthURL = "https://10.0.2.2:7262";
-
   static const String devAuthURL = "https://localhost:7262";
   static const String devCasseURL = "https://localhost:7263";
   static const String devWhURL = "https://localhost:7264";
@@ -13,11 +10,6 @@ class ApiRoutes {
   static const String prodAuthURL = "https://auth.giveapp.it";
   static const String prodCasseURL = "https://apicasse.giveapp.it";
   static const String prodWhURL = "https://wh.giveapp.it";
-
-  // static const String prodAuthURL = "http://31.14.141.7:8083";
-  // static const String testAuthURL = "http://31.14.141.7:8444";
-  // static const String localWebAuthURL = "http://31.14.141.7:8084";
-  // static const String testBaseURL = "http://31.14.141.7:8443";
 
   static const String authURL = testAuthURL;
   static const String casseURL = testCasseURL;
@@ -58,7 +50,13 @@ class ApiRoutes {
 
   static const String comunicationURL = "$casseURL/api/Comunication/Utility";
 
+  static const String baseMyosotisConfigurationURL =
+      "$casseURL/api/MyosotisConfiguration";
+
   static const String downloadAppURL = "$casseURL/api/DownloadApp";
+  static const String MyosotisConfigurationURL =
+      "$casseURL/api/MyosotisConfiguration";
+
   // static const String storeURL = "$baseURL/api/Store";
 
   static const String baseProductURL = "$whURL/api/Product";

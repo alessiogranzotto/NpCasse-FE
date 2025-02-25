@@ -44,7 +44,7 @@ class _CategoryCatalogScreenState extends State<CategoryCatalogScreen> {
         value: "SecondLevelCategory"),
   ];
 
-  String numberResult = '25';
+  String numberResult = '10';
   List<DropdownMenuItem<String>> availableNumberResult = [
     DropdownMenuItem(child: Text("Tutti"), value: "All"),
     DropdownMenuItem(child: Text("10"), value: "10"),

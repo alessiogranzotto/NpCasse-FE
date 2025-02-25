@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
+import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
@@ -13,9 +14,10 @@ import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.detail.d
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.dart';
 import 'package:np_casse/screens/comunicationScreen/template.comunication.html.screen.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
-import 'package:np_casse/screens/homeScreen/master.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.screen.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.detail.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/productAttribute.screen.dart';
@@ -94,6 +96,9 @@ class AppRouter {
 
   static const String templateComunicationHtml = "/templatecomunicationhtml";
 
+  static const String myosotisConfigurationRoute = "/myosotisConfiguration";
+  static const String myosotisConfigurationDetailRoute =
+      "/myosotisConfigurationDetail";
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -315,6 +320,23 @@ class AppRouter {
           );
         }
 
+      case myosotisConfigurationRoute:
+        {
+          return MaterialPageRoute(
+            builder: (_) => const MyosotisConfigurationScreen(),
+          );
+        }
+
+      case myosotisConfigurationDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MyosotisConfigurationDetailScreen(
+              myosotisConfiguration: ModalRoute.of(context)!.settings.arguments
+                  as MyosotisConfigurationModel,
+            ),
+            settings: settings,
+          );
+        }
       case onBoardRoute:
         {
           return MaterialPageRoute(

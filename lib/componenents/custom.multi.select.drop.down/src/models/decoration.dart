@@ -110,7 +110,7 @@ class DropdownDecoration {
   const DropdownDecoration({
     this.backgroundColor = Colors.white,
     this.elevation = 1,
-    this.maxHeight = 400,
+    this.maxHeight = 300,
     this.marginTop = 0,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.footer,

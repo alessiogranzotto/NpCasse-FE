@@ -655,18 +655,32 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                         child: CustomTextFormField(
                                           obscureText: true,
                                           controller: stripeApiKeyController,
-                                          labelText: AppStrings.stripeApiKey,
+                                          labelText: AppStrings.stripeApiKey +
+                                              ((stripeApiKeyController
+                                                          .text.length >
+                                                      5
+                                                  ? " ******" +
+                                                      stripeApiKeyController
+                                                          .text
+                                                          .substring(
+                                                              stripeApiKeyController
+                                                                      .text
+                                                                      .length -
+                                                                  5,
+                                                              stripeApiKeyController
+                                                                  .text.length)
+                                                  : "")),
                                           keyboardType: TextInputType.name,
                                           textInputAction: TextInputAction.next,
                                           onChanged: (_) => _formKey1
                                               .currentState
                                               ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterstripeApiKey;
-                                          },
+                                          // validator: (value) {
+                                          //   return value!.isNotEmpty
+                                          //       ? null
+                                          //       : AppStrings
+                                          //           .pleaseEnterstripeApiKey;
+                                          // },
                                         ),
                                       ),
                                       Row(

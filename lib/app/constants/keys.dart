@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.003';
+  static String version = '1.20.008';
 }
 
 // class AppRegex {
@@ -171,6 +171,50 @@ class AppStrings {
   static const institutionFiscalizationPin = 'PIN Agenzia delle Entrate';
   static const pleaseEnterInstitutionFiscalizationPassword =
       'Inserire PIN Agenzia delle Entrate';
+
+  static const nameMyosotisConfiguration = 'Nome configurazione';
+  static const pleaseEnterNameMyosotisConfiguration =
+      'Inserire nome configurazione';
+
+  static const descriptionMyosotisConfiguration = 'Descrizione configurazione';
+  static const pleaseEnterDescriptionMyosotisConfiguration =
+      'Inserire descrizione configurazione';
+
+  static const idDeviceMyosotisConfiguration = 'Id device abilitati';
+  static const preestablishedAmount = 'Importi predefiniti';
+
+  static const formStartupMyosotisConfiguration =
+      'Configurazione form di avvio';
+  static const pleaseEnterFormStartupMyosotisConfiguration =
+      'Configurazione form di avvio';
+
+  static const titleMyosotisConfiguration = 'Titolo form';
+  static const pleaseEnterTitleMyosotisConfiguration = 'Inserire titolo form';
+  static const subtitleMyosotisConfiguration = 'Sottotitolo form';
+  static const pleaseEnterSubtitleMyosotisConfiguration =
+      'Inserire sottotitolo form';
+  static const showLogoConfiguration = 'Mostra logo associazione';
+
+  static const textPrivacyMyosotisConfiguration = 'Testo privacy';
+  static const textNewsletterMyosotisConfiguration = 'Testo newletter';
+
+  static const projectToHelp = 'Progetti da sostenere';
+
+  static const showFreePriceConfiguration = 'Mostra importo libero';
+  static const showCausalDonation = 'Mostra progetti da sostenere';
+
+  static const showPrivacy = 'Mostra accetta privacy';
+
+  static const isMandatoryPrivacy = "Accettazione privacy obbligatoria";
+
+  static const showNewsletter = "Mostra accetta newsletter";
+
+  static const isMandatoryNewsletter = "Accettazione newsletter obbligatoria";
+
+  static const showCompanyForm = "Mostra form azienda";
+
+  static const causalDonationText = "Testo causale donazione";
+  static const availableSubCategoryCausalDonation = "Categoria causali";
 }
 
 class AppColors {

@@ -7,6 +7,7 @@ class AppAssets {
   static const String logoGivePro_scritta_lato =
       'assets/images/logo/givepro_scritta_lato.png';
   static const String logoGivePro_solo_G = 'assets/images/logo/solo_g.png';
+  static const String logoGivePro = 'assets/images/splash/Logo_GivePro.png';
 
   static const String onBoardingOne = 'assets/animations/onBoardingOne.json';
   static const String onBoardingTwo = 'assets/animations/onBoardingTwo.json';

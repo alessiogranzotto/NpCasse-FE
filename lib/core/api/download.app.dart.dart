@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
-import 'package:np_casse/core/models/cart.product.model.dart';
 
 class DownloadAppAPI {
   final client = http.Client();

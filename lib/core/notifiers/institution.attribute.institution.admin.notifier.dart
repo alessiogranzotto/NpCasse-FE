@@ -1,25 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cache_manager/cache_manager.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/componenents/custom.alert.dialog.dart';
-import 'package:np_casse/core/api/authentication.api.dart';
 import 'package:np_casse/core/api/institution.attribute.api.dart';
-import 'package:np_casse/core/api/user.api.dart';
 import 'package:np_casse/core/models/institution.model.dart';
-import 'package:np_casse/core/models/user.app.institution.model.dart';
-import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
-import 'package:np_casse/screens/loginScreen/login.view.dart';
-import 'package:np_casse/screens/shopScreen/widget/shop.grant.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
   final InstitutionAttributeAPI institutionAttributeAPI =

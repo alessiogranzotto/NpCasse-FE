@@ -17,6 +17,7 @@ import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/disable.focus.node.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
+import 'package:uiblock/uiblock.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard(
@@ -795,6 +796,7 @@ class _ProductCardState extends State<ProductCard> {
                             if (!addToCartButtonEnabled.value) {
                               return;
                             } else {
+                              UIBlock.block(context);
                               addToCartButtonEnabled.value = false;
                               int quantity = 0;
                               var q = int.tryParse(
@@ -842,6 +844,7 @@ class _ProductCardState extends State<ProductCard> {
                                           textEditingControllerNoteProduct.text)
                                   .then((value) {
                                 addToCartButtonEnabled.value = true;
+                                UIBlock.unblock(context);
                                 if (value) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackUtil.stylishSnackBar(

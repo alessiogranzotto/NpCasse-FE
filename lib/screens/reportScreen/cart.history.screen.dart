@@ -25,6 +25,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
   List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
   List<String> filterStringModel = [];
+  String? sortBy;
+  String? sortDirection;
+  String sortColumnAndDirection = '';
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -51,10 +54,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      // Sorting logic
-      String? sortBy;
-      String? sortDirection;
-      String? sortColumnAndDirection = '';
+      sortColumnAndDirection = '';
 
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
@@ -131,10 +131,13 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         authNotifier.getSelectedUserAppInstitution();
 
     await reportNotifier.downloadCartList(
-      context: context,
-      token: authNotifier.token,
-      idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-    );
+        context: context,
+        token: authNotifier.token,
+        pageNumber: 1,
+        pageSize: -1 >>> 1,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
+        filter: filterStringModel);
   }
 
   @override

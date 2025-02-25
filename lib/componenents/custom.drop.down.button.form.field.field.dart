@@ -59,10 +59,9 @@ class _CustomDropDownButtonFormField
             //               _selectedValue = null;
             //               widget.onItemChanged('0');
             //             })),
-            labelStyle: Theme.of(context)
-                .textTheme
-                .labelMedium!
-                .copyWith(color: Colors.blueGrey),
+
+            labelStyle: Theme.of(context).textTheme.labelLarge!,
+
             hintText: widget.hintText,
             hintStyle: Theme.of(context)
                 .textTheme
@@ -79,7 +78,7 @@ class _CustomDropDownButtonFormField
             ),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
-              borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              borderSide: BorderSide(color: Colors.black, width: 1.0),
             ),
             errorBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -118,7 +117,9 @@ class _CustomDropDownButtonFormField
           //     null;
           //   }
           // },
-          validator: (value) => value == null ? 'Selezione obbligatoria' : null,
+          validator: (value) => (value == null || value.toString().isEmpty)
+              ? 'Selezione obbligatoria'
+              : null,
           items: widget.listOfValue),
     );
   }

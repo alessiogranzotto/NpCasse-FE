@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/app/utilities/initial_context.dart';
 import 'package:np_casse/core/api/cart.api.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
-import 'package:np_casse/screens/loginScreen/login.view.dart';
-import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:provider/provider.dart';
 
 class CartNotifier with ChangeNotifier {
