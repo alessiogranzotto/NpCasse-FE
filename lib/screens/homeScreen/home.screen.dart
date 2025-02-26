@@ -34,7 +34,8 @@ import 'package:np_casse/screens/settingScreen/institution.setting.screen.dart';
 import 'package:np_casse/screens/settingScreen/user.setting.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
-import 'package:np_casse/screens/stakeholderScreen/stakeholder.navigator.screen.dart';
+import 'package:np_casse/screens/stakeholderScreen/stakeholder.givepro.navigator.dart';
+import 'package:np_casse/screens/stakeholderScreen/stakeholder.navigator.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
 
@@ -100,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const ProductCatalogNavigator(), 2, null),
     ]),
     MenuList('Donatori', Icons.people, const StakeholderNavigator(), 1, null),
+    MenuList('Donatori Give Pro', Icons.people,
+        const StakeholderGiveproNavigator(), 1, null),
     MenuList('Impostazioni', Icons.settings, null, 1, [
       MenuList('Impostazioni utente', Icons.settings, const UserSettingScreen(),
           1, null),

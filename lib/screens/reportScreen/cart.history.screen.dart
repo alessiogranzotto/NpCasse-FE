@@ -320,9 +320,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
 
                 return states;
               },
-              chipFormatter: (value) => 'State: ${value?.name ?? "None"}',
+              chipFormatter: (value) => 'Stato: ${value?.name ?? "None"}',
               id: "stateFilter",
-              name: "State",
+              name: "Stato",
               onChanged: (StateModel? newValue) {
                 setState(() {});
               },

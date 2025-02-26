@@ -42,6 +42,36 @@ class GiveAPI {
     }
   }
 
+  Future findStakeholderGivepro({
+    required String? token,
+    required int idUserAppInstitution,
+    required int id,
+    required String nameSurnameOrBusinessName,
+    required String email,
+    required String city,
+    required String cf,
+  }) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.giveURL}/Find-stakeholder-givepro?idUserAppInstitution=$idUserAppInstitution&IdStakeholder=$id&NameSurnameOrBusinessName=$nameSurnameOrBusinessName&Email=$email&City=$city&Cf=$cf');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
   Future addStakeholder(
       {String? token,
       required int idUserAppInstitution,

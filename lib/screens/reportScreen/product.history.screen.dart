@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
@@ -214,6 +215,14 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               sortable: true,
             ),
             TableColumn(
+              id: 'dateCart',
+              title: const Text('Data'),
+              cellBuilder: (context, item, index) =>
+                  Text(item['dateCart'].toString()),
+              size: const FixedColumnSize(200),
+              sortable: true,
+            ),
+            TableColumn(
               id: 'nameProduct',
               title: const Text('Nome prodotto'),
               cellBuilder: (context, item, index) =>
@@ -285,7 +294,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                 return categories ?? [CategoryCatalogModel.empty()];
               },
               chipFormatter: (value) =>
-                  'Category: ${value?.nameCategory ?? "None"}',
+                  'Categoria: ${value?.nameCategory ?? "None"}',
               id: "categoryFilter",
               name: "Categoria",
               onChanged: (newValue) {
@@ -326,9 +335,9 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                 return categories ?? [CategoryCatalogModel.empty()];
               },
               chipFormatter: (value) =>
-                  'Sub Categoria: ${value?.nameCategory ?? "None"}',
+                  'Sottocategoria: ${value?.nameCategory ?? "None"}',
               id: "subcategoryFilter",
-              name: "Sub Categoria",
+              name: "Sottocategoria",
               onChanged: (newValue) {
                 setState(() {
                   selectedSubCategory = newValue;

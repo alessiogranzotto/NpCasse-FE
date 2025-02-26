@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/screens/shopScreen/category.one.shop.screen.dart';
+import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 
-class ShopNavigator extends StatefulWidget {
-  const ShopNavigator({super.key});
+class StakeholderNavigator extends StatefulWidget {
+  const StakeholderNavigator({super.key});
 
   @override
-  ShopNavigatorState createState() => ShopNavigatorState();
+  StakeholderNavigatorState createState() => StakeholderNavigatorState();
 }
 
-GlobalKey<NavigatorState> ShopNavigatorKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> StakeholderNavigatorKey = GlobalKey<NavigatorState>();
 
-class ShopNavigatorState extends State<ShopNavigator> {
+class StakeholderNavigatorState extends State<StakeholderNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: ShopNavigatorKey,
+      key: StakeholderNavigatorKey,
       onGenerateRoute: (RouteSettings settings) {
         if (settings.name != "/") {
           return AppRouter.generateRoute(settings);
@@ -23,7 +23,9 @@ class ShopNavigatorState extends State<ShopNavigator> {
         return MaterialPageRoute(
           settings: settings,
           builder: (BuildContext context) {
-            return const CategoryOneShopScreen();
+            return const ShManageScreen(
+              idCart: 0,
+            );
           },
         );
 

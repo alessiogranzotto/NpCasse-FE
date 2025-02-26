@@ -9,14 +9,12 @@ import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.d
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
-import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/product.category.mapping.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/vat.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';

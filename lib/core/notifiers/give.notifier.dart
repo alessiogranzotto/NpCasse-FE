@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/give.api.dart';
 import 'package:np_casse/core/models/give.model.dart';
+import 'package:np_casse/core/models/givepro.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
@@ -69,6 +70,64 @@ class GiveNotifier with ChangeNotifier {
             //         .toList();
 
             return stakeholderModel;
+          } else {
+            return null;
+          }
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Anagrafiche",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future findStakeholderGivepro(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int id,
+      required String nameSurnameOrBusinessName,
+      required String email,
+      required String city,
+      required String cf}) async {
+    try {
+      bool isOk = false;
+
+      var response = await giveAPI.findStakeholderGivepro(
+          token: token,
+          id: id,
+          idUserAppInstitution: idUserAppInstitution,
+          nameSurnameOrBusinessName: nameSurnameOrBusinessName,
+          email: email,
+          city: city,
+          cf: cf);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Anagrafiche",
+                    message: errorDescription,
+                    contentType: "failure"));
+            // Navigator.pop(context);
+          }
+        } else {
+          if (parseData['okResult'] != null) {
+            StakeholderGiveProDataModel stakeholderGiveProDataModel =
+                StakeholderGiveProDataModel.fromJson(parseData['okResult']);
+            return stakeholderGiveProDataModel;
           } else {
             return null;
           }

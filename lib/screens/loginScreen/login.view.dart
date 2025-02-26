@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:jumping_dot/jumping_dot.dart';
 import 'package:np_casse/app/constants/assets.dart';
-import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/download.app.notifier.dart';
-import 'package:np_casse/helpers/snackbar.helper.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:np_casse/core/api/category.catalog.api.dart';
 import 'package:np_casse/core/api/common.api.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.dart';
 import 'package:np_casse/screens/comunicationScreen/prepare.comunication.screen.dart';
 
 class PrepareComunicationNavigator extends StatefulWidget {

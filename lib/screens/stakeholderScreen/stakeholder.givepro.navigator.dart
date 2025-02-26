@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/screens/cartScreen/sh.givepro.manage.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
-import 'package:np_casse/screens/shopScreen/category.one.shop.screen.dart';
-import 'package:provider/provider.dart';
 
-class StakeholderNavigator extends StatefulWidget {
-  const StakeholderNavigator({super.key});
+class StakeholderGiveproNavigator extends StatefulWidget {
+  const StakeholderGiveproNavigator({super.key});
 
   @override
-  StakeholderNavigatorState createState() => StakeholderNavigatorState();
+  StakeholderGiveproNavigatorState createState() =>
+      StakeholderGiveproNavigatorState();
 }
 
-GlobalKey<NavigatorState> StakeholderNavigatorKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> StakeholderGiveproNavigatorKey =
+    GlobalKey<NavigatorState>();
 
-class StakeholderNavigatorState extends State<StakeholderNavigator> {
+class StakeholderGiveproNavigatorState
+    extends State<StakeholderGiveproNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: StakeholderNavigatorKey,
+      key: StakeholderGiveproNavigatorKey,
       onGenerateRoute: (RouteSettings settings) {
         if (settings.name != "/") {
           return AppRouter.generateRoute(settings);
@@ -26,7 +27,7 @@ class StakeholderNavigatorState extends State<StakeholderNavigator> {
         return MaterialPageRoute(
           settings: settings,
           builder: (BuildContext context) {
-            return const ShManageScreen(
+            return const ShGiveproManageScreen(
               idCart: 0,
             );
           },

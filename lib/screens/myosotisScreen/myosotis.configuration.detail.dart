@@ -173,6 +173,11 @@ class _MyosotisConfigurationDetailState
     mandatoryCompanyFormFieldController.dispose();
     paymentMethodAppController.dispose();
     paymentMethodWebController.dispose();
+
+    createMyosotisConfigurationValidNotifier.dispose();
+    showPrivacyNotifier.dispose();
+    isMandatoryPrivacyNotifier.dispose();
+    showCompanyFormNotifier.dispose();
   }
 
   void dataControllerListener() {

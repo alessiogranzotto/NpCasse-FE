@@ -9,19 +9,20 @@ import 'package:np_casse/core/notifiers/give.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/widgets/sh.search.textfield.dart';
 import 'package:np_casse/screens/cartScreen/widgets/show.GiveSh.data.dart';
+import 'package:np_casse/screens/cartScreen/widgets/show.GiveShGivepro.data.dart';
 import 'package:provider/provider.dart';
 
-class ShManageScreen extends StatefulWidget {
-  const ShManageScreen({
+class ShGiveproManageScreen extends StatefulWidget {
+  const ShGiveproManageScreen({
     Key? key,
     required this.idCart,
   }) : super(key: key);
   final int idCart;
   @override
-  State<ShManageScreen> createState() => _ShManageScreenState();
+  State<ShGiveproManageScreen> createState() => _ShGiveproManageScreenState();
 }
 
-class _ShManageScreenState extends State<ShManageScreen> {
+class _ShGiveproManageScreenState extends State<ShGiveproManageScreen> {
   final TextEditingController nameSurnameorBusinessNameController =
       TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -72,9 +73,9 @@ class _ShManageScreenState extends State<ShManageScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
       appBar: AppBar(
-        backgroundColor: CustomColors.darkBlue,
+        backgroundColor: CustomColors.red,
         centerTitle: true,
-        title: Text("Gestione donatori",
+        title: Text("Gestione donatori Give Pro",
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: Column(
@@ -187,7 +188,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
           Row(
             children: [
               isExecuted
-                  ? ShowGiveShData(
+                  ? ShowGiveShGiveproData(
                       nameSurnameOrBusinessName:
                           nameSurnameorBusinessNameController.text,
                       email: emailController.text,
