@@ -15,7 +15,7 @@ interface BackendService {
     /**
      * Get a connection token string from the backend, with idUserAppInstitution as a query parameter
      */
-    @POST("Create-connection-token")
+    @POST("Create-connection-token-by-iuai")
     fun getConnectionToken(@Query("idUserAppInstitution") idUserAppInstitution: Int): Call<ConnectionToken>
 
     /**

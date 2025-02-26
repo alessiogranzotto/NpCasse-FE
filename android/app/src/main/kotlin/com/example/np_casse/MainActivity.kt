@@ -30,6 +30,7 @@ class MainActivity : FlutterActivity() {
     // Create your token provider.
     var tokenProvider: TokenProvider? = null
     private var variableConnectionTokenProvider: VariableConnectionTokenProvider? = null // No default initialization
+    private var casseURL: String? = null // Store casseURL globally
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -39,10 +40,13 @@ class MainActivity : FlutterActivity() {
                 "initializeStripe" -> {
                     val idUserAppInstitution = call.argument<Int>("idUserAppInstitution")
                     val token = call.argument<String>("token")  // Extract token from Flutter side
-                    
-                    if (idUserAppInstitution != null && token != null) {
+                    val casseUrl = call.argument<String>("casseURL") // Extract casseURL
+
+                    if (idUserAppInstitution != null && token != null  && casseUrl != null) {
+                        // Store casseURL globally
+                        casseURL = casseUrl
                         // Pass both idUserAppInstitution and token to the method that initializes Stripe
-                        initializeTerminal(idUserAppInstitution, token, result)
+                        initializeTerminal(idUserAppInstitution, token, result, casseURL!!)
                     } else {
                         result.error("MISSING_PARAM", "idUserAppInstitution and token are required", null)
                     }
@@ -88,9 +92,10 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun initializeTerminal(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
+    private fun initializeTerminal(idUserAppInstitution: Int, token: String, result: MethodChannel.Result, casseURL: String) {
         // Set the token globally in ApiClient
         ApiClient.setToken(token)
+        ApiClient.initialize(casseURL)  // Initialize your ApiClient here with the provided URL
         val tokenProvider = TokenProvider(idUserAppInstitution)
 
         if (!Terminal.isInitialized()) {
@@ -252,7 +257,7 @@ private fun connectToReader(idUserAppInstitution: Int, token: String?, reader: R
         return
     }
 
-    val apiUrl = "https://apicasse.giveapp.it/api/StripeTerminal/Get-location-id"
+    val apiUrl = "$casseURL/api/StripeTerminal/Get-location-id-by-iuai"
 
     // Fetch location ID asynchronously
     fetchLocationId(idUserAppInstitution, token, apiUrl) { locationId, error ->

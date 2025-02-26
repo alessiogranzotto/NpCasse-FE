@@ -11,10 +11,6 @@ import java.io.IOException
 
 // The 'ApiClient' is a singleton object used to make calls to our backend and return their results
 object ApiClient {
-
-    // Base URL for your backend API
-    const val BACKEND_URL = "https://apicasse.giveapp.it/api/StripeTerminal/"
-
     // Variable to store the token that will be added to each request
     private var token: String? = null
 
@@ -39,15 +35,24 @@ object ApiClient {
         }
         .build()
 
-    // Create Retrofit instance with the OkHttpClient that includes the token
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BACKEND_URL)
-        .client(client)  // Attach the custom client
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+     // Retrofit instance, will be initialized with the provided casseURL
+    private var retrofit: Retrofit? = null
 
     // The service used to call backend endpoints
-    internal val service: BackendService = retrofit.create(BackendService::class.java)
+    internal lateinit var service: BackendService
+
+    // Method to initialize ApiClient with a base URL (casseURL) + '/api/StripeTerminal/'
+    fun initialize(casseURL: String) {
+        val fullUrl = "$casseURL/api/StripeTerminal/"  // Concatenate the base URL with '/api/StripeTerminal/'
+
+        retrofit = Retrofit.Builder()
+            .baseUrl(fullUrl)
+            .client(client)  // Attach the custom client
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        service = retrofit!!.create(BackendService::class.java)
+    }   
 
     // Method to set the token for subsequent API calls
     fun setToken(newToken: String) {

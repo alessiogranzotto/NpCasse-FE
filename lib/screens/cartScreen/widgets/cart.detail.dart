@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jumping_dot/jumping_dot.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/app/routes/api_routes.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/money_formatter.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
@@ -275,6 +276,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         'idUserAppInstitution':
             idUserAppInstitution, // Pass the idUserAppInstitution
         'token': token, // Pass token as part of the method arguments
+        'casseURL': ApiRoutes.casseURL
       });
 
       // On success, mark the terminal as initialized
