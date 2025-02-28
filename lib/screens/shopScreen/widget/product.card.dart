@@ -250,7 +250,9 @@ class _ProductCardState extends State<ProductCard> {
           categoryCatalogNotifier.getCurrentCategoryCatalog().idCategory;
       showCategoryProduct = false;
     } else if (widget.comeFrom == "Search") {
-      idCategory = productCatalog.productCategoryMappingModel.first.idCategory;
+      idCategory = productCatalog.productCategoryMappingModel.isNotEmpty
+          ? productCatalog.productCategoryMappingModel.first.idCategory
+          : 0;
       showCategoryProduct = true;
     }
     addToCartButtonEnabled = ValueNotifier(checkEnableButton());

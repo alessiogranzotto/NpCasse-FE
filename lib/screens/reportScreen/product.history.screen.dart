@@ -253,7 +253,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               title: const Text('Prezzo'),
               cellBuilder: (context, item, index) =>
                   Text(item['priceCartProduct'].toStringAsFixed(2) + ' €'),
-              size: const FixedColumnSize(100),
+              size: const FixedColumnSize(150),
               sortable: true,
             ),
             TableColumn(

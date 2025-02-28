@@ -22,11 +22,11 @@ class ImageUtils {
 
     if (!kIsWeb) {
       imageXFile = await imagePicked.pickImage(
-          source: source,
-          maxWidth: 1280,
-          maxHeight: 720,
-          imageQuality: 50 //0 - 100
-          );
+        source: source,
+        // maxWidth: 1280,
+        // maxHeight: 720,
+        // imageQuality: 50 //0 - 100
+      );
       if (imageXFile != null) {
         var selected = File(imageXFile.path);
         imageFilePicked = selected;
@@ -39,11 +39,11 @@ class ImageUtils {
       }
     } else if (kIsWeb) {
       imageXFile = await ImagePicker().pickImage(
-          source: source,
-          maxWidth: 1280,
-          maxHeight: 720,
-          imageQuality: 50 //0 - 100
-          );
+        source: source,
+        // maxWidth: 1280,
+        // maxHeight: 720,
+        // imageQuality: 50 //0 - 100
+      );
       if (imageXFile != null) {
         var f = await imageXFile.readAsBytes();
         imagebytes = f;

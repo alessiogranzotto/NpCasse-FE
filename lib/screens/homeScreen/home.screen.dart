@@ -102,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ]),
     MenuList('Donatori', Icons.people, const StakeholderNavigator(), 1, null),
     MenuList('Donatori Give Pro', Icons.people,
-        const StakeholderGiveproNavigator(), 1, null),
+        const StakeholderGiveproNavigator(), 3, null),
     MenuList('Impostazioni', Icons.settings, null, 1, [
       MenuList('Impostazioni utente', Icons.settings, const UserSettingScreen(),
           1, null),

@@ -11,9 +11,9 @@ class ApiRoutes {
   static const String prodCasseURL = "https://apicasse.giveapp.it";
   static const String prodWhURL = "https://wh.giveapp.it";
 
-  static const String authURL = devAuthURL;
-  static const String casseURL = devCasseURL;
-  static const String whURL = devWhURL;
+  static const String authURL = testAuthURL;
+  static const String casseURL = testCasseURL;
+  static const String whURL = testWhURL;
 
   static const String authenticateURL =
       "$authURL/api/user/utility/authenticate";

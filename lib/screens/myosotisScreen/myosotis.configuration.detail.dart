@@ -1574,7 +1574,7 @@ class _MyosotisConfigurationDetailState
                               title: "Configurazione Myosotis",
                               message: "Errore di connessione",
                               contentType: "failure"));
-                      Navigator.of(context).pop();
+                      // Navigator.of(context).pop();
                     }
                   });
                 }
