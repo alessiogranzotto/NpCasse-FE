@@ -441,6 +441,51 @@ class CartNotifier with ChangeNotifier {
     }
   }
 
+  Future changeCartState(
+      {required BuildContext context,
+      String? token,
+      required int idUserAppInstitution,
+      required idCart,
+      required int state}) async {
+    try {
+      bool isOk = false;
+      var response = await cartAPI.changeCartState(
+          token: token,
+          idCart: idCart,
+          idUserAppInstitution: idUserAppInstitution,
+          state: state);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Carrello",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          //notifyListeners();
+        }
+        return isOk;
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
   void refresh() {
     notifyListeners();
   }

@@ -242,4 +242,30 @@ class CartAPI {
       return null;
     }
   }
+
+  Future changeCartState(
+      {String? token,
+      required idCart,
+      required int idUserAppInstitution,
+      required int state}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.cartURL}/Change-cart-state/$idCart');
+
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode(
+            {"idUserAppInstitution": idUserAppInstitution, "state": state}));
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/state.model.dart';
+import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
@@ -138,6 +139,25 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
         orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
         filter: filterStringModel);
+  }
+
+  void changeCartState(idCart, int state) async {
+    var authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+    CartNotifier cartNotifier =
+        Provider.of<CartNotifier>(context, listen: false);
+    await cartNotifier
+        .changeCartState(
+            context: context,
+            token: authenticationNotifier.token,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+            idCart: idCart,
+            state: state)
+        .then((value) {
+      tableController.refresh();
+    });
   }
 
   @override
@@ -286,9 +306,14 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                       value: 3,
                       child: const Text('Visualizza scontrino'),
                     ),
-                  if (item['fiscalization'] > 0)
+                  if (item['paymentTypeCart'].toString().isNotEmpty)
                     PopupMenuItem<int>(
                       value: 4,
+                      child: const Text('Storna carrello'),
+                    ),
+                  if (item['paymentTypeCart'].toString().isNotEmpty)
+                    PopupMenuItem<int>(
+                      value: 5,
                       child: const Text('Annulla carrello'),
                     ),
                 ],
@@ -300,6 +325,12 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   if (value == 2) {
                     Navigator.of(context).pushNamed(AppRouter.shManage,
                         arguments: item['idCart']);
+                  }
+                  if (value == 4) {
+                    changeCartState(item['idCart'], 7);
+                  }
+                  if (value == 5) {
+                    changeCartState(item['idCart'], 8);
                   }
                 },
               ),
@@ -314,6 +345,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   StateModel(id: 2, name: '2-Pagato'),
                   StateModel(id: 4, name: '4-In acquisizione'),
                   StateModel(id: 5, name: '5-Acquisito'),
+                  StateModel(id: 7, name: '7-Stornato'),
                   StateModel(id: 8, name: '8-Annullato'),
                   StateModel(id: 9, name: '9-Errore'),
                 ];
