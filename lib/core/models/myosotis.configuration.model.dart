@@ -77,9 +77,14 @@ class MyosotisConfigurationModel {
       enabledDeviceMyosotisConfiguration = List.empty();
     }
 
-    myosotisConfigurationDetailModel =
-        MyosotisConfigurationDetailModel.fromJson(
-            json['myosotisConfigurationDetail']);
+    if (json['myosotisConfigurationDetail'] != null) {
+      myosotisConfigurationDetailModel =
+          MyosotisConfigurationDetailModel.fromJson(
+              json['myosotisConfigurationDetail']);
+    } else {
+      myosotisConfigurationDetailModel =
+          MyosotisConfigurationDetailModel.empty();
+    }
   }
 
   // JSON serialization
@@ -126,32 +131,32 @@ class MyosotisConfigurationDetailModel {
       required this.mandatoryCompanyFormField,
       required this.preestablishedPaymentMethodApp,
       required this.preestablishedPaymentMethodWeb});
-  late final String typeFormStartup;
-  late final bool showLogo;
-  late final String logoEncoded;
-  late final String bigImageString;
-  late final String smallImageString;
-  late final String title;
-  late final String subtitle;
-  late final List<String> preestablishedAmount;
-  late final bool showFreePrice;
-  late final bool showCausalDonation;
-  late final String causalDonationText;
-  late final int idSubCategoryCausalDonation;
-  late final List<String> subCategoryCausalDonation;
-  late final bool showPrivacy;
-  late final String textPrivacy;
-  late final bool isMandatoryPrivacy;
-  late final bool showNewsletter;
-  late final String textNewsletter;
-  late final bool isMandatoryNewsletter;
-  late final List<String> visiblePersonalFormField;
-  late final List<String> mandatoryPersonalFormField;
-  late final bool showCompanyForm;
-  late final List<String> visibleCompanyFormField;
-  late final List<String> mandatoryCompanyFormField;
-  late final List<String> preestablishedPaymentMethodApp;
-  late final List<String> preestablishedPaymentMethodWeb;
+  late String typeFormStartup;
+  late bool showLogo;
+  late String logoEncoded;
+  late String bigImageString;
+  late String smallImageString;
+  late String title;
+  late String subtitle;
+  late List<String> preestablishedAmount;
+  late bool showFreePrice;
+  late bool showCausalDonation;
+  late String causalDonationText;
+  late int idSubCategoryCausalDonation;
+  late List<ProductCausalDonation> productCausalDonation;
+  late bool showPrivacy;
+  late String textPrivacy;
+  late bool isMandatoryPrivacy;
+  late bool showNewsletter;
+  late String textNewsletter;
+  late bool isMandatoryNewsletter;
+  late List<String> visiblePersonalFormField;
+  late List<String> mandatoryPersonalFormField;
+  late bool showCompanyForm;
+  late List<String> visibleCompanyFormField;
+  late List<String> mandatoryCompanyFormField;
+  late List<String> preestablishedPaymentMethodApp;
+  late List<String> preestablishedPaymentMethodWeb;
 
   MyosotisConfigurationDetailModel.empty() {
     typeFormStartup = "";
@@ -166,7 +171,7 @@ class MyosotisConfigurationDetailModel {
     showCausalDonation = false;
     causalDonationText = '';
     idSubCategoryCausalDonation = 0;
-    subCategoryCausalDonation = [];
+    productCausalDonation = [];
     showPrivacy = false;
     textPrivacy = '';
     isMandatoryPrivacy = false;
@@ -204,10 +209,12 @@ class MyosotisConfigurationDetailModel {
     causalDonationText = json['causalDonationText'];
     idSubCategoryCausalDonation = json['idSubCategoryCausalDonation'];
 
-    if (json['subCategoryCausalDonation'] != null) {
-      subCategoryCausalDonation = List.from(json['subCategoryCausalDonation']);
+    if (json['productCausalDonation'] != null) {
+      productCausalDonation = List.from(json['productCausalDonation'])
+          .map((e) => ProductCausalDonation.fromJson(e))
+          .toList();
     } else {
-      subCategoryCausalDonation = List.empty();
+      productCausalDonation = List.empty();
     }
 
     showPrivacy = json['showPrivacy'];
@@ -355,5 +362,33 @@ class EnabledDeviceMyosotisConfiguration {
   // JSON deserialization
   EnabledDeviceMyosotisConfiguration.fromJson(Map<String, dynamic> json) {
     valueDeviceMyosotisConfiguration = json['valueDeviceMyosotisConfiguration'];
+  }
+}
+
+class ProductCausalDonation {
+  ProductCausalDonation({
+    required this.idProduct,
+    required this.nameProduct,
+    required this.priceProduct,
+    required this.freePriceProduct,
+  });
+  late final int idProduct;
+  late final String nameProduct;
+  late final double priceProduct;
+  late final bool freePriceProduct;
+
+  ProductCausalDonation.empty() {
+    idProduct = 0;
+    nameProduct = '';
+    priceProduct = 0;
+    freePriceProduct = false;
+  }
+
+  // JSON deserialization
+  ProductCausalDonation.fromJson(Map<String, dynamic> json) {
+    idProduct = json['idProduct'];
+    nameProduct = json['nameProduct'];
+    priceProduct = json['priceProduct'];
+    freePriceProduct = json['freePriceProduct'];
   }
 }

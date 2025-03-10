@@ -40,6 +40,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
   final ValueNotifier<bool> freePriceProduct = ValueNotifier<bool>(false);
   final ValueNotifier<bool> outOfAssortment = ValueNotifier<bool>(false);
   bool deleted = false;
+  bool tempDeleted = false;
   String tImageString = '';
   bool isEdit = false;
   bool panelIdsGiveExpanded = false;
@@ -78,6 +79,15 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       TextEditingController();
   final TextEditingController textEditingControllerIdCatalogo =
       TextEditingController();
+
+  // final TextEditingController textEditingControllerIdPagamentoContante =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoBancomat =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoCartaDiCredito =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoAssegno =
+  //     TextEditingController();
   final controllerCategory = MultiSelectController<CategoryCatalogModel>();
   int idCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
@@ -215,6 +225,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       outOfAssortment.value =
           widget.productCatalogModelArgument.outOfAssortment;
       deleted = widget.productCatalogModelArgument.deleted;
+      tempDeleted = deleted;
       tImageString = widget.productCatalogModelArgument.imageData;
       selectedVat = widget.productCatalogModelArgument.valueVat;
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
@@ -291,6 +302,51 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       } else {
         textEditingControllerIdCatalogo.text = '';
       }
+
+      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+      //         .idPagamentoContante >
+      //     0) {
+      //   textEditingControllerIdPagamentoContante.text = widget
+      //       .productCatalogModelArgument
+      //       .giveIdsFlatStructureModel
+      //       .idPagamentoContante
+      //       .toString();
+      // } else {
+      //   textEditingControllerIdPagamentoContante.text = '';
+      // }
+      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+      //         .idPagamentoBancomat >
+      //     0) {
+      //   textEditingControllerIdPagamentoBancomat.text = widget
+      //       .productCatalogModelArgument
+      //       .giveIdsFlatStructureModel
+      //       .idPagamentoBancomat
+      //       .toString();
+      // } else {
+      //   textEditingControllerIdPagamentoBancomat.text = '';
+      // }
+      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+      //         .idPagamentoCartaDiCredito >
+      //     0) {
+      //   textEditingControllerIdPagamentoCartaDiCredito.text = widget
+      //       .productCatalogModelArgument
+      //       .giveIdsFlatStructureModel
+      //       .idPagamentoCartaDiCredito
+      //       .toString();
+      // } else {
+      //   textEditingControllerIdPagamentoCartaDiCredito.text = '';
+      // }
+      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+      //         .idPagamentoAssegno >
+      //     0) {
+      //   textEditingControllerIdPagamentoAssegno.text = widget
+      //       .productCatalogModelArgument
+      //       .giveIdsFlatStructureModel
+      //       .idPagamentoAssegno
+      //       .toString();
+      // } else {
+      //   textEditingControllerIdPagamentoAssegno.text = '';
+      // }
     } else {
       //tImageString = AppAssets.noImageString;
     }
@@ -881,6 +937,11 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                             child: Text("Cancellato")),
                                         value: deleted,
                                         onChanged: (bool? value) {
+                                          if (isEdit && tempDeleted) {
+                                            setState(() {
+                                              deleted = value!;
+                                            });
+                                          }
                                           // setState(() {
                                           //   deleted = value!;
                                           // });
@@ -955,6 +1016,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     },
                     children: [
                       ExpansionPanel(
+                        canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
                             title: Text('ID Give'),
@@ -999,37 +1061,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text(
-                                                      "Id Finalizzazione",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Finalizzazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Fin",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1072,36 +1115,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Campagna",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Campagna",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Ev",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1144,36 +1169,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Attività",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Attività",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Att",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1182,11 +1189,6 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
                               Expanded(
                                 child: Column(
                                   children: [
@@ -1221,34 +1223,16 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Ag",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Evento",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Evento",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
                                           ],
@@ -1259,6 +1243,11 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   ],
                                 ),
                               ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Expanded(
                                 child: Column(
                                   children: [
@@ -1293,37 +1282,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text(
-                                                      "Id Comunicazioni",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Comunicazioni",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Com",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1366,36 +1336,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Tipo Donazione",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Tipo Donazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Td",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1404,11 +1356,6 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
                               Expanded(
                                 child: Column(
                                   children: [
@@ -1443,36 +1390,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Catalogo",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Catalogo",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Cat",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1483,6 +1412,234 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                               ),
                             ],
                           ),
+                          // SizedBox(
+                          //   height: 30,
+                          // ),
+                          // Row(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     Expanded(
+                          //       child: Column(
+                          //         children: [
+                          //           Card(
+                          //             color: Theme.of(context).cardColor,
+                          //             elevation: 4,
+                          //             child: ListTile(
+                          //               subtitle: Row(
+                          //                 children: [
+                          //                   Expanded(
+                          //                     child: TextField(
+                          //                       controller:
+                          //                           textEditingControllerIdPagamentoContante,
+                          //                       minLines: 1,
+                          //                       maxLines: 1,
+                          //                       inputFormatters: <TextInputFormatter>[
+                          //                         FilteringTextInputFormatter
+                          //                             .digitsOnly
+                          //                       ],
+                          //                       onTapOutside: (event) {
+                          //                         FocusManager
+                          //                             .instance.primaryFocus
+                          //                             ?.unfocus();
+                          //                       },
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               trailing: const Icon(Icons.edit),
+                          //               leading: Column(
+                          //                 mainAxisSize: MainAxisSize.min,
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.center,
+                          //                 children: [
+                          //                   Container(
+                          //                     height: 36.0,
+                          //                     width: 100.0,
+                          //                     color: CustomColors.darkBlue,
+                          //                     child: Center(
+                          //                       child: Text(
+                          //                           "Id Pagamento contante",
+                          //                           textAlign: TextAlign.center,
+                          //                           style: Theme.of(context)
+                          //                               .textTheme
+                          //                               .headlineSmall),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               onTap: () {},
+                          //             ),
+                          //           )
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Expanded(
+                          //       child: Column(
+                          //         children: [
+                          //           Card(
+                          //             color: Theme.of(context).cardColor,
+                          //             elevation: 4,
+                          //             child: ListTile(
+                          //               subtitle: Row(
+                          //                 children: [
+                          //                   Expanded(
+                          //                     child: TextField(
+                          //                       controller:
+                          //                           textEditingControllerIdPagamentoBancomat,
+                          //                       minLines: 1,
+                          //                       maxLines: 1,
+                          //                       inputFormatters: <TextInputFormatter>[
+                          //                         FilteringTextInputFormatter
+                          //                             .digitsOnly
+                          //                       ],
+                          //                       onTapOutside: (event) {
+                          //                         FocusManager
+                          //                             .instance.primaryFocus
+                          //                             ?.unfocus();
+                          //                       },
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               trailing: const Icon(Icons.edit),
+                          //               leading: Column(
+                          //                 mainAxisSize: MainAxisSize.min,
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.center,
+                          //                 children: [
+                          //                   Container(
+                          //                     height: 36.0,
+                          //                     width: 100.0,
+                          //                     color: CustomColors.darkBlue,
+                          //                     child: Center(
+                          //                       child: Text(
+                          //                           "Id Pagamento bancomat",
+                          //                           textAlign: TextAlign.center,
+                          //                           style: Theme.of(context)
+                          //                               .textTheme
+                          //                               .headlineSmall),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               onTap: () {},
+                          //             ),
+                          //           )
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Expanded(
+                          //       child: Column(
+                          //         children: [
+                          //           Card(
+                          //             color: Theme.of(context).cardColor,
+                          //             elevation: 4,
+                          //             child: ListTile(
+                          //               subtitle: Row(
+                          //                 children: [
+                          //                   Expanded(
+                          //                     child: TextField(
+                          //                       controller:
+                          //                           textEditingControllerIdPagamentoCartaDiCredito,
+                          //                       minLines: 1,
+                          //                       maxLines: 1,
+                          //                       inputFormatters: <TextInputFormatter>[
+                          //                         FilteringTextInputFormatter
+                          //                             .digitsOnly
+                          //                       ],
+                          //                       onTapOutside: (event) {
+                          //                         FocusManager
+                          //                             .instance.primaryFocus
+                          //                             ?.unfocus();
+                          //                       },
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               trailing: const Icon(Icons.edit),
+                          //               leading: Column(
+                          //                 mainAxisSize: MainAxisSize.min,
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.center,
+                          //                 children: [
+                          //                   Container(
+                          //                     height: 36.0,
+                          //                     width: 100.0,
+                          //                     color: CustomColors.darkBlue,
+                          //                     child: Center(
+                          //                       child: Text(
+                          //                           "Id Pagamento carta di credito",
+                          //                           textAlign: TextAlign.center,
+                          //                           style: Theme.of(context)
+                          //                               .textTheme
+                          //                               .headlineSmall),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               onTap: () {},
+                          //             ),
+                          //           )
+                          //         ],
+                          //       ),
+                          //     ),
+                          //     Expanded(
+                          //       child: Column(
+                          //         children: [
+                          //           Card(
+                          //             color: Theme.of(context).cardColor,
+                          //             elevation: 4,
+                          //             child: ListTile(
+                          //               subtitle: Row(
+                          //                 children: [
+                          //                   Expanded(
+                          //                     child: TextField(
+                          //                       controller:
+                          //                           textEditingControllerIdPagamentoAssegno,
+                          //                       minLines: 1,
+                          //                       maxLines: 1,
+                          //                       inputFormatters: <TextInputFormatter>[
+                          //                         FilteringTextInputFormatter
+                          //                             .digitsOnly
+                          //                       ],
+                          //                       onTapOutside: (event) {
+                          //                         FocusManager
+                          //                             .instance.primaryFocus
+                          //                             ?.unfocus();
+                          //                       },
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               trailing: const Icon(Icons.edit),
+                          //               leading: Column(
+                          //                 mainAxisSize: MainAxisSize.min,
+                          //                 crossAxisAlignment:
+                          //                     CrossAxisAlignment.center,
+                          //                 children: [
+                          //                   Container(
+                          //                     height: 36.0,
+                          //                     width: 100.0,
+                          //                     color: CustomColors.darkBlue,
+                          //                     child: Center(
+                          //                       child: Text(
+                          //                           "Id pagamento assegno",
+                          //                           textAlign: TextAlign.center,
+                          //                           style: Theme.of(context)
+                          //                               .textTheme
+                          //                               .headlineSmall),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               onTap: () {},
+                          //             ),
+                          //           )
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
                         ]),
                         isExpanded: panelIdsGiveExpanded,
                       ),
@@ -1536,28 +1693,38 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     imageData: tImageString,
                     // categoryName: '',
                     giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
-                      idFinalizzazione: int.tryParse(
-                              textEditingControllerIdFinalizzazione.text) ??
-                          0,
-                      idEvento:
-                          int.tryParse(textEditingControllerIdEvento.text) ?? 0,
-                      idAttivita:
-                          int.tryParse(textEditingControllerIdAttivita.text) ??
-                              0,
-                      idAgenda:
-                          int.tryParse(textEditingControllerIdAgenda.text) ?? 0,
-                      idComunicazioni: int.tryParse(
-                              textEditingControllerIdComunicazioni.text) ??
-                          0,
-                      idTipDonazione: int.tryParse(
-                              textEditingControllerIdTipDonazione.text) ??
-                          0,
-                      idCatalogo:
-                          int.tryParse(textEditingControllerIdCatalogo.text) ??
-                              0,
-                    ),
-                    productCategoryMappingModel:
-                        cProductCategoryMappingModelList,
+                        idFinalizzazione:
+                            int.tryParse(textEditingControllerIdFinalizzazione.text) ??
+                                0,
+                        idEvento:
+                            int.tryParse(textEditingControllerIdEvento.text) ??
+                                0,
+                        idAttivita:
+                            int.tryParse(textEditingControllerIdAttivita.text) ?? 0,
+                        idAgenda: int.tryParse(textEditingControllerIdAgenda.text) ?? 0,
+                        idComunicazioni: int.tryParse(textEditingControllerIdComunicazioni.text) ?? 0,
+                        idTipDonazione: int.tryParse(textEditingControllerIdTipDonazione.text) ?? 0,
+                        idCatalogo: int.tryParse(textEditingControllerIdCatalogo.text) ?? 0,
+                        idPagamentoContante: 0,
+                        idPagamentoBancomat: 0,
+                        idPagamentoCartaDiCredito: 0,
+                        idPagamentoAssegno: 0
+
+                        // idPagamentoContante: int.tryParse(
+                        //         textEditingControllerIdPagamentoContante.text) ??
+                        //     0,
+                        // idPagamentoBancomat: int.tryParse(
+                        //         textEditingControllerIdPagamentoBancomat.text) ??
+                        //     0,
+                        // idPagamentoCartaDiCredito: int.tryParse(
+                        //         textEditingControllerIdPagamentoCartaDiCredito
+                        //             .text) ??
+                        //     0,
+                        // idPagamentoAssegno: int.tryParse(
+                        //         textEditingControllerIdPagamentoAssegno.text) ??
+                        //     0,
+                        ),
+                    productCategoryMappingModel: cProductCategoryMappingModelList,
                     productAttributeCombination: List.empty(),
                     smartProductAttributeJson: List.empty());
 
@@ -1590,7 +1757,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
               child: const Icon(Icons.check),
             ),
           ),
-          (isEdit)
+          (isEdit && !tempDeleted)
               ? Container(
                   margin: const EdgeInsets.all(10),
                   child: FloatingActionButton(
@@ -1606,8 +1773,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                               ProductCatalogModel(
                                   idProduct: widget
                                       .productCatalogModelArgument.idProduct,
-                                  nameProduct: textEditingControllerNameProduct
-                                      .text,
+                                  nameProduct:
+                                      textEditingControllerNameProduct.text,
                                   displayOrder: int.tryParse(
                                           textEditingControllerDisplayOrderProduct
                                               .text) ??
@@ -1615,10 +1782,9 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   descriptionProduct:
                                       textEditingControllerDescriptionProduct
                                           .text,
-                                  priceProduct: double.tryParse(
-                                          textEditingControllerPriceProduct
-                                              .text) ??
-                                      0,
+                                  priceProduct:
+                                      double.tryParse(textEditingControllerPriceProduct.text) ??
+                                          0,
                                   freePriceProduct: freePriceProduct.value,
                                   outOfAssortment: outOfAssortment.value,
                                   wishlisted: false,
@@ -1630,37 +1796,38 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                       .idUserAppInstitution,
                                   imageData: tImageString,
                                   // categoryName: '',
-                                  giveIdsFlatStructureModel:
-                                      GiveIdsFlatStructureModel(
-                                    idFinalizzazione: int.tryParse(
-                                            textEditingControllerIdFinalizzazione
-                                                .text) ??
-                                        0,
-                                    idEvento: int.tryParse(
-                                            textEditingControllerIdEvento
-                                                .text) ??
-                                        0,
-                                    idAttivita: int.tryParse(
-                                            textEditingControllerIdAttivita
-                                                .text) ??
-                                        0,
-                                    idAgenda: int.tryParse(
-                                            textEditingControllerIdAgenda
-                                                .text) ??
-                                        0,
-                                    idComunicazioni: int.tryParse(
-                                            textEditingControllerIdComunicazioni
-                                                .text) ??
-                                        0,
-                                    idTipDonazione: int.tryParse(
-                                            textEditingControllerIdTipDonazione
-                                                .text) ??
-                                        0,
-                                    idCatalogo: int.tryParse(
-                                            textEditingControllerIdCatalogo
-                                                .text) ??
-                                        0,
-                                  ),
+                                  giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
+                                      idFinalizzazione: int.tryParse(
+                                              textEditingControllerIdFinalizzazione.text) ??
+                                          0,
+                                      idEvento: int.tryParse(textEditingControllerIdEvento.text) ?? 0,
+                                      idAttivita: int.tryParse(textEditingControllerIdAttivita.text) ?? 0,
+                                      idAgenda: int.tryParse(textEditingControllerIdAgenda.text) ?? 0,
+                                      idComunicazioni: int.tryParse(textEditingControllerIdComunicazioni.text) ?? 0,
+                                      idTipDonazione: int.tryParse(textEditingControllerIdTipDonazione.text) ?? 0,
+                                      idCatalogo: int.tryParse(textEditingControllerIdCatalogo.text) ?? 0,
+                                      idPagamentoContante: 0,
+                                      idPagamentoBancomat: 0,
+                                      idPagamentoCartaDiCredito: 0,
+                                      idPagamentoAssegno: 0
+
+                                      // idPagamentoContante: int.tryParse(
+                                      //         textEditingControllerIdPagamentoContante
+                                      //             .text) ??
+                                      //     0,
+                                      // idPagamentoBancomat: int.tryParse(
+                                      //         textEditingControllerIdPagamentoBancomat
+                                      //             .text) ??
+                                      //     0,
+                                      // idPagamentoCartaDiCredito: int.tryParse(
+                                      //         textEditingControllerIdPagamentoCartaDiCredito
+                                      //             .text) ??
+                                      //     0,
+                                      // idPagamentoAssegno: int.tryParse(
+                                      //         textEditingControllerIdPagamentoAssegno
+                                      //             .text) ??
+                                      //     0,
+                                      ),
                                   productAttributeCombination: List.empty(),
                                   productCategoryMappingModel: List.empty(),
                                   smartProductAttributeJson: List.empty());

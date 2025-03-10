@@ -18,7 +18,6 @@ class MyosotisConfigurationNotifier with ChangeNotifier {
       required int idUserAppInstitution,
       required int idInstitution}) async {
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
       var response =
           await myosotisConfigurationAPI.getMyosotisConfigurationDetailEmpty(
               token: token,
@@ -40,6 +39,52 @@ class MyosotisConfigurationNotifier with ChangeNotifier {
           MyosotisConfigurationDetailEmpty myosotisConfigurationDetailEmpty =
               MyosotisConfigurationDetailEmpty.fromJson(parseData['okResult']);
           return myosotisConfigurationDetailEmpty;
+          // notifyListeners();
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Configurazioni Myosotis",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future getMyosotisConfigurationDetail(
+      {required BuildContext context,
+      String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required int idMyosotisConfiguration}) async {
+    try {
+      var response =
+          await myosotisConfigurationAPI.getMyosotisConfigurationDetail(
+              token: token,
+              idUserAppInstitution: idUserAppInstitution,
+              idInstitution: idInstitution,
+              idMyosotisConfiguration: idMyosotisConfiguration);
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Configurazioni Myosotis",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          MyosotisConfigurationDetailModel myosotisConfigurationDetailModel =
+              MyosotisConfigurationDetailModel.fromJson(parseData['okResult']);
+          return myosotisConfigurationDetailModel;
           // notifyListeners();
         }
       } else {
@@ -114,7 +159,7 @@ class MyosotisConfigurationNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  addOrUpdateMyosotisConfiguration(
+  Future addOrUpdateMyosotisConfiguration(
       {required BuildContext context,
       String? token,
       required MyosotisConfigurationModel myosotisConfigurationModel}) async {

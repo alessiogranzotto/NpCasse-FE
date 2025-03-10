@@ -239,7 +239,7 @@ class CartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    title: "Autenticazione",
+                    title: "Carrello",
                     message: errorDescription,
                     contentType: "failure"));
           }

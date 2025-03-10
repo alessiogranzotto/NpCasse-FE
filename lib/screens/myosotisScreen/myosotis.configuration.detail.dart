@@ -14,6 +14,8 @@ import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
+import 'package:uiblock/uiblock.dart';
+
 class MyosotisConfigurationDetailScreen extends StatefulWidget {
   final MyosotisConfigurationModel myosotisConfiguration;
   const MyosotisConfigurationDetailScreen(
@@ -33,7 +35,11 @@ class _MyosotisConfigurationDetailState
 
   bool isEdit = false;
   bool isLoading = true;
+  bool isLoadingDetailEmpty = true;
+  bool isLoadingDetail = true;
 
+  late MyosotisConfigurationDetailEmpty myosotisConfigurationDetailEmpty;
+  late MyosotisConfigurationDetailModel myosotisConfigurationDetailModel;
   //NAME CONFIGURATION
   late final TextEditingController nameMyosotisConfigurationController;
 
@@ -185,7 +191,7 @@ class _MyosotisConfigurationDetailState
     if (nameMyosotisConfigurationController.text.isEmpty) return;
   }
 
-  Future<void> getMyosotisConfigurationDetailEmpty() async {
+  Future<void> getMyosotisConfigurationData() async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -203,12 +209,158 @@ class _MyosotisConfigurationDetailState
                 cUserAppInstitutionModel.idInstitutionNavigation.idInstitution)
         .then((value) {
       var snapshot = value as MyosotisConfigurationDetailEmpty;
-      var myosotisConfigurationDetailEmpty = snapshot;
+      myosotisConfigurationDetailEmpty = snapshot;
+      setState(() {
+        isLoadingDetailEmpty = false;
+        checkLoading();
+      });
+    });
+    if (widget.myosotisConfiguration.idMyosotisConfiguration > 0) {
+      myosotisConfigurationNotifier
+          .getMyosotisConfigurationDetail(
+              context: context,
+              token: authenticationNotifier.token,
+              idUserAppInstitution:
+                  cUserAppInstitutionModel.idUserAppInstitution,
+              idInstitution: cUserAppInstitutionModel
+                  .idInstitutionNavigation.idInstitution,
+              idMyosotisConfiguration:
+                  widget.myosotisConfiguration.idMyosotisConfiguration)
+          .then((value) {
+        var snapshot = value as MyosotisConfigurationDetailModel;
+        myosotisConfigurationDetailModel = snapshot;
+        setState(() {
+          isLoadingDetail = false;
+          checkLoading();
+        });
+      });
+    } else {
+      setState(() {
+        isLoadingDetail = false;
+        checkLoading();
+      });
+    }
+  }
+
+  checkLoading() {
+    if (!isLoadingDetailEmpty && !isLoadingDetail) {
+      if (widget.myosotisConfiguration.idMyosotisConfiguration > 0) {
+        setWidgetDetail(myosotisConfigurationDetailModel);
+      }
       setInitialData(myosotisConfigurationDetailEmpty);
       setState(() {
         isLoading = false;
       });
-    });
+    }
+  }
+
+  setWidgetDetail(
+      MyosotisConfigurationDetailModel myosotisConfigurationDetailModel) {
+    //SHOWLOGO CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.showLogo =
+        myosotisConfigurationDetailModel.showLogo;
+
+    //IMAGE CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .bigImageString = myosotisConfigurationDetailModel.bigImageString;
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .smallImageString = myosotisConfigurationDetailModel.smallImageString;
+
+    // //TITLE CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.title =
+        myosotisConfigurationDetailModel.title;
+
+    //SUBTITLE CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.subtitle =
+        myosotisConfigurationDetailModel.subtitle;
+
+    //FORM STARTUP CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .typeFormStartup = myosotisConfigurationDetailModel.typeFormStartup;
+
+    //PREESTABLISHED AMOUNTS CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .preestablishedAmount =
+        myosotisConfigurationDetailModel.preestablishedAmount;
+
+    //SHOW FREE PRICE CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .showFreePrice = myosotisConfigurationDetailModel.showFreePrice;
+
+    //SHOW CAUSAL DONATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .showCausalDonation =
+        myosotisConfigurationDetailModel.showCausalDonation;
+
+    //TEXT CAUSAL DONATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .causalDonationText =
+        myosotisConfigurationDetailModel.causalDonationText;
+
+    //ID SUBCATEGORY CASUAL DONATION VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .idSubCategoryCausalDonation =
+        myosotisConfigurationDetailModel.idSubCategoryCausalDonation;
+
+    //SHOW PRIVACY CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.showPrivacy =
+        myosotisConfigurationDetailModel.showPrivacy;
+
+    //TEXT PRIVACY CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.textPrivacy =
+        myosotisConfigurationDetailModel.textPrivacy;
+
+    //MANDATORY PRIVACY CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .isMandatoryPrivacy =
+        myosotisConfigurationDetailModel.isMandatoryPrivacy;
+
+    //SHOW NEWSLETTER CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .showNewsletter = myosotisConfigurationDetailModel.showNewsletter;
+
+    //TEXT NEWSLETTER CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .textNewsletter = myosotisConfigurationDetailModel.textNewsletter;
+
+    //MANDATORY NEWSLETTER CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .isMandatoryNewsletter =
+        myosotisConfigurationDetailModel.isMandatoryNewsletter;
+
+    // VISIBLE PERSONAL FORM FIELD CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .visiblePersonalFormField =
+        myosotisConfigurationDetailModel.visiblePersonalFormField;
+
+    //MANDATORY PERSONAL FORM FIELD  CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .mandatoryPersonalFormField =
+        myosotisConfigurationDetailModel.mandatoryPersonalFormField;
+
+    //SHOW COMPANY FORM
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .showCompanyForm = myosotisConfigurationDetailModel.showCompanyForm;
+
+    //VISIBLE COMPANY FORM FIELD CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .visibleCompanyFormField =
+        myosotisConfigurationDetailModel.visibleCompanyFormField;
+
+    //MANDATORY COMPANY FORM FIELD CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .mandatoryCompanyFormField =
+        myosotisConfigurationDetailModel.mandatoryCompanyFormField;
+
+    //PAYMENT METHOD APP CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .preestablishedPaymentMethodApp =
+        myosotisConfigurationDetailModel.preestablishedPaymentMethodApp;
+
+    //PAYMENT METHOD WEB CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .preestablishedPaymentMethodWeb =
+        myosotisConfigurationDetailModel.preestablishedPaymentMethodWeb;
   }
 
   setInitialData(
@@ -500,7 +652,7 @@ class _MyosotisConfigurationDetailState
   void initState() {
     super.initState();
     initializeControllers();
-    getMyosotisConfigurationDetailEmpty();
+    getMyosotisConfigurationData();
   }
 
   Widget chipBuilderIdDevice(BuildContext context, String topping) {
@@ -1477,7 +1629,7 @@ class _MyosotisConfigurationDetailState
                           onSelectionChange: (selectedItems) {},
                         ),
                       ),
-                      SizedBox(height: 50),
+                      SizedBox(height: 120),
                     ],
                   ),
                 )),
@@ -1487,6 +1639,7 @@ class _MyosotisConfigurationDetailState
             child: FloatingActionButton(
               shape: const CircleBorder(eccentricity: 0.5),
               onPressed: () {
+                UIBlock.block(context);
                 if (_formKey.currentState!.validate()) {
                   MyosotisConfigurationDetailModel myosotisConfigurationDetailModel = MyosotisConfigurationDetailModel(
                       typeFormStartup: typeFormStartup!,
@@ -1552,7 +1705,6 @@ class _MyosotisConfigurationDetailState
                               .idInstitutionNavigation.idInstitution,
                           myosotisConfigurationDetailModel:
                               myosotisConfigurationDetailModel);
-
                   myosotisConfigurationNotifier
                       .addOrUpdateMyosotisConfiguration(
                           context: context,
@@ -1566,9 +1718,11 @@ class _MyosotisConfigurationDetailState
                               title: "Configurazione Myosotis",
                               message: "Informazioni aggiornate",
                               contentType: "success"));
+                      UIBlock.unblock(context);
                       Navigator.of(context).pop();
                       myosotisConfigurationNotifier.refresh();
                     } else {
+                      UIBlock.unblock(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackUtil.stylishSnackBar(
                               title: "Configurazione Myosotis",

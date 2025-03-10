@@ -195,13 +195,16 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
             modeCartCheckout: 0)
         .then((value) {
       if (value > 0) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Carrello",
-              message: "Carrello chiuso correttamente",
-              contentType: "success"));
-        }
-        cartNotifier.refresh();
+        setState(() {
+          disabledFinalizeButton = false;
+        });
+        // if (context.mounted) {
+        //   ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+        //       title: "Carrello",
+        //       message: "Carrello chiuso correttamente",
+        //       contentType: "success"));
+        // }
+        //cartNotifier.refresh();
       } else {
         showCartErrorSnackbar();
       }
@@ -779,7 +782,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                   .copyWith(
                                       color: Colors.grey.shade700,
                                       fontSize: 12),
-                            )
+                            ),
                           ],
                         ),
                         ToggleButtons(

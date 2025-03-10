@@ -6,7 +6,11 @@ class GiveIdsFlatStructureModel {
       required this.idAgenda,
       required this.idComunicazioni,
       required this.idTipDonazione,
-      required this.idCatalogo});
+      required this.idCatalogo,
+      required this.idPagamentoContante,
+      required this.idPagamentoBancomat,
+      required this.idPagamentoCartaDiCredito,
+      required this.idPagamentoAssegno});
   late final int idFinalizzazione;
   late final int idEvento;
   late final int idAttivita;
@@ -14,6 +18,10 @@ class GiveIdsFlatStructureModel {
   late final int idComunicazioni;
   late final int idTipDonazione;
   late final int idCatalogo;
+  late final int idPagamentoContante;
+  late final int idPagamentoBancomat;
+  late final int idPagamentoCartaDiCredito;
+  late final int idPagamentoAssegno;
 
   GiveIdsFlatStructureModel.empty() {
     idFinalizzazione = 0;
@@ -23,6 +31,10 @@ class GiveIdsFlatStructureModel {
     idComunicazioni = 0;
     idTipDonazione = 0;
     idCatalogo = 0;
+    idPagamentoContante = 0;
+    idPagamentoBancomat = 0;
+    idPagamentoCartaDiCredito = 0;
+    idPagamentoAssegno = 0;
   }
   GiveIdsFlatStructureModel.fromJson(Map<String, dynamic> json) {
     idFinalizzazione = json['idFinalizzazione'];
@@ -32,6 +44,10 @@ class GiveIdsFlatStructureModel {
     idComunicazioni = json['idComunicazioni'];
     idTipDonazione = json['idTipDonazione'];
     idCatalogo = json['idCatalogo'];
+    idPagamentoContante = json['idPagamentoContante'];
+    idPagamentoBancomat = json['idPagamentoBancomat'];
+    idPagamentoCartaDiCredito = json['idPagamentoCartaDiCredito'];
+    idPagamentoAssegno = json['idPagamentoAssegno'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +59,10 @@ class GiveIdsFlatStructureModel {
     data['idComunicazioni'] = idComunicazioni;
     data['idTipDonazione'] = idTipDonazione;
     data['idCatalogo'] = idCatalogo;
+    data['idPagamentoContante'] = idPagamentoContante;
+    data['idPagamentoBancomat'] = idPagamentoBancomat;
+    data['idPagamentoCartaDiCredito'] = idPagamentoCartaDiCredito;
+    data['idPagamentoAssegno'] = idPagamentoAssegno;
     return data;
   }
 }

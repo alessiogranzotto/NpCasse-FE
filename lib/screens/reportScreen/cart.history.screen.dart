@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
@@ -327,10 +328,30 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                         arguments: item['idCart']);
                   }
                   if (value == 4) {
-                    changeCartState(item['idCart'], 7);
+                    var dialog = CustomAlertDialog(
+                      title: "Cambio di stato",
+                      content: Text("Si desidera stornare il carrello?"),
+                      yesCallBack: () {
+                        changeCartState(item['idCart'], 7);
+                      },
+                      noCallBack: () {},
+                    );
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => dialog);
                   }
                   if (value == 5) {
-                    changeCartState(item['idCart'], 8);
+                    var dialog = CustomAlertDialog(
+                      title: "Cambio di stato",
+                      content: Text("Si desidera annullare il carrello?"),
+                      yesCallBack: () {
+                        changeCartState(item['idCart'], 8);
+                      },
+                      noCallBack: () {},
+                    );
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => dialog);
                   }
                 },
               ),

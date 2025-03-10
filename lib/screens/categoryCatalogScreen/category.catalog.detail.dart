@@ -33,6 +33,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
   String tImageString = '';
   bool isEdit = false;
   bool deleted = false;
+  bool tempDeleted = false;
   bool panelIdsGiveExpanded = false;
   bool panelOtherExpanded = false;
 
@@ -58,6 +59,14 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
   final TextEditingController textEditingControllerIdCatalogo =
       TextEditingController();
 
+  final TextEditingController textEditingControllerIdPagamentoContante =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdPagamentoBancomat =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdPagamentoCartaDiCredito =
+      TextEditingController();
+  final TextEditingController textEditingControllerIdPagamentoAssegno =
+      TextEditingController();
   int parentIdCategory = 0;
   int idCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
@@ -121,6 +130,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
           widget.categoryCatalogModelArgument.displayOrder.toString();
 
       deleted = widget.categoryCatalogModelArgument.deleted;
+      tempDeleted = deleted;
       tImageString = widget.categoryCatalogModelArgument.imageData;
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idFinalizzazione >
@@ -195,6 +205,50 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
             .toString();
       } else {
         textEditingControllerIdCatalogo.text = '';
+      }
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+              .idPagamentoContante >
+          0) {
+        textEditingControllerIdPagamentoContante.text = widget
+            .categoryCatalogModelArgument
+            .giveIdsFlatStructureModel
+            .idPagamentoContante
+            .toString();
+      } else {
+        textEditingControllerIdPagamentoContante.text = '';
+      }
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+              .idPagamentoBancomat >
+          0) {
+        textEditingControllerIdPagamentoBancomat.text = widget
+            .categoryCatalogModelArgument
+            .giveIdsFlatStructureModel
+            .idPagamentoBancomat
+            .toString();
+      } else {
+        textEditingControllerIdPagamentoBancomat.text = '';
+      }
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+              .idPagamentoCartaDiCredito >
+          0) {
+        textEditingControllerIdPagamentoCartaDiCredito.text = widget
+            .categoryCatalogModelArgument
+            .giveIdsFlatStructureModel
+            .idPagamentoCartaDiCredito
+            .toString();
+      } else {
+        textEditingControllerIdPagamentoCartaDiCredito.text = '';
+      }
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+              .idPagamentoAssegno >
+          0) {
+        textEditingControllerIdPagamentoAssegno.text = widget
+            .categoryCatalogModelArgument
+            .giveIdsFlatStructureModel
+            .idPagamentoAssegno
+            .toString();
+      } else {
+        textEditingControllerIdPagamentoAssegno.text = '';
       }
     } else {
       //tImageString = AppAssets.noImageString;
@@ -534,6 +588,11 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                             child: Text("Cancellato")),
                                         value: deleted,
                                         onChanged: (bool? value) {
+                                          if (isEdit && tempDeleted) {
+                                            setState(() {
+                                              deleted = value!;
+                                            });
+                                          }
                                           // setState(() {
                                           //   deleted = value!;
                                           // });
@@ -606,6 +665,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                     },
                     children: [
                       ExpansionPanel(
+                        canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
                             title: Text('ID Give'),
@@ -650,37 +710,18 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text(
-                                                      "Id Finalizzazione",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Finalizzazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Fin",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -723,36 +764,18 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Campagna",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Campagna",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Ev",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -795,36 +818,18 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Attività",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Attività",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Att",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -833,11 +838,6 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
                               Expanded(
                                 child: Column(
                                   children: [
@@ -872,34 +872,16 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Ag",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Evento",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Evento",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
                                           ],
@@ -910,6 +892,11 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                   ],
                                 ),
                               ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Expanded(
                                 child: Column(
                                   children: [
@@ -944,37 +931,18 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text(
-                                                      "Id Comunicazioni",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Comunicazioni",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Com",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1017,36 +985,18 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Tipo Donazione",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Tipo Donazione",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Td",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1055,11 +1005,6 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
                               Expanded(
                                 child: Column(
                                   children: [
@@ -1094,36 +1039,246 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      12.0), //or 15.0
-                                              child: Container(
-                                                height: 48.0,
-                                                width: 140.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondaryContainer,
-                                                child: Center(
-                                                  child: Text("Id Catalogo",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headlineMedium),
-                                                ),
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text("Id Catalogo",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
                                               ),
                                             ),
-                                            // CircleAvatar(
-                                            //   radius: 24,
-                                            //   backgroundColor: Theme.of(context)
-                                            //       .colorScheme
-                                            //       .secondaryContainer,
-                                            //   child: Text("Cat",
-                                            //       style: Theme.of(context)
-                                            //           .textTheme
-                                            //           .headlineLarge),
-                                            // ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdPagamentoContante,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text(
+                                                    "Id Pagamento contante",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdPagamentoBancomat,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text(
+                                                    "Id Pagamento bancomat",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdPagamentoCartaDiCredito,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text(
+                                                    "Id Pagamento carta di credito",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Card(
+                                      color: Theme.of(context).cardColor,
+                                      elevation: 4,
+                                      child: ListTile(
+                                        subtitle: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller:
+                                                    textEditingControllerIdPagamentoAssegno,
+                                                minLines: 1,
+                                                maxLines: 1,
+                                                inputFormatters: <TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly
+                                                ],
+                                                onTapOutside: (event) {
+                                                  FocusManager
+                                                      .instance.primaryFocus
+                                                      ?.unfocus();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: const Icon(Icons.edit),
+                                        leading: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              height: 36.0,
+                                              width: 100.0,
+                                              color: CustomColors.darkBlue,
+                                              child: Center(
+                                                child: Text(
+                                                    "Id pagamento assegno",
+                                                    textAlign: TextAlign.center,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headlineSmall),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                         onTap: () {},
@@ -1189,6 +1344,22 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                           idCatalogo: int.tryParse(
                                   textEditingControllerIdCatalogo.text) ??
                               0,
+                          idPagamentoContante: int.tryParse(
+                                  textEditingControllerIdPagamentoContante
+                                      .text) ??
+                              0,
+                          idPagamentoBancomat: int.tryParse(
+                                  textEditingControllerIdPagamentoBancomat
+                                      .text) ??
+                              0,
+                          idPagamentoCartaDiCredito: int.tryParse(
+                                  textEditingControllerIdPagamentoCartaDiCredito
+                                      .text) ??
+                              0,
+                          idPagamentoAssegno: int.tryParse(
+                                  textEditingControllerIdPagamentoAssegno
+                                      .text) ??
+                              0,
                         ));
 
                 categoryCatalogNotifier
@@ -1219,96 +1390,120 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
               child: const Icon(Icons.check),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.all(10),
-            child: FloatingActionButton(
-              shape: const CircleBorder(eccentricity: 0.5),
-              onPressed: () {
-                var dialog = CustomAlertDialog(
-                  title: "Eliminazione categoria",
-                  content: Text("Si desidera procedere alla cancellazione?"),
-                  yesCallBack: () {
-                    deleted = true;
-                    CategoryCatalogModel categoryCatalogModel =
-                        CategoryCatalogModel(
-                            idCategory:
-                                widget.categoryCatalogModelArgument.idCategory,
-                            nameCategory:
-                                textEditingControllerNameCategory.text,
-                            descriptionCategory:
-                                textEditingControllerDescriptionCategory.text,
-                            parentIdCategory: parentIdCategory,
-                            parentCategoryName: '',
-                            displayOrder: int.tryParse(
-                                    textEditingControllerDisplayOrderCategory
-                                        .text) ??
-                                0,
-                            deleted: deleted,
-                            idUserAppInstitution:
-                                cUserAppInstitutionModel.idUserAppInstitution,
-                            imageData: tImageString,
-                            giveIdsFlatStructureModel:
-                                GiveIdsFlatStructureModel(
-                              idFinalizzazione: int.tryParse(
-                                      textEditingControllerIdFinalizzazione
-                                          .text) ??
-                                  0,
-                              idEvento: int.tryParse(
-                                      textEditingControllerIdEvento.text) ??
-                                  0,
-                              idAttivita: int.tryParse(
-                                      textEditingControllerIdAttivita.text) ??
-                                  0,
-                              idAgenda: int.tryParse(
-                                      textEditingControllerIdAgenda.text) ??
-                                  0,
-                              idComunicazioni: int.tryParse(
-                                      textEditingControllerIdComunicazioni
-                                          .text) ??
-                                  0,
-                              idTipDonazione: int.tryParse(
-                                      textEditingControllerIdTipDonazione
-                                          .text) ??
-                                  0,
-                              idCatalogo: int.tryParse(
-                                      textEditingControllerIdCatalogo.text) ??
-                                  0,
-                            ));
+          (isEdit && !tempDeleted)
+              ? Container(
+                  margin: const EdgeInsets.all(10),
+                  child: FloatingActionButton(
+                    shape: const CircleBorder(eccentricity: 0.5),
+                    onPressed: () {
+                      var dialog = CustomAlertDialog(
+                        title: "Eliminazione categoria",
+                        content:
+                            Text("Si desidera procedere alla cancellazione?"),
+                        yesCallBack: () {
+                          deleted = true;
+                          CategoryCatalogModel categoryCatalogModel =
+                              CategoryCatalogModel(
+                                  idCategory: widget
+                                      .categoryCatalogModelArgument.idCategory,
+                                  nameCategory:
+                                      textEditingControllerNameCategory.text,
+                                  descriptionCategory:
+                                      textEditingControllerDescriptionCategory
+                                          .text,
+                                  parentIdCategory: parentIdCategory,
+                                  parentCategoryName: '',
+                                  displayOrder: int.tryParse(
+                                          textEditingControllerDisplayOrderCategory
+                                              .text) ??
+                                      0,
+                                  deleted: deleted,
+                                  idUserAppInstitution: cUserAppInstitutionModel
+                                      .idUserAppInstitution,
+                                  imageData: tImageString,
+                                  giveIdsFlatStructureModel:
+                                      GiveIdsFlatStructureModel(
+                                    idFinalizzazione: int.tryParse(
+                                            textEditingControllerIdFinalizzazione
+                                                .text) ??
+                                        0,
+                                    idEvento: int.tryParse(
+                                            textEditingControllerIdEvento
+                                                .text) ??
+                                        0,
+                                    idAttivita: int.tryParse(
+                                            textEditingControllerIdAttivita
+                                                .text) ??
+                                        0,
+                                    idAgenda: int.tryParse(
+                                            textEditingControllerIdAgenda
+                                                .text) ??
+                                        0,
+                                    idComunicazioni: int.tryParse(
+                                            textEditingControllerIdComunicazioni
+                                                .text) ??
+                                        0,
+                                    idTipDonazione: int.tryParse(
+                                            textEditingControllerIdTipDonazione
+                                                .text) ??
+                                        0,
+                                    idCatalogo: int.tryParse(
+                                            textEditingControllerIdCatalogo
+                                                .text) ??
+                                        0,
+                                    idPagamentoContante: int.tryParse(
+                                            textEditingControllerIdPagamentoContante
+                                                .text) ??
+                                        0,
+                                    idPagamentoBancomat: int.tryParse(
+                                            textEditingControllerIdPagamentoBancomat
+                                                .text) ??
+                                        0,
+                                    idPagamentoCartaDiCredito: int.tryParse(
+                                            textEditingControllerIdPagamentoCartaDiCredito
+                                                .text) ??
+                                        0,
+                                    idPagamentoAssegno: int.tryParse(
+                                            textEditingControllerIdPagamentoAssegno
+                                                .text) ??
+                                        0,
+                                  ));
 
-                    categoryCatalogNotifier
-                        .addOrUpdateCategory(
-                            context: context,
-                            token: authenticationNotifier.token,
-                            categoryCatalogModel: categoryCatalogModel)
-                        .then((value) {
-                      if (value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackUtil.stylishSnackBar(
-                                title: "Categorie",
-                                message: "Informazioni aggiornate",
-                                contentType: "success"));
-                        Navigator.of(context).pop();
-                        // categoryCatalogNotifier.refresh();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackUtil.stylishSnackBar(
-                                title: "Categorie",
-                                message: "Errore di connessione",
-                                contentType: "failure"));
-                        Navigator.of(context).pop();
-                      }
-                    });
-                  },
-                  noCallBack: () {},
-                );
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) => dialog);
-              },
-              //backgroundColor: Colors.deepOrangeAccent,
-              child: const Icon(Icons.delete),
-            ),
-          )
+                          categoryCatalogNotifier
+                              .addOrUpdateCategory(
+                                  context: context,
+                                  token: authenticationNotifier.token,
+                                  categoryCatalogModel: categoryCatalogModel)
+                              .then((value) {
+                            if (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackUtil.stylishSnackBar(
+                                      title: "Categorie",
+                                      message: "Informazioni aggiornate",
+                                      contentType: "success"));
+                              Navigator.of(context).pop();
+                              categoryCatalogNotifier.refresh();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackUtil.stylishSnackBar(
+                                      title: "Categorie",
+                                      message: "Errore di connessione",
+                                      contentType: "failure"));
+                              Navigator.of(context).pop();
+                            }
+                          });
+                        },
+                        noCallBack: () {},
+                      );
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => dialog);
+                    },
+                    //backgroundColor: Colors.deepOrangeAccent,
+                    child: const Icon(Icons.delete),
+                  ),
+                )
+              : const SizedBox.shrink()
         ]));
   }
 }
