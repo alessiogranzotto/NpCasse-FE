@@ -22,6 +22,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import java.io.IOException
+import android.os.Build
+import android.provider.Settings
+import android.content.Intent
+import android.location.LocationManager
+import android.app.Activity
 
 class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.example.npcasse/stripe"
@@ -31,6 +36,7 @@ class MainActivity : FlutterActivity() {
     var tokenProvider: TokenProvider? = null
     private var variableConnectionTokenProvider: VariableConnectionTokenProvider? = null // No default initialization
     private var casseURL: String? = null // Store casseURL globally
+    private var permissionsRequested = false
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -55,6 +61,7 @@ class MainActivity : FlutterActivity() {
                     uninitializeTerminal(result)
                 }
                 "discoverReaders" -> {
+                    permissionsRequested = false    
                     if (terminalInitialized) {
                         val idUserAppInstitution = call.argument<Int>("idUserAppInstitution")
                         val token = call.argument<String>("token")  // Extract token from Flutter side
@@ -110,19 +117,19 @@ class MainActivity : FlutterActivity() {
                 result.error("INITIALIZATION_ERROR", "Error initializing Terminal: ${e.message}", null)
             }
         } else { 
-if (variableConnectionTokenProvider != null) {
-        // Safely update the provider
-        variableConnectionTokenProvider!!.provider = tokenProvider
-        terminalInitialized = true
-        result.success("Stripe Already Initialized")
-    } else {
-        // Handle the rare case where the provider is null unexpectedly
-        result.error(
-            "PROVIDER_ERROR", 
-            "Connection token provider is not initialized.", 
-            null
-        )
-    }          
+            if (variableConnectionTokenProvider != null) {
+                // Safely update the provider
+                variableConnectionTokenProvider!!.provider = tokenProvider
+                terminalInitialized = true
+                result.success("Stripe Already Initialized")
+            } else {
+                // Handle the rare case where the provider is null unexpectedly
+                result.error(
+                    "PROVIDER_ERROR", 
+                    "Connection token provider is not initialized.", 
+                    null
+                )
+            }          
         }
     }
 
@@ -162,6 +169,26 @@ if (variableConnectionTokenProvider != null) {
         }
     }
 
+    private fun isLocationEnabled(context: Context): Boolean {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        return gpsEnabled || networkEnabled
+    }
+
+    // Function to prompt the user to enable location services
+    private fun promptEnableLocationServices(context: Context) {
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        // Ensure that the context is an activity or set the FLAG_ACTIVITY_NEW_TASK flag
+        if (context is Activity) {
+            context.startActivity(intent)
+        } else {
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+        }
+    }
+
+
     private fun disconnectReader(result: MethodChannel.Result) {
     val connectedReader = Terminal.getInstance().connectedReader
     if (connectedReader != null) {
@@ -183,13 +210,30 @@ if (variableConnectionTokenProvider != null) {
 
 
 private fun discoverReaders(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
+    Log.d("StripeTerminal", "Starting discoverReaders function")
+
+    // Check if location services are enabled
+    if (!isLocationEnabled(applicationContext)) {
+        Log.e("StripeTerminal", "Location services are disabled. Please enable them.")
+        promptEnableLocationServices(applicationContext)
+        result.error("LOCATION_ERROR", "Location services must be enabled.", null)
+        return
+    }
+
+    // Check permissions
     if (checkPermissions()) {
+        Log.d("StripeTerminal", "Permissions are granted. Proceeding with GPS and Bluetooth checks.")
+
+        // Ensure Bluetooth is enabled
         if (BluetoothAdapter.getDefaultAdapter()?.isEnabled == false) {
+            Log.d("StripeTerminal", "Bluetooth is disabled. Enabling Bluetooth...")
             BluetoothAdapter.getDefaultAdapter().enable()
         }
 
         // Check if terminal is already connected to a reader
         if (Terminal.getInstance().connectedReader != null) {
+            Log.d("StripeTerminal", "Already connected to a reader. Attempting to disconnect.")
+
             // Disconnect from the current reader before discovering new ones
             Terminal.getInstance().disconnectReader(object : Callback {
                 override fun onSuccess() {
@@ -198,17 +242,27 @@ private fun discoverReaders(idUserAppInstitution: Int, token: String, result: Me
                 }
 
                 override fun onFailure(e: TerminalException) {
+                    Log.e("StripeTerminal", "Failed to disconnect from the reader: ${e.message}")
                     result.error("DISCONNECT_ERROR", "Failed to disconnect: ${e.message}", null)
                 }
             })
         } else {
+            Log.d("StripeTerminal", "No connected reader. Starting discovery of new readers.")
             startDiscoveringReaders(idUserAppInstitution, token, result)
         }
     } else {
-        requestPermissions()
+        if (!permissionsRequested) {
+            // Only request permissions once to prevent a loop
+            permissionsRequested = true
+            requestPermissions()
+            discoverReaders(idUserAppInstitution, token, result)
+        } else {
+            // If permissions were requested, and still not granted, return an error
+            Log.d("StripeTerminal", "Permissions still not granted, please grant permissions.")
+            result.error("PERMISSION_ERROR", "Permissions not granted.", null)
+        }
     }
 }
-
 
 private fun startDiscoveringReaders(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
     val discoveryConfig = DiscoveryConfiguration.BluetoothDiscoveryConfiguration(isSimulated = false)
@@ -247,7 +301,6 @@ private fun startDiscoveringReaders(idUserAppInstitution: Int, token: String, re
         }
     })
 }
-
 
 private fun connectToReader(idUserAppInstitution: Int, token: String?, reader: Reader, result: MethodChannel.Result) {
     if (token == null) {
@@ -381,7 +434,9 @@ private fun fetchLocationId(
 
 
     private fun notifyFlutterReaderConnection(isConnected: Boolean) {
-        methodChannel.invokeMethod("updateReaderConnection", isConnected)
+        runOnUiThread {
+            methodChannel.invokeMethod("updateReaderConnection", isConnected)
+        }
     }
 
 
@@ -447,21 +502,92 @@ private fun processPayment(amount: Long, currency: String, result: MethodChannel
     }
 
 
-    private fun checkPermissions(): Boolean {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-               ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
-               ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
-    }
+private fun checkPermissions(): Boolean {
+    val missingPermissions = mutableListOf<String>()
 
-    private fun requestPermissions() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
+    // Check for different permission sets based on Android version
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.BLUETOOTH_SCAN,
                 Manifest.permission.BLUETOOTH_CONNECT
-            ),
-            1
-        )
+            ).forEach {
+                if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
+                    missingPermissions.add(it)
+                }
+            }
+        }
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+            listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+            ).forEach {
+                if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
+                    missingPermissions.add(it)
+                }
+            }
+        }
+        else -> {
+            listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).forEach {
+                if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
+                    missingPermissions.add(it)
+                }
+            }
+        }
     }
+
+    // If there are missing permissions, log them
+    if (missingPermissions.isNotEmpty()) {
+        Log.d("StripeTerminal", "Missing permissions: ${missingPermissions.joinToString(", ")}")
+    }
+
+    return missingPermissions.isEmpty()
+}
+
+// Request permissions
+private fun requestPermissions() {
+    val permissions = mutableListOf<String>()
+
+    when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            permissions.addAll(
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                )
+            )
+        }
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+            permissions.addAll(
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.BLUETOOTH_ADMIN
+                )
+            )
+        }
+        else -> {
+            permissions.addAll(
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
+    if (permissions.isNotEmpty()) {
+        Log.d("StripeTerminal", "Requesting permissions: ${permissions.joinToString(", ")}")
+        ActivityCompat.requestPermissions(this, permissions.toTypedArray(), 1)
+    }
+}
+
 }
