@@ -289,10 +289,10 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
 
       // Optionally print the result from the native side
       print(result);
-    } catch (e) {
+    } on PlatformException catch (e) {
       // On error, handle initialization failure
       setState(() {
-        _stripeStatus = 'Error initializing terminal';
+        _stripeStatus = '${e.message}';
         isTerminalInitialized = false;
       });
     }
@@ -300,9 +300,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
 
   Future<void> _discoverReaders(int idUserAppInstitution, String? token) async {
     if (!isTerminalInitialized) {
-      setState(() {
-        _stripeStatus = 'Terminal is not initialized yet.';
-      });
       return;
     }
 
@@ -342,9 +339,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           isReaderDiscovered = false;
         });
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       setState(() {
-        _stripeStatus = 'Error discovering readers';
+        _stripeStatus = '${e.message}';
       });
     }
   }
@@ -369,9 +366,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
           isReaderConnected = false;
         });
       }
-    } catch (e) {
+    } on PlatformException catch (e) {
       setState(() {
-        _stripeStatus = 'Error connecting reader';
+        _stripeStatus = '${e.message}';
         isReaderConnected = false;
       });
     }
@@ -400,9 +397,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       });
       disconnectReader();
       finalizeStripePayment();
-    } catch (e) {
+    } on PlatformException catch (e) {
       setState(() {
-        _stripeStatus = 'Error processing payment';
+        _stripeStatus = '${e.message}';
       });
     }
   }
@@ -415,7 +412,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       });
       print(result); // This will print the success message from the native code
     } on PlatformException catch (e) {
-      print("Error disconnectReader reader");
+      print("$e");
     }
   }
 
@@ -576,7 +573,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder:
                               (BuildContext context, int value, Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   value.toString(),
                                   style: CustomTextStyle.textFormFieldMedium
@@ -606,7 +603,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder:
                               (BuildContext context, int value, Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   value.toString(),
                                   style: CustomTextStyle.textFormFieldMedium
@@ -645,7 +642,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder: (BuildContext context, double value,
                               Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   MoneyUtils.getFormattedCurrency(value),
                                   style: CustomTextStyle.textFormFieldMedium
@@ -753,7 +750,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder: (BuildContext context, double value,
                               Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   MoneyUtils.getFormattedCurrency(value),
                                   style: CustomTextStyle.textFormFieldBold
@@ -1006,17 +1003,24 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                     maintainState: true,
                     visible: _isStripePayment,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 3),
+                      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 2),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            _stripeStatus,
-                            style: CustomTextStyle.textFormFieldBold
-                                .copyWith(color: Colors.black, fontSize: 14),
+                          Container(
+                            width: 300,  // Set the desired width limit
+                            child: Text(
+                              _stripeStatus,
+                              style: CustomTextStyle.textFormFieldBold.copyWith(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                              maxLines: 3,  // Set the max number of lines
+                              overflow: TextOverflow.ellipsis,  // Optional: To handle overflow with ellipsis
+                            ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Theme.of(context)
@@ -1068,8 +1072,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                     children: [
                       Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.all(10),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -1079,7 +1081,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Theme.of(context)
@@ -1099,7 +1101,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                       )),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Theme.of(context)

@@ -178,7 +178,7 @@ class _CartScreenState extends State<CartScreen> {
                         children: [
                           Expanded(
                             flex: 2,
-                            child: SingleChildScrollView(
+                            // child: SingleChildScrollView(
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: tSnapshot.length,
@@ -697,7 +697,7 @@ class _CartScreenState extends State<CartScreen> {
                                   );
                                 },
                               ),
-                            ),
+                            // ),
                           ),
                           CartDetailScreen(idCart: idCart) // Expanded(
                           //   child:

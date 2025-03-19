@@ -73,6 +73,8 @@ class _ShowGiveproShDataTableState extends State<ShowGiveproShDataTable> {
                   ? Colors.blueAccent[100]
                   : Colors.transparent;
             },
+            cellPadding: EdgeInsets.zero, // Removes padding inside cells
+            padding: EdgeInsets.zero, // Removes overall table padding
           ),
           child: PagedDataTable<String, Map<String, dynamic>>(
             controller: tableController,
@@ -166,6 +168,7 @@ class _ShowGiveproShDataTableState extends State<ShowGiveproShDataTable> {
   // Helper method to build a selectable row
   Widget _buildSelectableRow(int index, String displayText,
       {bool isCircleAvatar = false, Icon? optionalIcon}) {
+    bool isSelected = idRowSelected == widget.snapshot[index].id; // Check if this row is selected
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -181,28 +184,31 @@ class _ShowGiveproShDataTableState extends State<ShowGiveproShDataTable> {
         });
       },
       child: Container(
-        height: 40, // Make sure to define a consistent row height
+        width: double.infinity, // Ensures it spans the entire column width
+        color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent, // Highlight full cell
+        alignment: Alignment.centerLeft, // Aligns text to the left
         child: Row(
           children: [
+            // Circle Avatar (if needed)
             if (isCircleAvatar) ...[
               CircleAvatar(
                 radius: 16,
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(displayText,
-                      style: Theme.of(context).textTheme.bodySmall),
+                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                child: Text(
+                  displayText,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
-              SizedBox(width: 8),
             ],
-            // Add Text only if CircleAvatar is not being displayed
+            // Text or Icon
             if (!isCircleAvatar) ...[
-              if (optionalIcon != null) ...[
-                optionalIcon,
-              ],
-              Expanded(child: Text(displayText)),
+              if (optionalIcon != null) optionalIcon,
+              Expanded( // This makes sure text spans and doesn't restrict clicks
+                child: Text(
+                  displayText,
+                  softWrap: true,
+                ),
+              ),
             ],
           ],
         ),

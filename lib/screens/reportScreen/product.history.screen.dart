@@ -160,7 +160,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
         context: context,
         token: authNotifier.token,
         pageNumber: 1,
-        pageSize: -1 >>> 1,
+        pageSize: -1,
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
         orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
         filter: filterStringModel);

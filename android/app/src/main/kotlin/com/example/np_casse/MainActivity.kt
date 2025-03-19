@@ -37,6 +37,7 @@ class MainActivity : FlutterActivity() {
     private var variableConnectionTokenProvider: VariableConnectionTokenProvider? = null // No default initialization
     private var casseURL: String? = null // Store casseURL globally
     private var permissionsRequested = false
+    private var isDiscoveryInProgress = false
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -114,7 +115,7 @@ class MainActivity : FlutterActivity() {
                 result.success("Stripe Initialized")
             } catch (e: TerminalException) {
                 terminalInitialized = false
-                result.error("INITIALIZATION_ERROR", "Error initializing Terminal: ${e.message}", null)
+                result.error("INITIALIZATION_ERROR", "${e.message}", null)
             }
         } else { 
             if (variableConnectionTokenProvider != null) {
@@ -152,7 +153,7 @@ class MainActivity : FlutterActivity() {
 
                         override fun onFailure(e: TerminalException) {
                             Log.e("StripeTerminal", "Failed to disconnect: ${e.message}")
-                            result.error("DISCONNECT_ERROR", "Failed to disconnect reader: ${e.message}", null)
+                            result.error("DISCONNECT_ERROR", "${e.message}", null)
                         }
                     })
                 } else {
@@ -162,7 +163,7 @@ class MainActivity : FlutterActivity() {
                 terminalInitialized = false
             } catch (e: Exception) {
                 Log.e("StripeTerminal", "Error uninitializing terminal: ${e.message}")
-                result.error("UNINITIALIZATION_ERROR", "Error uninitializing terminal: ${e.message}", null)
+                result.error("UNINITIALIZATION_ERROR", "${e.message}", null)
             }
         } else {
             result.success("Stripe Terminal Not Initialized.")
@@ -200,7 +201,7 @@ class MainActivity : FlutterActivity() {
 
             override fun onFailure(e: TerminalException) {
                 Log.e("StripeTerminal", "Failed to disconnect: ${e.message}")
-                result.error("DISCONNECT_ERROR", "Failed to disconnect reader: ${e.message}", null)
+                result.error("DISCONNECT_ERROR", "${e.message}", null)
             }
         })
     } else {
@@ -212,11 +213,23 @@ class MainActivity : FlutterActivity() {
 private fun discoverReaders(idUserAppInstitution: Int, token: String, result: MethodChannel.Result) {
     Log.d("StripeTerminal", "Starting discoverReaders function")
 
+    // Check if discovery is already in progress
+    if (isDiscoveryInProgress) {
+        Log.e("StripeTerminal", "A discovery operation is already in progress.")
+        result.error("DISCOVERY_IN_PROGRESS", "A discovery operation is already in progress.", null)
+        return
+    }
+
+    // Mark discovery as in progress
+    isDiscoveryInProgress = true
+
     // Check if location services are enabled
     if (!isLocationEnabled(applicationContext)) {
         Log.e("StripeTerminal", "Location services are disabled. Please enable them.")
         promptEnableLocationServices(applicationContext)
         result.error("LOCATION_ERROR", "Location services must be enabled.", null)
+        // Reset the flag once the function ends
+        isDiscoveryInProgress = false
         return
     }
 
@@ -243,7 +256,9 @@ private fun discoverReaders(idUserAppInstitution: Int, token: String, result: Me
 
                 override fun onFailure(e: TerminalException) {
                     Log.e("StripeTerminal", "Failed to disconnect from the reader: ${e.message}")
-                    result.error("DISCONNECT_ERROR", "Failed to disconnect: ${e.message}", null)
+                    result.error("DISCONNECT_ERROR", "${e.message}", null)
+                    // Reset the flag after failure
+                    isDiscoveryInProgress = false
                 }
             })
         } else {
@@ -254,12 +269,15 @@ private fun discoverReaders(idUserAppInstitution: Int, token: String, result: Me
         if (!permissionsRequested) {
             // Only request permissions once to prevent a loop
             permissionsRequested = true
+            isDiscoveryInProgress = false
             requestPermissions()
             discoverReaders(idUserAppInstitution, token, result)
         } else {
             // If permissions were requested, and still not granted, return an error
             Log.d("StripeTerminal", "Permissions still not granted, please grant permissions.")
             result.error("PERMISSION_ERROR", "Permissions not granted.", null)
+            // Reset the flag after failure
+            isDiscoveryInProgress = false
         }
     }
 }
@@ -294,10 +312,15 @@ private fun startDiscoveringReaders(idUserAppInstitution: Int, token: String, re
     Terminal.getInstance().discoverReaders(discoveryConfig, discoveryListener, object : Callback {
         override fun onSuccess() {
             Log.d("StripeTerminal", "Reader discovery completed")
+            // Reset the flag once discovery is successful
+            isDiscoveryInProgress = false
         }
 
         override fun onFailure(e: TerminalException) {
-            result.error("DISCOVERY_ERROR", "Failed to discover readers: ${e.message}", null)
+            Log.e("StripeTerminal", "Discovery failed: ${e.message}")
+            result.error("DISCOVERY_ERROR", "${e.message}", null)
+            // Reset the flag after failure
+            isDiscoveryInProgress = false
         }
     })
 }
@@ -317,7 +340,7 @@ private fun connectToReader(idUserAppInstitution: Int, token: String?, reader: R
         if (error != null || locationId.isNullOrBlank() || locationId == null) {
             val errorMessage = error ?: "Location ID is blank or null"
             Log.e("StripeTerminal", "Error fetching location ID: $errorMessage")
-            result.error("LOCATION_ID_FETCH_ERROR", "Failed to fetch location ID: $errorMessage", null)
+            result.error("LOCATION_ID_FETCH_ERROR", "$errorMessage", null)
             return@fetchLocationId  // Exit the function after handling the error
         }
 
@@ -461,10 +484,10 @@ private fun processPayment(amount: Long, currency: String, result: MethodChannel
                                     result.success("Payment Successful")
                                 } else {
                                     Log.e("PAYMENT_UNEXPECTED_STATUS",
-                                        "Unexpected status: ${confirmedIntent.status}")
+                                        "${confirmedIntent.status}")
                                     result.error(
                                         "PAYMENT_UNEXPECTED_STATUS",
-                                        "Unexpected status: ${confirmedIntent.status}",
+                                        "${confirmedIntent.status}",
                                         null
                                     )
                                 }
@@ -472,21 +495,21 @@ private fun processPayment(amount: Long, currency: String, result: MethodChannel
 
                             override fun onFailure(e: TerminalException) {
                                 Log.e("StripeTerminal", "Error confirming payment: ${e.message}")
-                                result.error("PAYMENT_CONFIRM_ERROR", "Error confirming payment: ${e.message}", null)
+                                result.error("PAYMENT_CONFIRM_ERROR", "${e.message}", null)
                             }
                         })
                     }
 
                     override fun onFailure(e: TerminalException) {
                         Log.e("StripeTerminal", "Error collecting payment method: ${e.message}")
-                        result.error("PAYMENT_METHOD_ERROR", "Error collecting payment method: ${e.message}", null)
+                        result.error("PAYMENT_METHOD_ERROR", "${e.message}", null)
                     }
                 })
             }
 
             override fun onFailure(e: TerminalException) {
                 Log.e("StripeTerminal", "Error creating PaymentIntent: ${e.message}")
-                result.error("PAYMENT_INTENT_ERROR", "Error creating PaymentIntent: ${e.message}", null)
+                result.error("PAYMENT_INTENT_ERROR", "${e.message}", null)
             }
         })
     } else {

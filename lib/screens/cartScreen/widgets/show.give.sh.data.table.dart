@@ -65,20 +65,22 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
         padding: const EdgeInsets.all(16.0),
         child: PagedDataTableTheme(
           data: PagedDataTableThemeData(
-            selectedRow: Colors.blueAccent[100], // Set the selected row color
-            rowColor: (index) {
+            selectedRow: Colors.blueAccent[100],
+                        rowColor: (index) {
               // Highlight the row if it's selected
               return idRowSelected == widget.snapshot[index].id
                   ? Colors.blueAccent[100]
                   : Colors.transparent;
             },
+            cellPadding: EdgeInsets.zero, // Removes padding inside cells
+            padding: EdgeInsets.zero, // Removes overall table padding
           ),
           child: PagedDataTable<String, Map<String, dynamic>>(
             controller: tableController,
             initialPageSize: 50,
             pageSizes: const [50],
             fetcher: (pageSize, sortModel, filterModel, pageToken) =>
-                fetchData(pageSize, sortModel, filterModel, pageToken),
+                fetchData(pageSize, sortModel, filterModel, pageToken),    
             columns: [
               TableColumn(
                 id: 'contacts',
@@ -90,7 +92,7 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
                     isCircleAvatar: true,
                   );
                 },
-                size: const FixedColumnSize(120),
+                size: const FixedColumnSize(80),
               ),
               TableColumn(
                 id: 'id',
@@ -98,7 +100,7 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
                 cellBuilder: (context, item, index) {
                   return _buildSelectableRow(index, item['id'].toString());
                 },
-                size: const FixedColumnSize(150),
+                size: const FixedColumnSize(120),
                 sortable: true,
               ),
               TableColumn(
@@ -165,6 +167,7 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
   // Helper method to build a selectable row
   Widget _buildSelectableRow(int index, String displayText,
       {bool isCircleAvatar = false, Icon? optionalIcon}) {
+    bool isSelected = idRowSelected == widget.snapshot[index].id; // Check if this row is selected
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -172,36 +175,36 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
           StakeholderGiveModelSearch cStakeholderGiveModel =
               widget.snapshot[index];
           widget.callback2(cStakeholderGiveModel);
-          if (idRowSelected != 0) {
-            editAndReceiptVisible == true;
-          } else {
-            editAndReceiptVisible == false;
-          }
+
+          editAndReceiptVisible = idRowSelected != 0;
         });
       },
       child: Container(
-        height: 40, // Make sure to define a consistent row height
+        width: double.infinity, // Ensures it spans the entire column width
+        color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent, // Highlight full cell
+        alignment: Alignment.centerLeft, // Aligns text to the left
         child: Row(
           children: [
+            // Circle Avatar (if needed)
             if (isCircleAvatar) ...[
               CircleAvatar(
                 radius: 16,
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(displayText,
-                      style: Theme.of(context).textTheme.bodySmall),
+                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                child: Text(
+                  displayText,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
-              SizedBox(width: 8),
             ],
-            // Add Text only if CircleAvatar is not being displayed
+            // Text or Icon
             if (!isCircleAvatar) ...[
-              if (optionalIcon != null) ...[
-                optionalIcon,
-              ],
-              Expanded(child: Text(displayText)),
+              if (optionalIcon != null) optionalIcon,
+              Expanded( // This makes sure text spans and doesn't restrict clicks
+                child: Text(
+                  displayText,
+                  softWrap: true,
+                ),
+              ),
             ],
           ],
         ),
@@ -277,6 +280,7 @@ class _ShowGiveShDataTableDeduplica
   // Helper method to build a selectable row
   Widget _buildSelectableRow(int index, String displayText,
       {bool isCircleAvatar = false}) {
+    bool isSelected = idRowSelected == widget.snapshot[index].stakeholderGiveModelSearch.id; // Check if this row is selected
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -288,24 +292,30 @@ class _ShowGiveShDataTableDeduplica
         });
       },
       child: Container(
-        height: 40, // Define a consistent row height
+        width: double.infinity, // Ensures it spans the entire column width
+        color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent, // Highlight full cell
+        alignment: Alignment.centerLeft, // Aligns text to the left
         child: Row(
           children: [
+            // Circle Avatar (if needed)
             if (isCircleAvatar) ...[
               CircleAvatar(
                 radius: 16,
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(displayText,
-                      style: Theme.of(context).textTheme.bodySmall),
+                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                child: Text(
+                  displayText,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
-              SizedBox(width: 8),
             ],
+            // Text or Icon
             if (!isCircleAvatar) ...[
-              Expanded(child: Text(displayText)),
+              Expanded( // This makes sure text spans and doesn't restrict clicks
+                child: Text(
+                  displayText,
+                  softWrap: true,
+                ),
+              ),
             ],
           ],
         ),
@@ -321,7 +331,6 @@ class _ShowGiveShDataTableDeduplica
         padding: const EdgeInsets.all(16.0),
         child: PagedDataTableTheme(
           data: PagedDataTableThemeData(
-            selectedRow: Colors.blueAccent[100], // Set the selected row color
             rowColor: (index) {
               // Highlight the row if it's selected
               return idRowSelected ==
@@ -329,6 +338,8 @@ class _ShowGiveShDataTableDeduplica
                   ? Colors.blueAccent[100]
                   : Colors.transparent;
             },
+            cellPadding: EdgeInsets.zero, // Removes padding inside cells
+            padding: EdgeInsets.zero, // Removes overall table padding
           ),
           child: PagedDataTable<String, Map<String, dynamic>>(
             controller: tableController,
@@ -347,7 +358,7 @@ class _ShowGiveShDataTableDeduplica
                     isCircleAvatar: true,
                   );
                 },
-                size: const FixedColumnSize(120),
+                size: const FixedColumnSize(80),
               ),
               TableColumn(
                 id: 'id',
@@ -355,7 +366,7 @@ class _ShowGiveShDataTableDeduplica
                 cellBuilder: (context, item, index) {
                   return _buildSelectableRow(index, item['id'].toString());
                 },
-                size: const FixedColumnSize(150),
+                size: const FixedColumnSize(120),
                 sortable: true,
               ),
               TableColumn(
