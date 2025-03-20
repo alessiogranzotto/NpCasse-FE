@@ -7,10 +7,11 @@ import 'package:flutter_media_store/flutter_media_store.dart';
 Future<void> downloadFileMobile(Uint8List fileBytes, String fileName, BuildContext context) async {
   try {
     // Check for permission
-    PermissionStatus status = await Permission.storage.status;
+    PermissionStatus status = await Permission.manageExternalStorage.request();
+
 
     // Request permission if not granted
-    if (!status.isGranted && !await Permission.manageExternalStorage.isGranted) {
+    if (!status.isGranted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Permission denied. Please enable storage access in settings."),
