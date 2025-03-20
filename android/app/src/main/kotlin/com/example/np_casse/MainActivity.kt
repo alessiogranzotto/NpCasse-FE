@@ -48,6 +48,7 @@ class MainActivity : FlutterActivity() {
                     val idUserAppInstitution = call.argument<Int>("idUserAppInstitution")
                     val token = call.argument<String>("token")  // Extract token from Flutter side
                     val casseUrl = call.argument<String>("casseURL") // Extract casseURL
+                    isDiscoveryInProgress = false
 
                     if (idUserAppInstitution != null && token != null  && casseUrl != null) {
                         // Store casseURL globally
@@ -59,6 +60,7 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "uninitializeStripe" -> {
+                    isDiscoveryInProgress = false
                     uninitializeTerminal(result)
                 }
                 "discoverReaders" -> {
@@ -82,6 +84,7 @@ class MainActivity : FlutterActivity() {
                 }
                 "getConnectedDeviceInfo" -> getConnectedDeviceInfo(result)
                 "disconnectReader" -> {
+                    isDiscoveryInProgress = false
                     disconnectReader(result) // Native method to disconnect the reader
                 }
                 "processPayment" -> {
