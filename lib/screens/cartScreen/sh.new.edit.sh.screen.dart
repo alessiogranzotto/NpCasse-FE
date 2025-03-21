@@ -91,6 +91,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
       ValueNotifier<bool>(false);
   ValueNotifier<bool> visibilityForceSaveButton = ValueNotifier<bool>(false);
   ValueNotifier<bool> visibilitySaveButton = ValueNotifier<bool>(true);
+  ValueNotifier<bool> _isSavingNotifier = ValueNotifier<bool>(false);
 
   ValueNotifier<bool> visibilityDeduplicationScreen =
       ValueNotifier<bool>(false);
@@ -1999,7 +2000,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                     child: BlinkWidget(
                       interval: 1000,
                       children: [
-                        FloatingActionButton(
+                        FloatingActionButton(                          
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
                           // heroTag: 'Deduplication1',
@@ -2011,7 +2012,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                           backgroundColor: Colors.red[900],
                           child: const Icon(Icons.warning),
                         ),
-                        FloatingActionButton(
+                                                FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
                           // heroTag: 'Deduplication2',
@@ -2030,54 +2031,74 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
             valueListenable: visibilityDeduplicationButton,
           ),
           ValueListenableBuilder<bool>(
-            builder: (BuildContext context, bool value, Widget? child) {
+            valueListenable: visibilitySaveButton,  // Listen for visibility condition
+            builder: (BuildContext context, bool visible, Widget? child) {
               return Visibility(
-                visible: value,
+                visible: visible,  // Show/hide the button based on visibilitySaveButton value
                 child: Container(
                   margin: const EdgeInsets.all(10),
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(eccentricity: 0.5),
-                    tooltip: "Salva",
-                    // heroTag: 'Salva',
-                    onPressed: () {
-                      visibilityDeduplicationButton.value = false;
-                      // visibilitySaveButton.value = false;
-                      visibilityForceSaveButton.value = false;
-                      visibilityDeduplicationScreen.value = false;
-                      createSh(0, false);
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: _isSavingNotifier,  // Listen to the save state (whether it’s in progress)
+                    builder: (BuildContext context, bool isSaving, Widget? child) {
+                      return FloatingActionButton(
+                        shape: const CircleBorder(eccentricity: 0.5),
+                        tooltip: "Salva",  // Tooltip text for the save button
+                        onPressed: isSaving
+                            ? null  // Disable button if saving is in progress
+                            : () async {
+                                visibilityDeduplicationButton.value = false;
+                                visibilityForceSaveButton.value = false;
+                                visibilityDeduplicationScreen.value = false;
+
+                                _isSavingNotifier.value = true; 
+
+                                await createSh(0, false); 
+                                _isSavingNotifier.value = false;
+                              },
+                        backgroundColor: isSaving
+                          ? Colors.grey  
+                          : Colors.green,
+                        child: const Icon(Icons.save),
+                      );
                     },
-                    backgroundColor: Colors.green,
-                    child: const Icon(Icons.save),
                   ),
                 ),
               );
             },
-            valueListenable: visibilitySaveButton,
           ),
+
           ValueListenableBuilder<bool>(
-            builder: (BuildContext context, bool value, Widget? child) {
+            valueListenable: visibilityForceSaveButton,
+            builder: (BuildContext context, bool visible, Widget? child) {
               return Visibility(
-                visible: value,
-                child: Container(
-                  margin: const EdgeInsets.all(10),
-                  child: FloatingActionButton(
-                    shape: const CircleBorder(eccentricity: 0.5),
-                    // heroTag: 'ForceSave',
-                    tooltip: "Forza salvataggio",
-                    onPressed: () {
-                      setState(() {
-                        createSh(idSh, true);
-                      });
-                    },
-                    backgroundColor: Colors.deepOrange,
-                    child: const Icon(Icons.save),
-                  ),
+                visible: visible,  // Show/hide the button based on visibilityForceSaveButton
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _isSavingNotifier,  // For controlling the save state
+                  builder: (BuildContext context, bool isSaving, Widget? child) {
+                    return Container(
+                      margin: const EdgeInsets.all(10),
+                      child: FloatingActionButton(
+                        shape: const CircleBorder(eccentricity: 0.5),
+                        tooltip: "Forza salvataggio",
+                        onPressed: isSaving
+                            ? null  // Disable the button if saving is in progress
+                            : () async {
+                                _isSavingNotifier.value = true;
+                                await createSh(idSh, true);
+                                _isSavingNotifier.value = false;
+                              },
+                        backgroundColor:  isSaving
+                          ? Colors.grey  
+                          : Colors.deepOrange,
+                        child: const Icon(Icons.save),
+                      ),
+                    );
+                  },
                 ),
               );
             },
-            valueListenable: visibilityForceSaveButton,
-          ),
-          // Add more buttons here
+          )
+                // Add more buttons here
         ],
       ),
     );
