@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.013';
+  static String version = '1.20.015';
 }
 
 // class AppRegex {
@@ -215,6 +215,35 @@ class AppStrings {
 
   static const causalDonationText = "Testo causale donazione";
   static const availableSubCategoryCausalDonation = "Categoria causali";
+
+  //COMUNICAZIONI
+  static const nameMassSending = "Nome comunicazione";
+  static const pleaseEnterNameMassSending = "Inserire nome comunicazione";
+
+  static const descriptionMassSending = "Descrizione comunicazione";
+  static const pleaseEnterDescriptionMassSending =
+      "Inserire descrizione comunicazione";
+
+  static const senderMassSending = "Mittente comunicazione";
+  static const pleaseEnterSenderMassSending = "Inserire mittente comunicazione";
+
+  static const emailSenderMassSending = "Email mittente comunicazione";
+  static const pleaseEnterEmailSenderMassSending =
+      "Inserire email mittente comunicazione";
+
+  static const subjectEmailMassSending = "Oggetto comunicazione";
+  static const pleaseEnterSubjectEmailMassSending =
+      "Inserire oggetto comunicazione";
+
+  static const massSendingTemplate = "Template comunicazione";
+
+  static const datePlanMassSending = "Data spedizione pianificata";
+  static const pleaseEnterDatePlanMassSending =
+      "Inserire data spedizione pianificata";
+
+  static const hourPlanMassSending = "Ora spedizione pianificata";
+  static const pleaseEnterHourPlanMassSending =
+      "Inserire ora spedizione pianificata";
 }
 
 class AppColors {

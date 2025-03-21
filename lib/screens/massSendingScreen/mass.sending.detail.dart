@@ -333,7 +333,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                             child: CustomDropDownButtonFormField(
                               enabled: true,
                               actualValue: smtp2GoTemplate,
-                              labelText: AppStrings.MassSendingTemplate,
+                              labelText: AppStrings.massSendingTemplate,
                               listOfValue: availableSmtp2GoTemplateItem,
                               onItemChanged: (value) {
                                 smtp2GoTemplate = value;

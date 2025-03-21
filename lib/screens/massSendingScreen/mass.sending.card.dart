@@ -41,6 +41,26 @@ class MassSendingCard extends StatelessWidget {
         return false;
       } else if (stateModel == 4) {
         return true;
+      } else if (stateModel == 5) {
+        return true;
+      }
+      return false;
+    }
+    if (area == 'statistics') {
+      if (stateModel == 1) {
+        return false;
+      } else if (stateModel == 2) {
+        return false;
+      } else if (stateModel == 3) {
+        return false;
+      } else if (stateModel == 4) {
+        return false;
+      } else if (stateModel == 5) {
+        return false;
+      } else if (stateModel == 6) {
+        return false;
+      } else if (stateModel == 7) {
+        return true;
       }
       return false;
     }
@@ -252,6 +272,53 @@ class MassSendingCard extends StatelessWidget {
                               : null,
                           icon: const Icon(
                             Icons.schedule,
+                            size: 24,
+                          )),
+                    ),
+                    SizedBox(
+                      // height: 30,
+                      // width: 30,
+                      child: IconButton(
+                          onPressed: checkState('statistics')
+                              ? () {
+                                  Navigator.of(context).pushNamed(
+                                    AppRouter.massSendingStatisticsRoute,
+                                    arguments: MassSendingModel(
+                                        idMassSending:
+                                            massSendingModel.idMassSending,
+                                        idInstitution:
+                                            massSendingModel.idInstitution,
+                                        idUserAppInstitution:
+                                            cUserAppInstitutionModel
+                                                .idUserAppInstitution,
+                                        archived: massSendingModel.archived,
+                                        nameMassSending:
+                                            massSendingModel.nameMassSending,
+                                        descriptionMassSending: massSendingModel
+                                            .descriptionMassSending,
+                                        senderMassSending:
+                                            massSendingModel.senderMassSending,
+                                        emailSenderMassSending: massSendingModel
+                                            .emailSenderMassSending,
+                                        subjectMassSending:
+                                            massSendingModel.subjectMassSending,
+                                        idTemplateMassSending: massSendingModel
+                                            .idTemplateMassSending,
+                                        stateMassSending:
+                                            massSendingModel.stateMassSending,
+                                        stateMassSendingDescription:
+                                            massSendingModel
+                                                .stateMassSendingDescription,
+                                        massSendingGiveAccumulator:
+                                            massSendingModel
+                                                .massSendingGiveAccumulator,
+                                        planningDate:
+                                            massSendingModel.planningDate),
+                                  );
+                                }
+                              : null,
+                          icon: const Icon(
+                            Icons.query_stats,
                             size: 24,
                           )),
                     ),

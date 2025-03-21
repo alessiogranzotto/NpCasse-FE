@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:np_casse/core/models/mass.sending.model.dart';
 
 class MassSendingJobModel {
   MassSendingJobModel({
@@ -13,8 +14,7 @@ class MassSendingJobModel {
     required this.businessNameSh,
     required this.emailSh,
     required this.emailId,
-    required this.stateMassSendingJob,
-    required this.dateStateMassSendingJob,
+    required this.massSendingModel,
   });
 
   late final int idMassSendingJob;
@@ -28,8 +28,7 @@ class MassSendingJobModel {
   late final String businessNameSh;
   late final String emailSh;
   late final String emailId;
-  late final String stateMassSendingJob;
-  late final DateTime? dateStateMassSendingJob;
+  late final MassSendingModel massSendingModel;
 
   MassSendingJobModel.empty() {
     idMassSendingJob = 0;
@@ -43,8 +42,7 @@ class MassSendingJobModel {
     businessNameSh = '';
     emailSh = '';
     emailId = '';
-    stateMassSendingJob = '';
-    dateStateMassSendingJob = null;
+    massSendingModel = MassSendingModel.empty();
   }
 
   // JSON deserialization
@@ -68,14 +66,8 @@ class MassSendingJobModel {
     businessNameSh = json['businessNameSh'];
     emailSh = json['emailSh'];
     emailId = json['emailId'];
-    stateMassSendingJob = json['stateMassSendingJob'];
-    if (json['dateStateMassSendingJob'] != null) {
-      var dateTimeS = DateFormat("yyyy-MM-ddTHH:mm:ss")
-          .parse(json['dateStateMassSendingJob'], true);
-      dateStateMassSendingJob = dateTimeS.toLocal();
-    } else {
-      dateStateMassSendingJob = null;
-    }
+    massSendingModel =
+        MassSendingModel.fromJson(json['idMassSendingNavigation']);
   }
 
   // JSON serialization
@@ -92,8 +84,7 @@ class MassSendingJobModel {
     data['businessNameSh'] = businessNameSh;
     data['emailSh'] = emailSh;
     data['emailId'] = emailId;
-    data['stateMassSendingJob'] = stateMassSendingJob;
-    data['dateStateMassSendingJob'] = dateStateMassSendingJob;
+    data['idMassSendingNavigation'] = massSendingModel;
     return data;
   }
 }

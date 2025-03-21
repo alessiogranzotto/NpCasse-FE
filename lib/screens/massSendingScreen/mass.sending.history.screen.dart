@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/core/models/mass.sending.history.model.dart';
+import 'package:np_casse/core/models/mass.sending.job.model.dart';
+import 'package:np_casse/core/models/mass.sending.model.dart';
 import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
@@ -69,12 +71,6 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
           filterStringModel
               .add('Filter=stateFilter:' + stateModel.id.toString());
         }
-        if (filterModel['paymentTypeFilter'] != null) {
-          StateModel stateModel = filterModel['paymentTypeFilter'];
-          filterStringModel
-              .add('Filter=paymentTypeFilter:' + stateModel.id.toString());
-        }
-
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
           filterStringModel.add('Filter=startDate:' + cStartDate);
@@ -155,88 +151,112 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Report acquisti ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Email report ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: PagedDataTable<String, Map<String, dynamic>>(
-          controller: tableController,
-          initialPageSize: 20,
-          pageSizes: const [10, 20, 50],
-          fetcher: (pageSize, sortModel, filterModel, pageToken) =>
-              fetchData(pageSize, sortModel, filterModel, pageToken),
-          filterBarChild: PopupMenuButton(
-            icon: const Icon(Icons.more_vert_outlined),
-            itemBuilder: (context) => <PopupMenuEntry>[
-              // PopupMenuItem(
-              //   child: const Text("Seleziona tutti"),
-              //   onTap: () {
-              //     tableController.selectAllRows();
-              //   },
-              // ),
-              // PopupMenuItem(
-              //   child: const Text("Deseleziona tutti"),
-              //   onTap: () {
-              //     tableController.unselectAllRows();
-              //   },
-              // ),
-              // const PopupMenuDivider(),
-              // PopupMenuItem(
-              //   child: const Text("Export Excel"),
-              //   onTap: () {
-              //     handleDownloadCartList(context);
-              //   },
+        child: PagedDataTableTheme(
+          data: PagedDataTableThemeData(
+            // selectedRow: Colors.blueAccent[100],
+            //             rowColor: (index) {
+            //   // Highlight the row if it's selected
+            //   return idRowSelected == widget.snapshot[index].id
+            //       ? Colors.blueAccent[100]
+            //       : Colors.transparent;
+            // },
+            cellPadding: EdgeInsets.zero, // Removes padding inside cells
+            padding: EdgeInsets.zero, // Removes overall table padding
+          ),
+          child: PagedDataTable<String, Map<String, dynamic>>(
+            controller: tableController,
+            initialPageSize: 20,
+            pageSizes: const [10, 20, 50],
+            fetcher: (pageSize, sortModel, filterModel, pageToken) =>
+                fetchData(pageSize, sortModel, filterModel, pageToken),
+            filterBarChild: PopupMenuButton(
+              icon: const Icon(Icons.more_vert_outlined),
+              itemBuilder: (context) => <PopupMenuEntry>[
+                // PopupMenuItem(
+                //   child: const Text("Seleziona tutti"),
+                //   onTap: () {
+                //     tableController.selectAllRows();
+                //   },
+                // ),
+                // PopupMenuItem(
+                //   child: const Text("Deseleziona tutti"),
+                //   onTap: () {
+                //     tableController.unselectAllRows();
+                //   },
+                // ),
+                // const PopupMenuDivider(),
+                // PopupMenuItem(
+                //   child: const Text("Export Excel"),
+                //   onTap: () {
+                //     handleDownloadCartList(context);
+                //   },
+                // ),
+              ],
+            ),
+            columns: [
+              // RowSelectorColumn(),
+              TableColumn(
+                id: 'dateSend',
+                title: const Text('Nome comunicazione'),
+                cellBuilder: (context, item, index) {
+                  MassSendingModel massSendingModel =
+                      item['idMassSendingNavigation'];
+                  return Text(massSendingModel.nameMassSending);
+                },
+                size: const FixedColumnSize(250),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'dateSend',
+                title: const Text('Data invio'),
+                cellBuilder: (context, item, index) => item['dateSend'] != null
+                    ? Text(item['dateSend'].toString())
+                    : Text(''),
+                size: const FixedColumnSize(250),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'emailSh',
+                title: const Text('Email'),
+                cellBuilder: (context, item, index) =>
+                    Text(item['emailSh'].toString()),
+                size: const FixedColumnSize(250),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'stateMassSendingJob',
+                title: const Text('Stato comunicazione'),
+                cellBuilder: (context, item, index) => Text(
+                    item['stateMassSendingJob'] != null
+                        ? item['stateMassSendingJob']
+                        : ''),
+                size: const FixedColumnSize(200),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'dateStateMassSendingJob',
+                title: const Text('Data ultimo aggiornamento'),
+                cellBuilder: (context, item, index) =>
+                    item['dateStateMassSendingJob'] != null
+                        ? Text(item['dateStateMassSendingJob'].toString())
+                        : Text(''),
+                size: const FixedColumnSize(250),
+                sortable: true,
+              ),
+            ],
+            filters: [
+              //   id: "endDate",
+              //   chipFormatter: (value) => 'A "$value"',
+              //   name: "A",
               // ),
             ],
           ),
-          columns: [
-            // RowSelectorColumn(),
-            TableColumn(
-              id: 'dateSend',
-              title: const Text('Data invio'),
-              cellBuilder: (context, item, index) => item['dateSend'] != null
-                  ? Text(item['dateSend'].toString())
-                  : Text(''),
-              size: const FixedColumnSize(250),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'emailSh',
-              title: const Text('Email'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['emailSh'].toString()),
-              size: const FixedColumnSize(250),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'stateMassSendingJob',
-              title: const Text('Stato comunicazione'),
-              cellBuilder: (context, item, index) => Text(
-                  item['stateMassSendingJob'] != null
-                      ? item['stateMassSendingJob']
-                      : ''),
-              size: const FixedColumnSize(200),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'dateStateMassSendingJob',
-              title: const Text('Data ultimo aggiornamento'),
-              cellBuilder: (context, item, index) =>
-                  item['dateStateMassSendingJob'] != null
-                      ? Text(item['dateStateMassSendingJob'].toString())
-                      : Text(''),
-              size: const FixedColumnSize(250),
-              sortable: true,
-            ),
-          ],
-          filters: [
-            //   id: "endDate",
-            //   chipFormatter: (value) => 'A "$value"',
-            //   name: "A",
-            // ),
-          ],
         ),
       ),
     );

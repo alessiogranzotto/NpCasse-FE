@@ -25,6 +25,8 @@ import 'package:np_casse/screens/comunicationScreen/finalize.comunication.screen
 import 'package:np_casse/screens/comunicationScreen/prepare.comunication.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.history.navigator.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.navigator.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
@@ -112,12 +114,10 @@ class _HomeScreenState extends State<HomeScreen> {
       //     const AdminSettingScreen(), 3, null),
     ]),
     MenuList('Comunicazioni', Icons.email, null, 3, [
-      MenuList('Predisponi comunicazione', Icons.email,
-          const PrepareComunicationNavigator(), 3, null),
-      MenuList('Finalizza comunicazione', Icons.email,
-          const FinalizeComunicationScreen(), 3, null),
-      MenuList('Pianifica comunicazione', Icons.email,
-          const PrepareComunicationNavigator(), 3, null),
+      MenuList(
+          'Invio massivo', Icons.email, const MassSendingNavigator(), 3, null),
+      MenuList('Email report', Icons.send, const MassSendingHistoryNavigator(),
+          3, null),
     ]),
     MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
         const MyosotisConfigurationNavigator(), 3, null),

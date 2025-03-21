@@ -289,6 +289,45 @@ class MassSendingNotifier with ChangeNotifier {
     }
   }
 
+  Future updateMassSendingPlanning(
+      {required BuildContext context,
+      required String? token,
+      required int idMassSending,
+      required int idUserAppInstitution,
+      required DateTime dateTimePlanMassSending}) async {
+    try {
+      bool isOk = false;
+      var response = await massSendingAPI.updateMassSendingPlanning(
+          token: token,
+          idMassSending: idMassSending,
+          idUserAppInstitution: idUserAppInstitution,
+          dateTimePlanMassSending: dateTimePlanMassSending);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Comunicazioni",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {}
+      }
+      return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Comunicazioni",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
   void refresh() {
     notifyListeners();
   }

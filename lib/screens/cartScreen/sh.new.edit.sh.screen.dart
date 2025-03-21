@@ -888,35 +888,6 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 250,
-                                              child: Text(
-                                                width.toString(),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .labelLarge!
-                                                    .copyWith(
-                                                        color: Colors.blueGrey),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
                                               CrossAxisAlignment.center,
                                           children: [
                                             SizedBox(
@@ -2000,7 +1971,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                     child: BlinkWidget(
                       interval: 1000,
                       children: [
-                        FloatingActionButton(                          
+                        FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
                           // heroTag: 'Deduplication1',
@@ -2012,7 +1983,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                           backgroundColor: Colors.red[900],
                           child: const Icon(Icons.warning),
                         ),
-                                                FloatingActionButton(
+                        FloatingActionButton(
                           // shape: const CircleBorder(eccentricity: 0.5),
                           tooltip: "Gestisci duplicati",
                           // heroTag: 'Deduplication2',
@@ -2031,33 +2002,35 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
             valueListenable: visibilityDeduplicationButton,
           ),
           ValueListenableBuilder<bool>(
-            valueListenable: visibilitySaveButton,  // Listen for visibility condition
+            valueListenable:
+                visibilitySaveButton, // Listen for visibility condition
             builder: (BuildContext context, bool visible, Widget? child) {
               return Visibility(
-                visible: visible,  // Show/hide the button based on visibilitySaveButton value
+                visible:
+                    visible, // Show/hide the button based on visibilitySaveButton value
                 child: Container(
                   margin: const EdgeInsets.all(10),
                   child: ValueListenableBuilder<bool>(
-                    valueListenable: _isSavingNotifier,  // Listen to the save state (whether it’s in progress)
-                    builder: (BuildContext context, bool isSaving, Widget? child) {
+                    valueListenable:
+                        _isSavingNotifier, // Listen to the save state (whether it’s in progress)
+                    builder:
+                        (BuildContext context, bool isSaving, Widget? child) {
                       return FloatingActionButton(
                         shape: const CircleBorder(eccentricity: 0.5),
-                        tooltip: "Salva",  // Tooltip text for the save button
+                        tooltip: "Salva", // Tooltip text for the save button
                         onPressed: isSaving
-                            ? null  // Disable button if saving is in progress
+                            ? null // Disable button if saving is in progress
                             : () async {
                                 visibilityDeduplicationButton.value = false;
                                 visibilityForceSaveButton.value = false;
                                 visibilityDeduplicationScreen.value = false;
 
-                                _isSavingNotifier.value = true; 
+                                _isSavingNotifier.value = true;
 
-                                await createSh(0, false); 
+                                await createSh(0, false);
                                 _isSavingNotifier.value = false;
                               },
-                        backgroundColor: isSaving
-                          ? Colors.grey  
-                          : Colors.green,
+                        backgroundColor: isSaving ? Colors.grey : Colors.green,
                         child: const Icon(Icons.save),
                       );
                     },
@@ -2071,25 +2044,27 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
             valueListenable: visibilityForceSaveButton,
             builder: (BuildContext context, bool visible, Widget? child) {
               return Visibility(
-                visible: visible,  // Show/hide the button based on visibilityForceSaveButton
+                visible:
+                    visible, // Show/hide the button based on visibilityForceSaveButton
                 child: ValueListenableBuilder<bool>(
-                  valueListenable: _isSavingNotifier,  // For controlling the save state
-                  builder: (BuildContext context, bool isSaving, Widget? child) {
+                  valueListenable:
+                      _isSavingNotifier, // For controlling the save state
+                  builder:
+                      (BuildContext context, bool isSaving, Widget? child) {
                     return Container(
                       margin: const EdgeInsets.all(10),
                       child: FloatingActionButton(
                         shape: const CircleBorder(eccentricity: 0.5),
                         tooltip: "Forza salvataggio",
                         onPressed: isSaving
-                            ? null  // Disable the button if saving is in progress
+                            ? null // Disable the button if saving is in progress
                             : () async {
                                 _isSavingNotifier.value = true;
                                 await createSh(idSh, true);
                                 _isSavingNotifier.value = false;
                               },
-                        backgroundColor:  isSaving
-                          ? Colors.grey  
-                          : Colors.deepOrange,
+                        backgroundColor:
+                            isSaving ? Colors.grey : Colors.deepOrange,
                         child: const Icon(Icons.save),
                       ),
                     );
@@ -2098,7 +2073,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
               );
             },
           )
-                // Add more buttons here
+          // Add more buttons here
         ],
       ),
     );

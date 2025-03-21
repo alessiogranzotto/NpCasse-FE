@@ -125,7 +125,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: SizedBox(
-                              width: 200,
+                              width: 250,
                               child: CustomTextFormField(
                                 enabled: false,
                                 controller: datePlanController,
@@ -137,7 +137,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                   return value!.isNotEmpty
                                       ? null
                                       : AppStrings
-                                          .pleaseEnterdatePlanMassSending;
+                                          .pleaseEnterDatePlanMassSending;
                                 },
                               ),
                             ),
@@ -148,11 +148,11 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                   context: context,
                                   initialDate: planningDate ?? DateTime.now(),
                                   firstDate: DateTime(2025),
-                                  lastDate: DateTime(2050),
+                                  lastDate: DateTime(DateTime.now().year + 1),
                                   locale: Locale('en', 'GB'),
                                   cancelText: 'Annulla',
                                   confirmText: 'Conferma',
-                                  helpText: 'Data comunicazione ' +
+                                  helpText: 'Data ' +
                                       widget.massSendingModel.nameMassSending,
                                   builder:
                                       (BuildContext context, Widget? child) {
@@ -216,11 +216,11 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: SizedBox(
-                              width: 200,
+                              width: 250,
                               child: CustomTextFormField(
                                 enabled: false,
                                 controller: timePlanController,
-                                labelText: AppStrings.datePlanMassSending,
+                                labelText: AppStrings.hourPlanMassSending,
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 // onChanged: (_) => _formKey.currentState?.validate(),
@@ -228,7 +228,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                   return value!.isNotEmpty
                                       ? null
                                       : AppStrings
-                                          .pleaseEnterdatePlanMassSending;
+                                          .pleaseEnterHourPlanMassSending;
                                 },
                               ),
                             ),
@@ -238,7 +238,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                 final TimeOfDay? time = await showTimePicker(
                                   cancelText: 'Annulla',
                                   confirmText: 'Conferma',
-                                  helpText: 'Orario comunicazione ' +
+                                  helpText: 'Ora ' +
                                       widget.massSendingModel.nameMassSending,
                                   hourLabelText: 'Ore',
                                   minuteLabelText: 'Minuti',
@@ -293,13 +293,13 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                   planningTime = time;
                                   if (time != null) {
                                     timePlanController.text =
-                                        '${time.hour}:${time.minute}';
+                                        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
                                   } else {
                                     timePlanController.text = '';
                                   }
                                 });
                               },
-                              icon: Icon(Icons.date_range)),
+                              icon: Icon(Icons.query_builder)),
                         ],
                       ),
 
@@ -317,35 +317,41 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   UIBlock.block(context);
+                  DateTime dateTimePlanMassSending = new DateTime(
+                      planningDate!.year,
+                      planningDate!.month,
+                      planningDate!.day,
+                      planningTime!.hour,
+                      planningTime!.minute,
+                      0);
 
-                  // massSendingNotifier
-                  //     .updateMassSendingGiveAccumulator(
-                  //         context: context,
-                  //         token: authenticationNotifier.token,
-                  //         idMassSending: widget.massSendingModel.idMassSending,
-                  //         idUserAppInstitution:
-                  //             cUserAppInstitutionModel.idUserAppInstitution,
-                  //         massSendingGiveAccumulator:
-                  //             massSendingGiveAccumulator)
-                  //     .then((value) {
-                  //   if (value) {
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //         SnackUtil.stylishSnackBar(
-                  //             title: "Comunicazioni",
-                  //             message: "Informazioni aggiornate",
-                  //             contentType: "success"));
-                  //     UIBlock.unblock(context);
-                  //     Navigator.of(context).pop();
-                  //     massSendingNotifier.refresh();
-                  //   } else {
-                  //     UIBlock.unblock(context);
-                  //     ScaffoldMessenger.of(context).showSnackBar(
-                  //         SnackUtil.stylishSnackBar(
-                  //             title: "Comunicazioni",
-                  //             message: "Errore di connessione",
-                  //             contentType: "failure"));
-                  //   }
-                  // });
+                  massSendingNotifier
+                      .updateMassSendingPlanning(
+                          context: context,
+                          token: authenticationNotifier.token,
+                          idMassSending: widget.massSendingModel.idMassSending,
+                          idUserAppInstitution:
+                              cUserAppInstitutionModel.idUserAppInstitution,
+                          dateTimePlanMassSending: dateTimePlanMassSending)
+                      .then((value) {
+                    if (value) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackUtil.stylishSnackBar(
+                              title: "Comunicazioni",
+                              message: "Informazioni aggiornate",
+                              contentType: "success"));
+                      UIBlock.unblock(context);
+                      Navigator.of(context).pop();
+                      massSendingNotifier.refresh();
+                    } else {
+                      UIBlock.unblock(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackUtil.stylishSnackBar(
+                              title: "Comunicazioni",
+                              message: "Errore di connessione",
+                              contentType: "failure"));
+                    }
+                  });
                 }
               },
 

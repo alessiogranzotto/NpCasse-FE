@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
+import 'package:np_casse/core/models/mass.sending.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
@@ -16,6 +17,10 @@ import 'package:np_casse/screens/comunicationScreen/template.comunication.html.s
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.detail.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.plan.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.recipient.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.statistics.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.screen.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
@@ -99,6 +104,12 @@ class AppRouter {
   static const String myosotisConfigurationRoute = "/myosotisConfiguration";
   static const String myosotisConfigurationDetailRoute =
       "/myosotisConfigurationDetail";
+
+  static const String massSendingDetailRoute = "/massSendingDetail";
+  static const String massSendingRecipientRoute = "/massSendingRecipient";
+  static const String massSendingPlanRoute = "/massSendingPlan";
+  static const String massSendingStatisticsRoute = "/massSendingStatistic";
+
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -337,6 +348,50 @@ class AppRouter {
             settings: settings,
           );
         }
+
+      case massSendingDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MassSendingDetailScreen(
+              massSendingModel: ModalRoute.of(context)!.settings.arguments
+                  as MassSendingModel,
+            ),
+            settings: settings,
+          );
+        }
+
+      case massSendingRecipientRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MassSendingRecipientScreen(
+              massSendingModel: ModalRoute.of(context)!.settings.arguments
+                  as MassSendingModel,
+            ),
+            settings: settings,
+          );
+        }
+
+      case massSendingPlanRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MassSendingPlanScreen(
+              massSendingModel: ModalRoute.of(context)!.settings.arguments
+                  as MassSendingModel,
+            ),
+            settings: settings,
+          );
+        }
+      case massSendingStatisticsRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MassSendingStatisticsScreen(
+              massSendingModel: ModalRoute.of(context)!.settings.arguments
+                  as MassSendingModel,
+            ),
+            settings: settings,
+          );
+        }
+
       case onBoardRoute:
         {
           return MaterialPageRoute(

@@ -159,13 +159,7 @@ class MassSendingAPI {
     final Uri uri = Uri.parse('${ApiRoutes.baseMassSendingURL}' +
         '/$idMassSending/Recipient' +
         '?IdUserAppInstitution=$idUserAppInstitution');
-    var t = List.from(massSendingGiveAccumulator)
-        .map((e) => jsonEncode(massSendingGiveAccumulator))
-        .toList();
-    print(t);
-    var tt = jsonEncode(massSendingGiveAccumulator);
 
-    print(tt);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',
@@ -174,6 +168,36 @@ class MassSendingAPI {
           "Authorization": token ?? ''
         },
         body: jsonEncode(massSendingGiveAccumulator));
+
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  Future updateMassSendingPlanning(
+      {String? token,
+      required int idMassSending,
+      required int idUserAppInstitution,
+      required DateTime dateTimePlanMassSending}) async {
+    final Uri uri = Uri.parse('${ApiRoutes.baseMassSendingURL}' +
+        '/$idMassSending/Plan' +
+        '?IdUserAppInstitution=$idUserAppInstitution');
+
+    var t = dateTimePlanMassSending.toIso8601String();
+    print(t);
+    final http.Response response = await client.post(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode(dateTimePlanMassSending.toIso8601String()));
 
     if (response.statusCode == 200) {
       final dynamic body = response.body;

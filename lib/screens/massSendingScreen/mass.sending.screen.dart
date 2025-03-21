@@ -11,7 +11,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
-import 'package:np_casse/screens/massSendingScreen/massi.sending.card.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.card.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.card.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +23,7 @@ class MassSendingScreen extends StatefulWidget {
 }
 
 class _MassSendingScreenState extends State<MassSendingScreen> {
-  final double widgetWitdh = 300;
+  final double widgetWitdh = 350;
   final double widgetRatio = 1;
   final double gridMainAxisSpacing = 10;
   final double widgetHeight = 150;
