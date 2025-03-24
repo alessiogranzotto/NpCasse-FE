@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/componenents/custom.table.footer.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/product.history.model.dart';
@@ -40,6 +41,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   String? sortDirection;
   String sortColumnAndDirection = '';
   bool isRefreshing = true; // Track if data is refreshing
+  int totalCount = 0;
 
   @override
   void didChangeDependencies() {
@@ -124,6 +126,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
           filter: filterStringModel);
 
       if (response is ProductHistoryModel) {
+        totalCount = response.totalCount;
         List<Map<String, dynamic>> data = response.productHistoryList
             .map((cart) =>
                 cart.toJson()) // Assuming CartModel has a toJson method
@@ -203,6 +206,10 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                 },
               ),
             ],
+          ),
+          footer: CustomTableFooter<String, Map<String, dynamic>>(
+            totalItems: totalCount, 
+            controller: tableController, 
           ),
           columns: [
             // RowSelectorColumn(),
