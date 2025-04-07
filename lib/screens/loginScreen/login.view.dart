@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:np_casse/app/constants/assets.dart';
@@ -306,6 +307,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                               padding:
                                                   const EdgeInsets.all(30.0),
                                               child: OtpTextField(
+                                                enabledBorderColor:
+                                                    Colors.blueGrey,
                                                 showCursor: true,
                                                 fieldHeight: 60,
                                                 fieldWidth: 60,
@@ -753,39 +756,44 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     SizedBox(
                                                       height: 20,
                                                     ),
-                                                    ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        side: BorderSide(
-                                                            width: 1.0),
-                                                      ),
-                                                      onPressed: () {
-                                                        isDownloadingApk
-                                                            ? null
-                                                            : downloadAndroidApp();
-                                                      },
-                                                      child: Wrap(
-                                                        children: <Widget>[
-                                                          Icon(
-                                                            Icons.android,
-                                                            color: Colors.green,
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Text(
-                                                            isDownloadingApk
-                                                                ? 'Attendere...'
-                                                                : AppStrings
-                                                                    .downloadApp,
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize: 14),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                                    kIsWeb
+                                                        ? ElevatedButton(
+                                                            style:
+                                                                ElevatedButton
+                                                                    .styleFrom(
+                                                              side: BorderSide(
+                                                                  width: 1.0),
+                                                            ),
+                                                            onPressed: () {
+                                                              isDownloadingApk
+                                                                  ? null
+                                                                  : downloadAndroidApp();
+                                                            },
+                                                            child: Wrap(
+                                                              children: <Widget>[
+                                                                Icon(
+                                                                  Icons.android,
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 10,
+                                                                ),
+                                                                Text(
+                                                                  isDownloadingApk
+                                                                      ? 'Attendere...'
+                                                                      : AppStrings
+                                                                          .downloadApp,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontSize:
+                                                                          14),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        : SizedBox.shrink()
                                                   ],
                                                 ),
                                           const SizedBox(height: 20),
@@ -1009,4 +1017,3 @@ class _LoginScreenState extends State<LoginScreen> {
 //     ),
 //   ],
 // ),
-                               

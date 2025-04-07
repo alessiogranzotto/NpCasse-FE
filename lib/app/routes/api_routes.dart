@@ -11,9 +11,9 @@ class ApiRoutes {
   static const String prodCasseURL = "https://apicasse.giveapp.it";
   static const String prodWhURL = "https://wh.giveapp.it";
 
-  static const String authURL = devAuthURL;
-  static const String casseURL = devCasseURL;
-  static const String whURL = devWhURL;
+  static const String authURL = prodAuthURL;
+  static const String casseURL = prodCasseURL;
+  static const String whURL = prodWhURL;
 
   static const String authenticateURL =
       "$authURL/api/user/utility/authenticate";
@@ -49,6 +49,7 @@ class ApiRoutes {
   static const String giveURL = "$casseURL/api/Give/Utility";
 
   static const String comunicationURL = "$casseURL/api/Comunication/Utility";
+  static const String fiscalizationURL = "$casseURL/api/Fiscalization";
 
   static const String baseMyosotisConfigurationURL =
       "$casseURL/api/MyosotisConfiguration";

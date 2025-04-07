@@ -308,6 +308,60 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
     }
   }
 
+  Future updateInstitutionParameterAttribute({
+    required BuildContext context,
+    required String? token,
+    required int idUserAppInstitution,
+    required int idInstitution,
+    required String parameterIdShAnonymous,
+  }) async {
+    try {
+      var response =
+          await institutionAttributeAPI.updateInstitutionParameterAttribute(
+        token: token,
+        idUserAppInstitution: idUserAppInstitution,
+        idInstitution: idInstitution,
+        parameterIdShAnonymous: parameterIdShAnonymous,
+      );
+
+      final Map<String, dynamic> parseData = await jsonDecode(response);
+      bool isOk = parseData['isOk'];
+      if (!isOk) {
+        String errorDescription = parseData['errorDescription'];
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+              title: "Impostazioni ente",
+              message: errorDescription,
+              contentType: "failure"));
+          // _isLoading = false;
+          // notifyListeners();
+        }
+      } else {
+        // notifyListeners();
+      }
+      return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni ente",
+            message: "Errore di connessione",
+            contentType: "failure"));
+
+        // _isLoading = false;
+        // notifyListeners();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni ente",
+            message: "Errore di connessione",
+            contentType: "failure"));
+        // _isLoading = false;
+        // notifyListeners();
+      }
+    }
+  }
+
   void refresh() {
     notifyListeners();
   }

@@ -9,20 +9,19 @@ import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/comunication.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.history.notifier.dart';
+import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
-import 'package:np_casse/screens/comunicationScreen/finalize.comunication.screen.dart';
-import 'package:np_casse/screens/comunicationScreen/prepare.comunication.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.history.navigator.dart';
@@ -113,11 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
       // MenuList('Impostazioni amministratore', Icons.settings,
       //     const AdminSettingScreen(), 3, null),
     ]),
-    MenuList('Comunicazioni', Icons.email, null, 3, [
+    MenuList('Comunicazioni', Icons.email, null, 1, [
       MenuList(
-          'Invio massivo', Icons.email, const MassSendingNavigator(), 3, null),
+          'Invio massivo', Icons.email, const MassSendingNavigator(), 1, null),
       MenuList('Email report', Icons.send, const MassSendingHistoryNavigator(),
-          3, null),
+          1, null),
     ]),
     MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
         const MyosotisConfigurationNavigator(), 3, null),
@@ -171,8 +170,15 @@ class _HomeScreenState extends State<HomeScreen> {
           Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
               listen: false);
       institutionAttributeInstitutionAdminNotifier.setUpdate(true);
-    }
-    if (subMenu == "Configurazioni Myosotis") {
+    } else if (subMenu == "Invio massivo") {
+      MassSendingNotifier massSendingNotifier =
+          Provider.of<MassSendingNotifier>(context, listen: false);
+      massSendingNotifier.refresh();
+    } else if (subMenu == "Email report") {
+      ReportMassSendingNotifier reportMassSendingNotifier =
+          Provider.of<ReportMassSendingNotifier>(context, listen: false);
+      reportMassSendingNotifier.setUpdate(true);
+    } else if (subMenu == "Configurazioni Myosotis") {
       MyosotisConfigurationNotifier myosotisConfigurationNotifier =
           Provider.of<MyosotisConfigurationNotifier>(context, listen: false);
       myosotisConfigurationNotifier.refresh();
@@ -183,11 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //           listen: false);
     //   institutionAttributeAdminNotifier.setUpdate(true);
     // }
-    else if (subMenu == "Predisponi comunicazione") {
-      ComunicationNotifier comunicationNotifier =
-          Provider.of<ComunicationNotifier>(context, listen: false);
-      comunicationNotifier.refresh();
-    } else if (subMenu == "Report acquisti") {
+    else if (subMenu == "Report acquisti") {
       ReportCartNotifier reportCartNotifier =
           Provider.of<ReportCartNotifier>(context, listen: false);
       reportCartNotifier.setUpdate(true);

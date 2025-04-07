@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/core/models/mass.sending.model.dart';
 
@@ -14,10 +15,13 @@ class MassSendingJobModel {
     required this.businessNameSh,
     required this.emailSh,
     required this.emailId,
+    required this.webhooksEvent,
+    required this.dateLastUpdate,
     required this.massSendingModel,
+    required this.massSendingModelNameComunication,
   });
 
-  late final int idMassSendingJob;
+  late final String idMassSendingJob;
   late final int idInstitution;
   late final int idMassSending;
   late final DateTime dateBuilt;
@@ -28,10 +32,13 @@ class MassSendingJobModel {
   late final String businessNameSh;
   late final String emailSh;
   late final String emailId;
+  late final List<WebhooksEvent>? webhooksEvent;
+  late final DateTime? dateLastUpdate;
   late final MassSendingModel massSendingModel;
+  late final String massSendingModelNameComunication;
 
   MassSendingJobModel.empty() {
-    idMassSendingJob = 0;
+    idMassSendingJob = '';
     idInstitution = 0;
     idMassSending = 0;
     dateBuilt = DateTime.now();
@@ -42,7 +49,10 @@ class MassSendingJobModel {
     businessNameSh = '';
     emailSh = '';
     emailId = '';
+    webhooksEvent = List.empty();
+    dateLastUpdate = DateTime.now();
     massSendingModel = MassSendingModel.empty();
+    massSendingModelNameComunication = '';
   }
 
   // JSON deserialization
@@ -66,8 +76,28 @@ class MassSendingJobModel {
     businessNameSh = json['businessNameSh'];
     emailSh = json['emailSh'];
     emailId = json['emailId'];
-    massSendingModel =
-        MassSendingModel.fromJson(json['idMassSendingNavigation']);
+
+    webhooksEvent = List.from(json['webhooksEvent'])
+        .map((e) => WebhooksEvent.fromJson(e))
+        .toList();
+
+    if (json['dateLastUpdate'] != null) {
+      var dateTimeU =
+          DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateLastUpdate'], true);
+      dateLastUpdate = dateTimeU.toLocal();
+    } else {
+      dateLastUpdate = null;
+    }
+    if (json['idMassSendingNavigation'] != null) {
+      massSendingModel =
+          MassSendingModel.fromJson(json['idMassSendingNavigation']);
+    } else {
+      massSendingModel = MassSendingModel.empty();
+    }
+
+    if (json['massSendingName'] != null) {
+      massSendingModelNameComunication = json['massSendingName'];
+    }
   }
 
   // JSON serialization
@@ -84,9 +114,26 @@ class MassSendingJobModel {
     data['businessNameSh'] = businessNameSh;
     data['emailSh'] = emailSh;
     data['emailId'] = emailId;
+    data['webhooksEvent'] = webhooksEvent;
+    data['dateLastUpdate'] = dateLastUpdate;
     data['idMassSendingNavigation'] = massSendingModel;
+    data['massSendingModelNameComunication'] = massSendingModelNameComunication;
     return data;
   }
+}
+
+class MassSendingJobModelForEventDetail {
+  MassSendingJobModelForEventDetail({
+    required this.emailSh,
+    required this.emailId,
+    required this.webhooksEvent,
+    required this.dateLastUpdate,
+  });
+
+  late final String emailSh;
+  late final String emailId;
+  late final List<WebhooksEvent>? webhooksEvent;
+  late final DateTime? dateLastUpdate;
 }
 
 class MassSendingGiveAccumulator {
@@ -107,6 +154,37 @@ class MassSendingGiveAccumulator {
     final data = <String, dynamic>{};
     data['idGiveAccumulator'] = idGiveAccumulator;
     data['titleGiveAccumulator'] = titleGiveAccumulator;
+    return data;
+  }
+}
+
+class WebhooksEvent {
+  WebhooksEvent({
+    required this.event,
+    required this.dateUpdate,
+  });
+
+  late final String event;
+  late final DateTime dateUpdate;
+
+  // Empty constructor with default values
+  WebhooksEvent.empty() {
+    event = '';
+    dateUpdate = DateTime.now();
+  }
+  // JSON deserialization
+  WebhooksEvent.fromJson(Map<String, dynamic> json) {
+    event = json['event'];
+    var dateTimeU =
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateUpdate'], true);
+    dateUpdate = dateTimeU.toLocal();
+  }
+
+  // JSON serialization
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['event'] = event;
+    data['dateUpdate'] = dateUpdate;
     return data;
   }
 }

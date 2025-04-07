@@ -240,6 +240,63 @@ class MassSendingAPI {
     }
   }
 
+  Future downloadEmailReportList(
+      {required String? token,
+      required int idUserAppInstitution,
+      required int pageNumber,
+      required int pageSize,
+      required List<String> orderBy,
+      required List<String> filter}) async {
+    String filterJoined = "";
+    for (var item in filter) {
+      filterJoined = filterJoined + "&" + item;
+    }
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.baseMassSendingURL}/download-mass-sending-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else if (response.statusCode == 401) {
+      //REFRESH TOKEN??
+      return null;
+    }
+  }
+
+  Future getMassSendingJobStatistics(
+      {required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required int idMassSending}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.baseMassSendingURL}/Get-mass-sending-statistics?idUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&IdMassSending=$idMassSending');
+    final http.Response response = await http.Client().get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
   // Future getEmailTemplateDetail(
   //     {required String? token,
   //     required int idUserAppInstitution,

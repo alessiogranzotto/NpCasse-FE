@@ -328,6 +328,53 @@ class MassSendingNotifier with ChangeNotifier {
     }
   }
 
+  Future getMassSendingJobStatistics(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required int idMassSending}) async {
+    try {
+      var response = await massSendingAPI.getMassSendingJobStatistics(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          idInstitution: idInstitution,
+          idMassSending: idMassSending);
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Comunicazioni",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          List<MassSendingJobStatistics> massSendingJobStatistics =
+              List.from(parseData['okResult'])
+                  .map((e) => MassSendingJobStatistics.fromJson(e))
+                  .toList();
+          return massSendingJobStatistics;
+          // notifyListeners();
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Comunicazioni",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
   void refresh() {
     notifyListeners();
   }

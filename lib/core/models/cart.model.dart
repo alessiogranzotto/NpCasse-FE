@@ -32,6 +32,7 @@ class CartModel {
   late final int fiscalization;
   late final String stateFiscalization;
   late final String? fiscalizationId;
+  late final String? fiscalizationExternalId;
 
   late final String notesCart;
   late final double? totalPriceCart;
@@ -74,6 +75,7 @@ class CartModel {
     fiscalization = json['fiscalization'];
     stateFiscalization = json['fiscalizationDescription'];
     fiscalizationId = json['fiscalizationId'];
+    fiscalizationExternalId = json['fiscalizationExternalId'];
 
     notesCart = json['notesCart'] ?? '';
     totalPriceCart = (json['totalPriceCart'] != null)
@@ -102,6 +104,7 @@ class CartModel {
     data['fiscalization'] = fiscalization;
     data['stateFiscalization'] = stateFiscalization;
     data['fiscalizationId'] = fiscalizationId;
+    data['fiscalizationExternalId'] = fiscalizationExternalId;
 
     data['notesCart'] = notesCart;
     data['totalPriceCart'] = totalPriceCart;

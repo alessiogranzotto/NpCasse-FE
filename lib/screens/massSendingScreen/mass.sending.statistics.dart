@@ -7,6 +7,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.utility.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -25,21 +26,10 @@ class MassSendingStatisticsScreen extends StatefulWidget {
 class _MyosotisConfigurationDetailState
     extends State<MassSendingStatisticsScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool isEdit = false;
-  bool isLoadingData = true;
   bool isLoading = true;
-  //ISARCHIVED MASS SENDING
-  final ValueNotifier<bool> archiviedNotifier = ValueNotifier<bool>(false);
-
-  // //ACCUMULATOR
-  // TextEditingController accumulatorController = TextEditingController();
-
-  //VISIBLE PERSONAL FORM FIELD  CONFIGURATION
-  final accumulatorGiveController =
-      MultiSelectController<AccumulatorGiveModel>();
 
   //AVAILABLE GIVE ACCUMULATOR
-  List<AccumulatorGiveModel> availableAccumulatorGive = List.empty();
+  List<MassSendingJobStatistics> massSendingJobStatistics = List.empty();
   List<DropdownItem<AccumulatorGiveModel>> availableAccumulatorGiveItem = [];
 
   // //SMTP2GO TEMPLATE MASS SENDING
@@ -47,82 +37,43 @@ class _MyosotisConfigurationDetailState
 
   int touchedIndex = -1;
 
-  List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
+  List<PieChartSectionData> showingSections(List<MassSendingJobStatistics> s) {
+    List<MassSendingJobStatistics> wS = List.from(s);
+    int emailPrepared = wS[0].parameterValue;
+    List<int> indexToRemove = [0, 1, 8];
+    for (int index in indexToRemove) {
+      if (index < wS.length) {
+        wS.removeAt(index);
+      }
+    }
+    return List.generate(wS.length, (i) {
       final isTouched = i == touchedIndex;
-      final fontSize = isTouched ? 25.0 : 16.0;
+      final fontSize = isTouched ? 16.0 : 12.0;
       final radius = isTouched ? 60.0 : 50.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Colors.blue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Colors.yellow,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: Colors.purple,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: Colors.green,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-          );
-        default:
-          throw Error();
-      }
+
+      return PieChartSectionData(
+        color: MassSendingUtility.getWebhooksColor(wS[i].parameterName),
+        value: wS[i].parameterValue / emailPrepared,
+        title: (wS[i].parameterValue / emailPrepared).toStringAsFixed(2),
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: shadows,
+        ),
+      );
     });
   }
 
-  void initializeControllers() {
-    accumulatorGiveController.addListener(dataControllerListener);
-  }
+  void initializeControllers() {}
 
-  void disposeControllers() {
-    accumulatorGiveController.dispose();
-  }
+  void disposeControllers() {}
 
   void dataControllerListener() {}
 
-  Future<void> getMassSendingData() async {
+  Future<void> getStatisticsData() async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -132,44 +83,21 @@ class _MyosotisConfigurationDetailState
         Provider.of<MassSendingNotifier>(context, listen: false);
 
     await massSendingNotifier
-        .getAccumulatorFromGive(
+        .getMassSendingJobStatistics(
             context: context,
             token: authenticationNotifier.token,
             idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
             idInstitution:
-                cUserAppInstitutionModel.idInstitutionNavigation.idInstitution)
+                cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
+            idMassSending: widget.massSendingModel.idMassSending)
         .then((value) {
-      var snapshot = value as List<AccumulatorGiveModel>;
-      availableAccumulatorGive = snapshot;
-      isLoadingData = false;
-
+      var snapshot = value as List<MassSendingJobStatistics>;
+      massSendingJobStatistics = snapshot;
       setInitialData();
     });
   }
 
   void setInitialData() {
-    //AVAILABLE ACCUMULATOR GIVE SENDING
-    // availableAccumulatorGiveItem = availableAccumulatorGive
-    //     .map<DropdownItem<AccumulatorGiveModel>>((AccumulatorGiveModel item) {
-    //   return DropdownItem<AccumulatorGiveModel>(
-    //       value: item, label: item.id.toString() + " - " + item.titolo);
-    // }).toList();
-    isEdit = widget.massSendingModel.idMassSending != 0;
-
-    for (int i = 0; i < availableAccumulatorGive.length; i++) {
-      var isPresent = widget.massSendingModel.massSendingGiveAccumulator
-          .map((e) => e.idGiveAccumulator)
-          .contains(availableAccumulatorGive[i].id);
-
-      print(isPresent);
-      availableAccumulatorGiveItem.add(DropdownItem(
-          selected: isPresent,
-          label: availableAccumulatorGive[i].id.toString() +
-              " - " +
-              availableAccumulatorGive[i].titolo,
-          value: availableAccumulatorGive[i]));
-    }
-
     setState(() {
       isLoading = false;
     });
@@ -179,7 +107,7 @@ class _MyosotisConfigurationDetailState
   void initState() {
     super.initState();
     initializeControllers();
-    getMassSendingData();
+    getStatisticsData();
   }
 
   void dispose() {
@@ -215,148 +143,177 @@ class _MyosotisConfigurationDetailState
                       strokeWidth: 5,
                       color: Colors.redAccent,
                     )))
-            : Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                    child: Column(
+            : SingleChildScrollView(
+                child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
                   children: [
-                    AspectRatio(
-                      aspectRatio: 1.3,
-                      child: Row(
-                        children: <Widget>[
-                          const SizedBox(
-                            height: 18,
-                          ),
-                          Expanded(
-                            child: AspectRatio(
-                              aspectRatio: 1,
-                              child: PieChart(
-                                PieChartData(
-                                  pieTouchData: PieTouchData(
-                                    touchCallback:
-                                        (FlTouchEvent event, pieTouchResponse) {
-                                      setState(() {
-                                        if (!event
-                                                .isInterestedForInteractions ||
-                                            pieTouchResponse == null ||
-                                            pieTouchResponse.touchedSection ==
-                                                null) {
-                                          touchedIndex = -1;
-                                          return;
-                                        }
-                                        touchedIndex = pieTouchResponse
-                                            .touchedSection!
-                                            .touchedSectionIndex;
-                                      });
-                                    },
-                                  ),
-                                  borderData: FlBorderData(
-                                    show: false,
-                                  ),
-                                  sectionsSpace: 0,
-                                  centerSpaceRadius: 40,
-                                  sections: showingSections(),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        const SizedBox(
+                          width: 28,
+                        ),
+                        Container(
+                          height: 400,
+                          width:
+                              520, // Imposta la larghezza fissa del Container che avvolge il ListView
+                          child: ListView.builder(
+                            itemCount: massSendingJobStatistics
+                                .length, // Numero di elementi nella lista
+                            itemBuilder: (context, index) {
+                              var item = massSendingJobStatistics[index];
+                              var ratio = (100 *
+                                  item.parameterValue /
+                                  massSendingJobStatistics[0].parameterValue);
+                              var ratioStr = (100 *
+                                          item.parameterValue /
+                                          massSendingJobStatistics[0]
+                                              .parameterValue)
+                                      .toStringAsFixed(2) +
+                                  " %";
+                              return Container(
+                                padding: EdgeInsets.all(8.0),
+                                margin: EdgeInsets.only(bottom: 5.0),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 50,
+                                      child: Tooltip(
+                                        message: item.parameterName,
+                                        child: CircleAvatar(
+                                          radius:
+                                              8, // Imposta il raggio dell'avatar
+                                          backgroundColor: MassSendingUtility
+                                              .getWebhooksColor(item
+                                                  .parameterName), // Immagine dell'avatar
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 200,
+                                      child: Text(
+                                        item.parameterName.toString(),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                      child: Text(
+                                        item.parameterValue.toString(),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: ratio,
+                                      height: 12, // Altezza della barra
+                                      color: MassSendingUtility
+                                          .getWebhooksColor(item
+                                              .parameterName), // Colore della barra
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    SizedBox(
+                                      width: 80,
+                                      child: Text(
+                                        ratioStr,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
-                          const Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Indicator(
-                                color: Colors.blue,
-                                text: 'First',
-                                isSquare: true,
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Indicator(
-                                color: Colors.yellow,
-                                text: 'Second',
-                                isSquare: true,
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Indicator(
-                                color: Colors.purple,
-                                text: 'Third',
-                                isSquare: true,
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Indicator(
-                                color: Colors.green,
-                                text: 'Fourth',
-                                isSquare: true,
-                              ),
-                              SizedBox(
-                                height: 18,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 28,
-                          ),
-                        ],
-                      ),
-                    )
+                        ),
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        // SizedBox(
+                        //   width: 400,
+                        //   height: 150,
+                        //   child: PieChart(
+                        //     PieChartData(
+                        //       pieTouchData: PieTouchData(
+                        //         touchCallback:
+                        //             (FlTouchEvent event, pieTouchResponse) {
+                        //           setState(() {
+                        //             if (!event.isInterestedForInteractions ||
+                        //                 pieTouchResponse == null ||
+                        //                 pieTouchResponse.touchedSection ==
+                        //                     null) {
+                        //               touchedIndex = -1;
+                        //               return;
+                        //             }
+                        //             touchedIndex = pieTouchResponse
+                        //                 .touchedSection!.touchedSectionIndex;
+                        //           });
+                        //         },
+                        //       ),
+                        //       borderData: FlBorderData(
+                        //         show: false,
+                        //       ),
+                        //       sectionsSpace: 0,
+                        //       centerSpaceRadius: 40,
+                        //       sections:
+                        //           showingSections(massSendingJobStatistics),
+                        //     ),
+                        //   ),
+                        // ),
+                        // const Column(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: <Widget>[
+                        //     Indicator(
+                        //       color: Colors.blue,
+                        //       text: 'First',
+                        //       isSquare: true,
+                        //     ),
+                        //     SizedBox(
+                        //       height: 4,
+                        //     ),
+                        //     Indicator(
+                        //       color: Colors.yellow,
+                        //       text: 'Second',
+                        //       isSquare: true,
+                        //     ),
+                        //     SizedBox(
+                        //       height: 4,
+                        //     ),
+                        //     Indicator(
+                        //       color: Colors.purple,
+                        //       text: 'Third',
+                        //       isSquare: true,
+                        //     ),
+                        //     SizedBox(
+                        //       height: 4,
+                        //     ),
+                        //     Indicator(
+                        //       color: Colors.green,
+                        //       text: 'Fourth',
+                        //       isSquare: true,
+                        //     ),
+                        //     SizedBox(
+                        //       height: 18,
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(
+                        //   width: 28,
+                        // ),
+                      ],
+                    ),
                   ],
-                ))),
+                ),
+              )),
         floatingActionButton: Wrap(direction: Axis.vertical, children: <Widget>[
           Container(
             margin: const EdgeInsets.all(10),
             child: FloatingActionButton(
               shape: const CircleBorder(eccentricity: 0.5),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  UIBlock.block(context);
-
-                  List<MassSendingGiveAccumulator> massSendingGiveAccumulator =
-                      [];
-                  for (int i = 0;
-                      i < accumulatorGiveController.selectedItems.length;
-                      i++) {
-                    massSendingGiveAccumulator.add(MassSendingGiveAccumulator(
-                        idGiveAccumulator:
-                            accumulatorGiveController.selectedItems[i].value.id,
-                        titleGiveAccumulator: accumulatorGiveController
-                            .selectedItems[i].value.titolo));
-                  }
-
-                  massSendingNotifier
-                      .updateMassSendingGiveAccumulator(
-                          context: context,
-                          token: authenticationNotifier.token,
-                          idMassSending: widget.massSendingModel.idMassSending,
-                          idUserAppInstitution:
-                              cUserAppInstitutionModel.idUserAppInstitution,
-                          massSendingGiveAccumulator:
-                              massSendingGiveAccumulator)
-                      .then((value) {
-                    if (value) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackUtil.stylishSnackBar(
-                              title: "Comunicazioni",
-                              message: "Informazioni aggiornate",
-                              contentType: "success"));
-                      UIBlock.unblock(context);
-                      Navigator.of(context).pop();
-                      massSendingNotifier.refresh();
-                    } else {
-                      UIBlock.unblock(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackUtil.stylishSnackBar(
-                              title: "Comunicazioni",
-                              message: "Errore di connessione",
-                              contentType: "failure"));
-                    }
-                  });
-                }
-              },
+              onPressed: () {},
 
               //backgroundColor: Colors.deepOrangeAccent,
               child: const Icon(Icons.check),

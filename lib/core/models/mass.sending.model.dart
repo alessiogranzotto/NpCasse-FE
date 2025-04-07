@@ -231,3 +231,25 @@ class MassSendingGiveAccumulator {
     return data;
   }
 }
+
+class MassSendingJobStatistics {
+  MassSendingJobStatistics(
+      {required this.parameterName, required this.parameterValue});
+
+  late final String parameterName;
+  late final int parameterValue;
+
+  // JSON deserialization
+  MassSendingJobStatistics.fromJson(Map<String, dynamic> json) {
+    parameterName = json['parameterName'];
+    parameterValue = json['parameterValue'];
+  }
+
+  // JSON serialization
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['parameterName'] = parameterName;
+    data['parameterValue'] = parameterValue;
+    return data;
+  }
+}

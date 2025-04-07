@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
+import 'package:np_casse/componenents/custom.table.footer.dart';
+import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/mass.sending.history.model.dart';
 import 'package:np_casse/core/models/mass.sending.job.model.dart';
 import 'package:np_casse/core/models/mass.sending.model.dart';
 import 'package:np_casse/core/models/state.model.dart';
+import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.utility.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -30,6 +35,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
   String? sortBy;
   String? sortDirection;
   String sortColumnAndDirection = '';
+  int totalCount = 0;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -79,6 +85,21 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
           String cEndDate = filterModel['endDate'];
           filterStringModel.add('Filter=endDate:' + cEndDate);
         }
+
+        if (filterModel['massSendingModelNameComunication'] != null) {
+          String massSendingModelNameComunication =
+              filterModel['massSendingModelNameComunication'];
+          filterStringModel.add('Filter=massSendingModelNameComunication:' +
+              massSendingModelNameComunication);
+        }
+        if (filterModel['denominationSh'] != null) {
+          String denominationSh = filterModel['denominationSh'];
+          filterStringModel.add('Filter=denominationSh:' + denominationSh);
+        }
+        if (filterModel['emailSh'] != null) {
+          String emailSh = filterModel['emailSh'];
+          filterStringModel.add('Filter=emailSh:' + emailSh);
+        }
       }
 
       // Set refreshing to true before data fetching
@@ -96,6 +117,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
           filter: filterStringModel);
 
       if (response is MassSendingHistoryModel) {
+        totalCount = response.totalCount;
         List<Map<String, dynamic>> data = response.massSendingHistoryList
             .map((massSendingJob) => massSendingJob.toJson())
             .toList();
@@ -119,23 +141,23 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
     }
   }
 
-  // void handleDownloadCartList(BuildContext context) async {
-  //   final reportMassSendingNotifier =
-  //       Provider.of<ReportMassSendingNotifier>(context, listen: false);
-  //   var authNotifier =
-  //       Provider.of<AuthenticationNotifier>(context, listen: false);
-  //   UserAppInstitutionModel cUserAppInstitutionModel =
-  //       authNotifier.getSelectedUserAppInstitution();
+  void handleDownloadCartList(BuildContext context) async {
+    final reportMassSendingNotifier =
+        Provider.of<ReportMassSendingNotifier>(context, listen: false);
+    var authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
 
-  //   await reportNotifier.downloadCartList(
-  //       context: context,
-  //       token: authNotifier.token,
-  //       pageNumber: 1,
-  //       pageSize: -1,
-  //       idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-  //       orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
-  //       filter: filterStringModel);
-  // }
+    await reportMassSendingNotifier.downloadEmailReportList(
+        context: context,
+        token: authenticationNotifier.token,
+        pageNumber: 1,
+        pageSize: -1,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
+        filter: filterStringModel);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,25 +213,27 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 //   },
                 // ),
                 // const PopupMenuDivider(),
-                // PopupMenuItem(
-                //   child: const Text("Export Excel"),
-                //   onTap: () {
-                //     handleDownloadCartList(context);
-                //   },
-                // ),
+                PopupMenuItem(
+                  child: const Text("Export Excel"),
+                  onTap: () {
+                    handleDownloadCartList(context);
+                  },
+                ),
               ],
+            ),
+            footer: CustomTableFooter<String, Map<String, dynamic>>(
+              totalItems: totalCount,
+              controller: tableController,
             ),
             columns: [
               // RowSelectorColumn(),
               TableColumn(
-                id: 'dateSend',
+                id: 'massSendingModelNameComunication',
                 title: const Text('Nome comunicazione'),
                 cellBuilder: (context, item, index) {
-                  MassSendingModel massSendingModel =
-                      item['idMassSendingNavigation'];
-                  return Text(massSendingModel.nameMassSending);
+                  return Text(item['massSendingModelNameComunication']);
                 },
-                size: const FixedColumnSize(250),
+                size: const FixedColumnSize(200),
                 sortable: true,
               ),
               TableColumn(
@@ -218,43 +242,158 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 cellBuilder: (context, item, index) => item['dateSend'] != null
                     ? Text(item['dateSend'].toString())
                     : Text(''),
+                size: const FixedColumnSize(200),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'denominationSh',
+                title: const Text('Destinatario'),
+                cellBuilder: (context, item, index) {
+                  return item['businessNameSh'].toString().isEmpty
+                      ? Text(item['surnameSh'].toString() +
+                          ' ' +
+                          item['nameSh'].toString())
+                      : Text(item['businessNameSh'].toString());
+                },
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
               TableColumn(
                 id: 'emailSh',
-                title: const Text('Email'),
+                title: const Text('Email destinatario'),
                 cellBuilder: (context, item, index) =>
                     Text(item['emailSh'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
               TableColumn(
-                id: 'stateMassSendingJob',
-                title: const Text('Stato comunicazione'),
-                cellBuilder: (context, item, index) => Text(
-                    item['stateMassSendingJob'] != null
-                        ? item['stateMassSendingJob']
-                        : ''),
-                size: const FixedColumnSize(200),
-                sortable: true,
+                id: 'webhooksEvent',
+                title: const Text('Eventi comunicazione'),
+                cellBuilder: (context, item, index) {
+                  List<WebhooksEvent> webhooksEvent = item['webhooksEvent'];
+                  if (webhooksEvent.isEmpty) {
+                    return Text('');
+                  } else {
+                    webhooksEvent
+                        .sort((a, b) => b.dateUpdate.compareTo(a.dateUpdate));
+                    var firstwebhooksEvent = webhooksEvent.first;
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                        child: Tooltip(
+                          message: firstwebhooksEvent.event,
+                          child: CircleAvatar(
+                            radius: 8, // Imposta il raggio dell'avatar
+                            backgroundColor:
+                                MassSendingUtility.getWebhooksColor(
+                                    firstwebhooksEvent
+                                        .event), // Immagine dell'avatar
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
+                size: const FixedColumnSize(150),
+                sortable: false,
               ),
               TableColumn(
-                id: 'dateStateMassSendingJob',
+                id: 'dateLastUpdate',
                 title: const Text('Data ultimo aggiornamento'),
                 cellBuilder: (context, item, index) =>
-                    item['dateStateMassSendingJob'] != null
-                        ? Text(item['dateStateMassSendingJob'].toString())
+                    item['dateLastUpdate'] != null
+                        ? Text(item['dateLastUpdate'].toString())
                         : Text(''),
                 size: const FixedColumnSize(250),
-                sortable: true,
+                sortable: false,
+              ),
+              TableColumn(
+                id: 'actions',
+                title: const Text('Azioni'),
+                cellBuilder: (context, item, index) => PopupMenuButton<int>(
+                  icon: const Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                    if (item['dateLastUpdate'] != null)
+                      PopupMenuItem<int>(
+                        value: 1,
+                        child: const Text('Visualizza stati'),
+                      ),
+                  ],
+                  onSelected: (value) {
+                    if (value == 1) {
+                      MassSendingJobModelForEventDetail
+                          massSendingJobModelForEventDetail =
+                          MassSendingJobModelForEventDetail(
+                        emailSh: item['emailSh'].toString(),
+                        emailId: item['emailId'].toString(),
+                        webhooksEvent: item['webhooksEvent'],
+                        dateLastUpdate: item['dateLastUpdate'],
+                      );
+
+                      Navigator.of(context).pushNamed(
+                          AppRouter.massSendingEventDetailRoute,
+                          arguments: massSendingJobModelForEventDetail);
+                    }
+                  },
+                ),
+                size: const FixedColumnSize(100),
               ),
             ],
             filters: [
-              //   id: "endDate",
-              //   chipFormatter: (value) => 'A "$value"',
-              //   name: "A",
-              // ),
+              CustomDropdownTableFilter<StateModel>(
+                loadOptions: () async {
+                  final states = [
+                    StateModel(id: 'Email processed', name: 'Email processed'),
+                    StateModel(id: 'Bounced', name: 'Bounced'),
+                    StateModel(id: 'Rejected', name: 'Rejected'),
+                    StateModel(id: 'Marked as spam', name: 'Marked as spam'),
+                    StateModel(
+                        id: 'Delivered to recipient',
+                        name: 'Delivered to recipient'),
+                    StateModel(
+                        id: 'Unsubscribed/Resuscribed',
+                        name: 'Unsubscribed/Resuscribed'),
+                    StateModel(
+                        id: 'Opened by recipient', name: 'Opened by recipient'),
+                    StateModel(
+                        id: 'Link clicked by recipient',
+                        name: 'Link clicked by recipient'),
+                  ];
+                  return states;
+                },
+                chipFormatter: (value) => 'Stato: ${value?.name ?? "None"}',
+                id: "stateFilter",
+                name: "Stato",
+                onChanged: (StateModel? newValue) {
+                  setState(() {});
+                },
+                displayStringForOption: (state) => state.name,
+              ),
+              DateTextTableFilter(
+                id: "startDate",
+                chipFormatter: (value) => 'Da "$value"',
+                name: "Da",
+              ),
+              DateTextTableFilter(
+                id: "endDate",
+                chipFormatter: (value) => 'A "$value"',
+                name: "A",
+              ),
+              StringTextTableFilter(
+                id: "massSendingModelNameComunication",
+                chipFormatter: (value) => "Nome comunicazione: $value",
+                name: "Nome comunicazione",
+              ),
+              StringTextTableFilter(
+                id: "denominationSh",
+                chipFormatter: (value) => "Destinatario: $value",
+                name: "Destinatario",
+              ),
+              StringTextTableFilter(
+                id: "emailSh",
+                chipFormatter: (value) => "Email destinatario: $value",
+                name: "Email destinatario",
+              ),
             ],
           ),
         ),

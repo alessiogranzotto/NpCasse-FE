@@ -486,6 +486,34 @@ class CartNotifier with ChangeNotifier {
     }
   }
 
+  Future getReceipt(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required String fiscalizationExternalId}) async {
+    try {
+      var response = await cartAPI.getReceipt(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          fiscalizationExternalId: fiscalizationExternalId);
+
+      if (response != null) {
+        return response;
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Carrello",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
   void refresh() {
     notifyListeners();
   }

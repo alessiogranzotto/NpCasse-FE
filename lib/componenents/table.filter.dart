@@ -4,6 +4,54 @@ import 'package:paged_datatable/paged_datatable.dart';
 import 'package:flutter/services.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+class StringTextTableFilter extends TableFilter<String> {
+  final InputDecoration? decoration;
+  final TextEditingController _controller = TextEditingController();
+
+  StringTextTableFilter({
+    required super.id,
+    required super.name,
+    required super.chipFormatter,
+    super.initialValue,
+    super.enabled = true,
+    this.decoration,
+  }) {
+    // Initialize the controller with the initial value if present
+    _controller.text = initialValue?.toString() ?? '';
+  }
+
+  @override
+  Widget buildPicker(BuildContext context, FilterState<String> state) {
+    if (_controller.text != state.value?.toString()) {
+      _controller.text = state.value?.toString() ?? '';
+    }
+
+    return TextFormField(
+      controller: _controller,
+      keyboardType: TextInputType.name,
+      decoration: InputDecoration(
+        labelText: name,
+        hintText: 'Inserire valore da ricercare...', // Placeholder
+        hintStyle: TextStyle(color: Colors.grey), // Set hint text color to grey
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black, width: 2),
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+        border: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
+      ).copyWith(
+        hintText: decoration?.hintText ??
+            'Inserire valore da ricercare...', // Fallback to custom hintText if provided
+      ),
+      onChanged: (value) {
+        state.value = value;
+      },
+    );
+  }
+}
 
 class IntegerTextTableFilter extends TableFilter<int> {
   final InputDecoration? decoration;
@@ -29,13 +77,13 @@ class IntegerTextTableFilter extends TableFilter<int> {
 
     return TextFormField(
       controller: _controller,
-      keyboardType: TextInputType.number,  // Set keyboard type to number
+      keyboardType: TextInputType.number, // Set keyboard type to number
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly, // Allow only digits
       ],
       decoration: InputDecoration(
         labelText: name,
-        hintText: 'Enter an integer',  // Placeholder
+        hintText: 'Enter an integer', // Placeholder
         hintStyle: TextStyle(color: Colors.grey), // Set hint text color to grey
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.black, width: 2),
@@ -47,7 +95,8 @@ class IntegerTextTableFilter extends TableFilter<int> {
           borderSide: BorderSide(color: Colors.black),
         ),
       ).copyWith(
-        hintText: decoration?.hintText ?? 'Enter an integer', // Fallback to custom hintText if provided
+        hintText: decoration?.hintText ??
+            'Enter an integer', // Fallback to custom hintText if provided
       ),
       onChanged: (value) {
         // Update the state only if the value is a valid integer
@@ -63,7 +112,8 @@ class IntegerTextTableFilter extends TableFilter<int> {
   // Method to check if the input value is a valid integer
   bool _isValidInteger(String input) {
     if (input.isEmpty) return false; // Reject empty input
-    return int.tryParse(input) != null; // Check if the input can be parsed to an integer
+    return int.tryParse(input) !=
+        null; // Check if the input can be parsed to an integer
   }
 }
 
@@ -102,7 +152,8 @@ class DateTextTableFilter extends TableFilter<String> {
     });
     return TextFormField(
       controller: _controller,
-      focusNode: _focusNode, // Attach the focus node to detect when the field loses focus
+      focusNode:
+          _focusNode, // Attach the focus node to detect when the field loses focus
       keyboardType: TextInputType.datetime,
       inputFormatters: [
         DateInputFormatter(), // Custom formatter for date input
@@ -121,7 +172,8 @@ class DateTextTableFilter extends TableFilter<String> {
           borderSide: BorderSide(color: Colors.black),
         ),
       ).copyWith(
-        hintText: decoration?.hintText ?? 'dd/MM/yyyy', // Fallback to custom hintText if provided
+        hintText: decoration?.hintText ??
+            'dd/MM/yyyy', // Fallback to custom hintText if provided
       ),
       onChanged: (value) {
         // Update the state only if the date is valid
@@ -133,10 +185,12 @@ class DateTextTableFilter extends TableFilter<String> {
       },
     );
   }
+
   String removeLastSlash(String input) {
     int lastSlashIndex = input.lastIndexOf('/');
     if (lastSlashIndex != -1) {
-      return input.substring(0, lastSlashIndex) + input.substring(lastSlashIndex + 1);
+      return input.substring(0, lastSlashIndex) +
+          input.substring(lastSlashIndex + 1);
     }
     return input; // Return the original string if no slash is found
   }
@@ -148,12 +202,16 @@ class DateTextTableFilter extends TableFilter<String> {
     DateTime now = DateTime.now();
 
     // Check if the user has entered only the day (e.g., '04') and there are no slashes
-    if (value.isNotEmpty && value.length == 3 && value.contains('/') && value.indexOf('/') == 2) {
+    if (value.isNotEmpty &&
+        value.length == 3 &&
+        value.contains('/') &&
+        value.indexOf('/') == 2) {
       String day = value.replaceAll("/", "");
 
       if (int.parse(day) >= 1 && int.parse(day) <= 31) {
         // Format the current date with today's month and year
-        String currentDate = '$day/${now.month.toString().padLeft(2, '0')}/${now.year}';
+        String currentDate =
+            '$day/${now.month.toString().padLeft(2, '0')}/${now.year}';
 
         // Update the controller text with the new date
         _controller.text = currentDate;
@@ -161,8 +219,11 @@ class DateTextTableFilter extends TableFilter<String> {
         // Manually update the state with the new date
         state.value = currentDate;
       }
-    } else if (value.isNotEmpty && value.length == 6 && value.contains('/') 
-      && value.indexOf('/') == 2 && value.lastIndexOf('/') == 5)  {
+    } else if (value.isNotEmpty &&
+        value.length == 6 &&
+        value.contains('/') &&
+        value.indexOf('/') == 2 &&
+        value.lastIndexOf('/') == 5) {
       List<String> parts = removeLastSlash(value).split('/');
 
       if (parts.length == 2) {
@@ -172,10 +233,9 @@ class DateTextTableFilter extends TableFilter<String> {
         int day = int.tryParse(dayStr) ?? -1;
         int month = int.tryParse(monthStr) ?? -1;
 
-        if ((day > 0 && day <= 31  && month > 0 && month <= 12))  {
+        if ((day > 0 && day <= 31 && month > 0 && month <= 12)) {
           // Format the date to dd/MM/yyyy
-          String currentDate =
-              '${dayStr}/${monthStr}/${now.year}';
+          String currentDate = '${dayStr}/${monthStr}/${now.year}';
 
           // Update the controller text with the new date
           _controller.text = currentDate;
@@ -185,24 +245,31 @@ class DateTextTableFilter extends TableFilter<String> {
         }
       }
     } else if (value.isNotEmpty &&
-      value.length == 8 &&
-      value.contains('/') &&
-      value.indexOf('/') == 2 &&
-      value.lastIndexOf('/') == 5) {
-    String day = value.substring(0, 2); // Extract the day (first two characters)
-    String month = value.substring(3, 5); // Extract the month (fourth and fifth characters)
-    String year = value.substring(6, 8); // Extract the year (last two characters)
-    // DateTime now = DateTime.now();
+        value.length == 8 &&
+        value.contains('/') &&
+        value.indexOf('/') == 2 &&
+        value.lastIndexOf('/') == 5) {
+      String day =
+          value.substring(0, 2); // Extract the day (first two characters)
+      String month = value.substring(
+          3, 5); // Extract the month (fourth and fifth characters)
+      String year =
+          value.substring(6, 8); // Extract the year (last two characters)
+      // DateTime now = DateTime.now();
 
-    // Check if the day, month, and year are valid
-    if (int.parse(day) > 0 && int.parse(day) <= 31 && int.parse(month) > 0 
-    && int.parse(month) <= 12 && int.parse(year) >= 0 && int.parse(month) <= 99) {
-      // Add the current millennium and century to the year
-      int fullYear = int.parse('20$year');
+      // Check if the day, month, and year are valid
+      if (int.parse(day) > 0 &&
+          int.parse(day) <= 31 &&
+          int.parse(month) > 0 &&
+          int.parse(month) <= 12 &&
+          int.parse(year) >= 0 &&
+          int.parse(month) <= 99) {
+        // Add the current millennium and century to the year
+        int fullYear = int.parse('20$year');
 
-      // // Check if the entered date is in the valid past or current date range
-      // DateTime enteredDate = DateTime(fullYear, int.parse(month), int.parse(day));
-      // if (enteredDate.isBefore(now) || enteredDate.isAtSameMomentAs(now)) {
+        // // Check if the entered date is in the valid past or current date range
+        // DateTime enteredDate = DateTime(fullYear, int.parse(month), int.parse(day));
+        // if (enteredDate.isBefore(now) || enteredDate.isAtSameMomentAs(now)) {
         String formattedDate = '$day/$month/$fullYear';
 
         // Update the controller text with the new formatted date
@@ -210,9 +277,9 @@ class DateTextTableFilter extends TableFilter<String> {
 
         // Manually update the state with the new date
         state.value = formattedDate;
-      // }
+        // }
+      }
     }
-  }
   }
 
   // Method to validate the date format strictly
@@ -227,7 +294,8 @@ class DateTextTableFilter extends TableFilter<String> {
       }
 
       // Check if the date is valid
-      return _isValidDayMonth(parsedDate.day, parsedDate.month, parsedDate.year);
+      return _isValidDayMonth(
+          parsedDate.day, parsedDate.month, parsedDate.year);
     } catch (e) {
       return false;
     }
@@ -236,7 +304,8 @@ class DateTextTableFilter extends TableFilter<String> {
   // Method to check if the day and month are valid
   bool _isValidDayMonth(int day, int month, int year) {
     if (month < 1 || month > 12) return false; // Invalid month
-    if (year < 1900 || year > 2100) return false; // Adjust year limits as necessary
+    if (year < 1900 || year > 2100)
+      return false; // Adjust year limits as necessary
     if (day < 1 || day > _daysInMonth(month, year)) return false; // Invalid day
     return true;
   }
@@ -284,7 +353,8 @@ class DateInputFormatter extends TextInputFormatter {
 
     // Prevent adding a second slash in any place
     if (text.contains('//')) {
-      text = oldValue.text; // Restore to old value if there's more than one slash
+      text =
+          oldValue.text; // Restore to old value if there's more than one slash
     }
 
     // Ensure the length doesn't exceed 10 characters (dd/MM/yyyy)
@@ -299,7 +369,6 @@ class DateInputFormatter extends TextInputFormatter {
     );
   }
 }
-
 
 class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
   final InputDecoration? decoration;
@@ -340,7 +409,7 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
         if (visibilityInfo.visibleFraction > 0 && !_isVisible) {
           // The widget has become visible, so load the options
           _isVisible = true;
-          _loadOptions();  // Load options when the widget becomes visible
+          _loadOptions(); // Load options when the widget becomes visible
         }
         if (visibilityInfo.visibleFraction == 0 && _isVisible) {
           // If the widget is no longer visible, set _isVisible to false
@@ -351,7 +420,7 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
         valueListenable: _optionsNotifier,
         builder: (context, loadedOptions, child) {
           if (loadedOptions.isEmpty && !_isLoading && _isVisible) {
-            _loadOptions();  // Ensure we load options only if empty and widget is visible
+            _loadOptions(); // Ensure we load options only if empty and widget is visible
           }
           // Ensure that the filter is always shown, regardless of loading state
           return Column(
@@ -374,7 +443,8 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.normal,
-                                color: Colors.black, // Set a color for the item text
+                                color: Colors
+                                    .black, // Set a color for the item text
                               ),
                             ),
                           );
@@ -391,11 +461,14 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
                   onSaved: (newValue) {
                     state.value = newValue;
                   },
-                  decoration: (decoration ?? InputDecoration(labelText: name)).copyWith(
-                    hintText: _isLoading ? 'Loading options...' : 'Select an option',
+                  decoration:
+                      (decoration ?? InputDecoration(labelText: name)).copyWith(
+                    hintText:
+                        _isLoading ? 'Loading options...' : 'Select an option',
                     // Add a border to ensure only the bottom line is visible
                     border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black), // Bottom border color
+                      borderSide: BorderSide(
+                          color: Colors.black), // Bottom border color
                     ),
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.black, width: 2),
@@ -423,7 +496,8 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
 
     // Check if the current value is part of the loaded options and matches the display string
     for (T option in loadedOptions) {
-      if (displayStringForOption(option) == displayStringForOption(currentValue)) {
+      if (displayStringForOption(option) ==
+          displayStringForOption(currentValue)) {
         return option;
       }
     }
@@ -567,5 +641,3 @@ class AutocompleteTableFilter<T extends Object> extends TableFilter<T> {
     );
   }
 }
-
-

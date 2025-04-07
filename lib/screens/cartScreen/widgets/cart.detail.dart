@@ -153,7 +153,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                 double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
             typePayment: strTypePayment,
             fiscalization: int.parse(selectedFiscalization),
-            modeCartCheckout: 1)
+            modeCartCheckout: 2)
         .then((value) {
       if (value > 0) {
         // if (context.mounted) {
@@ -242,7 +242,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                   double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
               typePayment: strTypePayment,
               fiscalization: int.parse(selectedFiscalization),
-              modeCartCheckout: 0)
+              modeCartCheckout: 1)
           .then((value) {
         if (value > 0) {
           if (context.mounted) {
@@ -573,7 +573,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder:
                               (BuildContext context, int value, Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   value.toString(),
                                   style: CustomTextStyle.textFormFieldMedium
@@ -603,7 +604,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder:
                               (BuildContext context, int value, Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   value.toString(),
                                   style: CustomTextStyle.textFormFieldMedium
@@ -642,7 +644,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder: (BuildContext context, double value,
                               Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   MoneyUtils.getFormattedCurrency(value),
                                   style: CustomTextStyle.textFormFieldMedium
@@ -750,7 +753,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                           builder: (BuildContext context, double value,
                               Widget? child) {
                             return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
                                 child: Text(
                                   MoneyUtils.getFormattedCurrency(value),
                                   style: CustomTextStyle.textFormFieldBold
@@ -1008,19 +1012,21 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            width: 300,  // Set the desired width limit
+                            width: 300, // Set the desired width limit
                             child: Text(
                               _stripeStatus,
                               style: CustomTextStyle.textFormFieldBold.copyWith(
                                 color: Colors.black,
                                 fontSize: 14,
                               ),
-                              maxLines: 3,  // Set the max number of lines
-                              overflow: TextOverflow.ellipsis,  // Optional: To handle overflow with ellipsis
+                              maxLines: 3, // Set the max number of lines
+                              overflow: TextOverflow
+                                  .ellipsis, // Optional: To handle overflow with ellipsis
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 0),
                             child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Theme.of(context)
@@ -1081,7 +1087,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 2.0),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Theme.of(context)
@@ -1101,8 +1108,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                       )),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 4.0),
                                   child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor: Theme.of(context)

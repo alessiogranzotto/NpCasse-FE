@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
+import 'package:np_casse/core/models/mass.sending.job.model.dart';
 import 'package:np_casse/core/models/mass.sending.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
@@ -18,6 +19,7 @@ import 'package:np_casse/screens/homeScreen/home.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.detail.dart';
+import 'package:np_casse/screens/massSendingScreen/mass.sending.event.detail.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.plan.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.recipient.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.statistics.dart';
@@ -29,6 +31,7 @@ import 'package:np_casse/screens/productAttributeScreen/productAttribute.screen.
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.attribute.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.data.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.dart';
+import 'package:np_casse/screens/reportScreen/pdf.receipt.screen.dart';
 import 'package:np_casse/screens/shopScreen/category.two.shop.screen.dart';
 import 'package:np_casse/screens/shopScreen/product.three.shop.screen.dart';
 import 'package:np_casse/screens/splashScreen/splash.screen.dart';
@@ -109,7 +112,9 @@ class AppRouter {
   static const String massSendingRecipientRoute = "/massSendingRecipient";
   static const String massSendingPlanRoute = "/massSendingPlan";
   static const String massSendingStatisticsRoute = "/massSendingStatistic";
+  static const String massSendingEventDetailRoute = "/massSendingEventDetail";
 
+  static const String receiptPdf = "/receiptPdf";
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -391,7 +396,27 @@ class AppRouter {
             settings: settings,
           );
         }
-
+      case massSendingEventDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MassSendingEventDetailScreen(
+              massSendingJobModelForEventDetail: ModalRoute.of(context)!
+                  .settings
+                  .arguments as MassSendingJobModelForEventDetail,
+            ),
+            settings: settings,
+          );
+        }
+      case receiptPdf:
+        {
+          return MaterialPageRoute(
+            builder: (context) => PdfReceiptScreen(
+              fiscalizationExternalId:
+                  ModalRoute.of(context)!.settings.arguments as String,
+            ),
+            settings: settings,
+          );
+        }
       case onBoardRoute:
         {
           return MaterialPageRoute(

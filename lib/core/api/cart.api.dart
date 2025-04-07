@@ -268,4 +268,29 @@ class CartAPI {
       return null;
     }
   }
+
+  Future getReceipt(
+      {required String? token,
+      required int idUserAppInstitution,
+      required String fiscalizationExternalId}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.cartURL}/Get-receipt?IdUserAppInstitution=$idUserAppInstitution&FiscalizationExternalId=$fiscalizationExternalId');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic bodyBytes = response.bodyBytes;
+      return bodyBytes;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
 }

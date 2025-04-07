@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.015';
+  static String version = '1.20.021';
 }
 
 // class AppRegex {
@@ -143,6 +143,8 @@ class AppStrings {
 
   static const emailSendFrom = 'Email di invio';
   static const pleaseEnterEmailSendFrom = 'Inserire email di invio';
+
+  static const parameterIdShAnonymous = "Id Stakeholder anonimo";
 
   //COMUNICATION
   static const nameComunication = 'Nome comunicazione';

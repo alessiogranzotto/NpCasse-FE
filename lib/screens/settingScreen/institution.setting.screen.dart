@@ -23,17 +23,20 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   final _formKey2 = GlobalKey<FormState>();
   final _formKey3 = GlobalKey<FormState>();
   final _formKey4 = GlobalKey<FormState>();
+  final _formKey5 = GlobalKey<FormState>();
 
   final ValueNotifier<bool> paymentMethodValidNotifier = ValueNotifier(false);
   final ValueNotifier<bool> stripeValidNotifier = ValueNotifier(true);
   final ValueNotifier<bool> securityFieldValidNotifier = ValueNotifier(false);
   final ValueNotifier<bool> casseModuleValidNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> parameterValidNotifier = ValueNotifier(true);
 
   late final TextEditingController idContantiController;
   late final TextEditingController idBancomatController;
   late final TextEditingController idCartaCreditoController;
   late final TextEditingController idAssegnoController;
   late final TextEditingController stripeApiKeyController;
+  late final TextEditingController parameterIdShAnonymousApiKeyController;
   late TextEditingController tokenExpirationController =
       TextEditingController();
   late TextEditingController maxInactivityController = TextEditingController();
@@ -48,7 +51,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   late final TextEditingController institutionFiscalizationPinController;
   bool posAuthorization = false;
 
-  List<bool> panelOpen = [false, false, false, false];
+  List<bool> panelOpen = [false, false, false, false, false];
   bool isRefreshing = true; // Track if data is refreshing
 
   void initializeControllers() {
@@ -62,6 +65,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       ..addListener(paymentMethodControllerListener);
     stripeApiKeyController = TextEditingController()
       ..addListener(stripeControllerListener);
+    parameterIdShAnonymousApiKeyController = TextEditingController()
+      ..addListener(parameterControllerListener);
     tokenExpirationController = TextEditingController()
       ..addListener(securityControllerListener);
     maxInactivityController = TextEditingController()
@@ -86,6 +91,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     institutionFiscalizationCfController.dispose();
     institutionFiscalizationPasswordController.dispose();
     institutionFiscalizationPinController.dispose();
+    parameterIdShAnonymousApiKeyController.dispose();
   }
 
   void paymentMethodControllerListener() {
@@ -129,8 +135,11 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
         result = true;
       }
     }
-
     securityFieldValidNotifier.value = result;
+  }
+
+  void parameterControllerListener() {
+    stripeValidNotifier.value = true;
   }
 
   Future<void> getInstitutionAttributes() async {
@@ -259,6 +268,16 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
         if (itemPosAuthorization != null &&
             itemPosAuthorization.attributeValue == "true") {
           posAuthorization = true;
+        }
+
+        //PARAMETER
+        var itemParameterIdStakeholderAnonymous = cValue
+            .where(
+                (element) => element.attributeName == 'Parameter.IdShAnonymous')
+            .firstOrNull;
+        if (itemParameterIdStakeholderAnonymous != null) {
+          parameterIdShAnonymousApiKeyController.text =
+              itemParameterIdStakeholderAnonymous.attributeValue;
         }
       }
     });
@@ -406,6 +425,40 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                 SnackUtil.stylishSnackBar(
                     title: "Impostazioni ente",
                     message: "Criteri modulo casse aggiornati correttamente",
+                    contentType: "success"));
+          }
+        }
+      });
+    }
+  }
+
+  updateParameterData() {
+    if (_formKey5.currentState!.validate()) {
+      var authNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authNotifier.getSelectedUserAppInstitution();
+
+      var institutionAttributeInstitutionAdminNotifier =
+          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
+              listen: false);
+
+      institutionAttributeInstitutionAdminNotifier
+          .updateInstitutionParameterAttribute(
+        context: context,
+        token: authNotifier.token,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        idInstitution:
+            cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
+        parameterIdShAnonymous: parameterIdShAnonymousApiKeyController.text,
+      )
+          .then((value) {
+        if (value) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni ente",
+                    message: "Parametri aggiornati correttamente",
                     contentType: "success"));
           }
         }
@@ -996,6 +1049,86 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                 ),
                               ),
                               isExpanded: panelOpen[3],
+                            ),
+                            ExpansionPanel(
+                              canTapOnHeader: true,
+                              headerBuilder:
+                                  (BuildContext context, bool isExpanded) {
+                                return ListTile(
+                                  title: Text('Parametri'),
+                                  leading: const Icon(Icons.settings),
+                                );
+                              },
+                              body: Form(
+                                key: _formKey5,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(30),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomTextFormField(
+                                          controller:
+                                              parameterIdShAnonymousApiKeyController,
+                                          labelText:
+                                              AppStrings.parameterIdShAnonymous,
+                                          keyboardType: TextInputType.number,
+                                          inputFormatter: <TextInputFormatter>[
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          textInputAction: TextInputAction.next,
+                                          onChanged: (_) => _formKey1
+                                              .currentState
+                                              ?.validate(),
+                                          // validator: (value) {
+                                          //   return value!.isNotEmpty
+                                          //       ? null
+                                          //       : AppStrings
+                                          //           .pleaseEnterstripeApiKey;
+                                          // },
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ValueListenableBuilder(
+                                              valueListenable:
+                                                  parameterValidNotifier,
+                                              builder: (_, isValid, __) {
+                                                return ElevatedButton(
+                                                  onPressed: isValid
+                                                      ? () {
+                                                          updateParameterData();
+                                                        }
+                                                      : null,
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    side: BorderSide(
+                                                      width: 1.0,
+                                                    ),
+                                                  ),
+                                                  child: const Text(
+                                                    AppStrings.update,
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 14),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              isExpanded: panelOpen[4],
                             ),
                           ],
                         ),

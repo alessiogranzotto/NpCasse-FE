@@ -273,4 +273,38 @@ class InstitutionAttributeAPI {
       return null;
     }
   }
+
+  Future updateInstitutionParameterAttribute({
+    required String? token,
+    required int idUserAppInstitution,
+    required int idInstitution,
+    required String parameterIdShAnonymous,
+  }) async {
+    List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Parameter.IdShAnonymous',
+        attributeValue: parameterIdShAnonymous));
+
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');
+    final http.Response response = await client.put(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Access-Control-Allow-Origin': "*",
+          "Authorization": token ?? ''
+        },
+        body: jsonEncode({
+          "updateInstitutionAttributeRequest": cInstitutionAttributeModel,
+        }));
+
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
 }

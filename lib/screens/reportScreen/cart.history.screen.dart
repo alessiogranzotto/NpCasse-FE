@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
+import 'package:np_casse/componenents/custom.table.footer.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
@@ -24,6 +25,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
+  int totalCount = 0;
   List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
   List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
   List<String> filterStringModel = [];
@@ -102,6 +104,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           filter: filterStringModel);
 
       if (response is CartHistoryModel) {
+        totalCount = response.totalCount;
         List<Map<String, dynamic>> data =
             response.CartHistoryList.map((cart) => cart.toJson()).toList();
 
@@ -211,6 +214,10 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               ),
             ],
           ),
+          footer: CustomTableFooter<String, Map<String, dynamic>>(
+            totalItems: totalCount,
+            controller: tableController,
+          ),
           columns: [
             // RowSelectorColumn(),
             TableColumn(
@@ -302,7 +309,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                       value: 2,
                       child: const Text('Associazione donatore'),
                     ),
-                  if (item['fiscalization'] > 0)
+                  if (item['fiscalizationExternalId'] != null)
                     PopupMenuItem<int>(
                       value: 3,
                       child: const Text('Visualizza scontrino'),
@@ -326,6 +333,10 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                   if (value == 2) {
                     Navigator.of(context).pushNamed(AppRouter.shManage,
                         arguments: item['idCart']);
+                  }
+                  if (value == 3) {
+                    Navigator.of(context).pushNamed(AppRouter.receiptPdf,
+                        arguments: item['fiscalizationExternalId']);
                   }
                   if (value == 4) {
                     var dialog = CustomAlertDialog(

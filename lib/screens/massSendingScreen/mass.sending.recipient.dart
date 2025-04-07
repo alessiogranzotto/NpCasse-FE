@@ -30,19 +30,11 @@ class _MyosotisConfigurationDetailState
   //ISARCHIVED MASS SENDING
   final ValueNotifier<bool> archiviedNotifier = ValueNotifier<bool>(false);
 
-  // //ACCUMULATOR
-  // TextEditingController accumulatorController = TextEditingController();
-
-  //VISIBLE PERSONAL FORM FIELD  CONFIGURATION
+  //GIVE ACCUMULATOR
   final accumulatorGiveController =
       MultiSelectController<AccumulatorGiveModel>();
-
-  //AVAILABLE GIVE ACCUMULATOR
   List<AccumulatorGiveModel> availableAccumulatorGive = List.empty();
   List<DropdownItem<AccumulatorGiveModel>> availableAccumulatorGiveItem = [];
-
-  // //SMTP2GO TEMPLATE MASS SENDING
-  // AccumulatorGiveModel? accumulatorGive;
 
   void initializeControllers() {
     accumulatorGiveController.addListener(dataControllerListener);
@@ -245,7 +237,8 @@ class _MyosotisConfigurationDetailState
                                   archiviedNotifier, // Ascolta i cambiamenti del ValueNotifier
                               builder: (context, value, child) {
                                 return CheckboxListTile(
-                                    title: Text("Archiviata"),
+                                    title: Text(
+                                        "Ricrea il processo al salvataggio"),
                                     value: value,
                                     onChanged: (bool? newValue) {
                                       archiviedNotifier.value = newValue ??
