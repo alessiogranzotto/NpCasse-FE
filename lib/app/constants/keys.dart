@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.021';
+  static String version = '1.20.023';
 }
 
 // class AppRegex {
@@ -125,6 +125,8 @@ class AppStrings {
   static const String stripeApiKey = 'Stripe api key';
   static const String pleaseEnterstripeApiKey = 'Inserire api key di Stripe';
 
+  static const String paypalApiKey = 'Paypal Client Id';
+
   static const GiveNomeLogin = 'Nome login Give Api';
   static const pleaseEnterGiveNomeLogin = 'Inserire nome login Api Give';
 
@@ -183,6 +185,7 @@ class AppStrings {
       'Inserire descrizione configurazione';
 
   static const idDeviceMyosotisConfiguration = 'Id device abilitati';
+  static const urlMyosotisConfiguration = 'Url abilitati';
   static const preestablishedAmount = 'Importi predefiniti';
 
   static const formStartupMyosotisConfiguration =

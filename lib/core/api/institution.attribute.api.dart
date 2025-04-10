@@ -72,15 +72,18 @@ class InstitutionAttributeAPI {
     }
   }
 
-  Future updateInstitutionStripeAttribute({
+  Future updateInstitutionPosBancariAttribute({
     required String? token,
     required int idUserAppInstitution,
     required int idInstitution,
     required String stripeApiKey,
+    required String paypalClientId,
   }) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Stripe.ApiKey', attributeValue: stripeApiKey));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Paypal.ClientId', attributeValue: paypalClientId));
 
     final Uri uri = Uri.parse(
         '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');

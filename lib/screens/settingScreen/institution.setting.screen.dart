@@ -36,6 +36,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   late final TextEditingController idCartaCreditoController;
   late final TextEditingController idAssegnoController;
   late final TextEditingController stripeApiKeyController;
+  late final TextEditingController paypalClientIdController;
   late final TextEditingController parameterIdShAnonymousApiKeyController;
   late TextEditingController tokenExpirationController =
       TextEditingController();
@@ -65,6 +66,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       ..addListener(paymentMethodControllerListener);
     stripeApiKeyController = TextEditingController()
       ..addListener(stripeControllerListener);
+    paypalClientIdController = TextEditingController()
+      ..addListener(paypalControllerListener);
     parameterIdShAnonymousApiKeyController = TextEditingController()
       ..addListener(parameterControllerListener);
     tokenExpirationController = TextEditingController()
@@ -86,6 +89,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     idCartaCreditoController.dispose();
     idAssegnoController.dispose();
     stripeApiKeyController.dispose();
+    paypalClientIdController.dispose();
     tokenExpirationController.dispose();
     maxInactivityController.dispose();
     institutionFiscalizationCfController.dispose();
@@ -121,11 +125,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
 
   void stripeControllerListener() {
     stripeValidNotifier.value = true;
-    // if (stripeApiKeyController.text.isEmpty) {
-    //   stripeValidNotifier.value = false;
-    // } else {
-    //   stripeValidNotifier.value = true;
-    // }
+  }
+
+  void paypalControllerListener() {
+    stripeValidNotifier.value = true;
   }
 
   void securityControllerListener() {
@@ -203,6 +206,14 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
             .firstOrNull;
         if (itemStripeApiKey != null) {
           stripeApiKeyController.text = itemStripeApiKey.attributeValue;
+        }
+
+        //STRIPE
+        var itemPaypalApiKey = cValue
+            .where((element) => element.attributeName == 'Paypal.ClientId')
+            .firstOrNull;
+        if (itemPaypalApiKey != null) {
+          paypalClientIdController.text = itemPaypalApiKey.attributeValue;
         }
 
         //SECURITY
@@ -333,13 +344,14 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
               listen: false);
 
       institutionAttributeInstitutionAdminNotifier
-          .updateInstitutionStripeAttribute(
+          .updateInstitutionPosBancariAttribute(
         context: context,
         token: authNotifier.token,
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
         idInstitution:
             cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
         stripeApiKey: stripeApiKeyController.text,
+        paypalClientId: paypalClientIdController.text,
       )
           .then((value) {
         if (value) {
@@ -347,7 +359,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
                     title: "Impostazioni ente",
-                    message: "Parametri Stripe aggiornati correttamente",
+                    message: "Parametri POS bancari aggiornati correttamente",
                     contentType: "success"));
           }
         }
@@ -690,7 +702,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                               headerBuilder:
                                   (BuildContext context, bool isExpanded) {
                                 return ListTile(
-                                  title: Text('POS bancario'),
+                                  title: Text('POS bancari'),
                                   leading: const Icon(Icons.extension_rounded),
                                 );
                               },
@@ -721,6 +733,39 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                                                       .length -
                                                                   5,
                                                               stripeApiKeyController
+                                                                  .text.length)
+                                                  : "")),
+                                          keyboardType: TextInputType.name,
+                                          textInputAction: TextInputAction.next,
+                                          onChanged: (_) => _formKey1
+                                              .currentState
+                                              ?.validate(),
+                                          // validator: (value) {
+                                          //   return value!.isNotEmpty
+                                          //       ? null
+                                          //       : AppStrings
+                                          //           .pleaseEnterstripeApiKey;
+                                          // },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomTextFormField(
+                                          obscureText: true,
+                                          controller: paypalClientIdController,
+                                          labelText: AppStrings.paypalApiKey +
+                                              ((paypalClientIdController
+                                                          .text.length >
+                                                      5
+                                                  ? " ******" +
+                                                      paypalClientIdController.text
+                                                          .substring(
+                                                              paypalClientIdController
+                                                                      .text
+                                                                      .length -
+                                                                  5,
+                                                              paypalClientIdController
                                                                   .text.length)
                                                   : "")),
                                           keyboardType: TextInputType.name,

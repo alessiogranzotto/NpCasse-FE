@@ -94,6 +94,11 @@ class _FinalizeComunicationScreenState
     super.initState();
   }
 
+  void dispose() {
+    disposeControllers();
+    super.dispose();
+  }
+
   void downloadTemplateComunication() {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);

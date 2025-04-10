@@ -5,6 +5,7 @@ class ShSearchTextfield extends StatelessWidget {
   final String hintText;
   final Icon prefixIcon;
   final String? Function(String?)? validator;
+  final void Function(String)? onFieldSubmitted;
   final ThemeData themeData;
 
   const ShSearchTextfield(
@@ -12,7 +13,8 @@ class ShSearchTextfield extends StatelessWidget {
       required this.textEditingController,
       required this.hintText,
       required this.prefixIcon,
-      required this.validator,
+      this.validator,
+      this.onFieldSubmitted,
       required this.themeData})
       : super(key: key);
 
@@ -24,6 +26,7 @@ class ShSearchTextfield extends StatelessWidget {
       },
       controller: textEditingController,
       validator: validator,
+      onFieldSubmitted: onFieldSubmitted,
       textAlign: TextAlign.left,
       textAlignVertical: TextAlignVertical.center,
       style: TextStyle(

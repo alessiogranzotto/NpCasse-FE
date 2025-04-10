@@ -129,7 +129,6 @@ class MassSendingModel {
     required this.descriptionMassSending,
     required this.senderMassSending,
     required this.emailSenderMassSending,
-    required this.subjectMassSending,
     required this.idTemplateMassSending,
     this.stateMassSending,
     this.planningDate,
@@ -145,7 +144,6 @@ class MassSendingModel {
   late final String descriptionMassSending;
   late final String senderMassSending;
   late final String emailSenderMassSending;
-  late final String subjectMassSending;
   late final String idTemplateMassSending;
   late final int? stateMassSending;
   late final DateTime? planningDate;
@@ -160,7 +158,6 @@ class MassSendingModel {
     descriptionMassSending = '';
     senderMassSending = '';
     emailSenderMassSending = '';
-    subjectMassSending = '';
     idTemplateMassSending = '';
     massSendingGiveAccumulator = List.empty();
   }
@@ -174,7 +171,6 @@ class MassSendingModel {
     descriptionMassSending = json['descriptionMassSending'];
     senderMassSending = json['senderMassSending'];
     emailSenderMassSending = json['emailSenderMassSending'];
-    subjectMassSending = json['subjectMassSending'];
     idTemplateMassSending = json['idTemplateMassSending'];
     stateMassSending = json['stateMassSending'] ?? null;
     if (json['planningDate'] != null) {
@@ -201,7 +197,6 @@ class MassSendingModel {
     data['descriptionMassSending'] = descriptionMassSending;
     data['senderMassSending'] = senderMassSending;
     data['emailSenderMassSending'] = emailSenderMassSending;
-    data['subjectMassSending'] = subjectMassSending;
     data['idTemplateMassSending'] = idTemplateMassSending;
     data['idGiveAccumulator'] = stateMassSending;
     data['stateMassSending'] = stateMassSending;

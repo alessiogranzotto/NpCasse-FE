@@ -41,9 +41,6 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
   //EMAIL SENDER MASS SENDING
   late final TextEditingController emailSenderMassSendingController;
 
-  //SUBJECT EMAIL MASS SENDING
-  late final TextEditingController subjectEmailMassSendingController;
-
   //AVAILABLE SMTP2GO TEMPLATE MASS SENDING
   List<TemplateSmtp2GoModel> availableSmtp2GoTemplate = List.empty();
   List<DropdownMenuItem> availableSmtp2GoTemplateItem = List.empty();
@@ -62,8 +59,6 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
       ..addListener(dataControllerListener);
     emailSenderMassSendingController = TextEditingController()
       ..addListener(dataControllerListener);
-    subjectEmailMassSendingController = TextEditingController()
-      ..addListener(dataControllerListener);
   }
 
   void disposeControllers() {
@@ -71,7 +66,6 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
     descriptionMassSendingController.dispose();
     senderMassSendingController.dispose();
     emailSenderMassSendingController.dispose();
-    subjectEmailMassSendingController.dispose();
   }
 
   void dataControllerListener() {}
@@ -151,10 +145,6 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
     //EMAIL SENDER MASS SENDING
     emailSenderMassSendingController.text =
         widget.massSendingModel.emailSenderMassSending.toString();
-
-    //SUBJECT EMAIL MASS SENDING
-    subjectEmailMassSendingController.text =
-        widget.massSendingModel.subjectMassSending.toString();
 
     //AVAILABLE SMTP2GO TEMPLATE MASS SENDING
     availableSmtp2GoTemplateItem = availableSmtp2GoTemplate
@@ -309,22 +299,6 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: CustomTextFormField(
-                        enabled: true,
-                        controller: subjectEmailMassSendingController,
-                        labelText: AppStrings.subjectEmailMassSending,
-                        keyboardType: TextInputType.name,
-                        textInputAction: TextInputAction.next,
-                        // onChanged: (_) => _formKey.currentState?.validate(),
-                        validator: (value) {
-                          return value!.isNotEmpty
-                              ? null
-                              : AppStrings.pleaseEnterSubjectEmailMassSending;
-                        },
-                      ),
-                    ),
                     Row(
                       children: [
                         Expanded(
@@ -390,8 +364,6 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                       senderMassSending: senderMassSendingController.text,
                       emailSenderMassSending:
                           emailSenderMassSendingController.text,
-                      subjectMassSending:
-                          subjectEmailMassSendingController.text,
                       idTemplateMassSending:
                           smtp2GoTemplate == null ? '' : smtp2GoTemplate!.id,
                       stateMassSending: 0,

@@ -12,17 +12,17 @@ class GiveAPI {
     'Access-Control-Allow-Origin': "*",
   };
 
-  Future findStakeholder({
-    required String? token,
-    required int idUserAppInstitution,
-    required int id,
-    required String nameSurnameOrBusinessName,
-    required String email,
-    required String city,
-    required String cf,
-  }) async {
+  Future findStakeholder(
+      {required String? token,
+      required int idUserAppInstitution,
+      required int id,
+      required String nameSurnameOrBusinessName,
+      required String email,
+      required String city,
+      required String cf,
+      required bool fromReader}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.giveURL}/Find-stakeholder?idUserAppInstitution=$idUserAppInstitution&IdStakeholder=$id&NameSurnameOrBusinessName=$nameSurnameOrBusinessName&Email=$email&City=$city&Cf=$cf');
+        '${ApiRoutes.giveURL}/Find-stakeholder?idUserAppInstitution=$idUserAppInstitution&IdStakeholder=$id&NameSurnameOrBusinessName=$nameSurnameOrBusinessName&Email=$email&City=$city&Cf=$cf&FromReader=$fromReader');
     final http.Response response = await client.get(
       uri,
       headers: {

@@ -117,12 +117,14 @@ class _MyosotisConfigurationScreenState
                     },
                     controller: nameDescIdDeviceSearchController,
                     decoration: InputDecoration(
-                      labelText: "Ricerca per nome, descrizione o Id device",
+                      labelText:
+                          "Ricerca per nome, descrizione, Id device o Url",
                       labelStyle: Theme.of(context)
                           .textTheme
                           .labelMedium!
                           .copyWith(color: Colors.blueGrey),
-                      hintText: "Ricerca per nome, descrizione o Id device",
+                      hintText:
+                          "Ricerca per nome, descrizione, Id device o Url",
                       hintStyle: Theme.of(context)
                           .textTheme
                           .labelLarge!

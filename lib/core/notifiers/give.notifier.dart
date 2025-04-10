@@ -31,7 +31,8 @@ class GiveNotifier with ChangeNotifier {
       required String nameSurnameOrBusinessName,
       required String email,
       required String city,
-      required String cf}) async {
+      required String cf,
+      required bool fromReader}) async {
     try {
       bool isOk = false;
 
@@ -42,7 +43,8 @@ class GiveNotifier with ChangeNotifier {
           nameSurnameOrBusinessName: nameSurnameOrBusinessName,
           email: email,
           city: city,
-          cf: cf);
+          cf: cf,
+          fromReader: fromReader);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/componenents/custom.table.footer.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 
@@ -23,10 +24,11 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
   bool editAndReceiptVisible = false;
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
-
+  int totalCount = 0;
   @override
   void initState() {
     super.initState();
+    totalCount = widget.snapshot.length;
   }
 
   // Fetch data function to be used in the PagedDataTable
@@ -62,11 +64,11 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
         child: PagedDataTableTheme(
           data: PagedDataTableThemeData(
             selectedRow: Colors.blueAccent[100],
-                        rowColor: (index) {
+            rowColor: (index) {
               // Highlight the row if it's selected
               return idRowSelected == widget.snapshot[index].id
                   ? Colors.blueAccent[100]
@@ -80,7 +82,11 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
             initialPageSize: 50,
             pageSizes: const [50],
             fetcher: (pageSize, sortModel, filterModel, pageToken) =>
-                fetchData(pageSize, sortModel, filterModel, pageToken),    
+                fetchData(pageSize, sortModel, filterModel, pageToken),
+            footer: CustomTableFooter<String, Map<String, dynamic>>(
+              totalItems: totalCount,
+              controller: tableController,
+            ),
             columns: [
               TableColumn(
                 id: 'contacts',
@@ -167,7 +173,8 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
   // Helper method to build a selectable row
   Widget _buildSelectableRow(int index, String displayText,
       {bool isCircleAvatar = false, Icon? optionalIcon}) {
-    bool isSelected = idRowSelected == widget.snapshot[index].id; // Check if this row is selected
+    bool isSelected = idRowSelected ==
+        widget.snapshot[index].id; // Check if this row is selected
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -181,7 +188,9 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
       },
       child: Container(
         width: double.infinity, // Ensures it spans the entire column width
-        color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent, // Highlight full cell
+        color: isSelected
+            ? Colors.blue.withOpacity(0.1)
+            : Colors.transparent, // Highlight full cell
         alignment: Alignment.centerLeft, // Aligns text to the left
         child: Row(
           children: [
@@ -189,7 +198,8 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
             if (isCircleAvatar) ...[
               CircleAvatar(
                 radius: 16,
-                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 child: Text(
                   displayText,
                   style: Theme.of(context).textTheme.bodySmall,
@@ -199,7 +209,8 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
             // Text or Icon
             if (!isCircleAvatar) ...[
               if (optionalIcon != null) optionalIcon,
-              Expanded( // This makes sure text spans and doesn't restrict clicks
+              Expanded(
+                // This makes sure text spans and doesn't restrict clicks
                 child: Text(
                   displayText,
                   softWrap: true,
@@ -280,7 +291,9 @@ class _ShowGiveShDataTableDeduplica
   // Helper method to build a selectable row
   Widget _buildSelectableRow(int index, String displayText,
       {bool isCircleAvatar = false}) {
-    bool isSelected = idRowSelected == widget.snapshot[index].stakeholderGiveModelSearch.id; // Check if this row is selected
+    bool isSelected = idRowSelected ==
+        widget.snapshot[index].stakeholderGiveModelSearch
+            .id; // Check if this row is selected
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -293,7 +306,9 @@ class _ShowGiveShDataTableDeduplica
       },
       child: Container(
         width: double.infinity, // Ensures it spans the entire column width
-        color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent, // Highlight full cell
+        color: isSelected
+            ? Colors.blue.withOpacity(0.1)
+            : Colors.transparent, // Highlight full cell
         alignment: Alignment.centerLeft, // Aligns text to the left
         child: Row(
           children: [
@@ -301,7 +316,8 @@ class _ShowGiveShDataTableDeduplica
             if (isCircleAvatar) ...[
               CircleAvatar(
                 radius: 16,
-                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
                 child: Text(
                   displayText,
                   style: Theme.of(context).textTheme.bodySmall,
@@ -310,7 +326,8 @@ class _ShowGiveShDataTableDeduplica
             ],
             // Text or Icon
             if (!isCircleAvatar) ...[
-              Expanded( // This makes sure text spans and doesn't restrict clicks
+              Expanded(
+                // This makes sure text spans and doesn't restrict clicks
                 child: Text(
                   displayText,
                   softWrap: true,

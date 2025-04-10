@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -22,18 +23,77 @@ class ShManageScreen extends StatefulWidget {
 }
 
 class _ShManageScreenState extends State<ShManageScreen> {
-  final TextEditingController nameSurnameorBusinessNameController =
-      TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController cfController = TextEditingController();
-
+  late final TextEditingController nameSurnameorBusinessNameController;
+  late final TextEditingController emailController;
+  late final TextEditingController cityController;
+  late final TextEditingController cfController;
+  late final TextEditingController fiscalCardController;
+  final formKey = GlobalKey<FormState>();
   bool isExecuted = false;
+  bool fromReader = false;
   ValueNotifier<bool> visibilityNew = ValueNotifier<bool>(true);
   ValueNotifier<bool> visibilityEdit = ValueNotifier<bool>(false);
   ValueNotifier<bool> visibilityReceipt = ValueNotifier<bool>(false);
 
   StakeholderGiveModelSearch? cStakeholderGiveModelSearch;
+
+  void initializeControllers() {
+    nameSurnameorBusinessNameController = TextEditingController()
+      ..addListener(nameOrEmailControllerListener);
+    emailController = TextEditingController()
+      ..addListener(nameOrEmailControllerListener);
+    cityController = TextEditingController();
+    cfController = TextEditingController();
+    fiscalCardController = TextEditingController()
+      ..addListener(fiscalCardControllerListener);
+  }
+
+  void disposeControllers() {
+    nameSurnameorBusinessNameController.dispose();
+    emailController.dispose();
+    cityController.dispose();
+    cfController.dispose();
+    fiscalCardController.dispose();
+  }
+
+  void fiscalCardControllerListener() {
+    if (!fiscalCardController.text.isEmpty) {
+      String temp = fiscalCardController.text.replaceAll('  ', ' ');
+      cfController.text = temp.substring(1, 16);
+      nameSurnameorBusinessNameController.text =
+          temp.substring(17, temp.indexOf('_'));
+      fromReader = true;
+    } else {
+      fromReader = true;
+    }
+  }
+
+  void nameOrEmailControllerListener() {
+    if (!nameSurnameorBusinessNameController.text.isEmpty ||
+        !emailController.text.isEmpty) {
+      fromReader = false;
+    } else {
+      fromReader = true;
+    }
+  }
+
+  void submitSearch() {
+    final isValid = nameSurnameorBusinessNameController.text.isNotEmpty ||
+        emailController.text.isNotEmpty ||
+        cityController.text.isNotEmpty ||
+        cfController.text.isNotEmpty ||
+        fiscalCardController.text.isNotEmpty;
+
+    if (isValid) {
+      GiveNotifier giveNotifier =
+          Provider.of<GiveNotifier>(context, listen: false);
+      giveNotifier.setStakeholder(StakeholderGiveModelSearch.empty());
+
+      setState(() {
+        isExecuted = true;
+      });
+    }
+  }
 
   void stakeholderSelected1(StakeholderGiveModelSearch? val) {
     // visibilityEdit.value = !visibilityEdit.value;
@@ -53,6 +113,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
 
   @override
   void initState() {
+    initializeControllers();
     super.initState();
     GiveNotifier giveNotifier =
         Provider.of<GiveNotifier>(context, listen: false);
@@ -64,10 +125,13 @@ class _ShManageScreenState extends State<ShManageScreen> {
     }
   }
 
+  void dispose() {
+    disposeControllers();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    //HomeNotifier homeNotifier = Provider.of<HomeNotifier>(context);
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       //drawer: const CustomDrawerWidget(),
@@ -79,110 +143,142 @@ class _ShManageScreenState extends State<ShManageScreen> {
       ),
       body: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: ShSearchTextfield(
-                            textEditingController: cityController,
-                            hintText: 'città',
-                            prefixIcon: const Icon(Icons.location_city),
-                            themeData: Theme.of(context),
-                            validator: (val) => val!.length < 3
-                                ? 'Inserire almeno 3 caratteri'
-                                : null,
-                          )))),
-              Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                          height: 50,
-                          width: double.infinity,
-                          child: ShSearchTextfield(
-                            textEditingController: emailController,
-                            hintText: 'email',
-                            prefixIcon: const Icon(Icons.email),
-                            themeData: Theme.of(context),
-                            validator: (val) => val!.length < 3
-                                ? 'Inserire almeno 3 caratteri'
-                                : null,
-                          )))),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                          height: 50, //height of button
-                          width: double.infinity,
-                          child: ShSearchTextfield(
-                            textEditingController:
-                                nameSurnameorBusinessNameController,
-                            hintText: 'nome, cognome o ragione sociale',
-                            prefixIcon: const Icon(Icons.person),
-                            themeData: Theme.of(context),
-                            validator: (val) => val!.length < 3
-                                ? 'Inserire almeno 3 caratteri'
-                                : null,
-                          )))),
-              Expanded(
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                          height: 50, //height of button
-                          width: double.infinity,
-                          child: ShSearchTextfield(
-                            textEditingController: cfController,
-                            hintText: 'codice fiscale',
-                            prefixIcon: const Icon(Icons.code),
-                            themeData: Theme.of(context),
-                            validator: (val) => val!.length < 3
-                                ? 'Inserire almeno 3 caratteri'
-                                : null,
-                          )))),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 50, //height of button
-                  width: 100,
-                  child: MaterialButton(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                    minWidth: MediaQuery.of(context).size.width * 0.25,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        GiveNotifier giveNotifier =
-                            Provider.of<GiveNotifier>(context, listen: false);
-                        giveNotifier
-                            .setStakeholder(StakeholderGiveModelSearch.empty());
-                        isExecuted = true;
-                      });
-                    },
-                    color: Colors.blueAccent,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.search),
-                        Text('Ricerca',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium!
-                                .copyWith(fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                  ),
+          Form(
+            key: formKey,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                height: 50,
+                                width: double.infinity,
+                                child: ShSearchTextfield(
+                                    textEditingController: cityController,
+                                    hintText: 'città',
+                                    prefixIcon: const Icon(Icons.location_city),
+                                    themeData: Theme.of(context),
+                                    // validator: (val) => val!.length < 3
+                                    //     ? 'Inserire almeno 3 caratteri'
+                                    //     : null,
+                                    onFieldSubmitted: (_) => submitSearch())))),
+                    Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                height: 50,
+                                width: double.infinity,
+                                child: ShSearchTextfield(
+                                    textEditingController: emailController,
+                                    hintText: 'email',
+                                    prefixIcon: const Icon(Icons.email),
+                                    themeData: Theme.of(context),
+                                    // validator: (val) => val!.length < 3
+                                    //     ? 'Inserire almeno 3 caratteri'
+                                    //     : null,
+                                    onFieldSubmitted: (_) => submitSearch())))),
+                    Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                height: 50, //height of button
+                                width: double.infinity,
+                                child: ShSearchTextfield(
+                                    textEditingController: cfController,
+                                    hintText: 'codice fiscale',
+                                    prefixIcon: const Icon(Icons.code),
+                                    themeData: Theme.of(context),
+                                    // validator: (val) => val!.length < 3
+                                    //     ? 'Inserire almeno 3 caratteri'
+                                    //     : null,
+                                    onFieldSubmitted: (_) => submitSearch())))),
+                  ],
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                height: 50, //height of button
+                                width: double.infinity,
+                                child: ShSearchTextfield(
+                                    textEditingController:
+                                        nameSurnameorBusinessNameController,
+                                    hintText: 'nome, cognome o ragione sociale',
+                                    prefixIcon: const Icon(Icons.person),
+                                    themeData: Theme.of(context),
+                                    // validator: (val) => val!.length < 3
+                                    //     ? 'Inserire almeno 3 caratteri'
+                                    //     : null,
+                                    onFieldSubmitted: (_) => submitSearch())))),
+                    Expanded(
+                        child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SizedBox(
+                                height: 50, //height of button
+                                width: double.infinity,
+                                child: ShSearchTextfield(
+                                    textEditingController: fiscalCardController,
+                                    hintText:
+                                        'Lettura da tessera Codice Fiscale',
+                                    prefixIcon: const Icon(Icons.person),
+                                    themeData: Theme.of(context),
+                                    // validator: (val) => val!.length < 3
+                                    //     ? 'Inserire almeno 3 caratteri'
+                                    //     : null,
+                                    onFieldSubmitted: (_) => submitSearch())))),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 50, //height of button
+                        width: 60,
+                        child: MaterialButton(
+                          hoverColor: Colors.blueAccent[100],
+                          // height: MediaQuery.of(context).size.height * 0.05,
+                          // minWidth: MediaQuery.of(context).size.width * 0.20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary)),
+
+                          onPressed: submitSearch,
+                          color: Colors.white,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary),
+                              Text('Ricerca',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Divider(
+            height: 1,
           ),
           Row(
             children: [
@@ -193,6 +289,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       email: emailController.text,
                       city: cityController.text,
                       cf: cfController.text,
+                      fromReader: fromReader,
                       width: MediaQuery.of(context).size.width,
                       callback1: stakeholderSelected1)
                   : const Center(),
@@ -301,10 +398,35 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       tooltip: "Nuova anagrafica donatore",
                       // heroTag: 'New',
                       onPressed: () {
+                        List<String> item =
+                            nameSurnameorBusinessNameController.text.split(' ');
+
+                        String name = '';
+                        String surname = '';
+
+                        if (item.length == 1) {
+                          surname = item[0];
+                        } else if (item.length > 1) {
+                          surname = item[0];
+                          name = item[1];
+                        }
+
                         ShManageMultipleArgument cShManageMultipleArgument =
                             new ShManageMultipleArgument(
                                 idCart: widget.idCart,
-                                cStakeholderGiveModelSearch: null);
+                                cStakeholderGiveModelSearch:
+                                    StakeholderGiveModelSearch(
+                                        id: 0,
+                                        nome: name,
+                                        cognome: surname,
+                                        ragionesociale: '',
+                                        codfisc: cfController.text,
+                                        email: emailController.text,
+                                        tel: '',
+                                        cell: '',
+                                        dataNascita: '',
+                                        recapitoGiveModel:
+                                            RecapitoGiveModel.empty()));
 
                         Navigator.of(context).pushNamed(
                             AppRouter.shManageNewEdit,

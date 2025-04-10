@@ -102,6 +102,9 @@ class MyosotisConfigurationCard extends StatelessWidget {
                                 enabledDeviceMyosotisConfiguration:
                                     myosotisConfiguration
                                         .enabledDeviceMyosotisConfiguration,
+                                enabledUrlMyosotisConfiguration:
+                                    myosotisConfiguration
+                                        .enabledUrlMyosotisConfiguration,
                                 archived: myosotisConfiguration.archived,
                                 myosotisConfigurationDetailModel:
                                     myosotisConfiguration

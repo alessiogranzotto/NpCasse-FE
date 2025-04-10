@@ -35,6 +35,7 @@ class MyosotisConfigurationModel {
     required this.idUserAppInstitution,
     required this.idInstitution,
     required this.enabledDeviceMyosotisConfiguration,
+    required this.enabledUrlMyosotisConfiguration,
     required this.myosotisConfigurationDetailModel,
   });
   late final int idMyosotisConfiguration;
@@ -44,6 +45,7 @@ class MyosotisConfigurationModel {
   late final int idUserAppInstitution;
   late final int idInstitution;
   late final List<String> enabledDeviceMyosotisConfiguration;
+  late final List<String> enabledUrlMyosotisConfiguration;
   late final MyosotisConfigurationDetailModel myosotisConfigurationDetailModel;
 
   MyosotisConfigurationModel.empty() {
@@ -51,6 +53,7 @@ class MyosotisConfigurationModel {
     nameMyosotisConfiguration = '';
     descriptionMyosotisConfiguration = '';
     archived = false;
+    enabledUrlMyosotisConfiguration = List.empty();
     enabledDeviceMyosotisConfiguration = List.empty();
     idUserAppInstitution = 0;
     idInstitution = 0;
@@ -77,6 +80,16 @@ class MyosotisConfigurationModel {
       enabledDeviceMyosotisConfiguration = List.empty();
     }
 
+    if (json['enabledUrlMyosotisConfigurations'] != null) {
+      var t = List.from(json['enabledUrlMyosotisConfigurations'])
+          .map((e) => EnabledUrlMyosotisConfiguration.fromJson(e))
+          .toList();
+      enabledUrlMyosotisConfiguration =
+          t.map((data) => data.valueUrlMyosotisConfiguration).toList();
+    } else {
+      enabledUrlMyosotisConfiguration = List.empty();
+    }
+
     if (json['myosotisConfigurationDetail'] != null) {
       myosotisConfigurationDetailModel =
           MyosotisConfigurationDetailModel.fromJson(
@@ -96,6 +109,7 @@ class MyosotisConfigurationModel {
     data['idInstitution'] = idInstitution;
     data['enabledDeviceMyosotisConfiguration'] =
         enabledDeviceMyosotisConfiguration;
+    data['enabledUrlMyosotisConfiguration'] = enabledUrlMyosotisConfiguration;
     data['archived'] = archived;
     data['idUserAppInstitution'] = idUserAppInstitution;
     data['myosotisConfigurationDetailRequest'] =
@@ -362,6 +376,17 @@ class EnabledDeviceMyosotisConfiguration {
   // JSON deserialization
   EnabledDeviceMyosotisConfiguration.fromJson(Map<String, dynamic> json) {
     valueDeviceMyosotisConfiguration = json['valueDeviceMyosotisConfiguration'];
+  }
+}
+
+class EnabledUrlMyosotisConfiguration {
+  EnabledUrlMyosotisConfiguration(
+      {required this.valueUrlMyosotisConfiguration});
+  late final String valueUrlMyosotisConfiguration;
+
+  // JSON deserialization
+  EnabledUrlMyosotisConfiguration.fromJson(Map<String, dynamic> json) {
+    valueUrlMyosotisConfiguration = json['valueUrlMyosotisConfiguration'];
   }
 }
 

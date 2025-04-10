@@ -162,8 +162,6 @@ class MassSendingCard extends StatelessWidget {
                                             massSendingModel.senderMassSending,
                                         emailSenderMassSending: massSendingModel
                                             .emailSenderMassSending,
-                                        subjectMassSending:
-                                            massSendingModel.subjectMassSending,
                                         idTemplateMassSending: massSendingModel
                                             .idTemplateMassSending,
                                         stateMassSending:
@@ -209,8 +207,6 @@ class MassSendingCard extends StatelessWidget {
                                             massSendingModel.senderMassSending,
                                         emailSenderMassSending: massSendingModel
                                             .emailSenderMassSending,
-                                        subjectMassSending:
-                                            massSendingModel.subjectMassSending,
                                         idTemplateMassSending: massSendingModel
                                             .idTemplateMassSending,
                                         stateMassSending:
@@ -253,8 +249,6 @@ class MassSendingCard extends StatelessWidget {
                                             massSendingModel.senderMassSending,
                                         emailSenderMassSending: massSendingModel
                                             .emailSenderMassSending,
-                                        subjectMassSending:
-                                            massSendingModel.subjectMassSending,
                                         idTemplateMassSending: massSendingModel
                                             .idTemplateMassSending,
                                         stateMassSending:
@@ -300,8 +294,6 @@ class MassSendingCard extends StatelessWidget {
                                             massSendingModel.senderMassSending,
                                         emailSenderMassSending: massSendingModel
                                             .emailSenderMassSending,
-                                        subjectMassSending:
-                                            massSendingModel.subjectMassSending,
                                         idTemplateMassSending: massSendingModel
                                             .idTemplateMassSending,
                                         stateMassSending:

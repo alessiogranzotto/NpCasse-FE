@@ -52,6 +52,9 @@ class _MyosotisConfigurationDetailState
   //ID DEVICE CONFIGURATION
   late List<String> enabledDeviceMyosotisConfiguration = [];
 
+  //URL CONFIGURATION
+  late List<String> enabledUrlMyosotisConfiguration = [];
+
   //SHOW LOGO CONFIGURATION
   final ValueNotifier<bool> showLogoNotifier = ValueNotifier<bool>(false);
 
@@ -383,6 +386,10 @@ class _MyosotisConfigurationDetailState
     enabledDeviceMyosotisConfiguration = new List<String>.from(
         widget.myosotisConfiguration.enabledDeviceMyosotisConfiguration);
 
+    //URL CONFIGURATION
+    enabledUrlMyosotisConfiguration = new List<String>.from(
+        widget.myosotisConfiguration.enabledUrlMyosotisConfiguration);
+
     //SHOWLOGO CONFIGURATION
     showLogoNotifier.value =
         widget.myosotisConfiguration.myosotisConfigurationDetailModel.showLogo;
@@ -655,11 +662,24 @@ class _MyosotisConfigurationDetailState
     getMyosotisConfigurationData();
   }
 
+  void dispose() {
+    disposeControllers();
+    super.dispose();
+  }
+
   Widget chipBuilderIdDevice(BuildContext context, String topping) {
     return ToppingInputChip(
       topping: topping,
       onDeleted: (data) => onChipDeleted(data, 'idDevice'),
       onSelected: (data) => onChipTapped(data, 'idDevice'),
+    );
+  }
+
+  Widget chipBuilderUrl(BuildContext context, String topping) {
+    return ToppingInputChip(
+      topping: topping,
+      onDeleted: (data) => onChipDeleted(data, 'url'),
+      onSelected: (data) => onChipTapped(data, 'url'),
     );
   }
 
@@ -685,6 +705,8 @@ class _MyosotisConfigurationDetailState
     setState(() {
       if (area == 'idDevice') {
         enabledDeviceMyosotisConfiguration.remove(topping);
+      } else if (area == 'url') {
+        enabledUrlMyosotisConfiguration.remove(topping);
       } else if (area == 'preetablishedAmounts') {
         preetablishedAmounts.remove(topping);
       }
@@ -706,6 +728,20 @@ class _MyosotisConfigurationDetailState
           enabledDeviceMyosotisConfiguration = <String>[];
         });
       }
+    } else if (area == 'url') {
+      if (text.trim().isNotEmpty) {
+        setState(() {
+          enabledUrlMyosotisConfiguration = <String>[
+            ...enabledUrlMyosotisConfiguration,
+            text.trim()
+          ];
+        });
+      } else {
+        _chipFocusNode.unfocus();
+        setState(() {
+          enabledUrlMyosotisConfiguration = <String>[];
+        });
+      }
     } else if (area == 'preestablishedAmount') {
       if (text.trim().isNotEmpty) {
         setState(() {
@@ -724,6 +760,8 @@ class _MyosotisConfigurationDetailState
     setState(() {
       if (area == 'idDevice') {
         enabledDeviceMyosotisConfiguration = data;
+      } else if (area == 'url') {
+        enabledUrlMyosotisConfiguration = data;
       } else if (area == 'preestablishedAmount') {
         preetablishedAmounts = data;
       }
@@ -826,6 +864,17 @@ class _MyosotisConfigurationDetailState
                           onChanged: (data) => onChanged(data, 'idDevice'),
                           onSubmitted: (data) => onSubmitted(data, 'idDevice'),
                           chipBuilder: chipBuilderIdDevice,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: ChipsInput<String>(
+                          values: enabledUrlMyosotisConfiguration,
+                          label: AppStrings.urlMyosotisConfiguration,
+                          strutStyle: const StrutStyle(fontSize: 12),
+                          onChanged: (data) => onChanged(data, 'url'),
+                          onSubmitted: (data) => onSubmitted(data, 'url'),
+                          chipBuilder: chipBuilderUrl,
                         ),
                       ),
                       Padding(
@@ -1698,6 +1747,8 @@ class _MyosotisConfigurationDetailState
                               descriptionMyosotisConfigurationController.text,
                           enabledDeviceMyosotisConfiguration:
                               enabledDeviceMyosotisConfiguration,
+                          enabledUrlMyosotisConfiguration:
+                              enabledUrlMyosotisConfiguration,
                           archived: archiviedNotifier.value,
                           idUserAppInstitution:
                               cUserAppInstitutionModel.idUserAppInstitution,

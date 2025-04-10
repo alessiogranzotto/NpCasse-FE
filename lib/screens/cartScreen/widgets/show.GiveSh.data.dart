@@ -14,11 +14,13 @@ class ShowGiveShData extends StatelessWidget {
       required this.email,
       required this.city,
       required this.cf,
+      required this.fromReader,
       required this.callback1});
   final String nameSurnameOrBusinessName;
   final String email;
   final String city;
   final String cf;
+  final bool fromReader;
   final double width;
   final Function callback1;
 
@@ -45,7 +47,7 @@ class ShowGiveShData extends StatelessWidget {
     return Expanded(
       child: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.70,
+          height: MediaQuery.of(context).size.height * 0.74,
           width: MediaQuery.of(context).size.width,
           child: Consumer<GiveNotifier>(
             builder: (context, giveNotifier, _) {
@@ -59,7 +61,8 @@ class ShowGiveShData extends StatelessWidget {
                     nameSurnameOrBusinessName: nameSurnameOrBusinessName,
                     email: email,
                     city: city,
-                    cf: cf),
+                    cf: cf,
+                    fromReader: fromReader),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -81,12 +84,12 @@ class ShowGiveShData extends StatelessWidget {
                   } else if (!snapshot.hasData) {
                     return Center(
                       child: Text('Nessuna anagrafica trovata',
-                          style: Theme.of(context).textTheme.displayLarge),
+                          style: Theme.of(context).textTheme.displayMedium),
                     );
                   } else if (snapshot.data.isEmpty) {
                     return Center(
                       child: Text('Nessuna anagrafica trovata',
-                          style: Theme.of(context).textTheme.displayLarge),
+                          style: Theme.of(context).textTheme.displayMedium),
                     );
                   } else {
                     var tSnapshot =
@@ -96,13 +99,13 @@ class ShowGiveShData extends StatelessWidget {
                       return Center(
                         child: Text(
                             'Recuperate più di 50 anagrafiche, restringere la ricerca.',
-                            style: Theme.of(context).textTheme.displayLarge),
+                            style: Theme.of(context).textTheme.displayMedium),
                       );
                     } else {
                       return Column(
                         children: [
-                          Text('Recuperate $itemCount anagrafiche.',
-                              style: Theme.of(context).textTheme.displayLarge),
+                          // Text('Recuperate $itemCount anagrafiche.',
+                          //     style: Theme.of(context).textTheme.displayMedium),
                           Expanded(
                             child: ShowGiveShDataTable(
                                 snapshot: tSnapshot,

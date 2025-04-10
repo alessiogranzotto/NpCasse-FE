@@ -129,20 +129,22 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
     }
   }
 
-  Future updateInstitutionStripeAttribute({
+  Future updateInstitutionPosBancariAttribute({
     required BuildContext context,
     required String? token,
     required int idUserAppInstitution,
     required int idInstitution,
     required String stripeApiKey,
+    required String paypalClientId,
   }) async {
     try {
       var response =
-          await institutionAttributeAPI.updateInstitutionStripeAttribute(
+          await institutionAttributeAPI.updateInstitutionPosBancariAttribute(
         token: token,
         idUserAppInstitution: idUserAppInstitution,
         idInstitution: idInstitution,
         stripeApiKey: stripeApiKey,
+        paypalClientId: paypalClientId,
       );
 
       final Map<String, dynamic> parseData = await jsonDecode(response);
