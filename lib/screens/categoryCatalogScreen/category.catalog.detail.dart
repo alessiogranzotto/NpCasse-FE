@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/app/constants/functional.dart';
+import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
+import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
@@ -11,6 +14,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 typedef OnPickImageCallback = void Function(
     double? maxWidth, double? maxHeight, int? quality);
@@ -44,29 +48,32 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
   final TextEditingController textEditingControllerDisplayOrderCategory =
       TextEditingController();
 
-  final TextEditingController textEditingControllerIdFinalizzazione =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdEvento =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdAttivita =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdAgenda =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdComunicazioni =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdTipDonazione =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdCatalogo =
-      TextEditingController();
+  // final TextEditingController textEditingControllerIdFinalizzazione =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdEvento =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdAttivita =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdAgenda =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdComunicazioni =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdTipDonazione =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdCatalogo =
+  //     TextEditingController();
 
-  final TextEditingController textEditingControllerIdPagamentoContante =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdPagamentoBancomat =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdPagamentoCartaDiCredito =
-      TextEditingController();
-  final TextEditingController textEditingControllerIdPagamentoAssegno =
-      TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoContante =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoBancomat =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoCartaDiCredito =
+  //     TextEditingController();
+  // final TextEditingController textEditingControllerIdPagamentoAssegno =
+  //     TextEditingController();
+
+  //CUSTOM FIXED ID GIVE
+  late List<String> customIdGive = [];
   int parentIdCategory = 0;
   int idCategory = 0;
   List<DropdownMenuItem<String>> availableCategory = [];
@@ -113,6 +120,76 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
     parentIdCategory = int.tryParse(value) ?? 0;
   }
 
+  Widget chipBuilderCustomIdGive(BuildContext context, String topping) {
+    return ToppingInputChip(
+      topping: topping,
+      onDeleted: (data) => onChipDeleted(data, 'customIdGive'),
+      onSelected: (data) => onChipTapped(data, 'customIdGive'),
+    );
+  }
+
+  void onChipTapped(String topping, String area) {}
+
+  void onChipDeleted(String topping, String area) {
+    setState(() {
+      if (area == 'customIdGive') {
+        customIdGive.remove(topping);
+      }
+    });
+  }
+
+  void onSubmitted(String text, String area) {
+    if (area == 'customIdGive') {
+      if (text.trim().isNotEmpty) {
+        bool isOk = false;
+        String input = text.trim();
+        try {
+          var splitOnEqual = input.split('=');
+          if (splitOnEqual.length == 2) {
+            if (num.tryParse(splitOnEqual[1]) != null) {
+              final bestMatch = StringSimilarity.findBestMatch(
+                  splitOnEqual[0].toLowerCase(), idGiveListNameCategory);
+              if (bestMatch.bestMatch.rating != null) {
+                if (bestMatch.bestMatch.rating! > 0.40) {
+                  String finalString =
+                      bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
+                  if (!customIdGive.any((item) => item
+                      .toLowerCase()
+                      .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
+                    setState(() {
+                      customIdGive = <String>[...customIdGive, finalString];
+                    });
+                    isOk = true;
+                  }
+                }
+              }
+            }
+          }
+          if (!isOk) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+                title: "Categorie",
+                message:
+                    "Parametro Id Give non trovato, non corretto o già presente",
+                contentType: "warning"));
+          }
+        } catch (e) {}
+      } else {
+        // _chipFocusNode.unfocus();
+        // setState(() {
+        //   giveIds = <String>[];
+        // });
+      }
+    }
+  }
+
+  void onChanged(List<String> data, String area) {
+    setState(() {
+      if (area == 'customIdGive') {
+        customIdGive = data;
+      }
+    });
+  }
+
   @override
   void initState() {
     parentIdCategory = widget.categoryCatalogModelArgument.parentIdCategory;
@@ -135,120 +212,164 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idFinalizzazione >
           0) {
-        textEditingControllerIdFinalizzazione.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idFinalizzazione
-            .toString();
+        // textEditingControllerIdFinalizzazione.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idFinalizzazione
+        //     .toString();
+        customIdGive.add("IdFinalizzazione=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idFinalizzazione
+                .toString());
       } else {
-        textEditingControllerIdFinalizzazione.text = '';
+        // textEditingControllerIdFinalizzazione.text = '';
       }
       if (widget
               .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento >
           0) {
-        textEditingControllerIdEvento.text = widget
-            .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
-            .toString();
+        // textEditingControllerIdEvento.text = widget
+        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
+        //     .toString();
+        customIdGive.add("IdEvento=" +
+            widget
+                .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
+                .toString());
       } else {
-        textEditingControllerIdEvento.text = '';
+        // textEditingControllerIdEvento.text = '';
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idAttivita >
           0) {
-        textEditingControllerIdAttivita.text = widget
-            .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAttivita
-            .toString();
+        // textEditingControllerIdAttivita.text = widget
+        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAttivita
+        //     .toString();
+        customIdGive.add("IdAttività=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idAttivita
+                .toString());
       } else {
-        textEditingControllerIdAttivita.text = '';
+        // textEditingControllerIdAttivita.text = '';
       }
 
       if (widget
               .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda >
           0) {
-        textEditingControllerIdAgenda.text = widget
-            .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
-            .toString();
+        // textEditingControllerIdAgenda.text = widget
+        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
+        //     .toString();
+        customIdGive.add("IdAgenda=" +
+            widget
+                .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
+                .toString());
       } else {
-        textEditingControllerIdAgenda.text = '';
+        // textEditingControllerIdAgenda.text = '';
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idComunicazioni >
           0) {
-        textEditingControllerIdComunicazioni.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idComunicazioni
-            .toString();
+        // textEditingControllerIdComunicazioni.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idComunicazioni
+        //     .toString();
+        customIdGive.add("IdComunicazioni=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idComunicazioni
+                .toString());
       } else {
-        textEditingControllerIdComunicazioni.text = '';
+        // textEditingControllerIdComunicazioni.text = '';
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idTipDonazione >
           0) {
-        textEditingControllerIdTipDonazione.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idTipDonazione
-            .toString();
+        // textEditingControllerIdTipDonazione.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idTipDonazione
+        //     .toString();
+        customIdGive.add("IdTipDonazione=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idTipDonazione
+                .toString());
       } else {
-        textEditingControllerIdTipDonazione.text = '';
+        // textEditingControllerIdTipDonazione.text = '';
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idCatalogo >
           0) {
-        textEditingControllerIdCatalogo.text = widget
-            .categoryCatalogModelArgument.giveIdsFlatStructureModel.idCatalogo
-            .toString();
+        // textEditingControllerIdCatalogo.text = widget
+        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idCatalogo
+        //     .toString();
+        customIdGive.add("IdCatalogo=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idCatalogo
+                .toString());
       } else {
-        textEditingControllerIdCatalogo.text = '';
+        // textEditingControllerIdCatalogo.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idPagamentoContante >
           0) {
-        textEditingControllerIdPagamentoContante.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idPagamentoContante
-            .toString();
+        // textEditingControllerIdPagamentoContante.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoContante
+        //     .toString();
+        customIdGive.add("IdPagamentoContante=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoContante
+                .toString());
       } else {
-        textEditingControllerIdPagamentoContante.text = '';
+        // textEditingControllerIdPagamentoContante.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idPagamentoBancomat >
           0) {
-        textEditingControllerIdPagamentoBancomat.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idPagamentoBancomat
-            .toString();
+        // textEditingControllerIdPagamentoBancomat.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoBancomat
+        //     .toString();
+        customIdGive.add("IdPagamentoBancomat=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoBancomat
+                .toString());
       } else {
-        textEditingControllerIdPagamentoBancomat.text = '';
+        // textEditingControllerIdPagamentoBancomat.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idPagamentoCartaDiCredito >
           0) {
-        textEditingControllerIdPagamentoCartaDiCredito.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idPagamentoCartaDiCredito
-            .toString();
+        // textEditingControllerIdPagamentoCartaDiCredito.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoCartaDiCredito
+        //     .toString();
+        customIdGive.add("IdPagamentoCartaDiCredito=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoCartaDiCredito
+                .toString());
       } else {
-        textEditingControllerIdPagamentoCartaDiCredito.text = '';
+        // textEditingControllerIdPagamentoCartaDiCredito.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
               .idPagamentoAssegno >
           0) {
-        textEditingControllerIdPagamentoAssegno.text = widget
-            .categoryCatalogModelArgument
-            .giveIdsFlatStructureModel
-            .idPagamentoAssegno
-            .toString();
+        // textEditingControllerIdPagamentoAssegno.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoAssegno
+        //     .toString();
+        customIdGive.add("IdPagamentoAssegno=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoAssegno
+                .toString());
       } else {
-        textEditingControllerIdPagamentoAssegno.text = '';
+        // textEditingControllerIdPagamentoAssegno.text = '';
       }
     } else {
       //tImageString = AppAssets.noImageString;
@@ -268,7 +389,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
     //bool canAddProduct = authenticationNotifier.canUserAddItem();
 
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           backgroundColor: CustomColors.darkBlue,
           centerTitle: true,
@@ -655,645 +776,698 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                   ],
                 ),
                 SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ExpansionPanelList(
-                    expansionCallback: (panelIndex, isExpanded) {
-                      setState(() {
-                        panelIdsGiveExpanded = isExpanded;
-                      });
-                    },
-                    children: [
-                      ExpansionPanel(
-                        canTapOnHeader: true,
-                        headerBuilder: (BuildContext context, bool isExpanded) {
-                          return ListTile(
-                            title: Text('ID Give'),
-                            subtitle: Text('Inserire i dettagli degli Id Give'),
-                          );
-                        },
-                        body: Column(children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
+                // Padding(
+                //   padding: const EdgeInsets.all(8.0),
+                //   child: ExpansionPanelList(
+                //     expansionCallback: (panelIndex, isExpanded) {
+                //       setState(() {
+                //         panelIdsGiveExpanded = isExpanded;
+                //       });
+                //     },
+                //     children: [
+                //       ExpansionPanel(
+                //         canTapOnHeader: true,
+                //         headerBuilder: (BuildContext context, bool isExpanded) {
+                //           return ListTile(
+                //             title: Text('ID Give'),
+                //             subtitle: Text('Inserire i dettagli degli Id Give'),
+                //           );
+                //         },
+                //         body: Column(children: [
+                //           Row(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdFinalizzazione,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Id Finalizzazione",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdEvento,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Id Campagna",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdAttivita,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Id Attività",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdAgenda,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Id Evento",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           Row(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdComunicazioni,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Id Comunicazioni",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdTipDonazione,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Tipo Donazione",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdCatalogo,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text("Id Catalogo",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           SizedBox(
+                //             height: 30,
+                //           ),
+                //           Row(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdPagamentoContante,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text(
+                //                                     "Id Pagamento contante",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdPagamentoBancomat,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text(
+                //                                     "Id Pagamento bancomat",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdPagamentoCartaDiCredito,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text(
+                //                                     "Id Pagamento carta di credito",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //               Expanded(
+                //                 child: Column(
+                //                   children: [
+                //                     Card(
+                //                       color: Theme.of(context).cardColor,
+                //                       elevation: 4,
+                //                       child: ListTile(
+                //                         subtitle: Row(
+                //                           children: [
+                //                             Expanded(
+                //                               child: TextField(
+                //                                 controller:
+                //                                     textEditingControllerIdPagamentoAssegno,
+                //                                 minLines: 1,
+                //                                 maxLines: 1,
+                //                                 inputFormatters: <TextInputFormatter>[
+                //                                   FilteringTextInputFormatter
+                //                                       .digitsOnly
+                //                                 ],
+                //                                 onTapOutside: (event) {
+                //                                   FocusManager
+                //                                       .instance.primaryFocus
+                //                                       ?.unfocus();
+                //                                 },
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         trailing: const Icon(Icons.edit),
+                //                         leading: Column(
+                //                           mainAxisSize: MainAxisSize.min,
+                //                           crossAxisAlignment:
+                //                               CrossAxisAlignment.center,
+                //                           children: [
+                //                             Container(
+                //                               height: 36.0,
+                //                               width: 100.0,
+                //                               color: CustomColors.darkBlue,
+                //                               child: Center(
+                //                                 child: Text(
+                //                                     "Id pagamento assegno",
+                //                                     textAlign: TextAlign.center,
+                //                                     style: Theme.of(context)
+                //                                         .textTheme
+                //                                         .headlineSmall),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                         onTap: () {},
+                //                       ),
+                //                     )
+                //                   ],
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ]),
+                //         isExpanded: panelIdsGiveExpanded,
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Card(
+                            color: Theme.of(context).cardColor,
+                            elevation: 4,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
                                   children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdFinalizzazione,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Id Finalizzazione",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
+                                    SizedBox(
+                                      width: 50,
+                                      child: Tooltip(
+                                        message:
+                                            idGiveListNameCategory.join("\n"),
+                                        preferBelow: false,
+                                        verticalOffset: 12,
+                                        margin: EdgeInsets.all(16),
+                                        child: Icon(Icons.help_outline),
                                       ),
-                                    )
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: ChipsInput<String>(
+                                          values: customIdGive,
+                                          label: AppStrings.giveIds,
+                                          decoration: const InputDecoration(),
+                                          strutStyle:
+                                              const StrutStyle(fontSize: 12),
+                                          onChanged: (data) =>
+                                              onChanged(data, 'customIdGive'),
+                                          onSubmitted: (data) =>
+                                              onSubmitted(data, 'customIdGive'),
+                                          chipBuilder: chipBuilderCustomIdGive,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdEvento,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Id Campagna",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdAttivita,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Id Attività",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdAgenda,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Id Evento",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdComunicazioni,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Id Comunicazioni",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdTipDonazione,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Tipo Donazione",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdCatalogo,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text("Id Catalogo",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdPagamentoContante,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text(
-                                                    "Id Pagamento contante",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdPagamentoBancomat,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text(
-                                                    "Id Pagamento bancomat",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdPagamentoCartaDiCredito,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text(
-                                                    "Id Pagamento carta di credito",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Card(
-                                      color: Theme.of(context).cardColor,
-                                      elevation: 4,
-                                      child: ListTile(
-                                        subtitle: Row(
-                                          children: [
-                                            Expanded(
-                                              child: TextField(
-                                                controller:
-                                                    textEditingControllerIdPagamentoAssegno,
-                                                minLines: 1,
-                                                maxLines: 1,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly
-                                                ],
-                                                onTapOutside: (event) {
-                                                  FocusManager
-                                                      .instance.primaryFocus
-                                                      ?.unfocus();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: const Icon(Icons.edit),
-                                        leading: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 36.0,
-                                              width: 100.0,
-                                              color: CustomColors.darkBlue,
-                                              child: Center(
-                                                child: Text(
-                                                    "Id pagamento assegno",
-                                                    textAlign: TextAlign.center,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headlineSmall),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {},
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ]),
-                        isExpanded: panelIdsGiveExpanded,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             )
@@ -1307,60 +1481,62 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
               onPressed: () {
                 CategoryCatalogModel categoryCatalogModel =
                     CategoryCatalogModel(
-                        idCategory:
-                            widget.categoryCatalogModelArgument.idCategory,
-                        nameCategory: textEditingControllerNameCategory.text,
-                        descriptionCategory:
-                            textEditingControllerDescriptionCategory.text,
-                        parentIdCategory: parentIdCategory,
-                        parentCategoryName: '',
-                        displayOrder: int.tryParse(
-                                textEditingControllerDisplayOrderCategory
-                                    .text) ??
-                            0,
-                        deleted: deleted,
-                        idUserAppInstitution:
-                            cUserAppInstitutionModel.idUserAppInstitution,
-                        imageData: tImageString,
-                        giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
-                          idFinalizzazione: int.tryParse(
-                                  textEditingControllerIdFinalizzazione.text) ??
-                              0,
-                          idEvento: int.tryParse(
-                                  textEditingControllerIdEvento.text) ??
-                              0,
-                          idAttivita: int.tryParse(
-                                  textEditingControllerIdAttivita.text) ??
-                              0,
-                          idAgenda: int.tryParse(
-                                  textEditingControllerIdAgenda.text) ??
-                              0,
-                          idComunicazioni: int.tryParse(
-                                  textEditingControllerIdComunicazioni.text) ??
-                              0,
-                          idTipDonazione: int.tryParse(
-                                  textEditingControllerIdTipDonazione.text) ??
-                              0,
-                          idCatalogo: int.tryParse(
-                                  textEditingControllerIdCatalogo.text) ??
-                              0,
-                          idPagamentoContante: int.tryParse(
-                                  textEditingControllerIdPagamentoContante
-                                      .text) ??
-                              0,
-                          idPagamentoBancomat: int.tryParse(
-                                  textEditingControllerIdPagamentoBancomat
-                                      .text) ??
-                              0,
-                          idPagamentoCartaDiCredito: int.tryParse(
-                                  textEditingControllerIdPagamentoCartaDiCredito
-                                      .text) ??
-                              0,
-                          idPagamentoAssegno: int.tryParse(
-                                  textEditingControllerIdPagamentoAssegno
-                                      .text) ??
-                              0,
-                        ));
+                  idCategory: widget.categoryCatalogModelArgument.idCategory,
+                  nameCategory: textEditingControllerNameCategory.text,
+                  descriptionCategory:
+                      textEditingControllerDescriptionCategory.text,
+                  parentIdCategory: parentIdCategory,
+                  parentCategoryName: '',
+                  displayOrder: int.tryParse(
+                          textEditingControllerDisplayOrderCategory.text) ??
+                      0,
+                  deleted: deleted,
+                  idUserAppInstitution:
+                      cUserAppInstitutionModel.idUserAppInstitution,
+                  imageData: tImageString,
+                  giveIdsFlatStructureModel:
+                      GiveIdsFlatStructureModel.fromCustomIdGive(
+                          customIdGive, "Category"),
+                  // giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
+                  //   idFinalizzazione: int.tryParse(
+                  //           textEditingControllerIdFinalizzazione.text) ??
+                  //       0,
+                  //   idEvento: int.tryParse(
+                  //           textEditingControllerIdEvento.text) ??
+                  //       0,
+                  //   idAttivita: int.tryParse(
+                  //           textEditingControllerIdAttivita.text) ??
+                  //       0,
+                  //   idAgenda: int.tryParse(
+                  //           textEditingControllerIdAgenda.text) ??
+                  //       0,
+                  //   idComunicazioni: int.tryParse(
+                  //           textEditingControllerIdComunicazioni.text) ??
+                  //       0,
+                  //   idTipDonazione: int.tryParse(
+                  //           textEditingControllerIdTipDonazione.text) ??
+                  //       0,
+                  //   idCatalogo: int.tryParse(
+                  //           textEditingControllerIdCatalogo.text) ??
+                  //       0,
+                  //   idPagamentoContante: int.tryParse(
+                  //           textEditingControllerIdPagamentoContante
+                  //               .text) ??
+                  //       0,
+                  //   idPagamentoBancomat: int.tryParse(
+                  //           textEditingControllerIdPagamentoBancomat
+                  //               .text) ??
+                  //       0,
+                  //   idPagamentoCartaDiCredito: int.tryParse(
+                  //           textEditingControllerIdPagamentoCartaDiCredito
+                  //               .text) ??
+                  //       0,
+                  //   idPagamentoAssegno: int.tryParse(
+                  //           textEditingControllerIdPagamentoAssegno
+                  //               .text) ??
+                  //       0,
+                  //)
+                );
 
                 categoryCatalogNotifier
                     .addOrUpdateCategory(
@@ -1404,70 +1580,73 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                           deleted = true;
                           CategoryCatalogModel categoryCatalogModel =
                               CategoryCatalogModel(
-                                  idCategory: widget
-                                      .categoryCatalogModelArgument.idCategory,
-                                  nameCategory:
-                                      textEditingControllerNameCategory.text,
-                                  descriptionCategory:
-                                      textEditingControllerDescriptionCategory
-                                          .text,
-                                  parentIdCategory: parentIdCategory,
-                                  parentCategoryName: '',
-                                  displayOrder: int.tryParse(
-                                          textEditingControllerDisplayOrderCategory
-                                              .text) ??
-                                      0,
-                                  deleted: deleted,
-                                  idUserAppInstitution: cUserAppInstitutionModel
-                                      .idUserAppInstitution,
-                                  imageData: tImageString,
-                                  giveIdsFlatStructureModel:
-                                      GiveIdsFlatStructureModel(
-                                    idFinalizzazione: int.tryParse(
-                                            textEditingControllerIdFinalizzazione
-                                                .text) ??
-                                        0,
-                                    idEvento: int.tryParse(
-                                            textEditingControllerIdEvento
-                                                .text) ??
-                                        0,
-                                    idAttivita: int.tryParse(
-                                            textEditingControllerIdAttivita
-                                                .text) ??
-                                        0,
-                                    idAgenda: int.tryParse(
-                                            textEditingControllerIdAgenda
-                                                .text) ??
-                                        0,
-                                    idComunicazioni: int.tryParse(
-                                            textEditingControllerIdComunicazioni
-                                                .text) ??
-                                        0,
-                                    idTipDonazione: int.tryParse(
-                                            textEditingControllerIdTipDonazione
-                                                .text) ??
-                                        0,
-                                    idCatalogo: int.tryParse(
-                                            textEditingControllerIdCatalogo
-                                                .text) ??
-                                        0,
-                                    idPagamentoContante: int.tryParse(
-                                            textEditingControllerIdPagamentoContante
-                                                .text) ??
-                                        0,
-                                    idPagamentoBancomat: int.tryParse(
-                                            textEditingControllerIdPagamentoBancomat
-                                                .text) ??
-                                        0,
-                                    idPagamentoCartaDiCredito: int.tryParse(
-                                            textEditingControllerIdPagamentoCartaDiCredito
-                                                .text) ??
-                                        0,
-                                    idPagamentoAssegno: int.tryParse(
-                                            textEditingControllerIdPagamentoAssegno
-                                                .text) ??
-                                        0,
-                                  ));
+                            idCategory:
+                                widget.categoryCatalogModelArgument.idCategory,
+                            nameCategory:
+                                textEditingControllerNameCategory.text,
+                            descriptionCategory:
+                                textEditingControllerDescriptionCategory.text,
+                            parentIdCategory: parentIdCategory,
+                            parentCategoryName: '',
+                            displayOrder: int.tryParse(
+                                    textEditingControllerDisplayOrderCategory
+                                        .text) ??
+                                0,
+                            deleted: deleted,
+                            idUserAppInstitution:
+                                cUserAppInstitutionModel.idUserAppInstitution,
+                            imageData: tImageString,
+                            giveIdsFlatStructureModel:
+                                GiveIdsFlatStructureModel.fromCustomIdGive(
+                                    customIdGive, "Category"),
+                            // giveIdsFlatStructureModel:
+                            //             GiveIdsFlatStructureModel(
+                            //           idFinalizzazione: int.tryParse(
+                            //                   textEditingControllerIdFinalizzazione
+                            //                       .text) ??
+                            //               0,
+                            //           idEvento: int.tryParse(
+                            //                   textEditingControllerIdEvento
+                            //                       .text) ??
+                            //               0,
+                            //           idAttivita: int.tryParse(
+                            //                   textEditingControllerIdAttivita
+                            //                       .text) ??
+                            //               0,
+                            //           idAgenda: int.tryParse(
+                            //                   textEditingControllerIdAgenda
+                            //                       .text) ??
+                            //               0,
+                            //           idComunicazioni: int.tryParse(
+                            //                   textEditingControllerIdComunicazioni
+                            //                       .text) ??
+                            //               0,
+                            //           idTipDonazione: int.tryParse(
+                            //                   textEditingControllerIdTipDonazione
+                            //                       .text) ??
+                            //               0,
+                            //           idCatalogo: int.tryParse(
+                            //                   textEditingControllerIdCatalogo
+                            //                       .text) ??
+                            //               0,
+                            //           idPagamentoContante: int.tryParse(
+                            //                   textEditingControllerIdPagamentoContante
+                            //                       .text) ??
+                            //               0,
+                            //           idPagamentoBancomat: int.tryParse(
+                            //                   textEditingControllerIdPagamentoBancomat
+                            //                       .text) ??
+                            //               0,
+                            //           idPagamentoCartaDiCredito: int.tryParse(
+                            //                   textEditingControllerIdPagamentoCartaDiCredito
+                            //                       .text) ??
+                            //               0,
+                            //           idPagamentoAssegno: int.tryParse(
+                            //                   textEditingControllerIdPagamentoAssegno
+                            //                       .text) ??
+                            //               0,
+                            //         )
+                          );
 
                           categoryCatalogNotifier
                               .addOrUpdateCategory(

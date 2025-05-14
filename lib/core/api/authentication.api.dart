@@ -100,6 +100,28 @@ class AuthenticationAPI {
     }
   }
 
+  Future getGiveToken(
+      {required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.giveTemporaryTokenURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');
+    final http.Response response = await client.get(uri, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Access-Control-Allow-Origin': "*",
+      "Authorization": token ?? ''
+    });
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
   Future updateUserDetails(
       {required String? token,
       required int idUser,

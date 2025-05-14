@@ -96,7 +96,6 @@ class CartModel {
     data['idUserAppInstitution'] = idUserAppInstitution;
     data['dateCreatedCart'] = dateCreatedCart.toIso8601String();
     data['paymentTypeCart'] = paymentTypeCart;
-    data['paymentTypeCart'] = paymentTypeCart;
     data['docNumberCart'] = docNumberCart;
     data['stateCart'] = stateCart;
     data['stateCartDescription'] = stateCartDescription;

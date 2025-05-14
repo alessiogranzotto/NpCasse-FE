@@ -27,6 +27,27 @@ class InstitutionAttributeAPI {
     }
   }
 
+  Future getInstitutionUser(
+      {String? token,
+      required int idUserAppInstitution,
+      required int idInstitution}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.baseUserAppInstitutionURL}/Get-user-app-institution?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    }
+  }
+
   Future updateInstitutionPaymentMethodAttribute(
       {required String? token,
       required int idUserAppInstitution,
@@ -76,12 +97,17 @@ class InstitutionAttributeAPI {
     required String? token,
     required int idUserAppInstitution,
     required int idInstitution,
-    required String stripeApiKey,
+    required String stripeApiKeyPrivate,
+    required String stripeApiKeyPublic,
     required String paypalClientId,
   }) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
-        attributeName: 'Stripe.ApiKey', attributeValue: stripeApiKey));
+        attributeName: 'Stripe.ApiKeyPrivate',
+        attributeValue: stripeApiKeyPrivate));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Stripe.ApiKeyPublic',
+        attributeValue: stripeApiKeyPublic));
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Paypal.ClientId', attributeValue: paypalClientId));
 
@@ -282,11 +308,15 @@ class InstitutionAttributeAPI {
     required int idUserAppInstitution,
     required int idInstitution,
     required String parameterIdShAnonymous,
+    required String parameterEmailUserAuthMyosotis,
   }) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Parameter.IdShAnonymous',
         attributeValue: parameterIdShAnonymous));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Parameter.EmailUserAuthMyosotis',
+        attributeValue: parameterEmailUserAuthMyosotis));
 
     final Uri uri = Uri.parse(
         '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');

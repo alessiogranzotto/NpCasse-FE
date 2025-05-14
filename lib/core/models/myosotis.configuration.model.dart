@@ -129,9 +129,11 @@ class MyosotisConfigurationDetailModel {
       required this.subtitle,
       required this.preestablishedAmount,
       required this.showFreePrice,
-      required this.showCausalDonation,
       required this.causalDonationText,
+      required this.idFormGive,
       required this.idSubCategoryCausalDonation,
+      required this.idGiveFromProjectOrFixedValue,
+      required this.customIdGive,
       required this.showPrivacy,
       required this.textPrivacy,
       required this.isMandatoryPrivacy,
@@ -154,8 +156,12 @@ class MyosotisConfigurationDetailModel {
   late String subtitle;
   late List<String> preestablishedAmount;
   late bool showFreePrice;
-  late bool showCausalDonation;
+  //
+  late String idGiveFromProjectOrFixedValue;
+  late List<String> customIdGive;
+  //
   late String causalDonationText;
+  late int idFormGive;
   late int idSubCategoryCausalDonation;
   late List<ProductCausalDonation> productCausalDonation;
   late bool showPrivacy;
@@ -182,8 +188,10 @@ class MyosotisConfigurationDetailModel {
     subtitle = "";
     preestablishedAmount = [];
     showFreePrice = false;
-    showCausalDonation = false;
+    idGiveFromProjectOrFixedValue = "";
+    customIdGive = [];
     causalDonationText = '';
+    idFormGive = 0;
     idSubCategoryCausalDonation = 0;
     productCausalDonation = [];
     showPrivacy = false;
@@ -219,8 +227,18 @@ class MyosotisConfigurationDetailModel {
     }
     showFreePrice = json['showFreePrice'];
 
-    showCausalDonation = json['showCausalDonation'];
+    idGiveFromProjectOrFixedValue = json['idGiveFromProjectOrFixedValue'];
+    if (json['customIdGive'] != null) {
+      // customIdGive = List.from(json['customIdGive']);
+      customIdGive = (json['customIdGive'] as List<dynamic>)
+          .map((item) =>
+              '${item['customIdGiveName']}=${item['customIdGiveValue']}')
+          .toList();
+    } else {
+      customIdGive = List.empty();
+    }
     causalDonationText = json['causalDonationText'];
+    idFormGive = json['idFormGive'];
     idSubCategoryCausalDonation = json['idSubCategoryCausalDonation'];
 
     if (json['productCausalDonation'] != null) {
@@ -288,9 +306,12 @@ class MyosotisConfigurationDetailModel {
     data['preestablishedAmount'] = preestablishedAmount;
     data['showFreePrice'] = showFreePrice;
 
-    data['showCausalDonation'] = showCausalDonation;
     data['causalDonationText'] = causalDonationText;
+    data['idFormGive'] = idFormGive;
     data['idSubCategoryCausalDonation'] = idSubCategoryCausalDonation;
+
+    data['idGiveFromProjectOrFixedValue'] = idGiveFromProjectOrFixedValue;
+    data['customIdGive'] = customIdGive;
 
     data['showPrivacy'] = showPrivacy;
     data['textPrivacy'] = textPrivacy;

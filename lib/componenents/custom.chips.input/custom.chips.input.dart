@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:np_casse/app/constants/functional.dart';
 
 class ChipsInput<T> extends StatefulWidget {
   const ChipsInput({
@@ -103,40 +104,43 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
   Widget build(BuildContext context) {
     controller.updateValues(<T>[...widget.values]);
 
-    return TextFormField(
-      textInputAction: TextInputAction.next,
-      style: widget.style,
-      strutStyle: widget.strutStyle,
-      decoration: InputDecoration(
-        labelText: widget.label,
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        labelStyle: Theme.of(context).textTheme.labelLarge!,
-        hintStyle: Theme.of(context)
-            .textTheme
-            .labelLarge!
-            .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(
-              // color:
-              //     Theme.of(context).colorScheme.inversePrimary.withOpacity(0.8),
-              color: Colors.grey,
-              width: 1.0),
+    return Wrap(children: [
+      TextFormField(
+        maxLines: null,
+        textInputAction: TextInputAction.next,
+        style: widget.style,
+        strutStyle: widget.strutStyle,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          labelStyle: Theme.of(context).textTheme.labelLarge!,
+          hintStyle: Theme.of(context)
+              .textTheme
+              .labelLarge!
+              .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+                // color:
+                //     Theme.of(context).colorScheme.inversePrimary.withOpacity(0.8),
+                color: Colors.grey,
+                width: 1.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+                //color: Theme.of(context).colorScheme.inversePrimary,
+                color: Colors.black,
+                width: 1.0),
+          ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(
-              //color: Theme.of(context).colorScheme.inversePrimary,
-              color: Colors.black,
-              width: 1.0),
-        ),
+        controller: controller,
+        onChanged: (String value) =>
+            widget.onTextChanged?.call(controller.textWithoutReplacements),
+        onFieldSubmitted: (String value) =>
+            widget.onSubmitted?.call(controller.textWithoutReplacements),
       ),
-      controller: controller,
-      onChanged: (String value) =>
-          widget.onTextChanged?.call(controller.textWithoutReplacements),
-      onFieldSubmitted: (String value) =>
-          widget.onSubmitted?.call(controller.textWithoutReplacements),
-    );
+    ]);
   }
 }
 
@@ -235,6 +239,7 @@ class ToppingInputChip extends StatelessWidget {
         side: BorderSide(width: 1.5),
         key: ObjectKey(topping),
         label: Text(topping),
+        backgroundColor: FunctionalColorUtils.getColorForTag(topping),
         // avatar: Padding(
         //   padding: EdgeInsets.all(4),
         //   child: CircleAvatar(

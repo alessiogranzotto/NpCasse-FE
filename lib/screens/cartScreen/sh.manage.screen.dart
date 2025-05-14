@@ -57,14 +57,18 @@ class _ShManageScreenState extends State<ShManageScreen> {
   }
 
   void fiscalCardControllerListener() {
-    if (!fiscalCardController.text.isEmpty) {
-      String temp = fiscalCardController.text.replaceAll('  ', ' ');
-      cfController.text = temp.substring(1, 16);
-      nameSurnameorBusinessNameController.text =
-          temp.substring(17, temp.indexOf('_'));
-      fromReader = true;
-    } else {
-      fromReader = true;
+    try {
+      if (!fiscalCardController.text.isEmpty) {
+        String temp = fiscalCardController.text.replaceAll('  ', ' ');
+        cfController.text = temp.substring(1, 17);
+        nameSurnameorBusinessNameController.text =
+            temp.substring(17, temp.length - 23);
+        fromReader = true;
+      } else {
+        fromReader = false;
+      }
+    } catch (e) {
+      fromReader = false;
     }
   }
 
@@ -93,6 +97,14 @@ class _ShManageScreenState extends State<ShManageScreen> {
         isExecuted = true;
       });
     }
+  }
+
+  void clearSearch() {
+    nameSurnameorBusinessNameController.text = "";
+    emailController.text = "";
+    cityController.text = "";
+    cfController.text = "";
+    fiscalCardController.text = "";
   }
 
   void stakeholderSelected1(StakeholderGiveModelSearch? val) {
@@ -234,7 +246,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
                         height: 50, //height of button
-                        width: 60,
+                        // width: 80,
                         child: MaterialButton(
                           hoverColor: Colors.blueAccent[100],
                           // height: MediaQuery.of(context).size.height * 0.05,
@@ -258,6 +270,45 @@ class _ShManageScreenState extends State<ShManageScreen> {
                                       .colorScheme
                                       .inversePrimary),
                               Text('Ricerca',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 50, //height of button
+                        // width: 80,
+                        child: MaterialButton(
+                          hoverColor: Colors.blueAccent[100],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(
+                                  width: 1,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary)),
+                          onPressed: clearSearch,
+                          color: Colors.white,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.cleaning_services,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary),
+                              Text('Svuota',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineMedium!

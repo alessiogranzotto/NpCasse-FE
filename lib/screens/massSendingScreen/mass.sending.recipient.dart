@@ -151,7 +151,7 @@ class _MyosotisConfigurationDetailState
                           child: Column(
                             children: [
                               Tooltip(
-                                message: 'Categorie prodotto',
+                                message: 'Accumulatori Give',
                                 child: Card(
                                   color: Theme.of(context).cardColor,
                                   elevation: 4,

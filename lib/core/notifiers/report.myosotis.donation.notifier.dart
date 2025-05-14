@@ -6,6 +6,7 @@ import 'package:np_casse/core/api/common.api.dart';
 import 'package:np_casse/core/api/report.api.dart';
 import 'package:np_casse/core/models/cart.history.model.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
+import 'package:np_casse/core/models/myosotis.donation.history.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -14,14 +15,15 @@ import 'dart:typed_data';
 import 'package:np_casse/core/utils/file_web.dart'
     if (dart.library.io) 'package:np_casse/core/utils/file_mobile.dart';
 
-class ReportCartNotifier with ChangeNotifier {
+class ReportMyosotisDonationNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
-  final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
-  CategoryCatalogModel currentCategoryCatalogModel =
-      CategoryCatalogModel.empty();
-  final CommonAPI commonAPI = CommonAPI();
+  // final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
+  // CategoryCatalogModel currentCategoryCatalogModel =
+  //     CategoryCatalogModel.empty();
+  // final CommonAPI commonAPI = CommonAPI();
 
-  CartHistoryModel currentCartHistoryModel = CartHistoryModel.empty();
+  MyosotisDonationHistoryModel currentMyosotisDonationHistoryModel =
+      MyosotisDonationHistoryModel.empty();
   bool _isUpdated = false;
   bool get isUpdated => _isUpdated;
 
@@ -30,7 +32,7 @@ class ReportCartNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  Future findCartList(
+  Future findMyosotisDonationList(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
@@ -40,7 +42,7 @@ class ReportCartNotifier with ChangeNotifier {
       required List<String> filter}) async {
     try {
       bool isOk = false;
-      var response = await reportAPI.findCartList(
+      var response = await reportAPI.findMyosotisDonationList(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
           pageNumber: pageNumber,
@@ -56,15 +58,15 @@ class ReportCartNotifier with ChangeNotifier {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackUtil.stylishSnackBar(
-                    title: "Carrello Storico",
+                    title: "Donazioni Myosotis",
                     message: errorDescription,
                     contentType: "failure"));
           }
         } else {
           if (parseData['okResult'] != null) {
-            CartHistoryModel cartHistoryModel =
-                CartHistoryModel.fromJson(parseData['okResult']);
-            return cartHistoryModel;
+            MyosotisDonationHistoryModel myosotisDonationHistoryModel =
+                MyosotisDonationHistoryModel.fromJson(parseData['okResult']);
+            return myosotisDonationHistoryModel;
           } else {
             return null;
           }
@@ -77,7 +79,7 @@ class ReportCartNotifier with ChangeNotifier {
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Carrello Storico",
+            title: "Donazioni Myosotis",
             message: "Errore di connessione",
             contentType: "failure"));
       }

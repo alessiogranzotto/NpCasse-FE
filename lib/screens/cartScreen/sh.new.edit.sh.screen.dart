@@ -138,7 +138,8 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
     super.initState();
 
     initGeoCountryItemModel();
-    editMode = widget.editStakeholderGiveModelSearch != null;
+    editMode = widget.editStakeholderGiveModelSearch != null &&
+        widget.editStakeholderGiveModelSearch!.id != 0;
     if (editMode) {
       idSh = widget.editStakeholderGiveModelSearch != null
           ? widget.editStakeholderGiveModelSearch!.id
@@ -206,6 +207,11 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
         _characterType = TypeCharacter.personaFisica;
       }
     } else {
+      nameController.text = widget.editStakeholderGiveModelSearch!.nome;
+      surnameController.text = widget.editStakeholderGiveModelSearch!.cognome;
+      ragSocController.text =
+          widget.editStakeholderGiveModelSearch!.ragionesociale;
+      cFController.text = widget.editStakeholderGiveModelSearch!.codfisc;
       comCartacee = true;
       comEmail = true;
       consensoRingrazia = true;

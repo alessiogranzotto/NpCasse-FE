@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.023';
+  static String version = '1.20.029';
 }
 
 // class AppRegex {
@@ -122,7 +122,8 @@ class AppStrings {
   static const String pleaseEnterIdPaymentTypeCartaCredito =
       'Inserire Id di pagamento';
 
-  static const String stripeApiKey = 'Stripe api key';
+  static const String stripeApiKeyPrivate = 'Stripe api key (Private)';
+  static const String stripeApiKeyPublic = 'Stripe api key (Public)';
   static const String pleaseEnterstripeApiKey = 'Inserire api key di Stripe';
 
   static const String paypalApiKey = 'Paypal Client Id';
@@ -147,6 +148,7 @@ class AppStrings {
   static const pleaseEnterEmailSendFrom = 'Inserire email di invio';
 
   static const parameterIdShAnonymous = "Id Stakeholder anonimo";
+  static const parameterEmailUserAuthMyosotis = "Utente invio dati Myosotis";
 
   //COMUNICATION
   static const nameComunication = 'Nome comunicazione';
@@ -206,7 +208,6 @@ class AppStrings {
   static const projectToHelp = 'Progetti da sostenere';
 
   static const showFreePriceConfiguration = 'Mostra importo libero';
-  static const showCausalDonation = 'Mostra progetti da sostenere';
 
   static const showPrivacy = 'Mostra accetta privacy';
 
@@ -220,6 +221,9 @@ class AppStrings {
 
   static const causalDonationText = "Testo causale donazione";
   static const availableSubCategoryCausalDonation = "Categoria causali";
+  static const giveIds = "Id Give";
+  static const idFormGiveMyosotisConfiguration = "Id Form";
+  static const pleaseEnterIdFormGiveMyosotisConfiguration = "Inserire Id Form";
 
   //COMUNICAZIONI
   static const nameMassSending = "Nome comunicazione";

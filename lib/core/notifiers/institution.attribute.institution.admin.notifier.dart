@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/institution.attribute.api.dart';
 import 'package:np_casse/core/models/institution.model.dart';
+import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,54 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
                   .toList();
           return attribute;
           // notifyListeners();
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Impostazioni ente",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future getInstitutionUser(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      bool? isDelayed}) async {
+    try {
+      if (isDelayed != null && isDelayed) {
+        await Future.delayed(const Duration(seconds: 2));
+      }
+      var response = await institutionAttributeAPI.getInstitutionUser(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          idInstitution: idInstitution);
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Impostazioni ente",
+                    message: errorDescription,
+                    contentType: "failure"));
+            return null;
+          }
+        } else {
+          List<UserModelTeam> userModelTeam = List.from(parseData['okResult'])
+              .map((e) => UserModelTeam.fromJson(e))
+              .toList();
+          return userModelTeam;
         }
       } else {
         AuthenticationNotifier authenticationNotifier =
@@ -134,7 +183,8 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
     required String? token,
     required int idUserAppInstitution,
     required int idInstitution,
-    required String stripeApiKey,
+    required String stripeApiKeyPrivate,
+    required String stripeApiKeyPublic,
     required String paypalClientId,
   }) async {
     try {
@@ -143,7 +193,8 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
         token: token,
         idUserAppInstitution: idUserAppInstitution,
         idInstitution: idInstitution,
-        stripeApiKey: stripeApiKey,
+        stripeApiKeyPrivate: stripeApiKeyPrivate,
+        stripeApiKeyPublic: stripeApiKeyPublic,
         paypalClientId: paypalClientId,
       );
 
@@ -316,6 +367,7 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
     required int idUserAppInstitution,
     required int idInstitution,
     required String parameterIdShAnonymous,
+    required String parameterEmailUserAuthMyosotis,
   }) async {
     try {
       var response =
@@ -324,6 +376,7 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
         idUserAppInstitution: idUserAppInstitution,
         idInstitution: idInstitution,
         parameterIdShAnonymous: parameterIdShAnonymous,
+        parameterEmailUserAuthMyosotis: parameterEmailUserAuthMyosotis,
       );
 
       final Map<String, dynamic> parseData = await jsonDecode(response);

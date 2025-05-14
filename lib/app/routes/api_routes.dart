@@ -39,7 +39,9 @@ class ApiRoutes {
   static const String baseInstitutionAttributeURL =
       "$authURL/api/Institution/Utility";
   static const String baseUserAppInstitutionURL =
-      "$casseURL/api/UserAppInstitution";
+      "$authURL/api/UserAppInstitution/Utility";
+  static const String giveTemporaryTokenURL =
+      "$authURL/api/UserAppInstitution/Utility/get-user-app-institution-temporary-give-token";
 
   static const String cartURL = "$casseURL/api/Cart/Utility";
   static const String geoSuggestionsURL = "$authURL/api/Geo/Utility";

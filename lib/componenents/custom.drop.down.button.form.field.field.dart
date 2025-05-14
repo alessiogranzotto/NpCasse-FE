@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/core/utils/disable.focus.node.dart';
 
 class CustomDropDownButtonFormField extends StatefulWidget {
-  const CustomDropDownButtonFormField(
-      {super.key,
-      required this.enabled,
-      this.hintText,
-      this.labelText,
-      required this.onItemChanged,
-      required this.listOfValue,
-      this.actualValue,
-      this.prefixIcon,
-      this.validator});
+  const CustomDropDownButtonFormField({
+    super.key,
+    required this.enabled,
+    this.hintText,
+    this.labelText,
+    required this.onItemChanged,
+    required this.listOfValue,
+    this.actualValue,
+    this.prefixIcon,
+    this.validator,
+    this.selectedItemBuilder,
+  });
   final bool enabled;
   final List<DropdownMenuItem> listOfValue;
   final Icon? prefixIcon;
@@ -20,7 +22,7 @@ class CustomDropDownButtonFormField extends StatefulWidget {
   final ValueChanged<dynamic> onItemChanged;
   final dynamic actualValue;
   final String? Function(String?)? validator;
-
+  final DropdownButtonBuilder? selectedItemBuilder;
   @override
   State<CustomDropDownButtonFormField> createState() =>
       _CustomDropDownButtonFormField();
@@ -43,6 +45,7 @@ class _CustomDropDownButtonFormField
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField(
           value: _selectedValue,
+          selectedItemBuilder: widget.selectedItemBuilder,
           focusNode: AlwaysDisabledFocusNode(),
           style: Theme.of(context)
               .textTheme

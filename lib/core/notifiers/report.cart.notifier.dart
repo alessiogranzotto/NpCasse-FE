@@ -16,10 +16,10 @@ import 'package:np_casse/core/utils/file_web.dart'
 
 class ReportCartNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
-  final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
-  CategoryCatalogModel currentCategoryCatalogModel =
-      CategoryCatalogModel.empty();
-  final CommonAPI commonAPI = CommonAPI();
+  // final CategoryCatalogAPI categoryCatalogAPI = CategoryCatalogAPI();
+  // CategoryCatalogModel currentCategoryCatalogModel =
+  //     CategoryCatalogModel.empty();
+  // final CommonAPI commonAPI = CommonAPI();
 
   CartHistoryModel currentCartHistoryModel = CartHistoryModel.empty();
   bool _isUpdated = false;

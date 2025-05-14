@@ -60,6 +60,67 @@ class AuthenticationNotifier with ChangeNotifier {
   String _stepLoading = "user";
   String get stepLoading => _stepLoading;
 
+  int getNumberUserAppInstitution() {
+    return currentUserModel.userAppInstitutionModelList.length;
+  }
+
+  void setSelectedUserAppInstitution(UserAppInstitutionModel val) {
+    for (var element in currentUserModel.userAppInstitutionModelList) {
+      element.selected = false;
+    }
+    var s = currentUserModel.userAppInstitutionModelList.where(
+        (element) => element.idUserAppInstitution == val.idUserAppInstitution);
+    if (s.length == 1) {
+      s.first.selected = true;
+    }
+  }
+
+  UserAppInstitutionModel getSelectedUserAppInstitution() {
+    return currentUserModel.userAppInstitutionModelList
+        .where((element) => element.selected == true)
+        .first;
+  }
+
+  void checkPasswordStrength({required String password}) {
+    String mediumPattern = r'^(?=.*?[!@#\$&*~]).{8,}';
+    String strongPattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+
+    if (password.contains(RegExp(strongPattern))) {
+      _passwordEmoji = '🚀';
+      _passwordLevel = 'Strong';
+      notifyListeners();
+    } else if (password.contains(RegExp(mediumPattern))) {
+      _passwordEmoji = '🔥';
+      _passwordLevel = 'Medium';
+      notifyListeners();
+    } else if (!password.contains(RegExp(strongPattern))) {
+      _passwordEmoji = '😢';
+      _passwordLevel = 'Weak';
+      notifyListeners();
+    }
+  }
+
+  void getPasswordStrength({required String password}) {
+    String weakPattern = r'^(?=.*?[!@#\$&*~]).{4,}';
+    String mediumPattern = r'^(?=.*?[!@#\$&*~]).{8,}';
+    String strongPattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+
+    _passwordStrength = 0;
+
+    if (password.contains(RegExp(strongPattern))) {
+      _passwordStrength = 3;
+      notifyListeners();
+    } else if (password.contains(RegExp(mediumPattern))) {
+      _passwordStrength = 2;
+      notifyListeners();
+    } else if (password.contains(RegExp(weakPattern))) {
+      _passwordStrength = 1;
+      notifyListeners();
+    }
+  }
+
   Future init() async {
     try {
       _preferences = await SharedPreferences.getInstance();
@@ -460,6 +521,52 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
+  Future getGiveToken(
+      {required BuildContext context,
+      required int idUserAppInstitution,
+      required int idInstitution}) async {
+    try {
+      bool isOk = false;
+      String giveToken = '';
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          getSelectedUserAppInstitution();
+
+      var response = await authentificationAPI.getGiveToken(
+        token: token,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        idInstitution:
+            cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
+      );
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Autenticazione",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          if (parseData['okResult'] != null) {
+            giveToken = parseData['okResult']['temp_token'];
+          }
+        }
+      }
+
+      return giveToken;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Autenticazione",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
   // Future userRegister(
   //     {required BuildContext context,
   //     required String email,
@@ -508,70 +615,9 @@ class AuthenticationNotifier with ChangeNotifier {
   //   }
   // }
 
-  int getNumberUserAppInstitution() {
-    return currentUserModel.userAppInstitutionModelList.length;
-  }
-
-  void setSelectedUserAppInstitution(UserAppInstitutionModel val) {
-    for (var element in currentUserModel.userAppInstitutionModelList) {
-      element.selected = false;
-    }
-    var s = currentUserModel.userAppInstitutionModelList.where(
-        (element) => element.idUserAppInstitution == val.idUserAppInstitution);
-    if (s.length == 1) {
-      s.first.selected = true;
-    }
-  }
-
-  UserAppInstitutionModel getSelectedUserAppInstitution() {
-    return currentUserModel.userAppInstitutionModelList
-        .where((element) => element.selected == true)
-        .first;
-  }
-
-  void checkPasswordStrength({required String password}) {
-    String mediumPattern = r'^(?=.*?[!@#\$&*~]).{8,}';
-    String strongPattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-
-    if (password.contains(RegExp(strongPattern))) {
-      _passwordEmoji = '🚀';
-      _passwordLevel = 'Strong';
-      notifyListeners();
-    } else if (password.contains(RegExp(mediumPattern))) {
-      _passwordEmoji = '🔥';
-      _passwordLevel = 'Medium';
-      notifyListeners();
-    } else if (!password.contains(RegExp(strongPattern))) {
-      _passwordEmoji = '😢';
-      _passwordLevel = 'Weak';
-      notifyListeners();
-    }
-  }
-
-  void getPasswordStrength({required String password}) {
-    String weakPattern = r'^(?=.*?[!@#\$&*~]).{4,}';
-    String mediumPattern = r'^(?=.*?[!@#\$&*~]).{8,}';
-    String strongPattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
-
-    _passwordStrength = 0;
-
-    if (password.contains(RegExp(strongPattern))) {
-      _passwordStrength = 3;
-      notifyListeners();
-    } else if (password.contains(RegExp(mediumPattern))) {
-      _passwordStrength = 2;
-      notifyListeners();
-    } else if (password.contains(RegExp(weakPattern))) {
-      _passwordStrength = 1;
-      notifyListeners();
-    }
-  }
-
   Future userLogout(BuildContext context) async {
     DeleteCache.deleteKey(AppKeys.userData).whenComplete(() async {
-      await Future.delayed(const Duration(seconds: 3));
+      //await Future.delayed(const Duration(seconds: 3));
 
       if (context.mounted) {
         Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(

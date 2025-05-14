@@ -132,45 +132,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     });
   }
 
-  void finalizeFunctionKnown() {
-    CartNotifier cartNotifier =
-        Provider.of<CartNotifier>(context, listen: false);
-
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-    UserAppInstitutionModel cUserAppInstitutionModel =
-        authenticationNotifier.getSelectedUserAppInstitution();
-
-    var strTypePayment = PaymentType.values[indexPayment].toString();
-    cartNotifier
-        .setCartCheckout(
-            context: context,
-            token: authenticationNotifier.token,
-            idCart: widget.idCart,
-            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-            totalPriceCart: cartNotifier.totalCartMoney.value,
-            percDiscount:
-                double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
-            typePayment: strTypePayment,
-            fiscalization: int.parse(selectedFiscalization),
-            modeCartCheckout: 2)
-        .then((value) {
-      if (value > 0) {
-        // if (context.mounted) {
-        //   ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-        //       title: "Carrello",
-        //       message: "Carrello chiuso correttamente",
-        //       contentType: "success"));
-        // }
-        // homeNotifier.setHomeIndex(0);
-        Navigator.of(context)
-            .pushNamed(AppRouter.shManage, arguments: widget.idCart);
-      } else {
-        showCartErrorSnackbar();
-      }
-    });
-  }
-
   void finalizeStripePayment() {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
@@ -205,6 +166,45 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         //       contentType: "success"));
         // }
         //cartNotifier.refresh();
+      } else {
+        showCartErrorSnackbar();
+      }
+    });
+  }
+
+  void finalizeFunctionKnown() {
+    CartNotifier cartNotifier =
+        Provider.of<CartNotifier>(context, listen: false);
+
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    var strTypePayment = PaymentType.values[indexPayment].toString();
+    cartNotifier
+        .setCartCheckout(
+            context: context,
+            token: authenticationNotifier.token,
+            idCart: widget.idCart,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+            totalPriceCart: cartNotifier.totalCartMoney.value,
+            percDiscount:
+                double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
+            typePayment: strTypePayment,
+            fiscalization: int.parse(selectedFiscalization),
+            modeCartCheckout: 2)
+        .then((value) {
+      if (value > 0) {
+        // if (context.mounted) {
+        //   ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+        //       title: "Carrello",
+        //       message: "Carrello chiuso correttamente",
+        //       contentType: "success"));
+        // }
+        // homeNotifier.setHomeIndex(0);
+        Navigator.of(context)
+            .pushNamed(AppRouter.shManage, arguments: widget.idCart);
       } else {
         showCartErrorSnackbar();
       }

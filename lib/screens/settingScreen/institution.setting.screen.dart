@@ -6,6 +6,7 @@ import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.d
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
+import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -35,9 +36,15 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   late final TextEditingController idBancomatController;
   late final TextEditingController idCartaCreditoController;
   late final TextEditingController idAssegnoController;
-  late final TextEditingController stripeApiKeyController;
+  late final TextEditingController stripeApiKeyPrivateController;
+  late final TextEditingController stripeApiKeyPublicController;
   late final TextEditingController paypalClientIdController;
   late final TextEditingController parameterIdShAnonymousApiKeyController;
+
+  List<UserModelTeam> userModelTeam = List.empty();
+
+  UserModelTeam? selectedUserModelTeam;
+
   late TextEditingController tokenExpirationController =
       TextEditingController();
   late TextEditingController maxInactivityController = TextEditingController();
@@ -55,6 +62,16 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   List<bool> panelOpen = [false, false, false, false, false];
   bool isRefreshing = true; // Track if data is refreshing
 
+  getIconByRole(String roleUserInstitution) {
+    if (roleUserInstitution == "InstitutionAdmin") {
+      return Icon(Icons.group);
+    } else if (roleUserInstitution == "User") {
+      return Icon(Icons.person);
+    } else if (roleUserInstitution == "Admin") {
+      return Icon(Icons.admin_panel_settings_outlined);
+    }
+  }
+
   void initializeControllers() {
     idContantiController = TextEditingController()
       ..addListener(paymentMethodControllerListener);
@@ -64,12 +81,15 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       ..addListener(paymentMethodControllerListener);
     idAssegnoController = TextEditingController()
       ..addListener(paymentMethodControllerListener);
-    stripeApiKeyController = TextEditingController()
+    stripeApiKeyPrivateController = TextEditingController()
+      ..addListener(stripeControllerListener);
+    stripeApiKeyPublicController = TextEditingController()
       ..addListener(stripeControllerListener);
     paypalClientIdController = TextEditingController()
       ..addListener(paypalControllerListener);
     parameterIdShAnonymousApiKeyController = TextEditingController()
       ..addListener(parameterControllerListener);
+
     tokenExpirationController = TextEditingController()
       ..addListener(securityControllerListener);
     maxInactivityController = TextEditingController()
@@ -88,7 +108,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     idBancomatController.dispose();
     idCartaCreditoController.dispose();
     idAssegnoController.dispose();
-    stripeApiKeyController.dispose();
+    stripeApiKeyPrivateController.dispose();
+    stripeApiKeyPublicController.dispose();
     paypalClientIdController.dispose();
     tokenExpirationController.dispose();
     maxInactivityController.dispose();
@@ -142,7 +163,31 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   }
 
   void parameterControllerListener() {
-    stripeValidNotifier.value = true;
+    parameterValidNotifier.value = true;
+  }
+
+  Future<void> getUserInstitution() async {
+    AuthenticationNotifier authenticationNotifier =
+        Provider.of<AuthenticationNotifier>(context, listen: false);
+    InstitutionAttributeInstitutionAdminNotifier
+        institutionAttributeInstitutionAdminNotifier =
+        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
+            listen: false);
+    UserAppInstitutionModel cUserAppInstitutionModel =
+        authenticationNotifier.getSelectedUserAppInstitution();
+
+    await institutionAttributeInstitutionAdminNotifier
+        .getInstitutionUser(
+            context: context,
+            token: authenticationNotifier.token,
+            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+            idInstitution:
+                cUserAppInstitutionModel.idInstitutionNavigation.idInstitution)
+        .then((value) {
+      if (value != null) {
+        userModelTeam = value;
+      }
+    });
   }
 
   Future<void> getInstitutionAttributes() async {
@@ -201,14 +246,22 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
         }
 
         //STRIPE
-        var itemStripeApiKey = cValue
-            .where((element) => element.attributeName == 'Stripe.ApiKey')
+        var itemStripeApiKeyPrivate = cValue
+            .where((element) => element.attributeName == 'Stripe.ApiKeyPrivate')
             .firstOrNull;
-        if (itemStripeApiKey != null) {
-          stripeApiKeyController.text = itemStripeApiKey.attributeValue;
+        if (itemStripeApiKeyPrivate != null) {
+          stripeApiKeyPrivateController.text =
+              itemStripeApiKeyPrivate.attributeValue;
+        }
+        var itemStripeApiKeyPublic = cValue
+            .where((element) => element.attributeName == 'Stripe.ApiKeyPublic')
+            .firstOrNull;
+        if (itemStripeApiKeyPublic != null) {
+          stripeApiKeyPublicController.text =
+              itemStripeApiKeyPublic.attributeValue;
         }
 
-        //STRIPE
+        //PAYPAL
         var itemPaypalApiKey = cValue
             .where((element) => element.attributeName == 'Paypal.ClientId')
             .firstOrNull;
@@ -290,6 +343,16 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
           parameterIdShAnonymousApiKeyController.text =
               itemParameterIdStakeholderAnonymous.attributeValue;
         }
+        var itemEmailUserAuthMyosotis = cValue
+            .where((element) =>
+                element.attributeName == 'Parameter.EmailUserAuthMyosotis')
+            .firstOrNull;
+        if (itemEmailUserAuthMyosotis != null) {
+          selectedUserModelTeam = userModelTeam
+              .where((element) =>
+                  element.email == itemEmailUserAuthMyosotis.attributeValue)
+              .first;
+        }
       }
     });
   }
@@ -350,7 +413,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
         idInstitution:
             cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
-        stripeApiKey: stripeApiKeyController.text,
+        stripeApiKeyPrivate: stripeApiKeyPrivateController.text,
+        stripeApiKeyPublic: stripeApiKeyPublicController.text,
         paypalClientId: paypalClientIdController.text,
       )
           .then((value) {
@@ -457,13 +521,17 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
 
       institutionAttributeInstitutionAdminNotifier
           .updateInstitutionParameterAttribute(
-        context: context,
-        token: authNotifier.token,
-        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-        idInstitution:
-            cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
-        parameterIdShAnonymous: parameterIdShAnonymousApiKeyController.text,
-      )
+              context: context,
+              token: authNotifier.token,
+              idUserAppInstitution:
+                  cUserAppInstitutionModel.idUserAppInstitution,
+              idInstitution: cUserAppInstitutionModel
+                  .idInstitutionNavigation.idInstitution,
+              parameterIdShAnonymous:
+                  parameterIdShAnonymousApiKeyController.text,
+              parameterEmailUserAuthMyosotis: selectedUserModelTeam != null
+                  ? selectedUserModelTeam!.email
+                  : "")
           .then((value) {
         if (value) {
           if (context.mounted) {
@@ -490,7 +558,9 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         institutionAttributeInstitutionAdminNotifier
             .setUpdate(false); // Reset the update flag
-        getInstitutionAttributes();
+        getUserInstitution().then((res) {
+          getInstitutionAttributes();
+        });
       });
     }
   }
@@ -498,7 +568,6 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   @override
   void initState() {
     initializeControllers();
-    // getInstitutionAttributes();
     super.initState();
   }
 
@@ -719,20 +788,58 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                             const EdgeInsets.only(bottom: 20),
                                         child: CustomTextFormField(
                                           obscureText: true,
-                                          controller: stripeApiKeyController,
-                                          labelText: AppStrings.stripeApiKey +
-                                              ((stripeApiKeyController
+                                          controller:
+                                              stripeApiKeyPrivateController,
+                                          labelText: AppStrings
+                                                  .stripeApiKeyPrivate +
+                                              ((stripeApiKeyPrivateController
                                                           .text.length >
                                                       5
                                                   ? " ******" +
-                                                      stripeApiKeyController
+                                                      stripeApiKeyPrivateController
                                                           .text
                                                           .substring(
-                                                              stripeApiKeyController
+                                                              stripeApiKeyPrivateController
                                                                       .text
                                                                       .length -
                                                                   5,
-                                                              stripeApiKeyController
+                                                              stripeApiKeyPrivateController
+                                                                  .text.length)
+                                                  : "")),
+                                          keyboardType: TextInputType.name,
+                                          textInputAction: TextInputAction.next,
+                                          onChanged: (_) => _formKey1
+                                              .currentState
+                                              ?.validate(),
+                                          // validator: (value) {
+                                          //   return value!.isNotEmpty
+                                          //       ? null
+                                          //       : AppStrings
+                                          //           .pleaseEnterstripeApiKey;
+                                          // },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomTextFormField(
+                                          obscureText: true,
+                                          controller:
+                                              stripeApiKeyPublicController,
+                                          labelText: AppStrings
+                                                  .stripeApiKeyPublic +
+                                              ((stripeApiKeyPublicController
+                                                          .text.length >
+                                                      5
+                                                  ? " ******" +
+                                                      stripeApiKeyPublicController
+                                                          .text
+                                                          .substring(
+                                                              stripeApiKeyPublicController
+                                                                      .text
+                                                                      .length -
+                                                                  5,
+                                                              stripeApiKeyPublicController
                                                                   .text.length)
                                                   : "")),
                                           keyboardType: TextInputType.name,
@@ -1135,6 +1242,69 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                           //       : AppStrings
                                           //           .pleaseEnterstripeApiKey;
                                           // },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: CustomDropDownButtonFormField(
+                                          enabled: true,
+                                          actualValue: selectedUserModelTeam,
+                                          labelText: AppStrings
+                                              .parameterEmailUserAuthMyosotis,
+                                          listOfValue: userModelTeam
+                                              .map((UserModelTeam u) {
+                                            return DropdownMenuItem<
+                                                UserModelTeam>(
+                                              value: u,
+                                              child: Row(
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      getIconByRole(u.role),
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 10),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                          u.name +
+                                                              " " +
+                                                              u.surname,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(u.email,
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color: Colors
+                                                                  .grey[600])),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }).toList(),
+                                          onItemChanged: (value) {
+                                            selectedUserModelTeam = value;
+                                            // onChangeNumberResult(value);
+                                          },
+                                          selectedItemBuilder: (context) {
+                                            return userModelTeam.map((u) {
+                                              return Text(u.name +
+                                                  " " +
+                                                  u.surname +
+                                                  " - " +
+                                                  u.email); // 👈 Custom visualizzazione elemento selezionato
+                                            }).toList();
+                                          },
                                         ),
                                       ),
                                       Row(

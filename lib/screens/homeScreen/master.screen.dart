@@ -13,7 +13,7 @@ import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/report.history.notifier.dart';
+import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';

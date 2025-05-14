@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:np_casse/app/constants/assets.dart';
@@ -14,7 +15,7 @@ import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/report.history.notifier.dart';
+import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
@@ -26,6 +27,7 @@ import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.history.navigator.dart';
 import 'package:np_casse/screens/massSendingScreen/mass.sending.navigator.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.donation.history.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.navigator.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
@@ -39,6 +41,7 @@ import 'package:np_casse/screens/stakeholderScreen/stakeholder.givepro.navigator
 import 'package:np_casse/screens/stakeholderScreen/stakeholder.navigator.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuList {
   MenuList(
@@ -113,13 +116,19 @@ class _HomeScreenState extends State<HomeScreen> {
       //     const AdminSettingScreen(), 3, null),
     ]),
     MenuList('Comunicazioni', Icons.email, null, 1, [
+      MenuList('Crea template', Icons.new_label, const MassSendingNavigator(),
+          3, null),
       MenuList(
-          'Invio massivo', Icons.email, const MassSendingNavigator(), 1, null),
-      MenuList('Email report', Icons.send, const MassSendingHistoryNavigator(),
-          1, null),
+          'Invio massivo', Icons.send, const MassSendingNavigator(), 1, null),
+      MenuList('Email report', Icons.dashboard,
+          const MassSendingHistoryNavigator(), 1, null),
     ]),
-    MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
-        const MyosotisConfigurationNavigator(), 3, null),
+    MenuList('Myosotis', Icons.app_settings_alt, null, 1, [
+      MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
+          const MyosotisConfigurationNavigator(), 3, null),
+      MenuList('Report donazioni', Icons.dashboard,
+          const MyosotisDonationHistoryNavigator(), 3, null),
+    ]),
     MenuList('Report', Icons.dashboard, null, 1, [
       MenuList('Report acquisti', Icons.dashboard, const CartHistoryNavigator(),
           1, null),
@@ -134,6 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onItemTapped(String subMenu) {
     if (subMenu == 'Uscita') {
       signOut(context);
+      return;
+    }
+    if (subMenu == 'Crea template') {
+      launchGiveEmailTemplateLink(context);
       return;
     }
     if (subMenu == "Preferiti") {
@@ -300,10 +313,100 @@ class _HomeScreenState extends State<HomeScreen> {
     return Center();
   }
 
-  signOut(BuildContext context) {
-    AuthenticationNotifier authenticationNotifier =
-        Provider.of<AuthenticationNotifier>(context, listen: false);
-    authenticationNotifier.userLogout(context);
+  Future<void> signOut(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black54,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              const SizedBox(height: 20),
+              Text(
+                'Uscita in corso',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    try {
+      // Simula una chiamata API
+      await Future.delayed(Duration(seconds: 2));
+      AuthenticationNotifier authenticationNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      authenticationNotifier.userLogout(context);
+    } finally {
+      Navigator.of(context).pop(); // Chiude il dialog
+    }
+  }
+
+  Future<void> launchGiveEmailTemplateLink(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.black54,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              const SizedBox(height: 20),
+              Text(
+                'Autenticazione in corso. Al termine verrà aperta una nuova scheda.',
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    try {
+      // Simula una chiamata API
+      await Future.delayed(Duration(seconds: 1));
+      AuthenticationNotifier authenticationNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authenticationNotifier.getSelectedUserAppInstitution();
+
+      String temp_token = await authenticationNotifier.getGiveToken(
+          context: context,
+          idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+          idInstitution:
+              cUserAppInstitutionModel.idInstitutionNavigation.idInstitution);
+      if (temp_token.isNotEmpty) {
+        final Uri url = Uri.parse(
+          'https://www.give-newsletter.cloud/templateGivePro/index.php?token=$temp_token&nomeLogin=${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+        );
+        print(url);
+        if (kIsWeb) {
+          //  Web: devi specificare _blank per aprire una nuova scheda
+          if (!await launchUrl(url, webOnlyWindowName: '_blank')) {
+            throw Exception('Could not launch $url in Web');
+          }
+        } else {
+          //  App: puoi usare la modalità nativa
+          if (!await launchUrl(
+            url,
+            mode: LaunchMode.externalApplication,
+          )) {
+            throw Exception('Could not launch $url in App');
+          }
+        }
+        // Tenta di aprire l'URL
+      }
+    } finally {
+      Navigator.of(context).pop(); // Chiude il dialog
+    }
   }
 
   // void resetNavigators() {

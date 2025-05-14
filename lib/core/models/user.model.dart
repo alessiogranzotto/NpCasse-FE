@@ -119,3 +119,28 @@ class UserAttributeModel {
     return data;
   }
 }
+
+class UserModelTeam {
+  UserModelTeam(
+      {required this.idUser,
+      required this.name,
+      required this.surname,
+      required this.email,
+      required this.phone,
+      required this.role});
+  late int idUser;
+  late String name;
+  late String surname;
+  late String email;
+  late String phone;
+  late String role;
+
+  UserModelTeam.fromJson(Map<String, dynamic> json) {
+    idUser = json['idUser'];
+    name = json['name'];
+    surname = json['surname'];
+    email = json['email'];
+    phone = json['phone'];
+    role = json['role'];
+  }
+}

@@ -6,7 +6,7 @@ import 'package:np_casse/componenents/custom.table.footer.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/report.history.notifier.dart';
+import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
@@ -287,9 +287,33 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'stateFiscalization',
               title: const Text('Fiscalizzazione'),
-              cellBuilder: (context, item, index) =>
-                  Text(item['stateFiscalization'].toString()),
-              size: const FixedColumnSize(200),
+              cellBuilder: (context, item, index) {
+                bool warning =
+                    item['idStakeholder'] == null && item['fiscalization'] == 2;
+                return Row(
+                  children: [
+                    warning
+                        ? Tooltip(
+                            message:
+                                "Fattura richiesta: in attesa di essere inviata o priva di dati donatore",
+                            child: Icon(
+                              size: 24,
+                              Icons.warning_rounded,
+                              color: Colors.red,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    warning ? SizedBox(width: 6) : SizedBox.shrink(),
+                    Expanded(
+                      child: Text(
+                        item['stateFiscalization'].toString(),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                );
+              },
+              size: const FixedColumnSize(250),
               sortable: true,
             ),
             TableColumn(
@@ -307,7 +331,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                       item['docNumberCart'] > 0)
                     PopupMenuItem<int>(
                       value: 2,
-                      child: const Text('Associazione donatore'),
+                      child: const Text('Associa donatore'),
                     ),
                   if (item['fiscalizationExternalId'] != null)
                     PopupMenuItem<int>(
