@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:np_casse/core/api/Transactional.sending.api.dart';
 import 'package:np_casse/core/api/mass.sending.api.dart';
 import 'package:np_casse/core/models/mass.sending.history.model.dart';
+import 'package:np_casse/core/models/transactional.sending.history.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
@@ -12,8 +14,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:np_casse/core/utils/file_web.dart'
     if (dart.library.io) 'package:np_casse/core/utils/file_mobile.dart';
 
-class ReportMassSendingNotifier with ChangeNotifier {
-  final MassSendingAPI massSendingAPI = MassSendingAPI();
+class ReportTransactionalSendingNotifier with ChangeNotifier {
+  final TransactionalSendingAPI transactionalSendingAPI =
+      TransactionalSendingAPI();
 
   bool _isUpdated = false;
   bool get isUpdated => _isUpdated;
@@ -23,7 +26,7 @@ class ReportMassSendingNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  Future findMassSendingList(
+  Future findTransactionalSendingList(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
@@ -33,7 +36,7 @@ class ReportMassSendingNotifier with ChangeNotifier {
       required List<String> filter}) async {
     try {
       bool isOk = false;
-      var response = await massSendingAPI.findMassSendingList(
+      var response = await transactionalSendingAPI.findTransactionalSendingList(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
           pageNumber: pageNumber,
@@ -55,9 +58,10 @@ class ReportMassSendingNotifier with ChangeNotifier {
           }
         } else {
           if (parseData['okResult'] != null) {
-            MassSendingHistoryModel massSendingHistoryModel =
-                MassSendingHistoryModel.fromJson(parseData['okResult']);
-            return massSendingHistoryModel;
+            TransactionalSendingHistoryModel transactionalSendingHistoryModel =
+                TransactionalSendingHistoryModel.fromJson(
+                    parseData['okResult']);
+            return transactionalSendingHistoryModel;
           } else {
             return null;
           }
@@ -77,7 +81,7 @@ class ReportMassSendingNotifier with ChangeNotifier {
     }
   }
 
-  Future<void> downloadMassSendingHistoryList(
+  Future<void> downloadTransactionalSendingList(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
@@ -87,13 +91,14 @@ class ReportMassSendingNotifier with ChangeNotifier {
       required List<String> filter}) async {
     try {
       bool isOk = false;
-      var response = await massSendingAPI.downloadMassSendingList(
-          token: token,
-          idUserAppInstitution: idUserAppInstitution,
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-          orderBy: orderBy,
-          filter: filter);
+      var response =
+          await transactionalSendingAPI.downloadTransactionalSendingList(
+              token: token,
+              idUserAppInstitution: idUserAppInstitution,
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+              orderBy: orderBy,
+              filter: filter);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         isOk = parseData['isOk'];

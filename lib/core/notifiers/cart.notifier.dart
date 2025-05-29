@@ -264,52 +264,6 @@ class CartNotifier with ChangeNotifier {
     }
   }
 
-  Future getInvoiceType(
-      {required BuildContext context,
-      required String? token,
-      required int idUserAppInstitution}) async {
-    try {
-      List<InvoiceTypeModel> invoiceTypeModel = List<InvoiceTypeModel>.empty();
-      bool isOk = false;
-      var response = await cartAPI.getInvoiceType(
-          token: token, idUserAppInstitution: idUserAppInstitution);
-
-      if (response != null) {
-        final Map<String, dynamic> parseData = await jsonDecode(response);
-        isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Carrello",
-                    message: errorDescription,
-                    contentType: "failure"));
-          }
-        } else {
-          if (parseData['okResult'] != null) {
-            invoiceTypeModel = List.from(parseData['okResult'])
-                .map((e) => InvoiceTypeModel.fromJson(e))
-                .toList();
-            return invoiceTypeModel;
-          }
-        }
-      } else {
-        AuthenticationNotifier authenticationNotifier =
-            Provider.of<AuthenticationNotifier>(context, listen: false);
-        authenticationNotifier.exit(context);
-      }
-    } on SocketException catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Carrello",
-            message: "Errore di connessione",
-            contentType: "failure"));
-      }
-      return List<InvoiceTypeModel>.empty();
-    }
-  }
-
   Future getInvoice(
       {required BuildContext context,
       required String? token,
@@ -344,18 +298,20 @@ class CartNotifier with ChangeNotifier {
     }
   }
 
-  Future sendInvoice(
+  Future sendTransactionalInvoice(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
       required int idCart,
-      required String emailName}) async {
+      required String emailName,
+      required String nameTransactionalSending}) async {
     try {
-      var response = await cartAPI.sendInvoice(
+      var response = await cartAPI.sendTransactionalInvoice(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
           idCart: idCart,
-          emailName: emailName);
+          emailName: emailName,
+          nameTransactionalSending: nameTransactionalSending);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);

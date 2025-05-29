@@ -39,12 +39,13 @@ class _PdfReceiptScreenState extends State<PdfReceiptScreen> {
 
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    cartNotifier.sendInvoice(
+    cartNotifier.sendTransactionalInvoice(
         context: context,
         token: authenticationNotifier.token,
         idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
         idCart: 0,
-        emailName: emailName);
+        emailName: emailName,
+        nameTransactionalSending: "");
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
           title: "Carrello",

@@ -1,8 +1,7 @@
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/comunication.notifier.dart';
 import 'package:np_casse/core/notifiers/download.app.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
@@ -15,8 +14,10 @@ import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.d
 import 'package:np_casse/core/notifiers/product.attribute.mapping.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
+import 'package:np_casse/core/notifiers/report.transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
+import 'package:np_casse/core/notifiers/transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -49,14 +50,15 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => CategoryCatalogNotifier()),
     ChangeNotifierProvider(create: (_) => ShopNavigateNotifier()),
     ChangeNotifierProvider(create: (_) => ShopSearchNotifier()),
-    ChangeNotifierProvider(
-        create: (_) => InstitutionAttributeInstitutionAdminNotifier()),
+    ChangeNotifierProvider(create: (_) => InstitutionAttributeNotifier()),
     // ChangeNotifierProvider(create: (_) => InstitutionAttributeAdminNotifier()),
-    ChangeNotifierProvider(create: (_) => ComunicationNotifier()),
+    // ChangeNotifierProvider(create: (_) => ComunicationNotifier()),
     ChangeNotifierProvider(create: (_) => MyosotisConfigurationNotifier()),
     ChangeNotifierProvider(create: (_) => ReportMyosotisDonationNotifier()),
     ChangeNotifierProvider(create: (_) => MassSendingNotifier()),
+    ChangeNotifierProvider(create: (_) => TransactionalSendingNotifier()),
     ChangeNotifierProvider(create: (_) => ReportMassSendingNotifier()),
+    ChangeNotifierProvider(create: (_) => ReportTransactionalSendingNotifier()),
 
     // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];

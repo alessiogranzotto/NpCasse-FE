@@ -27,6 +27,29 @@ class InstitutionAttributeAPI {
     }
   }
 
+  Future getInstitutionEmail(
+      {required String? token, required int idUserAppInstitution}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.baseInstitutionEmailURL}/Get-institution-email?idUserAppInstitution=$idUserAppInstitution');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
   Future getInstitutionUser(
       {String? token,
       required int idUserAppInstitution,
@@ -331,6 +354,32 @@ class InstitutionAttributeAPI {
           "updateInstitutionAttributeRequest": cInstitutionAttributeModel,
         }));
 
+    if (response.statusCode == 200) {
+      final dynamic body = response.body;
+      return body;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      return null;
+    }
+  }
+
+  Future downloadInstitutionEmail(
+      {String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required String emailName}) async {
+    final Uri uri = Uri.parse(
+        '${ApiRoutes.baseInstitutionEmailURL}/Downlaod-institution-email?idUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&EmailName=$emailName');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;

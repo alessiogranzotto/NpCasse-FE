@@ -3,19 +3,20 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:np_casse/core/api/Transactional.sending.api.dart';
 import 'package:np_casse/core/api/common.sending.api.dart';
-import 'package:np_casse/core/api/mass.sending.api.dart';
 import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
-class MassSendingNotifier with ChangeNotifier {
-  final MassSendingAPI massSendingAPI = MassSendingAPI();
+class TransactionalSendingNotifier with ChangeNotifier {
+  final TransactionalSendingAPI transactionalSendingAPI =
+      TransactionalSendingAPI();
   final CommonSendingAPI commonSendingAPI = CommonSendingAPI();
 
-  Future findMassSendings(
+  Future findTransactionalSendings(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
@@ -23,17 +24,20 @@ class MassSendingNotifier with ChangeNotifier {
       required bool readAlsoArchived,
       required String numberResult,
       required String nameDescSearch,
-      required String orderBy}) async {
+      required String orderBy,
+      required String type}) async {
     try {
-      var response = await massSendingAPI.findMassSendings(
+      var response = await transactionalSendingAPI.findTransactionalSendings(
           token: token,
           idUserAppInstitution: idUserAppInstitution,
           idInstitution: idInstitution,
           readAlsoArchived: readAlsoArchived,
           numberResult: numberResult,
           nameDescSearch: nameDescSearch,
-          orderBy: orderBy);
+          orderBy: orderBy,
+          type: type);
       if (response != null) {
+        print(response);
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
         if (!isOk) {
@@ -46,10 +50,11 @@ class MassSendingNotifier with ChangeNotifier {
                     contentType: "failure"));
           }
         } else {
-          List<MassSendingModel> massSending = List.from(parseData['okResult'])
-              .map((e) => MassSendingModel.fromJson(e))
-              .toList();
-          return massSending;
+          List<TransactionalSendingModel> TransactionalSending =
+              List.from(parseData['okResult'])
+                  .map((e) => TransactionalSendingModel.fromJson(e))
+                  .toList();
+          return TransactionalSending;
           // notifyListeners();
         }
       } else {
@@ -101,6 +106,52 @@ class MassSendingNotifier with ChangeNotifier {
                     .map((e) => TemplateSmtp2GoModel.fromJson(e))
                     .toList();
             return templateComunicationModel;
+          } else {
+            return null;
+          }
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Comunicazioni",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future getAvailableAction(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution}) async {
+    try {
+      bool isOk = false;
+
+      var response = await transactionalSendingAPI.getAvailableAction(
+          token: token, idUserAppInstitution: idUserAppInstitution);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Comunicazioni",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          if (parseData['okResult'] != null) {
+            List<String> availableAction =
+                List<String>.from(parseData['okResult']);
+            return availableAction;
           } else {
             return null;
           }
@@ -172,14 +223,16 @@ class MassSendingNotifier with ChangeNotifier {
     }
   }
 
-  Future addOrUpdateMassSending(
+  Future addOrUpdateTransactionalSending(
       {required BuildContext context,
       String? token,
-      required MassSendingModel massSendingModel}) async {
+      required TransactionalSendingModel transactionalSendingModel}) async {
     try {
       bool isOk = false;
-      var response = await massSendingAPI.addOrUpdateMassSending(
-          token: token, massSendingModel: massSendingModel);
+      var response =
+          await transactionalSendingAPI.addOrUpdateTransactionalSending(
+              token: token,
+              transactionalSendingModel: transactionalSendingModel);
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
@@ -206,142 +259,19 @@ class MassSendingNotifier with ChangeNotifier {
     }
   }
 
-  Future getAccumulatorFromGive(
-      {required BuildContext context,
-      required String? token,
-      required int idUserAppInstitution,
-      required int idInstitution}) async {
-    try {
-      var response = await commonSendingAPI.getAccumulatorFromGive(
-          token: token,
-          idUserAppInstitution: idUserAppInstitution,
-          idInstitution: idInstitution);
-      if (response != null) {
-        final Map<String, dynamic> parseData = await jsonDecode(response);
-        bool isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Comunicazioni",
-                    message: errorDescription,
-                    contentType: "failure"));
-          }
-        } else {
-          List<AccumulatorGiveModel> massSending =
-              List.from(parseData['okResult'])
-                  .map((e) => AccumulatorGiveModel.fromJson(e))
-                  .toList();
-          return massSending;
-          // notifyListeners();
-        }
-      } else {
-        AuthenticationNotifier authenticationNotifier =
-            Provider.of<AuthenticationNotifier>(context, listen: false);
-        authenticationNotifier.exit(context);
-      }
-    } on SocketException catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Comunicazioni",
-            message: "Errore di connessione",
-            contentType: "failure"));
-      }
-    }
-  }
-
-  Future updateMassSendingGiveAccumulator(
-      {required BuildContext context,
-      required String? token,
-      required int idMassSending,
-      required int idUserAppInstitution,
-      required List<MassSendingGiveAccumulator>
-          massSendingGiveAccumulator}) async {
-    try {
-      bool isOk = false;
-      var response = await massSendingAPI.updateMassSendingGiveAccumulator(
-          token: token,
-          idMassSending: idMassSending,
-          idUserAppInstitution: idUserAppInstitution,
-          massSendingGiveAccumulator: massSendingGiveAccumulator);
-
-      if (response != null) {
-        final Map<String, dynamic> parseData = await jsonDecode(response);
-        isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Comunicazioni",
-                    message: errorDescription,
-                    contentType: "failure"));
-          }
-        } else {}
-      }
-      return isOk;
-    } on SocketException catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Comunicazioni",
-            message: "Errore di connessione",
-            contentType: "failure"));
-      }
-    }
-  }
-
-  Future updateMassSendingPlanning(
-      {required BuildContext context,
-      required String? token,
-      required int idMassSending,
-      required int idUserAppInstitution,
-      required DateTime dateTimePlanMassSending}) async {
-    try {
-      bool isOk = false;
-      var response = await massSendingAPI.updateMassSendingPlanning(
-          token: token,
-          idMassSending: idMassSending,
-          idUserAppInstitution: idUserAppInstitution,
-          dateTimePlanMassSending: dateTimePlanMassSending);
-
-      if (response != null) {
-        final Map<String, dynamic> parseData = await jsonDecode(response);
-        isOk = parseData['isOk'];
-        if (!isOk) {
-          String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Comunicazioni",
-                    message: errorDescription,
-                    contentType: "failure"));
-          }
-        } else {}
-      }
-      return isOk;
-    } on SocketException catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-            title: "Comunicazioni",
-            message: "Errore di connessione",
-            contentType: "failure"));
-      }
-    }
-  }
-
-  Future getMassSendingJobStatistics(
+  Future getTransactionalEmailStatistics(
       {required BuildContext context,
       required String? token,
       required int idUserAppInstitution,
       required int idInstitution,
-      required int idMassSending}) async {
+      required int idTransactionalSending}) async {
     try {
-      var response = await massSendingAPI.getMassSendingJobStatistics(
-          token: token,
-          idUserAppInstitution: idUserAppInstitution,
-          idInstitution: idInstitution,
-          idMassSending: idMassSending);
+      var response =
+          await transactionalSendingAPI.getTransactionalEmailStatistics(
+              token: token,
+              idUserAppInstitution: idUserAppInstitution,
+              idInstitution: idInstitution,
+              idTransactionalSending: idTransactionalSending);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
@@ -355,11 +285,11 @@ class MassSendingNotifier with ChangeNotifier {
                     contentType: "failure"));
           }
         } else {
-          List<ComunicationStatistics> massSendingJobStatistics =
+          List<ComunicationStatistics> transactionalEmailStatistics =
               List.from(parseData['okResult'])
                   .map((e) => ComunicationStatistics.fromJson(e))
                   .toList();
-          return massSendingJobStatistics;
+          return transactionalEmailStatistics;
           // notifyListeners();
         }
       } else {

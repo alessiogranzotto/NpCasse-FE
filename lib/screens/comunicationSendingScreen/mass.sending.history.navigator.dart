@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.screen.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.history.screen.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.history.screen.dart';
 
 class MassSendingHistoryNavigator extends StatefulWidget {
   const MassSendingHistoryNavigator({super.key});

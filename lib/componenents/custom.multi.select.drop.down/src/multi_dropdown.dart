@@ -311,15 +311,17 @@ class _MultiDropdownState<T extends Object> extends State<MultiDropdown<T>> {
   }
 
   void _controllerListener() {
-    // update the form field state when the controller changes
-    _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
+    try {
+      // update the form field state when the controller changes
+      _formFieldKey.currentState?.didChange(_dropdownController.selectedItems);
 
-    if (_dropdownController.isOpen) {
-      _portalController.show();
-    } else {
-      _dropdownController._clearSearchQuery();
-      _portalController.hide();
-    }
+      if (_dropdownController.isOpen) {
+        _portalController.show();
+      } else {
+        _dropdownController._clearSearchQuery();
+        _portalController.hide();
+      }
+    } catch (e) {}
   }
 
   @override

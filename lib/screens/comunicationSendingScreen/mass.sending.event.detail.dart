@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/colors.dart';
-import 'package:np_casse/core/models/mass.sending.job.model.dart';
+import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.utility.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/comunication.sending.utility.dart';
 import 'package:provider/provider.dart';
 
 class MassSendingEventDetailScreen extends StatefulWidget {
-  final MassSendingJobModelForEventDetail massSendingJobModelForEventDetail;
+  final ComunicationModelForEventDetail massSendingJobModelForEventDetail;
   const MassSendingEventDetailScreen(
       {super.key, required this.massSendingJobModelForEventDetail});
 
   @override
   State<MassSendingEventDetailScreen> createState() =>
-      _MyosotisConfigurationDetailState();
+      _MassSendingEventDetailState();
 }
 
-class _MyosotisConfigurationDetailState
-    extends State<MassSendingEventDetailScreen> {
+class _MassSendingEventDetailState extends State<MassSendingEventDetailScreen> {
   @override
   void initState() {
     super.initState();
@@ -39,36 +38,28 @@ class _MyosotisConfigurationDetailState
         Provider.of<MassSendingNotifier>(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: CustomColors.darkBlue,
-        centerTitle: true,
-        title: Text(
-          'Dettaglio stati Email',
-          style: Theme.of(context).textTheme.headlineMedium,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        appBar: AppBar(
+          backgroundColor: CustomColors.darkBlue,
+          centerTitle: true,
+          title: Text(
+            'Dettaglio stati Email',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
         ),
-      ),
-      body: Padding(
+        body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment
-                  .start, // Aligns containers in the center vertically
-              crossAxisAlignment: CrossAxisAlignment
-                  .start, // Aligns containers in the center horizontally
-
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.numbers,
-                        size: 16,
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
+                      Icon(Icons.numbers, size: 16),
+                      SizedBox(width: 6),
                       Text(widget.massSendingJobModelForEventDetail.emailId),
                     ],
                   ),
@@ -77,26 +68,17 @@ class _MyosotisConfigurationDetailState
                   padding: const EdgeInsets.all(12.0),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.email,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
+                      Icon(Icons.email, size: 20),
+                      SizedBox(width: 6),
                       Text(widget.massSendingJobModelForEventDetail.emailSh),
                     ],
                   ),
                 ),
-                Container(
-                  height: 400,
-                  width:
-                      480, // Imposta la larghezza fissa del Container che avvolge il ListView
+                SingleChildScrollView(
                   child: ListView.builder(
-                    itemCount: widget
-                        .massSendingJobModelForEventDetail
-                        .webhooksEvent!
-                        .length, // Numero di elementi nella lista
+                    shrinkWrap: true,
+                    itemCount: widget.massSendingJobModelForEventDetail
+                        .webhooksEvent!.length,
                     itemBuilder: (context, index) {
                       var item = widget.massSendingJobModelForEventDetail
                           .webhooksEvent![index];
@@ -110,24 +92,29 @@ class _MyosotisConfigurationDetailState
                               child: Tooltip(
                                 message: item.event,
                                 child: CircleAvatar(
-                                  radius: 8, // Imposta il raggio dell'avatar
-                                  backgroundColor:
-                                      MassSendingUtility.getWebhooksColor(
-                                          item.event), // Immagine dell'avatar
+                                  radius: 8,
+                                  backgroundColor: ComunicationSendingUtility
+                                      .getWebhooksColor(item.event),
                                 ),
                               ),
                             ),
                             SizedBox(
-                              width: 200,
+                              width: 350,
                               child: Text(
-                                item.event,
+                                item.event.length >
+                                        'Link clicked by recipient '.length
+                                    ? item.event.replaceAll(
+                                        'Link clicked by recipient ',
+                                        'Link clicked by recipient\n',
+                                      )
+                                    : item.event,
+                                softWrap: true,
                               ),
                             ),
+                            SizedBox(width: 20),
                             SizedBox(
                               width: 220,
-                              child: Text(
-                                item.dateUpdate.toString(),
-                              ),
+                              child: Text(item.dateUpdate.toString()),
                             ),
                           ],
                         ),
@@ -137,25 +124,7 @@ class _MyosotisConfigurationDetailState
                 ),
               ],
             ),
-          )
-
-          // ListView.builder(
-          //     padding: const EdgeInsets.all(8),
-          //           margin: EdgeInsets.only(bottom: 5.0),
-
-          //     itemBuilder: (BuildContext context, int index) {
-
-          //       return Padding(
-          //         padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          //         child: CircleAvatar(
-          //           radius: 8, // Imposta il raggio dell'avatar
-          //           backgroundColor:
-          //               getWebhooksColor(item), // Immagine dell'avatar
-          //         ),
-          //       );
-          //     })
-
           ),
-    );
+        ));
   }
 }

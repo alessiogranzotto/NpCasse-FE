@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:provider/provider.dart';

@@ -122,4 +122,8 @@ class InvoiceTypeModel {
   InvoiceTypeModel.fromJson(Map<String, dynamic> json) {
     emailName = json['emailName'];
   }
+
+  InvoiceTypeModel.empty() {
+    emailName = '';
+  }
 }

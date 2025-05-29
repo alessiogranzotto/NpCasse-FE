@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.screen.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.screen.dart';
 
 class MassSendingNavigator extends StatefulWidget {
   const MassSendingNavigator({super.key});

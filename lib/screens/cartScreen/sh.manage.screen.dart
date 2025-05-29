@@ -150,7 +150,7 @@ class _ShManageScreenState extends State<ShManageScreen> {
       appBar: AppBar(
         backgroundColor: CustomColors.darkBlue,
         centerTitle: true,
-        title: Text("Gestione donatori",
+        title: Text("Gestione stakeholder",
             style: Theme.of(context).textTheme.headlineLarge),
       ),
       body: Column(

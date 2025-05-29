@@ -10,7 +10,7 @@ import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
@@ -18,15 +18,17 @@ import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/report.product.notifier.dart';
+import 'package:np_casse/core/notifiers/report.transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.history.navigator.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.history.navigator.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.navigator.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.history.navigator.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.donation.history.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.navigator.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
@@ -39,6 +41,7 @@ import 'package:np_casse/screens/shopScreen/product.search.screen.dart';
 import 'package:np_casse/screens/shopScreen/shop.navigator.dart';
 import 'package:np_casse/screens/stakeholderScreen/stakeholder.givepro.navigator.dart';
 import 'package:np_casse/screens/stakeholderScreen/stakeholder.navigator.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.navigator.dart';
 import 'package:np_casse/screens/wishlistScreen/wishlist.screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -104,8 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
       MenuList('Catalogo prodotti', Icons.store,
           const ProductCatalogNavigator(), 2, null),
     ]),
-    MenuList('Donatori', Icons.people, const StakeholderNavigator(), 1, null),
-    MenuList('Donatori Give Pro', Icons.people,
+    MenuList(
+        'Stakeholder', Icons.people, const StakeholderNavigator(), 1, null),
+    MenuList('Stakeholder Give Pro', Icons.people,
         const StakeholderGiveproNavigator(), 3, null),
     MenuList('Impostazioni', Icons.settings, null, 1, [
       MenuList('Impostazioni utente', Icons.settings, const UserSettingScreen(),
@@ -120,8 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
           3, null),
       MenuList(
           'Invio massivo', Icons.send, const MassSendingNavigator(), 1, null),
-      MenuList('Email report', Icons.dashboard,
+      MenuList('Transazionali', Icons.transfer_within_a_station_sharp,
+          const TransactionalSendingNavigator(), 1, null),
+      MenuList('Report invio massivo', Icons.dashboard,
           const MassSendingHistoryNavigator(), 1, null),
+      MenuList('Report transazionali', Icons.dashboard,
+          const TransactionalSendingHistoryNavigator(), 1, null),
     ]),
     MenuList('Myosotis', Icons.app_settings_alt, null, 1, [
       MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
@@ -178,19 +186,22 @@ class _HomeScreenState extends State<HomeScreen> {
           Provider.of<CategoryCatalogNotifier>(context, listen: false);
       categoryCatalogNotifier.refresh();
     } else if (subMenu == "Impostazioni ente") {
-      InstitutionAttributeInstitutionAdminNotifier
-          institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
-      institutionAttributeInstitutionAdminNotifier.setUpdate(true);
+      InstitutionAttributeNotifier institutionAttributeNotifier =
+          Provider.of<InstitutionAttributeNotifier>(context, listen: false);
+      institutionAttributeNotifier.setUpdate(true);
     } else if (subMenu == "Invio massivo") {
       MassSendingNotifier massSendingNotifier =
           Provider.of<MassSendingNotifier>(context, listen: false);
       massSendingNotifier.refresh();
-    } else if (subMenu == "Email report") {
+    } else if (subMenu == "Report invio massivo") {
       ReportMassSendingNotifier reportMassSendingNotifier =
           Provider.of<ReportMassSendingNotifier>(context, listen: false);
       reportMassSendingNotifier.setUpdate(true);
+    } else if (subMenu == "Report transazionali") {
+      ReportTransactionalSendingNotifier reportTransactionalSendingNotifier =
+          Provider.of<ReportTransactionalSendingNotifier>(context,
+              listen: false);
+      reportTransactionalSendingNotifier.setUpdate(true);
     } else if (subMenu == "Configurazioni Myosotis") {
       MyosotisConfigurationNotifier myosotisConfigurationNotifier =
           Provider.of<MyosotisConfigurationNotifier>(context, listen: false);

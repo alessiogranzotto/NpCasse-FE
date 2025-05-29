@@ -137,29 +137,6 @@ class CartAPI {
     }
   }
 
-  Future getInvoiceType(
-      {required String? token, required int idUserAppInstitution}) async {
-    final Uri uri = Uri.parse(
-        '${ApiRoutes.cartURL}/Get-invoice-type?idUserAppInstitution=$idUserAppInstitution');
-    final http.Response response = await client.get(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Access-Control-Allow-Origin': "*",
-        "Authorization": token ?? ''
-      },
-    );
-    if (response.statusCode == 200) {
-      final dynamic body = response.body;
-      return body;
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      return null;
-    }
-  }
-
   Future getInvoice(
       {required String? token,
       required int idUserAppInstitution,
@@ -186,13 +163,14 @@ class CartAPI {
     }
   }
 
-  Future sendInvoice(
+  Future sendTransactionalInvoice(
       {required String? token,
       required int idUserAppInstitution,
       required int idCart,
-      required String emailName}) async {
+      required String emailName,
+      required String nameTransactionalSending}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.cartURL}/Send-invoice?IdUserAppInstitution=$idUserAppInstitution&IdCart=$idCart&EmailName=$emailName');
+        '${ApiRoutes.cartURL}/Send-invoice?IdUserAppInstitution=$idUserAppInstitution&IdCart=$idCart&EmailName=$emailName&NameTransactionalSending=$nameTransactionalSending');
     final http.Response response = await client.get(
       uri,
       headers: {

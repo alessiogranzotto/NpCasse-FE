@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
@@ -18,11 +18,10 @@ class MassSendingRecipientScreen extends StatefulWidget {
 
   @override
   State<MassSendingRecipientScreen> createState() =>
-      _MyosotisConfigurationDetailState();
+      _MassSendingRecipientState();
 }
 
-class _MyosotisConfigurationDetailState
-    extends State<MassSendingRecipientScreen> {
+class _MassSendingRecipientState extends State<MassSendingRecipientScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isEdit = false;
   bool isLoadingData = true;

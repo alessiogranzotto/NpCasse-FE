@@ -4,7 +4,7 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
@@ -19,11 +19,10 @@ class MassSendingPlanScreen extends StatefulWidget {
   const MassSendingPlanScreen({super.key, required this.massSendingModel});
 
   @override
-  State<MassSendingPlanScreen> createState() =>
-      _MyosotisConfigurationDetailState();
+  State<MassSendingPlanScreen> createState() => _MassSendingPlanState();
 }
 
-class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
+class _MassSendingPlanState extends State<MassSendingPlanScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isEdit = false;
   bool isLoadingData = true;
@@ -129,7 +128,8 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                               child: CustomTextFormField(
                                 enabled: false,
                                 controller: datePlanController,
-                                labelText: AppStrings.datePlanMassSending,
+                                labelText:
+                                    AppStrings.datePlanComunicationSending,
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 // onChanged: (_) => _formKey.currentState?.validate(),
@@ -137,7 +137,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                   return value!.isNotEmpty
                                       ? null
                                       : AppStrings
-                                          .pleaseEnterDatePlanMassSending;
+                                          .pleaseEnterDatePlanComunicationSending;
                                 },
                               ),
                             ),
@@ -220,7 +220,8 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                               child: CustomTextFormField(
                                 enabled: false,
                                 controller: timePlanController,
-                                labelText: AppStrings.hourPlanMassSending,
+                                labelText:
+                                    AppStrings.hourPlanComunicationSending,
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 // onChanged: (_) => _formKey.currentState?.validate(),
@@ -228,7 +229,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingPlanScreen> {
                                   return value!.isNotEmpty
                                       ? null
                                       : AppStrings
-                                          .pleaseEnterHourPlanMassSending;
+                                          .pleaseEnterHourPlanComunicationSending;
                                 },
                               ),
                             ),

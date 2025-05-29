@@ -11,7 +11,7 @@ import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +27,7 @@ class CartDetailScreen extends StatefulWidget {
 }
 
 class _CartDetailScreenState extends State<CartDetailScreen> {
-  bool _isButtonDisabled = false;
+  // bool _isButtonDisabled = false;
   bool cartHasData = true;
   bool visible = true;
 
@@ -438,12 +438,10 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-            listen: false);
+    InstitutionAttributeNotifier institutionAttributeNotifier =
+        Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-    await institutionAttributeInstitutionAdminNotifier
+    await institutionAttributeNotifier
         .getInstitutionAttribute(
             context: context,
             token: authenticationNotifier.token,

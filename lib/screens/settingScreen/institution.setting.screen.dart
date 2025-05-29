@@ -8,7 +8,7 @@ import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
@@ -169,14 +169,12 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   Future<void> getUserInstitution() async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-            listen: false);
+    InstitutionAttributeNotifier institutionAttributeNotifier =
+        Provider.of<InstitutionAttributeNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    await institutionAttributeInstitutionAdminNotifier
+    await institutionAttributeNotifier
         .getInstitutionUser(
             context: context,
             token: authenticationNotifier.token,
@@ -193,14 +191,12 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   Future<void> getInstitutionAttributes() async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-            listen: false);
+    InstitutionAttributeNotifier institutionAttributeNotifier =
+        Provider.of<InstitutionAttributeNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    await institutionAttributeInstitutionAdminNotifier
+    await institutionAttributeNotifier
         .getInstitutionAttribute(
             context: context,
             token: authenticationNotifier.token,
@@ -364,11 +360,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
+      var institutionAttributeNotifier =
+          Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-      institutionAttributeInstitutionAdminNotifier
+      institutionAttributeNotifier
           .updateInstitutionPaymentMethodAttribute(
               context: context,
               token: authNotifier.token,
@@ -402,11 +397,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
+      var institutionAttributeNotifier =
+          Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-      institutionAttributeInstitutionAdminNotifier
+      institutionAttributeNotifier
           .updateInstitutionPosBancariAttribute(
         context: context,
         token: authNotifier.token,
@@ -438,11 +432,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
+      var institutionAttributeNotifier =
+          Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-      institutionAttributeInstitutionAdminNotifier
+      institutionAttributeNotifier
           .updateInstitutionSecurityAttribute(
               context: context,
               token: authNotifier.token,
@@ -474,11 +467,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
+      var institutionAttributeNotifier =
+          Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-      institutionAttributeInstitutionAdminNotifier
+      institutionAttributeNotifier
           .updateCasseModuleDataAttribute(
               context: context,
               token: authNotifier.token,
@@ -515,11 +507,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
       UserAppInstitutionModel cUserAppInstitutionModel =
           authNotifier.getSelectedUserAppInstitution();
 
-      var institutionAttributeInstitutionAdminNotifier =
-          Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context,
-              listen: false);
+      var institutionAttributeNotifier =
+          Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-      institutionAttributeInstitutionAdminNotifier
+      institutionAttributeNotifier
           .updateInstitutionParameterAttribute(
               context: context,
               token: authNotifier.token,
@@ -549,15 +540,13 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
+    InstitutionAttributeNotifier institutionAttributeNotifier =
+        Provider.of<InstitutionAttributeNotifier>(context);
     // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
-    if (institutionAttributeInstitutionAdminNotifier.isUpdated) {
+    if (institutionAttributeNotifier.isUpdated) {
       // Post-frame callback to avoid infinite loop during build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        institutionAttributeInstitutionAdminNotifier
-            .setUpdate(false); // Reset the update flag
+        institutionAttributeNotifier.setUpdate(false); // Reset the update flag
         getUserInstitution().then((res) {
           getInstitutionAttributes();
         });

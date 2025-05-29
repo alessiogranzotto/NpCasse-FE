@@ -3,13 +3,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/institution.attribute.api.dart';
+import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
-class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
+class InstitutionAttributeNotifier with ChangeNotifier {
   final InstitutionAttributeAPI institutionAttributeAPI =
       InstitutionAttributeAPI();
 
@@ -29,7 +31,7 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
       bool? isDelayed}) async {
     try {
       if (isDelayed != null && isDelayed) {
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 1));
       }
       var response = await institutionAttributeAPI.getInstitutionAttribute(
           token: token,
@@ -65,6 +67,104 @@ class InstitutionAttributeInstitutionAdminNotifier with ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
             title: "Impostazioni ente",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future getInstitutionEmail(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution}) async {
+    try {
+      List<InvoiceTypeModel> invoiceTypeModel = List<InvoiceTypeModel>.empty();
+      bool isOk = false;
+      var response = await institutionAttributeAPI.getInstitutionEmail(
+          token: token, idUserAppInstitution: idUserAppInstitution);
+
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Comunicazioni",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          if (parseData['okResult'] != null) {
+            invoiceTypeModel = List.from(parseData['okResult'])
+                .map((e) => InvoiceTypeModel.fromJson(e))
+                .toList();
+            return invoiceTypeModel;
+          }
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Comunicazioni",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+      return List<InvoiceTypeModel>.empty();
+    }
+  }
+
+  Future downloadInstitutionEmail({
+    required BuildContext context,
+    required String? token,
+    required int idUserAppInstitution,
+    required int idInstitution,
+    required String emailName,
+  }) async {
+    try {
+      bool isOk = false;
+
+      var response = await institutionAttributeAPI.downloadInstitutionEmail(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          idInstitution: idInstitution,
+          emailName: emailName);
+
+      if (response != null) {
+        print(response);
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Comunicazioni",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          if (parseData['okResult'] != null) {
+            await DownloadFile.downloadFile(parseData['okResult'], context);
+            return null;
+          } else {
+            return null;
+          }
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Comunicazioni",
             message: "Errore di connessione",
             contentType: "failure"));
       }

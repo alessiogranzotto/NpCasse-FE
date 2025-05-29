@@ -5,14 +5,11 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
-import 'package:np_casse/core/models/myosotis.configuration.model.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
-import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.card.dart';
-import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.card.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.card.dart';
 import 'package:provider/provider.dart';
 
 class MassSendingScreen extends StatefulWidget {
@@ -29,8 +26,7 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
   final double widgetHeight = 150;
   Timer? _timer;
 
-  TextEditingController nameDescIdDeviceSearchController =
-      TextEditingController();
+  TextEditingController nameDescSearchController = TextEditingController();
   bool readAlsoArchived = false;
 
   String numberResult = '10';
@@ -116,7 +112,7 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                         });
                       });
                     },
-                    controller: nameDescIdDeviceSearchController,
+                    controller: nameDescSearchController,
                     decoration: InputDecoration(
                       labelText: "Ricerca per nome o descrizione",
                       labelStyle: Theme.of(context)
@@ -138,7 +134,7 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                               iconaNameDescSearch = const Icon(Icons.cancel);
                             } else {
                               iconaNameDescSearch = const Icon(Icons.search);
-                              nameDescIdDeviceSearchController.text = "";
+                              nameDescSearchController.text = "";
                             }
                           });
                         },
@@ -208,7 +204,7 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                             .idInstitutionNavigation.idInstitution,
                         readAlsoArchived: readAlsoArchived,
                         numberResult: numberResult,
-                        nameDescSearch: nameDescIdDeviceSearchController.text,
+                        nameDescSearch: nameDescSearchController.text,
                         orderBy: orderBy),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {

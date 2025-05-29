@@ -3,7 +3,7 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
@@ -17,11 +17,10 @@ class MassSendingDetailScreen extends StatefulWidget {
   const MassSendingDetailScreen({super.key, required this.massSendingModel});
 
   @override
-  State<MassSendingDetailScreen> createState() =>
-      _MyosotisConfigurationDetailState();
+  State<MassSendingDetailScreen> createState() => _MassSendingDetailState();
 }
 
-class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
+class _MassSendingDetailState extends State<MassSendingDetailScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isEdit = false;
   bool isLoading = true;
@@ -217,7 +216,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                             child: CustomTextFormField(
                               enabled: true,
                               controller: nameMassSendingController,
-                              labelText: AppStrings.nameMassSending,
+                              labelText: AppStrings.nameComunicationSending,
                               keyboardType: TextInputType.name,
                               textInputAction: TextInputAction.next,
                               // onChanged: (_) =>
@@ -225,7 +224,8 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                               validator: (value) {
                                 return value!.isNotEmpty
                                     ? null
-                                    : AppStrings.pleaseEnterNameMassSending;
+                                    : AppStrings
+                                        .pleaseEnterNameComunicationSending;
                               },
                             ),
                           ),
@@ -254,7 +254,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                       child: CustomTextFormField(
                         enabled: true,
                         controller: descriptionMassSendingController,
-                        labelText: AppStrings.descriptionMassSending,
+                        labelText: AppStrings.descriptionComunicationSending,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
                         // onChanged: (_) => _formKey.currentState?.validate(),
@@ -270,14 +270,14 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                       child: CustomTextFormField(
                         enabled: true,
                         controller: senderMassSendingController,
-                        labelText: AppStrings.senderMassSending,
+                        labelText: AppStrings.senderComunicationSending,
                         keyboardType: TextInputType.name,
                         textInputAction: TextInputAction.next,
                         // onChanged: (_) => _formKey.currentState?.validate(),
                         validator: (value) {
                           return value!.isNotEmpty
                               ? null
-                              : AppStrings.pleaseEnterSenderMassSending;
+                              : AppStrings.pleaseEnterSenderComunicationSending;
                         },
                       ),
                     ),
@@ -286,13 +286,14 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                       child: CustomTextFormField(
                         enabled: true,
                         controller: emailSenderMassSendingController,
-                        labelText: AppStrings.emailSenderMassSending,
+                        labelText: AppStrings.emailSenderComunicationSending,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         // onChanged: (_) => _formKey.currentState?.validate(),
                         validator: (value) {
                           return value!.isEmpty
-                              ? AppStrings.pleaseEnterEmailSenderMassSending
+                              ? AppStrings
+                                  .pleaseEnterEmailSenderComunicationSending
                               : AppConstants.emailRegex.hasMatch(value)
                                   ? null
                                   : AppStrings.invalidEmailAddress;
@@ -307,7 +308,7 @@ class _MyosotisConfigurationDetailState extends State<MassSendingDetailScreen> {
                             child: CustomDropDownButtonFormField(
                               enabled: true,
                               actualValue: smtp2GoTemplate,
-                              labelText: AppStrings.massSendingTemplate,
+                              labelText: AppStrings.comunicationSendingTemplate,
                               listOfValue: availableSmtp2GoTemplateItem,
                               onItemChanged: (value) {
                                 smtp2GoTemplate = value;

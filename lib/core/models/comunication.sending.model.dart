@@ -119,6 +119,50 @@ class AccumulatorGiveModel {
   // }
 }
 
+class MassSendingGiveAccumulator {
+  MassSendingGiveAccumulator(
+      {required this.idGiveAccumulator, required this.titleGiveAccumulator});
+
+  late final int idGiveAccumulator;
+  late final String titleGiveAccumulator;
+
+  // JSON deserialization
+  MassSendingGiveAccumulator.fromJson(Map<String, dynamic> json) {
+    idGiveAccumulator = json['idGiveAccumulator'];
+    titleGiveAccumulator = json['titleGiveAccumulator'];
+  }
+
+  // JSON serialization
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['idGiveAccumulator'] = idGiveAccumulator;
+    data['titleGiveAccumulator'] = titleGiveAccumulator;
+    return data;
+  }
+}
+
+class ComunicationStatistics {
+  ComunicationStatistics(
+      {required this.parameterName, required this.parameterValue});
+
+  late final String parameterName;
+  late final int parameterValue;
+
+  // JSON deserialization
+  ComunicationStatistics.fromJson(Map<String, dynamic> json) {
+    parameterName = json['parameterName'];
+    parameterValue = json['parameterValue'];
+  }
+
+  // JSON serialization
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['parameterName'] = parameterName;
+    data['parameterValue'] = parameterValue;
+    return data;
+  }
+}
+
 class MassSendingModel {
   MassSendingModel({
     required this.idMassSending,
@@ -205,46 +249,74 @@ class MassSendingModel {
   }
 }
 
-class MassSendingGiveAccumulator {
-  MassSendingGiveAccumulator(
-      {required this.idGiveAccumulator, required this.titleGiveAccumulator});
+class TransactionalSendingModel {
+  TransactionalSendingModel(
+      {required this.idTransactionalSending,
+      required this.idInstitution,
+      required this.idUserAppInstitution,
+      required this.archived,
+      required this.nameTransactionalSending,
+      required this.descriptionTransactionalSending,
+      required this.senderTransactionalSending,
+      required this.emailSenderTransactionalSending,
+      required this.idTemplateTransactionalSending,
+      required this.idAttachTransactionalSending,
+      required this.actionTransactionalSending});
 
-  late final int idGiveAccumulator;
-  late final String titleGiveAccumulator;
+  late final int idTransactionalSending;
+  late final int idInstitution;
+  late final int idUserAppInstitution;
+  late final bool archived;
+  late final String nameTransactionalSending;
+  late final String descriptionTransactionalSending;
+  late final String senderTransactionalSending;
+  late final String emailSenderTransactionalSending;
+  late final String? idTemplateTransactionalSending;
+  late final String? idAttachTransactionalSending;
+  late final String actionTransactionalSending;
+
+  TransactionalSendingModel.empty() {
+    idTransactionalSending = 0;
+    idInstitution = 0;
+    archived = false;
+    nameTransactionalSending = '';
+    descriptionTransactionalSending = '';
+    senderTransactionalSending = '';
+    emailSenderTransactionalSending = '';
+    actionTransactionalSending = '';
+    idTemplateTransactionalSending = '';
+    idAttachTransactionalSending = '';
+  }
 
   // JSON deserialization
-  MassSendingGiveAccumulator.fromJson(Map<String, dynamic> json) {
-    idGiveAccumulator = json['idGiveAccumulator'];
-    titleGiveAccumulator = json['titleGiveAccumulator'];
+  TransactionalSendingModel.fromJson(Map<String, dynamic> json) {
+    idTransactionalSending = json['idTransactionalSending'];
+    idInstitution = json['idInstitution'];
+    archived = json['archived'];
+    nameTransactionalSending = json['nameTransactionalSending'];
+    descriptionTransactionalSending = json['descriptionTransactionalSending'];
+    senderTransactionalSending = json['senderTransactionalSending'];
+    emailSenderTransactionalSending = json['emailSenderTransactionalSending'];
+    actionTransactionalSending = json['actionTransactionalSending'];
+    idTemplateTransactionalSending = json['idTemplateTransactionalSending'];
+    idAttachTransactionalSending = json['idAttachTransactionalSending'];
   }
 
   // JSON serialization
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['idGiveAccumulator'] = idGiveAccumulator;
-    data['titleGiveAccumulator'] = titleGiveAccumulator;
-    return data;
-  }
-}
+    data['idTransactionalSending'] = idTransactionalSending;
+    data['idInstitution'] = idInstitution;
+    data['idUserAppInstitution'] = idUserAppInstitution;
+    data['archived'] = archived;
+    data['nameTransactionalSending'] = nameTransactionalSending;
+    data['descriptionTransactionalSending'] = descriptionTransactionalSending;
+    data['senderTransactionalSending'] = senderTransactionalSending;
+    data['emailSenderTransactionalSending'] = emailSenderTransactionalSending;
+    data['actionTransactionalSending'] = actionTransactionalSending;
+    data['idTemplateTransactionalSending'] = idTemplateTransactionalSending;
+    data['idAttachTransactionalSending'] = idAttachTransactionalSending;
 
-class MassSendingJobStatistics {
-  MassSendingJobStatistics(
-      {required this.parameterName, required this.parameterValue});
-
-  late final String parameterName;
-  late final int parameterValue;
-
-  // JSON deserialization
-  MassSendingJobStatistics.fromJson(Map<String, dynamic> json) {
-    parameterName = json['parameterName'];
-    parameterValue = json['parameterValue'];
-  }
-
-  // JSON serialization
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['parameterName'] = parameterName;
-    data['parameterValue'] = parameterValue;
     return data;
   }
 }

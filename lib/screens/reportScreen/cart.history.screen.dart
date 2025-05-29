@@ -288,8 +288,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               id: 'stateFiscalization',
               title: const Text('Fiscalizzazione'),
               cellBuilder: (context, item, index) {
-                bool warning =
-                    item['idStakeholder'] == null && item['fiscalization'] == 2;
+                bool warning = item['fiscalization'] == 2;
                 return Row(
                   children: [
                     warning
@@ -333,7 +332,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                       value: 2,
                       child: const Text('Associa donatore'),
                     ),
-                  if (item['fiscalizationExternalId'] != null)
+                  if (item['fiscalizationExternalId'] != null &&
+                      item['fiscalization'] == 5)
                     PopupMenuItem<int>(
                       value: 3,
                       child: const Text('Visualizza scontrino'),

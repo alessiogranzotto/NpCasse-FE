@@ -22,7 +22,9 @@ const List<String> idGiveListNameProduct = [
   'IdAgenda',
   'IdComunicazioni',
   'IdTipDonazione',
-  'IdCatalogo'
+  'IdCatalogo',
+  'CodiceSottoconto',
+  'CodiceCentroRicavo'
 ];
 
 const List<String> idGiveListNameCategory = [
@@ -36,7 +38,9 @@ const List<String> idGiveListNameCategory = [
   'IdPagamentoContante',
   'IdPagamentoBancomat',
   'IdPagamentoCartaDiCredito',
-  'IdPagamentoAssegno'
+  'IdPagamentoAssegno',
+  'CodiceSottoconto',
+  'CodiceCentroRicavo'
 ];
 
 const List<String> idGiveListNameMyosotis = [
@@ -84,8 +88,11 @@ class FunctionalColorUtils {
           return Colors.indigo[100]!;
         case 'FonteSh':
           return Colors.purple[100]!;
-        case 'Ringraziato':
-          return Colors.pink[100]!;
+        case 'CodiceSottoconto':
+          return Colors.amber[100]!;
+        case 'CodiceCentroRicavo':
+          return Colors.deepOrange[100]!;
+
         default:
           return Colors.transparent;
       }

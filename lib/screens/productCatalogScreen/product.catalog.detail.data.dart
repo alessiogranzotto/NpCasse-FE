@@ -225,22 +225,32 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         String input = text.trim();
         try {
           var splitOnEqual = input.split('=');
+
+          //CONTROL FOR INT OR STRING
+          bool canContinue = false;
           if (splitOnEqual.length == 2) {
-            if (num.tryParse(splitOnEqual[1]) != null) {
-              final bestMatch = StringSimilarity.findBestMatch(
-                  splitOnEqual[0].toLowerCase(), idGiveListNameProduct);
-              if (bestMatch.bestMatch.rating != null) {
-                if (bestMatch.bestMatch.rating! > 0.40) {
-                  String finalString =
-                      bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
-                  if (!customIdGive.any((item) => item
-                      .toLowerCase()
-                      .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
-                    setState(() {
-                      customIdGive = <String>[...customIdGive, finalString];
-                    });
-                    isOk = true;
-                  }
+            if (text.toLowerCase().startsWith('id') &&
+                num.tryParse(splitOnEqual[1]) != null) {
+              canContinue = true;
+            } else if (text.toLowerCase().startsWith('codice') &&
+                splitOnEqual[1].isNotEmpty) {
+              canContinue = true;
+            }
+          }
+          if (canContinue) {
+            final bestMatch = StringSimilarity.findBestMatch(
+                splitOnEqual[0].toLowerCase(), idGiveListNameProduct);
+            if (bestMatch.bestMatch.rating != null) {
+              if (bestMatch.bestMatch.rating! > 0.40) {
+                String finalString =
+                    bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
+                if (!customIdGive.any((item) => item
+                    .toLowerCase()
+                    .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
+                  setState(() {
+                    customIdGive = <String>[...customIdGive, finalString];
+                  });
+                  isOk = true;
                 }
               }
             }

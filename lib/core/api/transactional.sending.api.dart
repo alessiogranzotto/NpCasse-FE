@@ -4,19 +4,20 @@ import 'package:http/http.dart' as http;
 import 'package:np_casse/app/routes/api_routes.dart';
 import 'package:np_casse/core/models/comunication.sending.model.dart';
 
-class MassSendingAPI {
+class TransactionalSendingAPI {
   final client = http.Client();
 
-  Future findMassSendings(
+  Future findTransactionalSendings(
       {required String? token,
       required int idUserAppInstitution,
       required int idInstitution,
       required bool readAlsoArchived,
       required String numberResult,
       required String nameDescSearch,
-      required String orderBy}) async {
+      required String orderBy,
+      required String type}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/Find-mass-sending?idUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&ReadAlsoArchived=$readAlsoArchived&NumberResult=$numberResult&NameDescSearch=$nameDescSearch&OrderBy=$orderBy');
+        '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/Find-Transactional-sending?idUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&ReadAlsoArchived=$readAlsoArchived&NumberResult=$numberResult&NameDescSearch=$nameDescSearch&OrderBy=$orderBy&Type=$type');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -36,15 +37,17 @@ class MassSendingAPI {
     }
   }
 
-  Future addOrUpdateMassSending(
-      {String? token, required MassSendingModel massSendingModel}) async {
-    int idMassSending = massSendingModel.idMassSending;
-    var t = jsonEncode(massSendingModel);
+  Future addOrUpdateTransactionalSending(
+      {String? token,
+      required TransactionalSendingModel transactionalSendingModel}) async {
+    int idTransactionalSending =
+        transactionalSendingModel.idTransactionalSending;
+    var t = jsonEncode(transactionalSendingModel);
     print(t);
     final http.Response response;
-    if (idMassSending == 0) {
-      final Uri uri =
-          Uri.parse('${ApiRoutes.baseComunicationSendingURL}/Mass-sending/');
+    if (idTransactionalSending == 0) {
+      final Uri uri = Uri.parse(
+          '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/');
       response = await client.post(uri,
           headers: {
             'Content-Type': 'application/json',
@@ -52,10 +55,10 @@ class MassSendingAPI {
             'Access-Control-Allow-Origin': "*",
             "Authorization": token ?? ''
           },
-          body: jsonEncode(massSendingModel));
+          body: jsonEncode(transactionalSendingModel));
     } else {
       final Uri uri = Uri.parse(
-          '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/$idMassSending');
+          '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/$idTransactionalSending');
       response = await client.put(uri,
           headers: {
             'Content-Type': 'application/json',
@@ -63,7 +66,7 @@ class MassSendingAPI {
             'Access-Control-Allow-Origin': "*",
             "Authorization": token ?? ''
           },
-          body: jsonEncode(massSendingModel));
+          body: jsonEncode(transactionalSendingModel));
     }
     if (response.statusCode == 200) {
       final dynamic body = response.body;
@@ -75,26 +78,19 @@ class MassSendingAPI {
     }
   }
 
-  Future updateMassSendingGiveAccumulator(
-      {String? token,
-      required int idMassSending,
-      required int idUserAppInstitution,
-      required List<MassSendingGiveAccumulator>
-          massSendingGiveAccumulator}) async {
+  Future getAvailableAction(
+      {required String? token, required int idUserAppInstitution}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending' +
-            '/$idMassSending/Recipient' +
-            '?IdUserAppInstitution=$idUserAppInstitution');
-
-    final http.Response response = await client.post(uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Access-Control-Allow-Origin': "*",
-          "Authorization": token ?? ''
-        },
-        body: jsonEncode(massSendingGiveAccumulator));
-
+        '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/Get-available-action?idUserAppInstitution=$idUserAppInstitution');
+    final http.Response response = await client.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': "*",
+        "Authorization": token ?? ''
+      },
+    );
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
@@ -105,38 +101,7 @@ class MassSendingAPI {
     }
   }
 
-  Future updateMassSendingPlanning(
-      {String? token,
-      required int idMassSending,
-      required int idUserAppInstitution,
-      required DateTime dateTimePlanMassSending}) async {
-    final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/' +
-            '/$idMassSending/Plan' +
-            '?IdUserAppInstitution=$idUserAppInstitution');
-
-    var t = dateTimePlanMassSending.toIso8601String();
-    print(t);
-    final http.Response response = await client.post(uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Access-Control-Allow-Origin': "*",
-          "Authorization": token ?? ''
-        },
-        body: jsonEncode(dateTimePlanMassSending.toIso8601String()));
-
-    if (response.statusCode == 200) {
-      final dynamic body = response.body;
-      return body;
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      return null;
-    }
-  }
-
-  Future findMassSendingList(
+  Future findTransactionalSendingList(
       {required String? token,
       required int idUserAppInstitution,
       required int pageNumber,
@@ -148,7 +113,7 @@ class MassSendingAPI {
       filterJoined = filterJoined + "&" + item;
     }
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/find-mass-sending-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
+        '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/find-transactional-sending-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -167,7 +132,7 @@ class MassSendingAPI {
     }
   }
 
-  Future downloadMassSendingList(
+  Future downloadTransactionalSendingList(
       {required String? token,
       required int idUserAppInstitution,
       required int pageNumber,
@@ -179,7 +144,7 @@ class MassSendingAPI {
       filterJoined = filterJoined + "&" + item;
     }
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/download-mass-sending-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
+        '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/download-transactional-sending-list?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -198,13 +163,13 @@ class MassSendingAPI {
     }
   }
 
-  Future getMassSendingJobStatistics(
+  Future getTransactionalEmailStatistics(
       {required String? token,
       required int idUserAppInstitution,
       required int idInstitution,
-      required int idMassSending}) async {
+      required int idTransactionalSending}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/Get-mass-sending-statistics?idUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&IdMassSending=$idMassSending');
+        '${ApiRoutes.baseComunicationSendingURL}/Transactional-sending/Get-transactional-sending-statistics?idUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution&IdTransactionalSending=$idTransactionalSending');
     final http.Response response = await http.Client().get(
       uri,
       headers: {

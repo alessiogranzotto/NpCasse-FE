@@ -283,7 +283,9 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                         cognome: surnameController.text,
                         ragSoc: ragSocController.text,
                         codfisc: cFController.text,
-                        sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                        sesso: _characterGender != null
+                            ? (_characterGender == GenderCharacter.male ? 1 : 2)
+                            : null,
                         email: emailController.text,
                         tel: phoneNumberController.text,
                         cell: mobileNumberController.text,
@@ -382,7 +384,9 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                         cognome: surnameController.text,
                         ragSoc: ragSocController.text,
                         codfisc: cFController.text,
-                        sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                        sesso: _characterGender != null
+                            ? (_characterGender == GenderCharacter.male ? 1 : 2)
+                            : null,
                         email: emailController.text,
                         tel: phoneNumberController.text,
                         cell: mobileNumberController.text,
@@ -498,7 +502,9 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                   cognome: surnameController.text,
                   ragSoc: ragSocController.text,
                   codfisc: cFController.text,
-                  sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                  sesso: _characterGender != null
+                      ? (_characterGender == GenderCharacter.male ? 1 : 2)
+                      : null,
                   email: emailController.text,
                   tel: phoneNumberController.text,
                   cell: mobileNumberController.text,
@@ -594,7 +600,9 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                   cognome: surnameController.text,
                   ragSoc: ragSocController.text,
                   codfisc: cFController.text,
-                  sesso: _characterGender == GenderCharacter.male ? 1 : 2,
+                  sesso: _characterGender != null
+                      ? (_characterGender == GenderCharacter.male ? 1 : 2)
+                      : null,
                   email: emailController.text,
                   tel: phoneNumberController.text,
                   cell: mobileNumberController.text,

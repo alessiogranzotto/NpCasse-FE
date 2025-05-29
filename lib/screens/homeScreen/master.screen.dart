@@ -10,7 +10,7 @@ import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
-import 'package:np_casse/core/notifiers/institution.attribute.institution.admin.notifier.dart';
+import 'package:np_casse/core/notifiers/institution.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
@@ -354,9 +354,8 @@ class _MasterScreenState extends State<MasterScreen> {
         Provider.of<ShopNavigateNotifier>(context);
     ShopSearchNotifier shopSearchNotifier =
         Provider.of<ShopSearchNotifier>(context);
-    InstitutionAttributeInstitutionAdminNotifier
-        institutionAttributeInstitutionAdminNotifier =
-        Provider.of<InstitutionAttributeInstitutionAdminNotifier>(context);
+    InstitutionAttributeNotifier institutionAttributeNotifier =
+        Provider.of<InstitutionAttributeNotifier>(context);
     // InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
     //     Provider.of<InstitutionAttributeAdminNotifier>(context);
     ReportProductNotifier reportProductNotifier =
@@ -424,8 +423,7 @@ class _MasterScreenState extends State<MasterScreen> {
                     } else if (menu.label == "Catalogo categorie") {
                       categoryCatalogNotifier.refresh();
                     } else if (menu.label == "Impostazioni ente") {
-                      institutionAttributeInstitutionAdminNotifier
-                          .setUpdate(true);
+                      institutionAttributeNotifier.setUpdate(true);
                     }
                     // else if (menu.label == "Impostazioni di configurazione") {
                     //   institutionAttributeAdminNotifier.setUpdate(true);

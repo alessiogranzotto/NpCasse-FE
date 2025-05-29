@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.029';
+  static String version = '1.20.031';
 }
 
 // class AppRegex {
@@ -226,32 +226,38 @@ class AppStrings {
   static const pleaseEnterIdFormGiveMyosotisConfiguration = "Inserire Id Form";
 
   //COMUNICAZIONI
-  static const nameMassSending = "Nome comunicazione";
-  static const pleaseEnterNameMassSending = "Inserire nome comunicazione";
+  static const nameComunicationSending = "Nome comunicazione";
+  static const pleaseEnterNameComunicationSending =
+      "Inserire nome comunicazione";
 
-  static const descriptionMassSending = "Descrizione comunicazione";
-  static const pleaseEnterDescriptionMassSending =
+  static const descriptionComunicationSending = "Descrizione comunicazione";
+  static const pleaseEnterDescriptionComunicationSending =
       "Inserire descrizione comunicazione";
 
-  static const senderMassSending = "Mittente comunicazione";
-  static const pleaseEnterSenderMassSending = "Inserire mittente comunicazione";
+  static const senderComunicationSending = "Mittente comunicazione";
+  static const pleaseEnterSenderComunicationSending =
+      "Inserire mittente comunicazione";
 
-  static const emailSenderMassSending = "Email mittente comunicazione";
-  static const pleaseEnterEmailSenderMassSending =
+  static const emailSenderComunicationSending = "Email mittente comunicazione";
+  static const pleaseEnterEmailSenderComunicationSending =
       "Inserire email mittente comunicazione";
 
-  static const subjectEmailMassSending = "Oggetto comunicazione";
-  static const pleaseEnterSubjectEmailMassSending =
+  static const actionComunicationSendingTemplate = "Azione comunicazione";
+
+  static const subjectEmailComunicationSending = "Oggetto comunicazione";
+  static const pleaseEnterSubjectEmailComunicationSending =
       "Inserire oggetto comunicazione";
 
-  static const massSendingTemplate = "Template comunicazione";
+  static const comunicationSendingTemplate = "Template invio comunicazione";
+  static const comunicationAttachSendingTemplate =
+      "Template allegato comunicazione";
 
-  static const datePlanMassSending = "Data spedizione pianificata";
-  static const pleaseEnterDatePlanMassSending =
+  static const datePlanComunicationSending = "Data spedizione pianificata";
+  static const pleaseEnterDatePlanComunicationSending =
       "Inserire data spedizione pianificata";
 
-  static const hourPlanMassSending = "Ora spedizione pianificata";
-  static const pleaseEnterHourPlanMassSending =
+  static const hourPlanComunicationSending = "Ora spedizione pianificata";
+  static const pleaseEnterHourPlanComunicationSending =
       "Inserire ora spedizione pianificata";
 }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/mass.sending.job.model.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
@@ -14,15 +14,17 @@ import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.new.edit.sh.screen.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.detail.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.dart';
-import 'package:np_casse/screens/comunicationScreen/template.comunication.html.screen.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.detail.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.event.detail.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.statistics.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.detail.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.event.detail.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.plan.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.recipient.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.statistics.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.detail.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.event.detail.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.plan.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.recipient.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.statistics.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.screen.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
@@ -114,7 +116,15 @@ class AppRouter {
   static const String massSendingStatisticsRoute = "/massSendingStatistic";
   static const String massSendingEventDetailRoute = "/massSendingEventDetail";
 
+  static const String transactionalSendingDetailRoute =
+      "/transactionalSendingDetail";
+  static const String transactionalSendingEventDetailRoute =
+      "/transactionalSendingEventDetail";
+  static const String transactionalSendingStatisticsRoute =
+      "/transactionalSendingStatistic";
+
   static const String receiptPdf = "/receiptPdf";
+
   // static const String searchRoute = "/search";
   // static const String profileRoute = "/profile";
   // static const String accountInfo = "/accountInfo";
@@ -324,17 +334,17 @@ class AppRouter {
           );
         }
 
-      case templateComunicationHtml:
-        {
-          return MaterialPageRoute(
-            builder: (context) => TemplateComunicationHtmlScreen(
-              templateComunicationModel: ModalRoute.of(context)!
-                  .settings
-                  .arguments as TemplateComunicationModel,
-            ),
-            settings: settings,
-          );
-        }
+      // case templateComunicationHtml:
+      //   {
+      //     return MaterialPageRoute(
+      //       builder: (context) => TemplateComunicationHtmlScreen(
+      //         templateComunicationModel: ModalRoute.of(context)!
+      //             .settings
+      //             .arguments as TemplateComunicationModel,
+      //       ),
+      //       settings: settings,
+      //     );
+      //   }
 
       case myosotisConfigurationRoute:
         {
@@ -402,7 +412,41 @@ class AppRouter {
             builder: (context) => MassSendingEventDetailScreen(
               massSendingJobModelForEventDetail: ModalRoute.of(context)!
                   .settings
-                  .arguments as MassSendingJobModelForEventDetail,
+                  .arguments as ComunicationModelForEventDetail,
+            ),
+            settings: settings,
+          );
+        }
+
+      case transactionalSendingDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => TransactionalSendingDetailScreen(
+              transactionalSendingModel: ModalRoute.of(context)!
+                  .settings
+                  .arguments as TransactionalSendingModel,
+            ),
+            settings: settings,
+          );
+        }
+      case transactionalSendingEventDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => TransactionalSendingEventDetailScreen(
+              transactionalSendingJobModelForEventDetail:
+                  ModalRoute.of(context)!.settings.arguments
+                      as ComunicationModelForEventDetail,
+            ),
+            settings: settings,
+          );
+        }
+      case transactionalSendingStatisticsRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => TransactionalSendingStatisticsScreen(
+              transactionalSendingModel: ModalRoute.of(context)!
+                  .settings
+                  .arguments as TransactionalSendingModel,
             ),
             settings: settings,
           );

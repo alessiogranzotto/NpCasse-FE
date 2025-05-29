@@ -1,36 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.table.footer.dart';
 import 'package:np_casse/componenents/table.filter.dart';
-import 'package:np_casse/core/models/mass.sending.history.model.dart';
+import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/mass.sending.job.model.dart';
-import 'package:np_casse/core/models/mass.sending.model.dart';
 import 'package:np_casse/core/models/state.model.dart';
-import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
-import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
-import 'package:np_casse/screens/massSendingScreen/mass.sending.utility.dart';
+import 'package:np_casse/core/models/transactional.sending.history.model.dart';
+import 'package:np_casse/core/notifiers/report.transactional.sending.notifier.dart';
+import 'package:np_casse/screens/comunicationSendingScreen/comunication.sending.utility.dart';
 import 'package:paged_datatable/paged_datatable.dart';
 import 'package:provider/provider.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
-import 'package:np_casse/core/models/cart.history.model.dart';
 
-class MassSendingHistoryScreen extends StatefulWidget {
-  const MassSendingHistoryScreen({Key? key}) : super(key: key);
+class TransactionalSendingHistoryScreen extends StatefulWidget {
+  const TransactionalSendingHistoryScreen({Key? key}) : super(key: key);
 
   @override
-  State<MassSendingHistoryScreen> createState() =>
-      _MassSendingHistoryScreenState();
+  State<TransactionalSendingHistoryScreen> createState() =>
+      _TransactionalSendingHistoryScreenState();
 }
 
-class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
+class _TransactionalSendingHistoryScreenState
+    extends State<TransactionalSendingHistoryScreen> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
-  List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
-  List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
   List<String> filterStringModel = [];
   String? sortBy;
   String? sortDirection;
@@ -39,13 +35,14 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ReportMassSendingNotifier reportMassSendingNotifier =
-        Provider.of<ReportMassSendingNotifier>(context);
+    ReportTransactionalSendingNotifier reportTransactionalSendingNotifier =
+        Provider.of<ReportTransactionalSendingNotifier>(context);
     // Ensure the refresh only happens when 'isUpdated' is true and the table isn't already refreshing
-    if (reportMassSendingNotifier.isUpdated && !isRefreshing) {
+    if (reportTransactionalSendingNotifier.isUpdated && !isRefreshing) {
       // Post-frame callback to avoid infinite loop during build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        reportMassSendingNotifier.setUpdate(false); // Reset the update flag
+        reportTransactionalSendingNotifier
+            .setUpdate(false); // Reset the update flag
         tableController.refresh();
       });
     }
@@ -53,8 +50,8 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
 
   Future<(List<Map<String, dynamic>>, String?)> fetchData(int pageSize,
       SortModel? sortModel, FilterModel? filterModel, String? pageToken) async {
-    final reportMassSendingNotifier =
-        Provider.of<ReportMassSendingNotifier>(context, listen: false);
+    final reportTransactionalSendingNotifier =
+        Provider.of<ReportTransactionalSendingNotifier>(context, listen: false);
     try {
       int pageNumber = (pageToken != null) ? int.parse(pageToken) : 1;
       var authNotifier =
@@ -86,11 +83,12 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
           filterStringModel.add('Filter=endDate:' + cEndDate);
         }
 
-        if (filterModel['massSendingModelNameComunication'] != null) {
-          String massSendingModelNameComunication =
-              filterModel['massSendingModelNameComunication'];
-          filterStringModel.add('Filter=massSendingModelNameComunication:' +
-              massSendingModelNameComunication);
+        if (filterModel['transactionalSendingModelNameComunication'] != null) {
+          String transactionalSendingModelNameComunication =
+              filterModel['transactionalSendingModelNameComunication'];
+          filterStringModel.add(
+              'Filter=transactionalSendingModelNameComunication:' +
+                  transactionalSendingModelNameComunication);
         }
         if (filterModel['denominationSh'] != null) {
           String denominationSh = filterModel['denominationSh'];
@@ -107,20 +105,23 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
         isRefreshing = true;
       });
 
-      var response = await reportMassSendingNotifier.findMassSendingList(
-          context: context,
-          token: authNotifier.token,
-          idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-          orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
-          filter: filterStringModel);
+      var response =
+          await reportTransactionalSendingNotifier.findTransactionalSendingList(
+              context: context,
+              token: authNotifier.token,
+              idUserAppInstitution:
+                  cUserAppInstitutionModel.idUserAppInstitution,
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+              orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
+              filter: filterStringModel);
 
-      if (response is MassSendingHistoryModel) {
+      if (response is TransactionalSendingHistoryModel) {
         totalCount = response.totalCount;
-        List<Map<String, dynamic>> data = response.massSendingHistoryList
-            .map((massSendingJob) => massSendingJob.toJson())
-            .toList();
+        List<Map<String, dynamic>> data =
+            response.TransactionalSendingHistoryList.map(
+                (TransactionalSendingJob) =>
+                    TransactionalSendingJob.toJson()).toList();
 
         String? nextPageToken =
             response.hasNext ? (pageNumber + 1).toString() : null;
@@ -133,7 +134,8 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
       return (<Map<String, dynamic>>[], null);
     } finally {
       // After fetching data, set isRefreshing to false
-      reportMassSendingNotifier.setUpdate(false); // Reset the update flag
+      reportTransactionalSendingNotifier
+          .setUpdate(false); // Reset the update flag
 
       setState(() {
         isRefreshing = false;
@@ -141,15 +143,16 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
     }
   }
 
-  void handleDownloadCartList(BuildContext context) async {
-    final reportMassSendingNotifier =
-        Provider.of<ReportMassSendingNotifier>(context, listen: false);
+  void handleDownloadTransactionalSendingHistoryList(
+      BuildContext context) async {
+    final reportTransactionalSendingNotifier =
+        Provider.of<ReportTransactionalSendingNotifier>(context, listen: false);
     var authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    await reportMassSendingNotifier.downloadEmailReportList(
+    await reportTransactionalSendingNotifier.downloadTransactionalSendingList(
         context: context,
         token: authenticationNotifier.token,
         pageNumber: 1,
@@ -173,7 +176,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         title: Text(
-          'Email report ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
+          'Report transazionali ${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -216,7 +219,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 PopupMenuItem(
                   child: const Text("Export Excel"),
                   onTap: () {
-                    handleDownloadCartList(context);
+                    handleDownloadTransactionalSendingHistoryList(context);
                   },
                 ),
               ],
@@ -228,10 +231,10 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
             columns: [
               // RowSelectorColumn(),
               TableColumn(
-                id: 'massSendingModelNameComunication',
-                title: const Text('Nome comunicazione'),
+                id: 'transactionSendingModelNameComunication',
+                title: const Text('Transazionale'),
                 cellBuilder: (context, item, index) {
-                  return Text(item['massSendingModelNameComunication']);
+                  return Text(item['transactionSendingModelNameComunication']);
                 },
                 size: const FixedColumnSize(200),
                 sortable: true,
@@ -246,23 +249,26 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 sortable: true,
               ),
               TableColumn(
-                id: 'denominationSh',
+                id: 'idStakeholder',
+                title: const Text('Id Stakeholder'),
+                cellBuilder: (context, item, index) =>
+                    Text(item['idStakeholder'].toString()),
+                size: const FixedColumnSize(250),
+                sortable: false,
+              ),
+              TableColumn(
+                id: 'denominationStakeholder',
                 title: const Text('Destinatario'),
-                cellBuilder: (context, item, index) {
-                  return item['businessNameSh'].toString().isEmpty
-                      ? Text(item['surnameSh'].toString() +
-                          ' ' +
-                          item['nameSh'].toString())
-                      : Text(item['businessNameSh'].toString());
-                },
+                cellBuilder: (context, item, index) =>
+                    Text(item['denominationStakeholder'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
               TableColumn(
-                id: 'emailSh',
+                id: 'emailStakeholder',
                 title: const Text('Email destinatario'),
                 cellBuilder: (context, item, index) =>
-                    Text(item['emailSh'].toString()),
+                    Text(item['emailStakeholder'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
@@ -285,7 +291,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                           child: CircleAvatar(
                             radius: 8, // Imposta il raggio dell'avatar
                             backgroundColor:
-                                MassSendingUtility.getWebhooksColor(
+                                ComunicationSendingUtility.getWebhooksColor(
                                     firstwebhooksEvent
                                         .event), // Immagine dell'avatar
                           ),
@@ -321,18 +327,18 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                   ],
                   onSelected: (value) {
                     if (value == 1) {
-                      MassSendingJobModelForEventDetail
-                          massSendingJobModelForEventDetail =
-                          MassSendingJobModelForEventDetail(
-                        emailSh: item['emailSh'].toString(),
+                      ComunicationModelForEventDetail
+                          comunicationModelForEventDetail =
+                          ComunicationModelForEventDetail(
+                        emailSh: item['emailStakeholder'].toString(),
                         emailId: item['emailId'].toString(),
                         webhooksEvent: item['webhooksEvent'],
                         dateLastUpdate: item['dateLastUpdate'],
                       );
 
                       Navigator.of(context).pushNamed(
-                          AppRouter.massSendingEventDetailRoute,
-                          arguments: massSendingJobModelForEventDetail);
+                          AppRouter.transactionalSendingEventDetailRoute,
+                          arguments: comunicationModelForEventDetail);
                     }
                   },
                 ),
@@ -344,7 +350,8 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 loadOptions: () async {
                   final states = [
                     StateModel(id: 'Email processed', name: 'Email processed'),
-                    StateModel(id: 'Bounced', name: 'Bounced'),
+                    StateModel(id: 'Bounced soft', name: 'Bounced soft'),
+                    StateModel(id: 'Bounced hard', name: 'Bounced hard'),
                     StateModel(id: 'Rejected', name: 'Rejected'),
                     StateModel(id: 'Marked as spam', name: 'Marked as spam'),
                     StateModel(
@@ -380,9 +387,9 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 name: "A",
               ),
               StringTextTableFilter(
-                id: "massSendingModelNameComunication",
-                chipFormatter: (value) => "Nome comunicazione: $value",
-                name: "Nome comunicazione",
+                id: "transactionalSendingModelNameComunication",
+                chipFormatter: (value) => "Transazionale: $value",
+                name: "Transazionale",
               ),
               StringTextTableFilter(
                 id: "denominationSh",
