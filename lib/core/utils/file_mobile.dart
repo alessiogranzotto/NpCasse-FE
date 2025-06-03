@@ -103,3 +103,6 @@ String _getMimeType(String fileName) {
       return 'application/octet-stream'; // Generic MIME type for unknown files
   }
 }
+void downloadFileWeb(Uint8List fileBytes, String fileName, String contentType) {
+
+}
