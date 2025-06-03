@@ -3,7 +3,6 @@ import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
-import 'package:np_casse/core/models/mass.sending.job.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';

@@ -312,8 +312,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       tImageString = widget.productCatalogModelArgument.imageData;
       selectedVat = widget.productCatalogModelArgument.valueVat;
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-              .idFinalizzazione >
-          0) {
+          .idFinalizzazione.isNotEmpty) {
         // textEditingControllerIdFinalizzazione.text = widget
         //     .productCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -326,9 +325,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       } else {
         // textEditingControllerIdFinalizzazione.text = '';
       }
-      if (widget
-              .productCatalogModelArgument.giveIdsFlatStructureModel.idEvento >
-          0) {
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel.idEvento
+          .isNotEmpty) {
         // textEditingControllerIdEvento.text = widget
         //     .productCatalogModelArgument.giveIdsFlatStructureModel.idEvento
         //     .toString();
@@ -342,8 +340,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       }
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-              .idAttivita >
-          0) {
+          .idAttivita.isNotEmpty) {
         // textEditingControllerIdAttivita.text = widget
         //     .productCatalogModelArgument.giveIdsFlatStructureModel.idAttivita
         //     .toString();
@@ -356,9 +353,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         // textEditingControllerIdAttivita.text = '';
       }
 
-      if (widget
-              .productCatalogModelArgument.giveIdsFlatStructureModel.idAgenda >
-          0) {
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
+          .isNotEmpty) {
         // textEditingControllerIdAgenda.text = widget
         //     .productCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
         //     .toString();
@@ -372,8 +368,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       }
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-              .idComunicazioni >
-          0) {
+          .idComunicazioni.isNotEmpty) {
         // textEditingControllerIdComunicazioni.text = widget
         //     .productCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -388,8 +383,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       }
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-              .idTipDonazione >
-          0) {
+          .idTipDonazione.isNotEmpty) {
         // textEditingControllerIdTipDonazione.text = widget
         //     .productCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -404,8 +398,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       }
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-              .idCatalogo >
-          0) {
+          .idCatalogo.isNotEmpty) {
         // textEditingControllerIdCatalogo.text = widget
         //     .productCatalogModelArgument.giveIdsFlatStructureModel.idCatalogo
         //     .toString();
@@ -417,6 +410,18 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         // textEditingControllerIdCatalogo.text = '';
       }
 
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+          .idPromotore.isNotEmpty) {
+        // textEditingControllerIdPromotore.text = widget
+        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
+        //     .toString();
+        customIdGive.add("IdPromotore=" +
+            widget.productCatalogModelArgument.giveIdsFlatStructureModel
+                .idPromotore
+                .toString());
+      } else {
+        // textEditingControllerIdPromotore.text = '';
+      }
       // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
       //         .idPagamentoContante >
       //     0) {
@@ -461,6 +466,35 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       // } else {
       //   textEditingControllerIdPagamentoAssegno.text = '';
       // }
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+          .codiceSottoconto.isNotEmpty) {
+        // textEditingControllerIdPagamentoAssegno.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoAssegno
+        //     .toString();
+        customIdGive.add("CodiceSottoconto=" +
+            widget.productCatalogModelArgument.giveIdsFlatStructureModel
+                .codiceSottoconto
+                .toString());
+      } else {
+        // textEditingControllerIdPagamentoAssegno.text = '';
+      }
+
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+          .codiceCentroRicavo.isNotEmpty) {
+        // textEditingControllerIdPagamentoAssegno.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoAssegno
+        //     .toString();
+        customIdGive.add("CodiceCentroRicavo=" +
+            widget.productCatalogModelArgument.giveIdsFlatStructureModel
+                .codiceCentroRicavo
+                .toString());
+      } else {
+        // textEditingControllerIdPagamentoAssegno.text = '';
+      }
     } else {
       //tImageString = AppAssets.noImageString;
     }

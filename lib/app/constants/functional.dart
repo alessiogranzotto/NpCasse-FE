@@ -8,6 +8,7 @@ const List<String> idGiveListNameAll = [
   'IdComunicazioni',
   'IdTipDonazione',
   'IdCatalogo',
+  'IdPromotore',
   'IdPagamentoContante',
   'IdPagamentoBancomat',
   'IdPagamentoCartaDiCredito',
@@ -23,6 +24,7 @@ const List<String> idGiveListNameProduct = [
   'IdComunicazioni',
   'IdTipDonazione',
   'IdCatalogo',
+  'IdPromotore',
   'CodiceSottoconto',
   'CodiceCentroRicavo'
 ];
@@ -35,12 +37,13 @@ const List<String> idGiveListNameCategory = [
   'IdComunicazioni',
   'IdTipDonazione',
   'IdCatalogo',
+  'IdPromotore',
+  'CodiceSottoconto',
+  'CodiceCentroRicavo',
   'IdPagamentoContante',
   'IdPagamentoBancomat',
   'IdPagamentoCartaDiCredito',
-  'IdPagamentoAssegno',
-  'CodiceSottoconto',
-  'CodiceCentroRicavo'
+  'IdPagamentoAssegno'
 ];
 
 const List<String> idGiveListNameMyosotis = [
@@ -51,6 +54,7 @@ const List<String> idGiveListNameMyosotis = [
   'IdComunicazioni',
   'IdTipDonazione',
   'IdCatalogo',
+  'IdPromotore',
   'IdPagamentoContante',
   'IdPagamentoBancomat',
   'IdPagamentoCartaDiCredito',
@@ -78,6 +82,8 @@ class FunctionalColorUtils {
           return Colors.deepPurple[100]!;
         case 'IdCatalogo':
           return Colors.green[100]!;
+        case 'IdPromotore':
+          return Colors.lime[100]!;
         case 'IdPagamentoContante':
           return Colors.teal[100]!;
         case 'IdPagamentoBancomat':

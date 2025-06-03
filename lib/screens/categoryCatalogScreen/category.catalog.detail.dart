@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
@@ -145,29 +144,39 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         String input = text.trim();
         try {
           var splitOnEqual = input.split('=');
+
+          //CONTROL FOR INT OR STRING
+          bool canContinue = false;
           if (splitOnEqual.length == 2) {
-            if (num.tryParse(splitOnEqual[1]) != null) {
-              final bestMatch = StringSimilarity.findBestMatch(
-                  splitOnEqual[0].toLowerCase(), idGiveListNameCategory);
-              if (bestMatch.bestMatch.rating != null) {
-                if (bestMatch.bestMatch.rating! > 0.40) {
-                  String finalString =
-                      bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
-                  if (!customIdGive.any((item) => item
-                      .toLowerCase()
-                      .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
-                    setState(() {
-                      customIdGive = <String>[...customIdGive, finalString];
-                    });
-                    isOk = true;
-                  }
+            if (text.toLowerCase().startsWith('id') &&
+                num.tryParse(splitOnEqual[1]) != null) {
+              canContinue = true;
+            } else if (text.toLowerCase().startsWith('codice') &&
+                splitOnEqual[1].isNotEmpty) {
+              canContinue = true;
+            }
+          }
+          if (canContinue) {
+            final bestMatch = StringSimilarity.findBestMatch(
+                splitOnEqual[0].toLowerCase(), idGiveListNameProduct);
+            if (bestMatch.bestMatch.rating != null) {
+              if (bestMatch.bestMatch.rating! > 0.40) {
+                String finalString =
+                    bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
+                if (!customIdGive.any((item) => item
+                    .toLowerCase()
+                    .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
+                  setState(() {
+                    customIdGive = <String>[...customIdGive, finalString];
+                  });
+                  isOk = true;
                 }
               }
             }
           }
           if (!isOk) {
             ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-                title: "Categorie",
+                title: "Prodotti",
                 message:
                     "Parametro Id Give non trovato, non corretto o già presente",
                 contentType: "warning"));
@@ -196,7 +205,6 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
     idCategory = widget.categoryCatalogModelArgument.idCategory;
     isEdit = idCategory != 0;
     getAvailableCategories(0);
-    print(availableCategory);
 
     if (widget.categoryCatalogModelArgument.idCategory != 0) {
       textEditingControllerNameCategory.text =
@@ -210,8 +218,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       tempDeleted = deleted;
       tImageString = widget.categoryCatalogModelArgument.imageData;
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idFinalizzazione >
-          0) {
+          .idFinalizzazione.isNotEmpty) {
         // textEditingControllerIdFinalizzazione.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -224,9 +231,8 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       } else {
         // textEditingControllerIdFinalizzazione.text = '';
       }
-      if (widget
-              .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento >
-          0) {
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
+          .isNotEmpty) {
         // textEditingControllerIdEvento.text = widget
         //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
         //     .toString();
@@ -239,8 +245,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idAttivita >
-          0) {
+          .idAttivita.isNotEmpty) {
         // textEditingControllerIdAttivita.text = widget
         //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAttivita
         //     .toString();
@@ -252,9 +257,8 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         // textEditingControllerIdAttivita.text = '';
       }
 
-      if (widget
-              .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda >
-          0) {
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
+          .isNotEmpty) {
         // textEditingControllerIdAgenda.text = widget
         //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
         //     .toString();
@@ -267,8 +271,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idComunicazioni >
-          0) {
+          .idComunicazioni.isNotEmpty) {
         // textEditingControllerIdComunicazioni.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -283,8 +286,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idTipDonazione >
-          0) {
+          .idTipDonazione.isNotEmpty) {
         // textEditingControllerIdTipDonazione.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -299,8 +301,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       }
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idCatalogo >
-          0) {
+          .idCatalogo.isNotEmpty) {
         // textEditingControllerIdCatalogo.text = widget
         //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idCatalogo
         //     .toString();
@@ -311,9 +312,22 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       } else {
         // textEditingControllerIdCatalogo.text = '';
       }
+
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idPagamentoContante >
-          0) {
+          .idPromotore.isNotEmpty) {
+        // textEditingControllerIdPromotore.text = widget
+        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.IdPromotore
+        //     .toString();
+        customIdGive.add("IdPromotore=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPromotore
+                .toString());
+      } else {
+        // textEditingControllerIdPromotore.text = '';
+      }
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoContante.isNotEmpty) {
         // textEditingControllerIdPagamentoContante.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -327,8 +341,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         // textEditingControllerIdPagamentoContante.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idPagamentoBancomat >
-          0) {
+          .idPagamentoBancomat.isNotEmpty) {
         // textEditingControllerIdPagamentoBancomat.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -342,8 +355,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         // textEditingControllerIdPagamentoBancomat.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idPagamentoCartaDiCredito >
-          0) {
+          .idPagamentoCartaDiCredito.isNotEmpty) {
         // textEditingControllerIdPagamentoCartaDiCredito.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -357,8 +369,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         // textEditingControllerIdPagamentoCartaDiCredito.text = '';
       }
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
-              .idPagamentoAssegno >
-          0) {
+          .idPagamentoAssegno.isNotEmpty) {
         // textEditingControllerIdPagamentoAssegno.text = widget
         //     .categoryCatalogModelArgument
         //     .giveIdsFlatStructureModel
@@ -367,6 +378,36 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
         customIdGive.add("IdPagamentoAssegno=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idPagamentoAssegno
+                .toString());
+      } else {
+        // textEditingControllerIdPagamentoAssegno.text = '';
+      }
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .codiceSottoconto.isNotEmpty) {
+        // textEditingControllerIdPagamentoAssegno.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoAssegno
+        //     .toString();
+        customIdGive.add("CodiceSottoconto=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .codiceSottoconto
+                .toString());
+      } else {
+        // textEditingControllerIdPagamentoAssegno.text = '';
+      }
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .codiceCentroRicavo.isNotEmpty) {
+        // textEditingControllerIdPagamentoAssegno.text = widget
+        //     .categoryCatalogModelArgument
+        //     .giveIdsFlatStructureModel
+        //     .idPagamentoAssegno
+        //     .toString();
+        customIdGive.add("CodiceCentroRicavo=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .codiceCentroRicavo
                 .toString());
       } else {
         // textEditingControllerIdPagamentoAssegno.text = '';

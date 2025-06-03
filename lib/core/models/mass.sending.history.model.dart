@@ -1,6 +1,4 @@
-import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/mass.sending.job.model.dart';
-import 'package:np_casse/core/models/comunication.sending.model.dart';
 
 class MassSendingHistoryModel {
   MassSendingHistoryModel({

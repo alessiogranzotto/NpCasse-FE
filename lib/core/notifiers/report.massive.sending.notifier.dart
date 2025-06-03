@@ -7,10 +7,6 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:np_casse/core/utils/file_web.dart'
-    if (dart.library.io) 'package:np_casse/core/utils/file_mobile.dart';
 
 class ReportMassSendingNotifier with ChangeNotifier {
   final MassSendingAPI massSendingAPI = MassSendingAPI();

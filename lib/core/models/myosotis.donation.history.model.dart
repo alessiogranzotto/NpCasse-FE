@@ -1,4 +1,3 @@
-import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/myosotis.donation.model.dart';
 
 class MyosotisDonationHistoryModel {

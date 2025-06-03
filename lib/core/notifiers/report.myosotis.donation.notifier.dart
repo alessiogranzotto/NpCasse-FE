@@ -1,19 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:np_casse/core/api/category.catalog.api.dart';
-import 'package:np_casse/core/api/common.api.dart';
 import 'package:np_casse/core/api/report.api.dart';
-import 'package:np_casse/core/models/cart.history.model.dart';
-import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/myosotis.donation.history.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
-import 'dart:typed_data';
-import 'package:np_casse/core/utils/file_web.dart'
-    if (dart.library.io) 'package:np_casse/core/utils/file_mobile.dart';
 
 class ReportMyosotisDonationNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
