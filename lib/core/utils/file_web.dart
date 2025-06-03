@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:html' as html;
+import 'package:flutter/material.dart';
 
 void downloadFileWeb(Uint8List fileBytes, String fileName, String contentType) {
   final blob = html.Blob([fileBytes], contentType);
@@ -9,4 +10,8 @@ void downloadFileWeb(Uint8List fileBytes, String fileName, String contentType) {
     ..download = fileName
     ..click();
   html.Url.revokeObjectUrl(url);
+}
+
+Future<void> downloadFileMobile(Uint8List fileBytes, String fileName, BuildContext context) async {
+ 
 }

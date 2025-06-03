@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:np_casse/core/utils/file_mobile.dart';
-import 'package:np_casse/core/utils/file_web.dart';
+import 'package:np_casse/core/utils/file_universal.dart';
 
 class DownloadFile {
   DownloadFile._(); // Private constructor to prevent instantiation

@@ -7,6 +7,7 @@ import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
 
 class ReportCartNotifier with ChangeNotifier {
   final ReportApi reportAPI = ReportApi();
