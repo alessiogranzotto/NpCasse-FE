@@ -186,7 +186,7 @@ class GiveNotifier with ChangeNotifier {
       required int com_email,
       required int consenso_materiale_info,
       required String datanascita,
-      required String tipo_donatore}) async {
+      required int? tipo_donatore}) async {
     StakeholderGiveModelWithRulesSearch? cStakeholderGiveModelWithRulesSearch;
     try {
       var response = await giveAPI.addStakeholder(
@@ -229,12 +229,25 @@ class GiveNotifier with ChangeNotifier {
 
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
-        //bool isOk = parseData['isOk'];
-        cStakeholderGiveModelWithRulesSearch =
-            StakeholderGiveModelWithRulesSearch.fromJson(parseData['okResult']);
-        cStakeholderGiveModelWithRulesSearch.operationResult =
-            parseData['errorDescription'] ?? 'Ok';
-        return cStakeholderGiveModelWithRulesSearch;
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Anagrafiche",
+                    message: errorDescription,
+                    contentType: "failure"));
+            // Navigator.pop(context);
+          }
+        } else {
+          cStakeholderGiveModelWithRulesSearch =
+              StakeholderGiveModelWithRulesSearch.fromJson(
+                  parseData['okResult']);
+          cStakeholderGiveModelWithRulesSearch.operationResult =
+              parseData['errorDescription'] ?? 'Ok';
+          return cStakeholderGiveModelWithRulesSearch;
+        }
       } else {
         AuthenticationNotifier authenticationNotifier =
             Provider.of<AuthenticationNotifier>(context, listen: false);

@@ -375,49 +375,51 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
               } else {
                 result = giveNotifier
                     .addStakeholder(
-                        context: context,
-                        token: authenticationNotifier.token,
-                        mustForce: mustForce,
-                        idUserAppInstitution:
-                            cUserAppInstitutionModel.idUserAppInstitution,
-                        nome: nameController.text,
-                        cognome: surnameController.text,
-                        ragSoc: ragSocController.text,
-                        codfisc: cFController.text,
-                        sesso: _characterGender != null
-                            ? (_characterGender == GenderCharacter.male ? 1 : 2)
-                            : null,
-                        email: emailController.text,
-                        tel: phoneNumberController.text,
-                        cell: mobileNumberController.text,
-                        nazione_nn_norm: countryController.text,
-                        regione_nn_norm: regionController.text,
-                        statoFederale_nn_norm: stateController.text,
-                        prov_nn_norm: provinceCodeController.text,
-                        cap_nn_norm: zipCodeController.text,
-                        citta_nn_norm: cityController.text,
-                        suddivisioneComune_2_nn_norm: district2Controller.text,
-                        suddivisioneComune_3_nn_norm: district3Controller.text,
-                        indirizzo_nn_norm: streetController.text,
-                        localita_nn_norm: district1Controller.text,
-                        n_civico_nn_norm: streetNumberController.text,
-                        row4: geoNormItemModel.exact.row4,
-                        row5: geoNormItemModel.exact.row5,
-                        cdxcnl: geoNormItemModel.exact.cdxcnl,
-                        x: geoNormItemModel.exact.x,
-                        y: geoNormItemModel.exact.y,
-                        com_cartacee: comCartacee ? 1 : 0,
-                        com_email: comEmail ? 1 : 0,
-                        consenso_ringrazia: consensoRingrazia ? 1 : 0,
-                        consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
-                        consenso_com_espresso: consensoComEspresso ? 1 : 0,
-                        consenso_marketing: consensoMarketing ? 1 : 0,
-                        consenso_sms: consensoSms ? 1 : 0,
-                        datanascita: borndateController.text,
-                        tipo_donatore:
-                            _characterType == TypeCharacter.personaFisica
-                                ? "1"
-                                : "0")
+                  context: context,
+                  token: authenticationNotifier.token,
+                  mustForce: mustForce,
+                  idUserAppInstitution:
+                      cUserAppInstitutionModel.idUserAppInstitution,
+                  nome: nameController.text,
+                  cognome: surnameController.text,
+                  ragSoc: ragSocController.text,
+                  codfisc: cFController.text,
+                  sesso: _characterGender != null
+                      ? (_characterGender == GenderCharacter.male ? 1 : 2)
+                      : null,
+                  email: emailController.text,
+                  tel: phoneNumberController.text,
+                  cell: mobileNumberController.text,
+                  nazione_nn_norm: countryController.text,
+                  regione_nn_norm: regionController.text,
+                  statoFederale_nn_norm: stateController.text,
+                  prov_nn_norm: provinceCodeController.text,
+                  cap_nn_norm: zipCodeController.text,
+                  citta_nn_norm: cityController.text,
+                  suddivisioneComune_2_nn_norm: district2Controller.text,
+                  suddivisioneComune_3_nn_norm: district3Controller.text,
+                  indirizzo_nn_norm: streetController.text,
+                  localita_nn_norm: district1Controller.text,
+                  n_civico_nn_norm: streetNumberController.text,
+                  row4: geoNormItemModel.exact.row4,
+                  row5: geoNormItemModel.exact.row5,
+                  cdxcnl: geoNormItemModel.exact.cdxcnl,
+                  x: geoNormItemModel.exact.x,
+                  y: geoNormItemModel.exact.y,
+                  com_cartacee: comCartacee ? 1 : 0,
+                  com_email: comEmail ? 1 : 0,
+                  consenso_ringrazia: consensoRingrazia ? 1 : 0,
+                  consenso_materiale_info: consensoMaterialeInfo ? 1 : 0,
+                  consenso_com_espresso: consensoComEspresso ? 1 : 0,
+                  consenso_marketing: consensoMarketing ? 1 : 0,
+                  consenso_sms: consensoSms ? 1 : 0,
+                  datanascita: borndateController.text,
+                  tipo_donatore: _characterGender != null
+                      ? (_characterGender == TypeCharacter.personaFisica
+                          ? 1
+                          : 2)
+                      : null,
+                )
                     .then((value) {
                   if (value == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -630,8 +632,11 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                   consenso_marketing: consensoMarketing ? 1 : 0,
                   consenso_sms: consensoSms ? 1 : 0,
                   datanascita: borndateController.text,
-                  tipo_donatore:
-                      _characterType == TypeCharacter.personaFisica ? "1" : "0")
+                  tipo_donatore: _characterGender != null
+                      ? (_characterGender == TypeCharacter.personaFisica
+                          ? 1
+                          : 2)
+                      : null)
               .then((value) {
             if (value == null) {
               ScaffoldMessenger.of(context).showSnackBar(

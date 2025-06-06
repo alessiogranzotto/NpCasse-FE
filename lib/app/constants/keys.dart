@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.031';
+  static String version = '1.20.033';
 }
 
 // class AppRegex {
@@ -224,6 +224,16 @@ class AppStrings {
   static const giveIds = "Id Give";
   static const idFormGiveMyosotisConfiguration = "Id Form";
   static const pleaseEnterIdFormGiveMyosotisConfiguration = "Inserire Id Form";
+
+  static const thankYouMethodMyosotisConfiguration =
+      "Inserire metodo di ringraziamento";
+
+  static const availableTransactionalSending = "Transazionali disponibili";
+  static const pleaseEnterIdTransactionalSending = "Inserire il transazionale";
+
+  static const idWAMessageMyosotisConfiguration = "Id messaggio WhatsApp";
+  static const pleaseEnterIdWAMessageMyosotisConfiguration =
+      "Inserire id messaggio WhatsApp";
 
   //COMUNICAZIONI
   static const nameComunicationSending = "Nome comunicazione";

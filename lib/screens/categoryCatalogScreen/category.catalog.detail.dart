@@ -158,7 +158,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
           }
           if (canContinue) {
             final bestMatch = StringSimilarity.findBestMatch(
-                splitOnEqual[0].toLowerCase(), idGiveListNameProduct);
+                splitOnEqual[0].toLowerCase(), idGiveListNameCategory);
             if (bestMatch.bestMatch.rating != null) {
               if (bestMatch.bestMatch.rating! > 0.40) {
                 String finalString =

@@ -26,6 +26,8 @@
 //   }
 // }
 
+import 'package:np_casse/core/models/comunication.sending.model.dart';
+
 class MyosotisConfigurationModel {
   MyosotisConfigurationModel({
     required this.idMyosotisConfiguration,
@@ -146,7 +148,10 @@ class MyosotisConfigurationDetailModel {
       required this.visibleCompanyFormField,
       required this.mandatoryCompanyFormField,
       required this.preestablishedPaymentMethodApp,
-      required this.preestablishedPaymentMethodWeb});
+      required this.preestablishedPaymentMethodWeb,
+      required this.thankYouMethod,
+      required this.idTransactionalSending,
+      required this.idWaMessageToSend});
   late String typeFormStartup;
   late bool showLogo;
   late String logoEncoded;
@@ -177,6 +182,10 @@ class MyosotisConfigurationDetailModel {
   late List<String> mandatoryCompanyFormField;
   late List<String> preestablishedPaymentMethodApp;
   late List<String> preestablishedPaymentMethodWeb;
+
+  late String thankYouMethod;
+  late int idTransactionalSending;
+  late int idWaMessageToSend;
 
   MyosotisConfigurationDetailModel.empty() {
     typeFormStartup = "";
@@ -209,6 +218,9 @@ class MyosotisConfigurationDetailModel {
     mandatoryCompanyFormField = [];
     preestablishedPaymentMethodApp = [];
     preestablishedPaymentMethodWeb = [];
+    thankYouMethod = "";
+    idTransactionalSending = 0;
+    idWaMessageToSend = 0;
   }
   // JSON deserialization
   MyosotisConfigurationDetailModel.fromJson(Map<String, dynamic> json) {
@@ -292,6 +304,21 @@ class MyosotisConfigurationDetailModel {
     } else {
       preestablishedPaymentMethodWeb = List.empty();
     }
+    if (json['thankYouMethod'] != null) {
+      thankYouMethod = json['thankYouMethod'];
+    } else {
+      thankYouMethod = 'Nessun ringraziamento';
+    }
+    if (json['idTransactionalSending'] != null) {
+      idTransactionalSending = json['idTransactionalSending'];
+    } else {
+      idTransactionalSending = 0;
+    }
+    if (json['idWAMessageToSend'] != null) {
+      idWaMessageToSend = json['idWAMessageToSend'];
+    } else {
+      idWaMessageToSend = 0;
+    }
   }
 
   // JSON serialization
@@ -327,6 +354,10 @@ class MyosotisConfigurationDetailModel {
     data['preestablishedPaymentMethodApp'] = preestablishedPaymentMethodApp;
     data['preestablishedPaymentMethodWeb'] = preestablishedPaymentMethodWeb;
 
+    data['thankYouMethod'] = thankYouMethod;
+    data['idTransactionalSending'] = idTransactionalSending;
+    data['idWaMessageToSend'] = idWaMessageToSend;
+
     return data;
   }
 }
@@ -339,6 +370,8 @@ class MyosotisConfigurationDetailEmpty {
     required this.availablePersonalFormField,
     required this.availableCompanyFormField,
     required this.availableSubCategoryCausalDonation,
+    required this.availableThankYouMethod,
+    required this.availableTransactionalSending,
   });
   late final List<String> availableFormStartup;
   late final List<String> availablePaymentMethodApp;
@@ -346,6 +379,8 @@ class MyosotisConfigurationDetailEmpty {
   late final List<String> availablePersonalFormField;
   late final List<String> availableCompanyFormField;
   late final List<SubCategoryShort> availableSubCategoryCausalDonation;
+  late final List<String> availableThankYouMethod;
+  late final List<TransactionalSendingShort> availableTransactionalSending;
 
   MyosotisConfigurationDetailEmpty.empty() {
     availableFormStartup = [];
@@ -354,6 +389,8 @@ class MyosotisConfigurationDetailEmpty {
     availablePersonalFormField = [];
     availableCompanyFormField = [];
     availableSubCategoryCausalDonation = [];
+    availableThankYouMethod = [];
+    availableTransactionalSending = [];
   }
 
   // JSON deserialization
@@ -367,6 +404,13 @@ class MyosotisConfigurationDetailEmpty {
     availableSubCategoryCausalDonation =
         List.from(json['availableSubCategoryCausalDonation'])
             .map((e) => SubCategoryShort.fromJson(e))
+            .toList();
+
+    availableThankYouMethod = List.from(json['availableThankYouMethod']);
+
+    availableTransactionalSending =
+        List.from(json['availableTransactionalSending'])
+            .map((e) => TransactionalSendingShort.fromJson(e))
             .toList();
   }
 }
@@ -386,6 +430,25 @@ class SubCategoryShort {
   SubCategoryShort.fromJson(Map<String, dynamic> json) {
     idSubCategory = json['idSubCategory'];
     nameSubCategory = json['nameSubCategory'];
+  }
+}
+
+class TransactionalSendingShort {
+  TransactionalSendingShort(
+      {required this.idTransactionalSending,
+      required this.nameTransactionalSending});
+  late final int idTransactionalSending;
+  late final String nameTransactionalSending;
+
+  TransactionalSendingShort.empty() {
+    idTransactionalSending = 0;
+    nameTransactionalSending = '';
+  }
+
+  // JSON deserialization
+  TransactionalSendingShort.fromJson(Map<String, dynamic> json) {
+    idTransactionalSending = json['idTransactionalSending'];
+    nameTransactionalSending = json['nameTransactionalSending'];
   }
 }
 

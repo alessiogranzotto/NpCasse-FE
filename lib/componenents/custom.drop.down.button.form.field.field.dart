@@ -120,9 +120,21 @@ class _CustomDropDownButtonFormField
           //     null;
           //   }
           // },
-          validator: (value) => (value == null || value.toString().isEmpty)
-              ? 'Selezione obbligatoria'
-              : null,
+          validator: (value) {
+            if (widget.validator != null) {
+              return widget.validator!(value.toString());
+            } else {
+              if (value == null || value.toString().isEmpty) {
+                return 'Selezione obbligatoria';
+              } else {
+                return null;
+              }
+            }
+
+            // (value == null || value.toString().isEmpty)
+            //     ? return 'Selezione obbligatoria'
+            //     : return null
+          },
           items: widget.listOfValue),
     );
   }

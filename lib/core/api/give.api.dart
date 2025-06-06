@@ -107,7 +107,7 @@ class GiveAPI {
       required int com_email,
       required int consenso_materiale_info,
       required String datanascita,
-      required String tipo_donatore,
+      required int? tipo_donatore,
       required int forza_duplicato}) async {
     final Uri uri = Uri.parse(
         '${ApiRoutes.giveURL}/Add-Stakeholder?IdUserAppInstitution=$idUserAppInstitution');

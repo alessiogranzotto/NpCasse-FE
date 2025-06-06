@@ -8,7 +8,8 @@ import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
-import 'package:np_casse/core/api/give.api.dart';
+import 'package:np_casse/core/api/transactional.sending.api.dart';
+import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -162,6 +163,21 @@ class _MyosotisConfigurationDetailState
   final paymentMethodWebController = MultiSelectController<String>();
   List<DropdownItem<String>> availablePaymentMethodWeb = [];
 
+  //THANK YOU CONFIGURATION-VALUE
+  final ValueNotifier<String> thankYouMethod = ValueNotifier<String>('');
+
+  //THANK YOU CONFIGURATION-AVAILABLE VALUE
+  late List<String> availableThankYouMethod = [];
+
+  //TRANSACTIONAL SENDING-VALUE
+  late int idTransactionalSending;
+
+  //TRANSACTIONAL SENDING-AVAILABLE VALUE
+  late List<TransactionalSendingShort> availableTransactionalSending = [];
+
+  //ID WA MESSAGE TO SEND
+  late TextEditingController idWAMessageToSendController;
+
   void initializeControllers() {
     nameMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
@@ -187,6 +203,9 @@ class _MyosotisConfigurationDetailState
     mandatoryCompanyFormFieldController.addListener(dataControllerListener);
     paymentMethodAppController.addListener(dataControllerListener);
     paymentMethodWebController.addListener(dataControllerListener);
+
+    idWAMessageToSendController = TextEditingController()
+      ..addListener(dataControllerListener);
   }
 
   void disposeControllers() {
@@ -210,6 +229,8 @@ class _MyosotisConfigurationDetailState
     showPrivacyNotifier.dispose();
     isMandatoryPrivacyNotifier.dispose();
     showCompanyFormNotifier.dispose();
+
+    idWAMessageToSendController.dispose();
   }
 
   void dataControllerListener() {}
@@ -289,7 +310,7 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
         .smallImageString = myosotisConfigurationDetailModel.smallImageString;
 
-    // //TITLE CONFIGURATION
+    //TITLE CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.title =
         myosotisConfigurationDetailModel.title;
 
@@ -397,6 +418,19 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
             .preestablishedPaymentMethodWeb =
         myosotisConfigurationDetailModel.preestablishedPaymentMethodWeb;
+
+    //THANK YOU CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .thankYouMethod = myosotisConfigurationDetailModel.thankYouMethod;
+
+    //TRANSACTIONAL SENDING VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .idTransactionalSending =
+        myosotisConfigurationDetailModel.idTransactionalSending;
+
+    //ID WA MESSAGE TO SEND VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .idWaMessageToSend = myosotisConfigurationDetailModel.idWaMessageToSend;
   }
 
   setInitialData(
@@ -479,7 +513,7 @@ class _MyosotisConfigurationDetailState
         : widget
             .myosotisConfiguration.myosotisConfigurationDetailModel.idFormGive
             .toString();
-    print(idFormGiveConfigurationController.text);
+
     //TEXT CAUSAL DONATION
     causalDonationTextMyosotisConfigurationController.text = widget
         .myosotisConfiguration
@@ -640,6 +674,29 @@ class _MyosotisConfigurationDetailState
       );
     }
 
+    //THANK YOU CONFIGURATION-VALUE
+    thankYouMethod.value = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.thankYouMethod;
+    if (thankYouMethod.value.isEmpty) {
+      thankYouMethod.value = "Nessun ringraziamento";
+    }
+
+    //THANK YOU CONFIGURATION-AVAILABLE VALUE
+    availableThankYouMethod =
+        myosotisConfigurationDetailEmpty.availableThankYouMethod;
+
+    //TRANSACTIONAL SENDING-AVAILABLE VALUE
+    idTransactionalSending = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.idTransactionalSending;
+
+    //TRANSACTIONAL SENDING-AVAILABLE VALUE
+    availableTransactionalSending =
+        myosotisConfigurationDetailEmpty.availableTransactionalSending;
+
+    //ID WA MESSAGE TO SEND
+    idWAMessageToSendController.text = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.idWaMessageToSend
+        .toString();
     if (isEdit) {
       //MASTER
 
@@ -2065,6 +2122,139 @@ class _MyosotisConfigurationDetailState
                           onSelectionChange: (selectedItems) {},
                         ),
                       ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: CustomDropDownButtonFormField(
+                              enabled: true,
+                              actualValue: thankYouMethod.value,
+                              labelText: AppStrings
+                                  .thankYouMethodMyosotisConfiguration,
+                              listOfValue: availableThankYouMethod
+                                  .map((value) => DropdownMenuItem(
+                                      child: Text(value), value: value))
+                                  .toList(),
+                              onItemChanged: (value) {
+                                thankYouMethod.value = value;
+                                if (thankYouMethod.value ==
+                                    availableThankYouMethod[0]) {
+                                  idTransactionalSending = 0;
+                                  idWAMessageToSendController.text = "";
+                                } else if (thankYouMethod.value ==
+                                    availableThankYouMethod[1]) {
+                                  idTransactionalSending = 0;
+                                } else if (thankYouMethod.value ==
+                                    availableThankYouMethod[2]) {
+                                  idWAMessageToSendController.text = "";
+                                }
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            flex: 6,
+                            child: Column(
+                              children: [
+                                ValueListenableBuilder<String?>(
+                                  valueListenable: thankYouMethod,
+                                  builder: (context, value, _) {
+                                    return AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 1000),
+                                      child: thankYouMethod.value ==
+                                              availableThankYouMethod[0]
+                                          ? SizedBox.shrink()
+                                          : thankYouMethod.value ==
+                                                  availableThankYouMethod[1]
+                                              ? Container(
+                                                  key: ValueKey(value),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                                CustomDropDownButtonFormField(
+                                                              enabled: true,
+                                                              actualValue:
+                                                                  idTransactionalSending,
+                                                              labelText: AppStrings
+                                                                  .availableTransactionalSending,
+                                                              listOfValue: availableTransactionalSending
+                                                                  .map((value) => DropdownMenuItem(
+                                                                      child: Text(
+                                                                          value
+                                                                              .nameTransactionalSending),
+                                                                      value: value
+                                                                          .idTransactionalSending))
+                                                                  .toList(),
+                                                              onItemChanged:
+                                                                  (value) {
+                                                                idTransactionalSending =
+                                                                    value;
+                                                              },
+                                                              validator:
+                                                                  (value) {
+                                                                if (thankYouMethod
+                                                                        .value ==
+                                                                    availableThankYouMethod[
+                                                                        1]) {
+                                                                  return (value!
+                                                                              .isNotEmpty &&
+                                                                          int.tryParse(value)! >
+                                                                              0)
+                                                                      ? null
+                                                                      : AppStrings
+                                                                          .pleaseEnterIdTransactionalSending;
+                                                                } else {
+                                                                  return null;
+                                                                }
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : CustomTextFormField(
+                                                  enabled: true,
+                                                  controller:
+                                                      idWAMessageToSendController,
+                                                  labelText: AppStrings
+                                                      .idWAMessageMyosotisConfiguration,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  inputFormatter: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly, // Allow only digits
+                                                  ],
+                                                  textInputAction:
+                                                      TextInputAction.next,
+                                                  onChanged: (_) => {},
+                                                  validator: (value) {
+                                                    if (thankYouMethod.value ==
+                                                        availableThankYouMethod[
+                                                            2]) {
+                                                      return (value!.isNotEmpty)
+                                                          ? null
+                                                          : AppStrings
+                                                              .pleaseEnterIdWAMessageMyosotisConfiguration;
+                                                    } else {
+                                                      return null;
+                                                    }
+                                                  },
+                                                ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       SizedBox(height: 180),
                     ],
                   ),
@@ -2077,63 +2267,69 @@ class _MyosotisConfigurationDetailState
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   UIBlock.block(context);
-                  MyosotisConfigurationDetailModel myosotisConfigurationDetailModel =
+                  MyosotisConfigurationDetailModel
+                      myosotisConfigurationDetailModel =
                       MyosotisConfigurationDetailModel(
-                          typeFormStartup: typeFormStartup!,
-                          showLogo: showLogoNotifier.value,
-                          bigImageString: bigImageString,
-                          smallImageString: smallImageString,
-                          title: titleMyosotisConfigurationController.text,
-                          subtitle:
-                              subtitleMyosotisConfigurationController.text,
-                          preestablishedAmount: preetablishedAmounts,
-                          showFreePrice: showFreePriceNotifier.value,
-                          showPrivacy: showPrivacyNotifier.value,
-                          textPrivacy:
-                              textPrivacyMyosotisConfigurationController.text,
-                          isMandatoryPrivacy: isMandatoryPrivacyNotifier.value,
-                          showNewsletter: showNewsletterNotifier.value,
-                          textNewsletter:
-                              textNewsletterMyosotisConfigurationController
-                                  .text,
-                          isMandatoryNewsletter:
-                              isMandatoryNewsletterNotifier.value,
-                          visiblePersonalFormField:
-                              visiblePersonalFormFieldController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          mandatoryPersonalFormField:
-                              mandatoryPersonalFormFieldController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          showCompanyForm: showCompanyFormNotifier.value,
-                          visibleCompanyFormField:
-                              visibleCompanyFormFieldController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          mandatoryCompanyFormField:
-                              mandatoryCompanyFormFieldController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          preestablishedPaymentMethodApp:
-                              paymentMethodAppController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          preestablishedPaymentMethodWeb:
-                              paymentMethodWebController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          // showCausalDonation: showCausalDonationNotifier.value,
-                          causalDonationText:
-                              causalDonationTextMyosotisConfigurationController.text,
-                          idSubCategoryCausalDonation: idSubCategoryCausalDonation,
+                    typeFormStartup: typeFormStartup!,
+                    showLogo: showLogoNotifier.value,
+                    bigImageString: bigImageString,
+                    smallImageString: smallImageString,
+                    title: titleMyosotisConfigurationController.text,
+                    subtitle: subtitleMyosotisConfigurationController.text,
+                    preestablishedAmount: preetablishedAmounts,
+                    showFreePrice: showFreePriceNotifier.value,
+                    showPrivacy: showPrivacyNotifier.value,
+                    textPrivacy:
+                        textPrivacyMyosotisConfigurationController.text,
+                    isMandatoryPrivacy: isMandatoryPrivacyNotifier.value,
+                    showNewsletter: showNewsletterNotifier.value,
+                    textNewsletter:
+                        textNewsletterMyosotisConfigurationController.text,
+                    isMandatoryNewsletter: isMandatoryNewsletterNotifier.value,
+                    visiblePersonalFormField: visiblePersonalFormFieldController
+                        .selectedItems
+                        .map((e) => e.value)
+                        .toList(),
+                    mandatoryPersonalFormField:
+                        mandatoryPersonalFormFieldController.selectedItems
+                            .map((e) => e.value)
+                            .toList(),
+                    showCompanyForm: showCompanyFormNotifier.value,
+                    visibleCompanyFormField: visibleCompanyFormFieldController
+                        .selectedItems
+                        .map((e) => e.value)
+                        .toList(),
+                    mandatoryCompanyFormField:
+                        mandatoryCompanyFormFieldController.selectedItems
+                            .map((e) => e.value)
+                            .toList(),
+                    preestablishedPaymentMethodApp: paymentMethodAppController
+                        .selectedItems
+                        .map((e) => e.value)
+                        .toList(),
+                    preestablishedPaymentMethodWeb: paymentMethodWebController
+                        .selectedItems
+                        .map((e) => e.value)
+                        .toList(),
+                    // showCausalDonation: showCausalDonationNotifier.value,
+                    causalDonationText:
+                        causalDonationTextMyosotisConfigurationController.text,
+                    idSubCategoryCausalDonation: idSubCategoryCausalDonation,
 
-                          //
-                          idGiveFromProjectOrFixedValue: idGiveFromProjectOrFixedValue.value,
-                          customIdGive: customIdGive,
-                          idFormGive: int.parse(idFormGiveConfigurationController.text)
-                          //
-                          );
+                    //
+                    idGiveFromProjectOrFixedValue:
+                        idGiveFromProjectOrFixedValue.value,
+                    customIdGive: customIdGive,
+                    idFormGive:
+                        int.parse(idFormGiveConfigurationController.text),
+                    thankYouMethod: thankYouMethod.value,
+                    idTransactionalSending: idTransactionalSending,
+                    idWaMessageToSend: int.parse(
+                        idWAMessageToSendController.text.isEmpty
+                            ? "0"
+                            : idWAMessageToSendController.text),
+                    //
+                  );
                   MyosotisConfigurationModel myosotisConfigurationModel =
                       MyosotisConfigurationModel(
                           idMyosotisConfiguration: widget
