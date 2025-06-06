@@ -6,6 +6,7 @@ import 'package:np_casse/core/notifiers/mass.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
+import 'package:np_casse/core/notifiers/report.myosotis.access.notifier.dart';
 import 'package:np_casse/core/notifiers/report.myosotis.donation.notifier.dart';
 import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
@@ -55,6 +56,7 @@ class AppProvider {
     // ChangeNotifierProvider(create: (_) => ComunicationNotifier()),
     ChangeNotifierProvider(create: (_) => MyosotisConfigurationNotifier()),
     ChangeNotifierProvider(create: (_) => ReportMyosotisDonationNotifier()),
+    ChangeNotifierProvider(create: (_) => ReportMyosotisAccessNotifier()),
     ChangeNotifierProvider(create: (_) => MassSendingNotifier()),
     ChangeNotifierProvider(create: (_) => TransactionalSendingNotifier()),
     ChangeNotifierProvider(create: (_) => ReportMassSendingNotifier()),

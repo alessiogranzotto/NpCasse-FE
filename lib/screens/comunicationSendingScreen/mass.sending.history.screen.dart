@@ -226,7 +226,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 id: 'massSendingModelNameComunication',
                 title: const Text('Nome comunicazione'),
                 cellBuilder: (context, item, index) {
-                  return Text(item['massSendingModelNameComunication']);
+                  return SelectableText(item['massSendingModelNameComunication']);
                 },
                 size: const FixedColumnSize(200),
                 sortable: true,
@@ -235,7 +235,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 id: 'dateSend',
                 title: const Text('Data invio'),
                 cellBuilder: (context, item, index) => item['dateSend'] != null
-                    ? Text(item['dateSend'].toString())
+                    ? SelectableText(item['dateSend'].toString())
                     : Text(''),
                 size: const FixedColumnSize(200),
                 sortable: true,
@@ -245,10 +245,10 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 title: const Text('Destinatario'),
                 cellBuilder: (context, item, index) {
                   return item['businessNameSh'].toString().isEmpty
-                      ? Text(item['surnameSh'].toString() +
+                      ? SelectableText(item['surnameSh'].toString() +
                           ' ' +
                           item['nameSh'].toString())
-                      : Text(item['businessNameSh'].toString());
+                      : SelectableText(item['businessNameSh'].toString());
                 },
                 size: const FixedColumnSize(250),
                 sortable: true,
@@ -257,7 +257,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 id: 'emailSh',
                 title: const Text('Email destinatario'),
                 cellBuilder: (context, item, index) =>
-                    Text(item['emailSh'].toString()),
+                    SelectableText(item['emailSh'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
@@ -297,7 +297,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 title: const Text('Data ultimo aggiornamento'),
                 cellBuilder: (context, item, index) =>
                     item['dateLastUpdate'] != null
-                        ? Text(item['dateLastUpdate'].toString())
+                        ? SelectableText(item['dateLastUpdate'].toString())
                         : Text(''),
                 size: const FixedColumnSize(250),
                 sortable: false,

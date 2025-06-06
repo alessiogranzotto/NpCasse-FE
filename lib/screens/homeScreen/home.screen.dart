@@ -29,6 +29,7 @@ import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.history.navigator.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.navigator.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.access.history.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.donation.history.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.navigator.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
@@ -136,6 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
           const MyosotisConfigurationNavigator(), 3, null),
       MenuList('Report donazioni', Icons.dashboard,
           const MyosotisDonationHistoryNavigator(), 3, null),
+      MenuList('Report Accessi', Icons.dashboard,
+          const MyosotisAccessHistoryNavigator(), 3, null),
     ]),
     MenuList('Report', Icons.dashboard, null, 1, [
       MenuList('Report acquisti', Icons.dashboard, const CartHistoryNavigator(),

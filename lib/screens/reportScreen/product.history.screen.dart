@@ -217,7 +217,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               id: 'docNumberCart',
               title: const Text('#'),
               cellBuilder: (context, item, index) =>
-                  Text(item['docNumberCart'].toString().padLeft(6, '0')),
+                  SelectableText(item['docNumberCart'].toString().padLeft(6, '0')),
               size: const FixedColumnSize(100),
               sortable: true,
             ),
@@ -225,7 +225,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               id: 'dateCart',
               title: const Text('Data'),
               cellBuilder: (context, item, index) =>
-                  Text(item['dateCart'].toString()),
+                  SelectableText(item['dateCart'].toString()),
               size: const FixedColumnSize(200),
               sortable: true,
             ),
@@ -233,7 +233,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               id: 'nameProduct',
               title: const Text('Nome prodotto'),
               cellBuilder: (context, item, index) =>
-                  Text(item['nameProduct'].toString()),
+                  SelectableText(item['nameProduct'].toString()),
               size: const FixedColumnSize(300),
               sortable: true,
             ),
@@ -241,14 +241,14 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               id: 'productAttributeExplicit',
               title: const Text('Variante'),
               cellBuilder: (context, item, index) =>
-                  Text(item['productAttributeExplicit'].toString()),
+                  SelectableText(item['productAttributeExplicit'].toString()),
               size: const FixedColumnSize(300),
               sortable: false,
             ),
             TableColumn(
               id: 'quantityCartProduct',
               title: const Text('Q.ta'),
-              cellBuilder: (context, item, index) => Text(
+              cellBuilder: (context, item, index) => SelectableText(
                   (item['quantityCartProduct'] as ValueNotifier<int>)
                       .value
                       .toString()),
@@ -259,7 +259,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               id: 'priceCartProduct',
               title: const Text('Prezzo'),
               cellBuilder: (context, item, index) =>
-                  Text(item['priceCartProduct'].toStringAsFixed(2) + ' €'),
+                  SelectableText(item['priceCartProduct'].toStringAsFixed(2) + ' €'),
               size: const FixedColumnSize(150),
               sortable: true,
             ),
@@ -267,7 +267,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
               id: 'notesCartProduct',
               title: const Text('Note'),
               cellBuilder: (context, item, index) =>
-                  Text(item['notesCartProduct'].toString()),
+                  SelectableText(item['notesCartProduct'].toString()),
               size: const FixedColumnSize(350),
               sortable: true,
             ),

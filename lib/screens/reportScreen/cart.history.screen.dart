@@ -224,7 +224,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               id: 'docNumberCart',
               title: const Text('#'),
               cellBuilder: (context, item, index) =>
-                  Text(item['docNumberCart'].toString().padLeft(6, '0')),
+                  SelectableText(item['docNumberCart'].toString().padLeft(6, '0')),
               size: const FixedColumnSize(100),
               sortable: true,
             ),
@@ -232,7 +232,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               id: 'stateCartDescription',
               title: const Text('Stato carrello'),
               cellBuilder: (context, item, index) =>
-                  Text(item['stateCartDescription'].toString()),
+                  SelectableText(item['stateCartDescription'].toString()),
               size: const FixedColumnSize(200),
               sortable: true,
             ),
@@ -240,14 +240,14 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               id: 'paymentTypeCart',
               title: const Text('Tipo pagamento'),
               cellBuilder: (context, item, index) =>
-                  Text(item['paymentTypeCart'].toString().split('.').last),
+                  SelectableText(item['paymentTypeCart'].toString().split('.').last),
               size: const FixedColumnSize(150),
               sortable: true,
             ),
             TableColumn(
               id: 'dateCreatedCart',
               title: const Text('Data'),
-              cellBuilder: (context, item, index) => Text(
+              cellBuilder: (context, item, index) => SelectableText(
                   DateFormat("yyyy-MM-ddTHH:mm:ss")
                       .parse(item['dateCreatedCart'], true)
                       .toString()),
@@ -257,7 +257,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'totalPriceCart',
               title: const Text('Totale'),
-              cellBuilder: (context, item, index) => Text(
+              cellBuilder: (context, item, index) => SelectableText(
                   item['totalPriceCart'] != null
                       ? '${item['totalPriceCart'].toStringAsFixed(2)} €'
                       : ''),
@@ -267,7 +267,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'idStakeholder',
               title: const Text('# Stakeholder'),
-              cellBuilder: (context, item, index) => Text(
+              cellBuilder: (context, item, index) => SelectableText(
                   item['idStakeholder'] != null
                       ? item['idStakeholder'].toString()
                       : ''),
@@ -277,7 +277,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'denominationStakeholder',
               title: const Text('Stakeholder'),
-              cellBuilder: (context, item, index) => Text(
+              cellBuilder: (context, item, index) => SelectableText(
                   item['denominationStakeholder'] != null
                       ? item['denominationStakeholder'].toString()
                       : ''),

@@ -234,7 +234,7 @@ class _TransactionalSendingHistoryScreenState
                 id: 'transactionSendingModelNameComunication',
                 title: const Text('Transazionale'),
                 cellBuilder: (context, item, index) {
-                  return Text(item['transactionSendingModelNameComunication']);
+                  return SelectableText(item['transactionSendingModelNameComunication']);
                 },
                 size: const FixedColumnSize(200),
                 sortable: true,
@@ -243,7 +243,7 @@ class _TransactionalSendingHistoryScreenState
                 id: 'dateSend',
                 title: const Text('Data invio'),
                 cellBuilder: (context, item, index) => item['dateSend'] != null
-                    ? Text(item['dateSend'].toString())
+                    ? SelectableText(item['dateSend'].toString())
                     : Text(''),
                 size: const FixedColumnSize(200),
                 sortable: true,
@@ -252,7 +252,7 @@ class _TransactionalSendingHistoryScreenState
                 id: 'idStakeholder',
                 title: const Text('Id Stakeholder'),
                 cellBuilder: (context, item, index) =>
-                    Text(item['idStakeholder'].toString()),
+                    SelectableText(item['idStakeholder'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: false,
               ),
@@ -260,7 +260,7 @@ class _TransactionalSendingHistoryScreenState
                 id: 'denominationStakeholder',
                 title: const Text('Destinatario'),
                 cellBuilder: (context, item, index) =>
-                    Text(item['denominationStakeholder'].toString()),
+                    SelectableText(item['denominationStakeholder'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
@@ -268,7 +268,7 @@ class _TransactionalSendingHistoryScreenState
                 id: 'emailStakeholder',
                 title: const Text('Email destinatario'),
                 cellBuilder: (context, item, index) =>
-                    Text(item['emailStakeholder'].toString()),
+                    SelectableText(item['emailStakeholder'].toString()),
                 size: const FixedColumnSize(250),
                 sortable: true,
               ),
@@ -308,7 +308,7 @@ class _TransactionalSendingHistoryScreenState
                 title: const Text('Data ultimo aggiornamento'),
                 cellBuilder: (context, item, index) =>
                     item['dateLastUpdate'] != null
-                        ? Text(item['dateLastUpdate'].toString())
+                        ? SelectableText(item['dateLastUpdate'].toString())
                         : Text(''),
                 size: const FixedColumnSize(250),
                 sortable: false,

@@ -210,14 +210,14 @@ class _MyosotisDonationHistoryScreenState
               id: 'nameMyosotisConfiguration',
               title: const Text('Nome configurazione'),
               cellBuilder: (context, item, index) =>
-                  Text(item['nameMyosotisConfiguration']),
+                  SelectableText(item['nameMyosotisConfiguration']),
               size: const FixedColumnSize(300),
               sortable: true,
             ),
             TableColumn(
               id: 'name-surname-businessName',
               title: const Text('Nominativo'),
-              cellBuilder: (context, item, index) => Text(
+              cellBuilder: (context, item, index) => SelectableText(
                   (item['businessName'].toString()).isNotEmpty
                       ? item['businessName'].toString()
                       : item['name'].toString() +
@@ -229,7 +229,7 @@ class _MyosotisDonationHistoryScreenState
             TableColumn(
               id: 'cf',
               title: const Text('CF/PIVA'),
-              cellBuilder: (context, item, index) => Text(item['cf'] != null
+              cellBuilder: (context, item, index) => SelectableText(item['cf'] != null
                   ? item['cf'].toString()
                   : item['piva'].toString()),
               size: const FixedColumnSize(200),
@@ -238,7 +238,7 @@ class _MyosotisDonationHistoryScreenState
             TableColumn(
               id: 'email',
               title: const Text('Email'),
-              cellBuilder: (context, item, index) => Text(item['email']),
+              cellBuilder: (context, item, index) => SelectableText(item['email']),
               size: const FixedColumnSize(300),
               sortable: true,
             ),
@@ -246,7 +246,7 @@ class _MyosotisDonationHistoryScreenState
               id: 'dateDonation',
               title: const Text('Data donazione'),
               cellBuilder: (context, item, index) {
-                return Text(DateFormat('yyyy-MM-dd HH:mm:ss')
+                return SelectableText(DateFormat('yyyy-MM-dd HH:mm:ss')
                     .format(item['dateDonation']));
               },
               size: const FixedColumnSize(200),
@@ -256,7 +256,7 @@ class _MyosotisDonationHistoryScreenState
               id: 'amountDonation',
               title: const Text('Importo donazione'),
               cellBuilder: (context, item, index) =>
-                  Text(item['amountDonation'].toStringAsFixed(2)),
+                  SelectableText(item['amountDonation'].toStringAsFixed(2)),
               size: const FixedColumnSize(200),
               sortable: false,
             ),
@@ -264,7 +264,7 @@ class _MyosotisDonationHistoryScreenState
               id: 'externalIdPayment1',
               title: const Text('Id pagamento'),
               cellBuilder: (context, item, index) =>
-                  Text(item['externalIdPayment1']),
+                  SelectableText(item['externalIdPayment1']),
               size: const FixedColumnSize(200),
               sortable: true,
             ),
@@ -272,14 +272,14 @@ class _MyosotisDonationHistoryScreenState
               id: 'stateDescription',
               title: const Text('Stato'),
               cellBuilder: (context, item, index) =>
-                  Text(item['stateDescription'].toString()),
+                  SelectableText(item['stateDescription'].toString()),
               size: const FixedColumnSize(150),
               sortable: true,
             ),
             TableColumn(
               id: 'idGive',
               title: const Text('Id give'),
-              cellBuilder: (context, item, index) => Text(item['idGive']),
+              cellBuilder: (context, item, index) => SelectableText(item['idGive']),
               size: const FixedColumnSize(2000),
               sortable: true,
             ),
