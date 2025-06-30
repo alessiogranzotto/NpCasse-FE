@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.033';
+  static String version = '1.20.040';
 }
 
 // class AppRegex {
@@ -193,7 +193,7 @@ class AppStrings {
   static const formStartupMyosotisConfiguration =
       'Configurazione form di avvio';
   static const pleaseEnterFormStartupMyosotisConfiguration =
-      'Configurazione form di avvio';
+      'Inserire configurazione form di avvio';
 
   static const titleMyosotisConfiguration = 'Titolo form';
   static const pleaseEnterTitleMyosotisConfiguration = 'Inserire titolo form';
@@ -203,12 +203,14 @@ class AppStrings {
   static const showLogoConfiguration = 'Mostra logo associazione';
 
   static const textPrivacyMyosotisConfiguration = 'Testo privacy';
+  static const urlPrivacyMyosotisConfiguration = 'Url privacy';
   static const textNewsletterMyosotisConfiguration = 'Testo newletter';
 
   static const projectToHelp = 'Progetti da sostenere';
 
   static const showFreePriceConfiguration = 'Mostra importo libero';
 
+  static const buttonNoAmountsText = "Testo bottone form senza importi";
   static const showPrivacy = 'Mostra accetta privacy';
 
   static const isMandatoryPrivacy = "Accettazione privacy obbligatoria";
@@ -231,9 +233,20 @@ class AppStrings {
   static const availableTransactionalSending = "Transazionali disponibili";
   static const pleaseEnterIdTransactionalSending = "Inserire il transazionale";
 
-  static const idWAMessageMyosotisConfiguration = "Id messaggio WhatsApp";
-  static const pleaseEnterIdWAMessageMyosotisConfiguration =
-      "Inserire id messaggio WhatsApp";
+  static const waTemplateNameMyosotisConfiguration = "Nome template WhatsApp";
+  static const pleaseEnterWaTemplateNameMyosotisConfiguration =
+      "Inserire il nome template WhatsApp";
+
+  static const paymentManagerMyosotisConfiguration = "Piattaforma pagamenti";
+  static const pleaseEnterPaymentManagerMyosotisConfiguration =
+      "Inserire piattaforma pagamenti";
+
+  static const paymentManagerNotNeededMyosotisConfiguration =
+      "Nessun metodo di pagamento necessita l'indicazione della piattaforma di pagamento";
+
+  static const tyEndMessageConfiguration = "Messaggio di ringraziamento finale";
+  static const pleaseEntertTyEndMessageConfiguration =
+      "Inserire il messaggio di ringraziamento finale";
 
   //COMUNICAZIONI
   static const nameComunicationSending = "Nome comunicazione";

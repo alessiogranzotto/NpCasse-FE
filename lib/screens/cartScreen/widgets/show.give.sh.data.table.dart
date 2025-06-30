@@ -25,6 +25,7 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
   final PagedDataTableController<String, Map<String, dynamic>> tableController =
       PagedDataTableController();
   int totalCount = 0;
+  double totalAmount = 0;
   @override
   void initState() {
     super.initState();
@@ -85,6 +86,7 @@ class _ShowGiveShDataTableState extends State<ShowGiveShDataTable> {
                 fetchData(pageSize, sortModel, filterModel, pageToken),
             footer: CustomTableFooter<String, Map<String, dynamic>>(
               totalItems: totalCount,
+              totalAmount: totalAmount,
               controller: tableController,
             ),
             columns: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
@@ -8,8 +9,6 @@ import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
-import 'package:np_casse/core/api/transactional.sending.api.dart';
-import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -19,12 +18,13 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:uiblock/uiblock.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyosotisConfigurationDetailScreen extends StatefulWidget {
   final MyosotisConfigurationModel myosotisConfiguration;
+
   const MyosotisConfigurationDetailScreen(
       {super.key, required this.myosotisConfiguration});
-
   @override
   State<MyosotisConfigurationDetailScreen> createState() =>
       _MyosotisConfigurationDetailState();
@@ -36,11 +36,194 @@ class _MyosotisConfigurationDetailState
   final FocusNode chipFocusNode = FocusNode();
   final ValueNotifier<bool> createMyosotisConfigurationValidNotifier =
       ValueNotifier(false);
-
+  ValueNotifier<bool> isButtonNoAmountTextEnabledNotifier =
+      ValueNotifier(false);
   bool isEdit = false;
   bool isLoading = true;
   bool isLoadingDetailEmpty = true;
   bool isLoadingDetail = true;
+
+  void _showColorPicker() {
+    Color tempColor = buttonColorNotifier.value; // copia temporanea del colore
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Scegli un colore'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: tempColor,
+              onColorChanged: (color) {
+                tempColor = color; // aggiorna la copia temporanea
+              },
+              pickerAreaBorderRadius:
+                  const BorderRadius.all(Radius.circular(12)),
+              paletteType: PaletteType.hsl,
+              labelTypes: [
+                ColorLabelType.rgb,
+                ColorLabelType.hsv,
+                ColorLabelType.hex,
+              ],
+              displayThumbColor: true,
+              pickerAreaHeightPercent: 0.7,
+              colorPickerWidth: 300,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              child: const Text('Annulla'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.grey[300],
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // chiude senza salvare
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Conferma'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                disabledForegroundColor: Colors.grey[600],
+              ),
+              onPressed: () {
+                buttonColorNotifier.value =
+                    tempColor; // salva il colore selezionato
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showFontPicker() {
+    final List<String> fontNames = GoogleFonts.asMap().keys.toList()..sort();
+    final TextEditingController controller = TextEditingController();
+    String? tempFont;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Scegli un Google Font'),
+              content: SizedBox(
+                height: 200,
+                width: 300,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Autocomplete<String>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text.isEmpty) {
+                          return const Iterable<String>.empty();
+                        }
+                        return fontNames.where((font) => font
+                            .toLowerCase()
+                            .contains(textEditingValue.text.toLowerCase()));
+                      },
+                      onSelected: (String font) {
+                        controller.text = font;
+                        setState(() => tempFont = font);
+                      },
+                      optionsViewBuilder: (context, onSelected, options) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: SizedBox(
+                            width: 220,
+                            child: Material(
+                              elevation: 4.0,
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: options.length,
+                                itemBuilder: (context, index) {
+                                  final font = options.elementAt(index);
+                                  return ListTile(
+                                    title: Text(font),
+                                    onTap: () => onSelected(font),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      fieldViewBuilder: (context, textEditingController,
+                          focusNode, onFieldSubmitted) {
+                        controller.text = textEditingController.text;
+                        return TextField(
+                          controller: textEditingController,
+                          focusNode: focusNode,
+                          decoration: const InputDecoration(
+                            hintText: 'Selezionare un font...',
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.grey), // bordo quando non focus
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.blue,
+                                  width: 2), // bordo quando focus
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (fontNames.contains(value)) {
+                              setState(() => tempFont = value);
+                            } else {
+                              setState(() => tempFont = null);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    if (tempFont != null)
+                      Text(
+                        'The quick brown fox jumps over the lazy dog',
+                        style: GoogleFonts.getFont(tempFont!, fontSize: 20),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.grey[300],
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Annulla'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey[300],
+                    disabledForegroundColor: Colors.grey[600],
+                  ),
+                  onPressed: tempFont != null
+                      ? () {
+                          formFontNotifier.value = tempFont!;
+                          Navigator.of(context).pop();
+                        }
+                      : null,
+                  child: const Text('Conferma'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   List<String> idGiveFromProjectOrFixedOption = [
     'Id Give da prodotti',
@@ -81,6 +264,13 @@ class _MyosotisConfigurationDetailState
   //FORM STARTUP CONFIGURATION-VALUE
   late String? typeFormStartup;
 
+  //BUTTON COLOR CONFIGURATION-VALUE
+  late ValueNotifier<Color> buttonColorNotifier =
+      ValueNotifier<Color>(Colors.red);
+
+  //FONT STYLE CONFIGURATION-VALUE
+  late ValueNotifier<String> formFontNotifier = ValueNotifier<String>('Roboto');
+
   //FORM STARTUP CONFIGURATION-AVAILABLE VALUE
   late List<String> preetablishedFormStartup = [];
 
@@ -89,6 +279,10 @@ class _MyosotisConfigurationDetailState
 
   //SHOW FREE PRICE CONFIGURATION
   final ValueNotifier<bool> showFreePriceNotifier = ValueNotifier<bool>(false);
+
+  //BUTTON TEXT NO AMOUNTS
+  late final TextEditingController
+      buttonNoAmountsTextMyosotisConfigurationController;
 
   //ID GIVE FROM PROJECT OR FIXED
   final ValueNotifier<String> idGiveFromProjectOrFixedValue =
@@ -119,6 +313,9 @@ class _MyosotisConfigurationDetailState
 
   //TEXT PRIVACY CONFIGURATION
   late final TextEditingController textPrivacyMyosotisConfigurationController;
+
+  //URL PRIVACY CONFIGURATION
+  late final TextEditingController urlPrivacyMyosotisConfigurationController;
 
   //MANDATORY PRIVACY CONFIGURATION//TEXT PRIVACY CONFIGURATION
   final ValueNotifier<bool> isMandatoryPrivacyNotifier =
@@ -163,6 +360,12 @@ class _MyosotisConfigurationDetailState
   final paymentMethodWebController = MultiSelectController<String>();
   List<DropdownItem<String>> availablePaymentMethodWeb = [];
 
+  //PAYMENT MANAGER CONFIGURATION-AVAILABLE VALUE
+  late List<String> availablePaymentManager = [];
+
+  //PAYMENT MANAGER APP CONFIGURATION
+  late String? paymentManager;
+
   //THANK YOU CONFIGURATION-VALUE
   final ValueNotifier<String> thankYouMethod = ValueNotifier<String>('');
 
@@ -176,7 +379,10 @@ class _MyosotisConfigurationDetailState
   late List<TransactionalSendingShort> availableTransactionalSending = [];
 
   //ID WA MESSAGE TO SEND
-  late TextEditingController idWAMessageToSendController;
+  late TextEditingController waTemplateNameController;
+
+  //THANK YOU END MESSAGE
+  late final TextEditingController tyEndMessageMyosotisConfigurationController;
 
   void initializeControllers() {
     nameMyosotisConfigurationController = TextEditingController()
@@ -187,11 +393,15 @@ class _MyosotisConfigurationDetailState
       ..addListener(dataControllerListener);
     subtitleMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
+    buttonNoAmountsTextMyosotisConfigurationController = TextEditingController()
+      ..addListener(dataControllerListener);
     causalDonationTextMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
     idFormGiveConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
     textPrivacyMyosotisConfigurationController = TextEditingController()
+      ..addListener(dataControllerListener);
+    urlPrivacyMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
     textNewsletterMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
@@ -204,7 +414,9 @@ class _MyosotisConfigurationDetailState
     paymentMethodAppController.addListener(dataControllerListener);
     paymentMethodWebController.addListener(dataControllerListener);
 
-    idWAMessageToSendController = TextEditingController()
+    waTemplateNameController = TextEditingController()
+      ..addListener(dataControllerListener);
+    tyEndMessageMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
   }
 
@@ -213,9 +425,11 @@ class _MyosotisConfigurationDetailState
     descriptionMyosotisConfigurationController.dispose();
     titleMyosotisConfigurationController.dispose();
     subtitleMyosotisConfigurationController.dispose();
+    buttonNoAmountsTextMyosotisConfigurationController.dispose();
     causalDonationTextMyosotisConfigurationController.dispose();
     idFormGiveConfigurationController.dispose();
     textPrivacyMyosotisConfigurationController.dispose();
+    urlPrivacyMyosotisConfigurationController.dispose();
     textNewsletterMyosotisConfigurationController.dispose();
     visiblePersonalFormFieldController.dispose();
     mandatoryPersonalFormFieldController.dispose();
@@ -230,7 +444,8 @@ class _MyosotisConfigurationDetailState
     isMandatoryPrivacyNotifier.dispose();
     showCompanyFormNotifier.dispose();
 
-    idWAMessageToSendController.dispose();
+    waTemplateNameController.dispose();
+    tyEndMessageMyosotisConfigurationController.dispose();
   }
 
   void dataControllerListener() {}
@@ -322,6 +537,14 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
         .typeFormStartup = myosotisConfigurationDetailModel.typeFormStartup;
 
+    //BUTTON COLOR CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.buttonColor =
+        myosotisConfigurationDetailModel.buttonColor;
+
+    //FONT STYLE CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.formFont =
+        myosotisConfigurationDetailModel.formFont;
+
     //PREESTABLISHED AMOUNTS CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
             .preestablishedAmount =
@@ -330,6 +553,11 @@ class _MyosotisConfigurationDetailState
     //SHOW FREE PRICE CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
         .showFreePrice = myosotisConfigurationDetailModel.showFreePrice;
+
+    //BUTTON TEXT NO AMOUNTS CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .buttonNoAmountsText =
+        myosotisConfigurationDetailModel.buttonNoAmountsText;
 
     // //SHOW CAUSAL DONATION
     // widget.myosotisConfiguration.myosotisConfigurationDetailModel
@@ -366,6 +594,10 @@ class _MyosotisConfigurationDetailState
     //TEXT PRIVACY CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.textPrivacy =
         myosotisConfigurationDetailModel.textPrivacy;
+
+    //URL PRIVACY CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.urlPrivacy =
+        myosotisConfigurationDetailModel.urlPrivacy;
 
     //MANDATORY PRIVACY CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
@@ -419,6 +651,10 @@ class _MyosotisConfigurationDetailState
             .preestablishedPaymentMethodWeb =
         myosotisConfigurationDetailModel.preestablishedPaymentMethodWeb;
 
+    //PAYMENT MANAGER CONFIGURATION-VALUE
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+        .paymentManager = myosotisConfigurationDetailModel.paymentManager;
+
     //THANK YOU CONFIGURATION-VALUE
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
         .thankYouMethod = myosotisConfigurationDetailModel.thankYouMethod;
@@ -430,7 +666,11 @@ class _MyosotisConfigurationDetailState
 
     //ID WA MESSAGE TO SEND VALUE
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
-        .idWaMessageToSend = myosotisConfigurationDetailModel.idWaMessageToSend;
+        .waTemplateName = myosotisConfigurationDetailModel.waTemplateName;
+
+    //THANK YOU END MESSAGE CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel.tyEndMessage =
+        myosotisConfigurationDetailModel.tyEndMessage;
   }
 
   setInitialData(
@@ -479,6 +719,28 @@ class _MyosotisConfigurationDetailState
     typeFormStartup = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.typeFormStartup;
 
+    //BUTTON COLOR CONFIGURATION-VALUE
+    int rawColor = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.buttonColor;
+    Color colorToUse;
+    if (isValidColor(rawColor)) {
+      colorToUse = Color(rawColor);
+    } else {
+      colorToUse = Colors.red; // Colore di default se non valido
+    }
+    buttonColorNotifier.value = colorToUse;
+
+    //FONT STYLE CONFIGURATION-VALUE
+    String rawFont =
+        widget.myosotisConfiguration.myosotisConfigurationDetailModel.formFont;
+    String fontToUse;
+    if (isValidFont(rawFont)) {
+      fontToUse = rawFont;
+    } else {
+      fontToUse = 'Roboto'; // Colore di default se non valido
+    }
+    formFontNotifier.value = fontToUse;
+
     //FORM STARTUP CONFIGURATION-AVAILABLE VALUE
     preetablishedFormStartup =
         myosotisConfigurationDetailEmpty.availableFormStartup;
@@ -490,6 +752,12 @@ class _MyosotisConfigurationDetailState
     //SHOW FREE PRICE CONFIGURATION
     showFreePriceNotifier.value = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.showFreePrice;
+
+    //BUTTON TEXT NO AMOUNTS CONFIGURATION
+    buttonNoAmountsTextMyosotisConfigurationController.text = widget
+        .myosotisConfiguration
+        .myosotisConfigurationDetailModel
+        .buttonNoAmountsText;
 
     // //SHOW CAUSAL DONATION
     // showCausalDonationNotifier.value = widget.myosotisConfiguration
@@ -535,6 +803,10 @@ class _MyosotisConfigurationDetailState
     //TEXT PRIVACY CONFIGURATION
     textPrivacyMyosotisConfigurationController.text = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.textPrivacy;
+
+    //URL PRIVACY CONFIGURATION
+    urlPrivacyMyosotisConfigurationController.text = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.urlPrivacy;
 
     //MANDATORY PRIVACY CONFIGURATION
     isMandatoryPrivacyNotifier.value = widget.myosotisConfiguration
@@ -674,6 +946,14 @@ class _MyosotisConfigurationDetailState
       );
     }
 
+    //PAYMENT MANAGER CONFIGURATION-AVAILABLE VALUE
+    availablePaymentManager =
+        myosotisConfigurationDetailEmpty.availablePaymentManager;
+
+    //PAYMENT MANAGER CONFIGURATION-VALUE
+    paymentManager = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.paymentManager;
+
     //THANK YOU CONFIGURATION-VALUE
     thankYouMethod.value = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.thankYouMethod;
@@ -694,14 +974,32 @@ class _MyosotisConfigurationDetailState
         myosotisConfigurationDetailEmpty.availableTransactionalSending;
 
     //ID WA MESSAGE TO SEND
-    idWAMessageToSendController.text = widget.myosotisConfiguration
-        .myosotisConfigurationDetailModel.idWaMessageToSend
-        .toString();
+    waTemplateNameController.text = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.waTemplateName;
+
+    //THANK YOU END MESSAGE CONFIGURATION-VALUE
+    tyEndMessageMyosotisConfigurationController.text = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.tyEndMessage;
+
     if (isEdit) {
       //MASTER
 
       //DETAIL
     } else {}
+
+    isButtonNoAmountTextEnabledNotifier = ValueNotifier<bool>(
+        !showFreePriceNotifier.value && preetablishedAmounts.isEmpty);
+    print(isButtonNoAmountTextEnabledNotifier.value);
+  }
+
+  void updateButtonNoAmountTextEnabledNotifier() {
+    final shouldEnable =
+        !showFreePriceNotifier.value && preetablishedAmounts.isEmpty;
+    isButtonNoAmountTextEnabledNotifier.value = shouldEnable;
+    if (!shouldEnable) {
+      buttonNoAmountsTextMyosotisConfigurationController.text = "";
+    }
+    print(isButtonNoAmountTextEnabledNotifier.value);
   }
 
   void refreshAvailableMandatoryPersonalFormField(List<String> selectedItems) {
@@ -764,6 +1062,27 @@ class _MyosotisConfigurationDetailState
     }
   }
 
+// Funzione helper per verificare se il colore è valido
+  bool isValidColor(int colorValue) {
+    // Per esempio, controlla che non sia null e che rientri nell'intervallo dei colori ARGB validi
+    return colorValue != null &&
+        colorValue > 0x00000000 &&
+        colorValue <= 0xFFFFFFFF;
+  }
+
+// Funzione helper per verificare se il font è valido
+  bool isValidFont(String fontValue) {
+    try {
+      // Proviamo a ottenere il font
+      final textStyle = GoogleFonts.getFont(fontValue);
+      // Se la chiamata va a buon fine, il font è valido
+      return true;
+    } catch (e) {
+      // Se c'è un errore, significa che il font non è valido
+      return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -818,6 +1137,7 @@ class _MyosotisConfigurationDetailState
         enabledUrlMyosotisConfiguration.remove(topping);
       } else if (area == 'preetablishedAmounts') {
         preetablishedAmounts.remove(topping);
+        updateButtonNoAmountTextEnabledNotifier();
       } else if (area == 'customIdGive') {
         customIdGive.remove(topping);
       }
@@ -966,7 +1286,7 @@ class _MyosotisConfigurationDetailState
                               keyboardType: TextInputType.name,
                               textInputAction: TextInputAction.next,
                               onChanged: (_) => {},
-                              //                                  _formKey.currentState?.validate(),
+                              //_formKey.currentState?.validate(),
                               validator: (value) {
                                 return value!.isNotEmpty
                                     ? null
@@ -1222,23 +1542,129 @@ class _MyosotisConfigurationDetailState
                           //           .pleaseEnterTitleMyosotisConfiguration;
                           // },
                           ),
-                      CustomDropDownButtonFormField(
-                        enabled: true,
-                        actualValue: typeFormStartup,
-                        labelText: AppStrings.formStartupMyosotisConfiguration,
-                        listOfValue: preetablishedFormStartup
-                            .map((value) => DropdownMenuItem(
-                                child: Text(value), value: value))
-                            .toList(),
-                        onItemChanged: (value) {
-                          typeFormStartup = value;
-                        },
-                        validator: (value) {
-                          return value!.isNotEmpty
-                              ? null
-                              : AppStrings
-                                  .pleaseEnterFormStartupMyosotisConfiguration;
-                        },
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomDropDownButtonFormField(
+                              enabled: true,
+                              actualValue: typeFormStartup,
+                              labelText:
+                                  AppStrings.formStartupMyosotisConfiguration,
+                              listOfValue: preetablishedFormStartup
+                                  .map((value) => DropdownMenuItem(
+                                      child: Text(value), value: value))
+                                  .toList(),
+                              onItemChanged: (value) {
+                                typeFormStartup = value;
+                              },
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings
+                                        .pleaseEnterFormStartupMyosotisConfiguration;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: 200,
+                            child: ValueListenableBuilder<Color>(
+                              valueListenable: buttonColorNotifier,
+                              child: Text(
+                                'Colore bottoni: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(color: Colors.blueGrey),
+                              ),
+                              builder: (BuildContext context, Color value,
+                                  Widget? child) {
+                                return InkWell(
+                                  onTap: _showColorPicker,
+                                  child: Tooltip(
+                                    message: 'Seleziona un colore',
+                                    child: Container(
+                                      // opzionale: margine esterno
+                                      padding:
+                                          EdgeInsets.all(8), // spazio interno
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .white, // oppure Theme.of(context).cardColor
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(width: 10),
+                                          child!, // il Text passato come child
+                                          SizedBox(width: 20),
+                                          Container(
+                                            width: 32,
+                                            height: 32,
+                                            color: value,
+                                          ),
+                                          SizedBox(width: 20),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          SizedBox(
+                            width: 250,
+                            child: ValueListenableBuilder<String?>(
+                              valueListenable: formFontNotifier,
+                              builder: (BuildContext context, String? value,
+                                  Widget? child) {
+                                return InkWell(
+                                  onTap: _showFontPicker,
+                                  child: Tooltip(
+                                    message: 'Seleziona un font',
+                                    child: Container(
+                                      height: 48,
+                                      // opzionale: margine esterno
+                                      padding:
+                                          EdgeInsets.all(8), // spazio interno
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .white, // oppure Theme.of(context).cardColor
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: Colors.grey),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Font: ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium!
+                                                .copyWith(
+                                                    color: Colors.blueGrey),
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            ' ${value}',
+                                            style: GoogleFonts.getFont(value!),
+                                          ),
+                                          SizedBox(width: 20),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                        ],
                       ),
                       Row(
                         children: [
@@ -1251,10 +1677,14 @@ class _MyosotisConfigurationDetailState
                                 label: AppStrings.preestablishedAmount,
                                 decoration: const InputDecoration(),
                                 strutStyle: const StrutStyle(fontSize: 12),
-                                onChanged: (data) =>
-                                    onChanged(data, 'preestablishedAmount'),
-                                onSubmitted: (data) =>
-                                    onSubmitted(data, 'preestablishedAmount'),
+                                onChanged: (data) {
+                                  onChanged(data, 'preestablishedAmount');
+                                  updateButtonNoAmountTextEnabledNotifier();
+                                },
+                                onSubmitted: (data) {
+                                  onSubmitted(data, 'preestablishedAmount');
+                                  updateButtonNoAmountTextEnabledNotifier();
+                                },
                                 chipBuilder: chipBuilderPreetablishedAmounts,
                               ),
                             ),
@@ -1273,10 +1703,32 @@ class _MyosotisConfigurationDetailState
                                       onChanged: (bool? value) {
                                         showFreePriceNotifier.value =
                                             value ?? false;
+                                        updateButtonNoAmountTextEnabledNotifier();
                                       },
                                       controlAffinity:
                                           ListTileControlAffinity.leading);
                                 }),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable:
+                                  isButtonNoAmountTextEnabledNotifier,
+                              builder: (context, isEnabled, _) {
+                                return CustomTextFormField(
+                                  enabled: isEnabled,
+                                  controller:
+                                      buttonNoAmountsTextMyosotisConfigurationController,
+                                  labelText: AppStrings.buttonNoAmountsText,
+                                  keyboardType: TextInputType.name,
+                                  textInputAction: TextInputAction.next,
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -1289,7 +1741,7 @@ class _MyosotisConfigurationDetailState
                               padding: EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Column(
                                 children: [
@@ -1452,9 +1904,10 @@ class _MyosotisConfigurationDetailState
                                                                       textInputAction:
                                                                           TextInputAction
                                                                               .next,
-                                                                      onChanged: (_) => _formKey
-                                                                          .currentState
-                                                                          ?.validate(),
+                                                                      // onChanged: (_) =>
+                                                                      // _formKey
+                                                                      //     .currentState
+                                                                      //     ?.validate(),
                                                                       // validator: (value) {
                                                                       //   return value!.isNotEmpty
                                                                       //       ? null
@@ -1651,13 +2104,33 @@ class _MyosotisConfigurationDetailState
                                 }),
                           ),
                           Expanded(
-                            flex: 3,
+                            flex: 2,
                             child: CustomTextFormField(
                                 enabled: true,
                                 controller:
                                     textPrivacyMyosotisConfigurationController,
                                 labelText:
                                     AppStrings.textPrivacyMyosotisConfiguration,
+                                keyboardType: TextInputType.name,
+                                textInputAction: TextInputAction.next,
+                                onChanged: (_) => {}
+                                // _formKey.currentState?.validate(),
+                                // validator: (value) {
+                                //   return value!.isNotEmpty
+                                //       ? null
+                                //       : AppStrings
+                                //           .pleaseEnterTextPrivacyMyosotisConfiguration;
+                                // },
+                                ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: CustomTextFormField(
+                                enabled: true,
+                                controller:
+                                    urlPrivacyMyosotisConfigurationController,
+                                labelText:
+                                    AppStrings.urlPrivacyMyosotisConfiguration,
                                 keyboardType: TextInputType.name,
                                 textInputAction: TextInputAction.next,
                                 onChanged: (_) => {}
@@ -1713,7 +2186,7 @@ class _MyosotisConfigurationDetailState
                                 }),
                           ),
                           Expanded(
-                            flex: 3,
+                            flex: 4,
                             child: CustomTextFormField(
                                 enabled: true,
                                 controller:
@@ -1763,7 +2236,7 @@ class _MyosotisConfigurationDetailState
                           chipDecoration: ChipDecoration(
                             labelStyle: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             border: Border.all(width: 1.5),
                             backgroundColor: Colors.transparent,
                             wrap: true,
@@ -1822,7 +2295,7 @@ class _MyosotisConfigurationDetailState
                           chipDecoration: ChipDecoration(
                             labelStyle: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             border: Border.all(width: 1.5),
                             backgroundColor: Colors.transparent,
                             wrap: true,
@@ -1902,7 +2375,7 @@ class _MyosotisConfigurationDetailState
                           chipDecoration: ChipDecoration(
                             labelStyle: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             border: Border.all(width: 1.5),
                             backgroundColor: Colors.transparent,
                             wrap: true,
@@ -1961,7 +2434,7 @@ class _MyosotisConfigurationDetailState
                           chipDecoration: ChipDecoration(
                             labelStyle: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             border: Border.all(width: 1.5),
                             backgroundColor: Colors.transparent,
                             wrap: true,
@@ -2018,7 +2491,7 @@ class _MyosotisConfigurationDetailState
                           chipDecoration: ChipDecoration(
                             labelStyle: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             border: Border.all(width: 1.5),
                             backgroundColor: Colors.transparent,
                             wrap: true,
@@ -2056,12 +2529,12 @@ class _MyosotisConfigurationDetailState
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Inserire modalità di pagamento APP';
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Inserire modalità di pagamento APP';
+                          //   }
+                          //   return null;
+                          // },
                           onSelectionChange: (selectedItems) {},
                         ),
                       ),
@@ -2075,7 +2548,7 @@ class _MyosotisConfigurationDetailState
                           chipDecoration: ChipDecoration(
                             labelStyle: TextStyle(
                                 fontSize: 14, fontWeight: FontWeight.w600),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             border: Border.all(width: 1.5),
                             backgroundColor: Colors.transparent,
                             wrap: true,
@@ -2113,14 +2586,87 @@ class _MyosotisConfigurationDetailState
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Inserire modalità di pagamento Web';
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Inserire modalità di pagamento Web';
+                          //   }
+                          //   return null;
+                          // },
                           onSelectionChange: (selectedItems) {},
                         ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomDropDownButtonFormField(
+                              enabled: true,
+                              actualValue: paymentManager,
+                              labelText: AppStrings
+                                  .paymentManagerMyosotisConfiguration,
+                              listOfValue: availablePaymentManager
+                                  .map((value) => DropdownMenuItem(
+                                      child: Text(value), value: value))
+                                  .toList(),
+                              onItemChanged: (value) {
+                                paymentManager = value;
+                              },
+                              validator: (value) {
+                                bool managerNotNeeded = true;
+                                var cAppMethod = paymentMethodAppController
+                                    .selectedItems
+                                    .map((e) => e.value)
+                                    .toList();
+                                if (cAppMethod.contains("POS") ||
+                                    cAppMethod.contains("NFC")) {
+                                  managerNotNeeded = false;
+                                  return value!.isNotEmpty
+                                      ? null
+                                      : AppStrings
+                                          .pleaseEnterPaymentManagerMyosotisConfiguration;
+                                }
+                                var cWebMethod = paymentMethodWebController
+                                    .selectedItems
+                                    .map((e) => e.value)
+                                    .toList();
+                                if (cWebMethod.contains("Carta di credito")) {
+                                  managerNotNeeded = false;
+                                  return value!.isNotEmpty
+                                      ? null
+                                      : AppStrings
+                                          .pleaseEnterPaymentManagerMyosotisConfiguration;
+                                }
+                                if (managerNotNeeded) {
+                                  return value!.isNotEmpty
+                                      ? AppStrings
+                                          .paymentManagerNotNeededMyosotisConfiguration
+                                      : null;
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextFormField(
+                              enabled: true,
+                              controller:
+                                  tyEndMessageMyosotisConfigurationController,
+                              labelText: AppStrings.tyEndMessageConfiguration,
+                              keyboardType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) => {},
+                              // _formKey.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings
+                                        .pleaseEntertTyEndMessageConfiguration;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       Row(
                         children: [
@@ -2140,13 +2686,13 @@ class _MyosotisConfigurationDetailState
                                 if (thankYouMethod.value ==
                                     availableThankYouMethod[0]) {
                                   idTransactionalSending = 0;
-                                  idWAMessageToSendController.text = "";
+                                  waTemplateNameController.text = "";
                                 } else if (thankYouMethod.value ==
                                     availableThankYouMethod[1]) {
                                   idTransactionalSending = 0;
                                 } else if (thankYouMethod.value ==
                                     availableThankYouMethod[2]) {
-                                  idWAMessageToSendController.text = "";
+                                  waTemplateNameController.text = "";
                                 }
                               },
                             ),
@@ -2222,15 +2768,9 @@ class _MyosotisConfigurationDetailState
                                               : CustomTextFormField(
                                                   enabled: true,
                                                   controller:
-                                                      idWAMessageToSendController,
+                                                      waTemplateNameController,
                                                   labelText: AppStrings
-                                                      .idWAMessageMyosotisConfiguration,
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  inputFormatter: [
-                                                    FilteringTextInputFormatter
-                                                        .digitsOnly, // Allow only digits
-                                                  ],
+                                                      .waTemplateNameMyosotisConfiguration,
                                                   textInputAction:
                                                       TextInputAction.next,
                                                   onChanged: (_) => {},
@@ -2241,7 +2781,7 @@ class _MyosotisConfigurationDetailState
                                                       return (value!.isNotEmpty)
                                                           ? null
                                                           : AppStrings
-                                                              .pleaseEnterIdWAMessageMyosotisConfiguration;
+                                                              .pleaseEnterWaTemplateNameMyosotisConfiguration;
                                                     } else {
                                                       return null;
                                                     }
@@ -2267,69 +2807,72 @@ class _MyosotisConfigurationDetailState
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   UIBlock.block(context);
-                  MyosotisConfigurationDetailModel
-                      myosotisConfigurationDetailModel =
+                  MyosotisConfigurationDetailModel myosotisConfigurationDetailModel =
                       MyosotisConfigurationDetailModel(
-                    typeFormStartup: typeFormStartup!,
-                    showLogo: showLogoNotifier.value,
-                    bigImageString: bigImageString,
-                    smallImageString: smallImageString,
-                    title: titleMyosotisConfigurationController.text,
-                    subtitle: subtitleMyosotisConfigurationController.text,
-                    preestablishedAmount: preetablishedAmounts,
-                    showFreePrice: showFreePriceNotifier.value,
-                    showPrivacy: showPrivacyNotifier.value,
-                    textPrivacy:
-                        textPrivacyMyosotisConfigurationController.text,
-                    isMandatoryPrivacy: isMandatoryPrivacyNotifier.value,
-                    showNewsletter: showNewsletterNotifier.value,
-                    textNewsletter:
-                        textNewsletterMyosotisConfigurationController.text,
-                    isMandatoryNewsletter: isMandatoryNewsletterNotifier.value,
-                    visiblePersonalFormField: visiblePersonalFormFieldController
-                        .selectedItems
-                        .map((e) => e.value)
-                        .toList(),
-                    mandatoryPersonalFormField:
-                        mandatoryPersonalFormFieldController.selectedItems
-                            .map((e) => e.value)
-                            .toList(),
-                    showCompanyForm: showCompanyFormNotifier.value,
-                    visibleCompanyFormField: visibleCompanyFormFieldController
-                        .selectedItems
-                        .map((e) => e.value)
-                        .toList(),
-                    mandatoryCompanyFormField:
-                        mandatoryCompanyFormFieldController.selectedItems
-                            .map((e) => e.value)
-                            .toList(),
-                    preestablishedPaymentMethodApp: paymentMethodAppController
-                        .selectedItems
-                        .map((e) => e.value)
-                        .toList(),
-                    preestablishedPaymentMethodWeb: paymentMethodWebController
-                        .selectedItems
-                        .map((e) => e.value)
-                        .toList(),
-                    // showCausalDonation: showCausalDonationNotifier.value,
-                    causalDonationText:
-                        causalDonationTextMyosotisConfigurationController.text,
-                    idSubCategoryCausalDonation: idSubCategoryCausalDonation,
+                          typeFormStartup: typeFormStartup!,
+                          buttonColor: buttonColorNotifier.value.toARGB32(),
+                          formFont: formFontNotifier.value,
+                          showLogo: showLogoNotifier.value,
+                          bigImageString: bigImageString,
+                          smallImageString: smallImageString,
+                          title: titleMyosotisConfigurationController.text,
+                          subtitle:
+                              subtitleMyosotisConfigurationController.text,
+                          preestablishedAmount: preetablishedAmounts,
+                          showFreePrice: showFreePriceNotifier.value,
+                          buttonNoAmountsText:
+                              buttonNoAmountsTextMyosotisConfigurationController
+                                  .text,
+                          showPrivacy: showPrivacyNotifier.value,
+                          textPrivacy:
+                              textPrivacyMyosotisConfigurationController.text,
+                          urlPrivacy:
+                              urlPrivacyMyosotisConfigurationController.text,
+                          isMandatoryPrivacy: isMandatoryPrivacyNotifier.value,
+                          showNewsletter: showNewsletterNotifier.value,
+                          textNewsletter:
+                              textNewsletterMyosotisConfigurationController
+                                  .text,
+                          isMandatoryNewsletter:
+                              isMandatoryNewsletterNotifier.value,
+                          visiblePersonalFormField:
+                              visiblePersonalFormFieldController.selectedItems
+                                  .map((e) => e.value)
+                                  .toList(),
+                          mandatoryPersonalFormField:
+                              mandatoryPersonalFormFieldController.selectedItems
+                                  .map((e) => e.value)
+                                  .toList(),
+                          showCompanyForm: showCompanyFormNotifier.value,
+                          visibleCompanyFormField:
+                              visibleCompanyFormFieldController.selectedItems
+                                  .map((e) => e.value)
+                                  .toList(),
+                          mandatoryCompanyFormField:
+                              mandatoryCompanyFormFieldController.selectedItems
+                                  .map((e) => e.value)
+                                  .toList(),
+                          preestablishedPaymentMethodApp:
+                              paymentMethodAppController.selectedItems
+                                  .map((e) => e.value)
+                                  .toList(),
+                          preestablishedPaymentMethodWeb:
+                              paymentMethodWebController.selectedItems.map((e) => e.value).toList(),
+                          paymentManager: paymentManager!,
+                          // showCausalDonation: showCausalDonationNotifier.value,
+                          causalDonationText: causalDonationTextMyosotisConfigurationController.text,
+                          idSubCategoryCausalDonation: idSubCategoryCausalDonation,
 
-                    //
-                    idGiveFromProjectOrFixedValue:
-                        idGiveFromProjectOrFixedValue.value,
-                    customIdGive: customIdGive,
-                    idFormGive:
-                        int.parse(idFormGiveConfigurationController.text),
-                    thankYouMethod: thankYouMethod.value,
-                    idTransactionalSending: idTransactionalSending,
-                    idWaMessageToSend: int.parse(
-                        idWAMessageToSendController.text.isEmpty
-                            ? "0"
-                            : idWAMessageToSendController.text),
-                    //
-                  );
+                          //
+                          idGiveFromProjectOrFixedValue: idGiveFromProjectOrFixedValue.value,
+                          customIdGive: customIdGive,
+                          idFormGive: int.parse(idFormGiveConfigurationController.text),
+                          thankYouMethod: thankYouMethod.value,
+                          idTransactionalSending: idTransactionalSending,
+                          waTemplateName: waTemplateNameController.text,
+                          tyEndMessage: tyEndMessageMyosotisConfigurationController.text
+                          //
+                          );
                   MyosotisConfigurationModel myosotisConfigurationModel =
                       MyosotisConfigurationModel(
                           idMyosotisConfiguration: widget

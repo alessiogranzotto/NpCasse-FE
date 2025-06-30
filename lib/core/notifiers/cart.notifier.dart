@@ -93,6 +93,10 @@ class CartNotifier with ChangeNotifier {
           //return projectDetail;
           //notifyListeners();
         }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
       }
       return isOk;
     } on SocketException catch (_) {

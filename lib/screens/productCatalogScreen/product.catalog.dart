@@ -528,6 +528,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       outOfAssortment: false,
                       wishlisted: false,
                       barcode: '',
+                      sku: '',
                       valueVat: '',
                       deleted: false,
                       idUserAppInstitution:

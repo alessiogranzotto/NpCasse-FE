@@ -60,6 +60,7 @@ class ProductCatalogModel {
       required this.freePriceProduct,
       required this.outOfAssortment,
       required this.barcode,
+      required this.sku,
       required this.deleted,
       required this.idUserAppInstitution,
       this.createdOnUtc,
@@ -83,6 +84,7 @@ class ProductCatalogModel {
   late final bool freePriceProduct;
   late final bool outOfAssortment;
   late final String barcode;
+  late final String sku;
   late final bool deleted;
   late final int idUserAppInstitution;
   late final String? valueVat;
@@ -109,6 +111,7 @@ class ProductCatalogModel {
     freePriceProduct = false;
     outOfAssortment = false;
     barcode = '';
+    sku = '';
     // idWarehouse = 0;
     // stockQuantity = 0;
     // minStockQuantity = 0;
@@ -130,6 +133,7 @@ class ProductCatalogModel {
     freePriceProduct = json['freePriceProduct'];
     outOfAssortment = json['outOfAssortment'];
     barcode = json['barcode'];
+    sku = json['sku'];
     valueVat = json['valueVat'];
     // idWarehouse = json['idWarehouse'];
     // stockQuantity = json['stockQuantity'];
@@ -186,6 +190,7 @@ class ProductCatalogModel {
     data['freePriceProduct'] = freePriceProduct;
     data['outOfAssortment'] = outOfAssortment;
     data['barcode'] = barcode;
+    data['sku'] = sku;
     data['valueVat'] = valueVat;
     // data['idWarehouse'] = idWarehouse;
     // data['stockQuantity'] = stockQuantity;

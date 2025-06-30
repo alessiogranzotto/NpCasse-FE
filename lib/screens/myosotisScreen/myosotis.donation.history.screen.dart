@@ -27,6 +27,8 @@ class _MyosotisDonationHistoryScreenState
       PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
   int totalCount = 0;
+  double totalAmount = 0;
+
   List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
   List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
   List<String> filterStringModel = [];
@@ -80,7 +82,6 @@ class _MyosotisDonationHistoryScreenState
           filterStringModel
               .add('Filter=paymentTypeFilter:' + stateModel.id.toString());
         }
-
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
           filterStringModel.add('Filter=startDate:' + cStartDate);
@@ -88,6 +89,12 @@ class _MyosotisDonationHistoryScreenState
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
           filterStringModel.add('Filter=endDate:' + cEndDate);
+        }
+        if (filterModel['nameMyosotisConfiguration'] != null) {
+          String nameMyosotisConfiguration =
+              filterModel['nameMyosotisConfiguration'];
+          filterStringModel.add(
+              'Filter=nameMyosotisConfiguration:' + nameMyosotisConfiguration);
         }
       }
 
@@ -109,6 +116,7 @@ class _MyosotisDonationHistoryScreenState
 
       if (response is MyosotisDonationHistoryModel) {
         totalCount = response.totalCount;
+        totalAmount = response.totalAmount;
         List<Map<String, dynamic>> data = response.myosotisDonationHistoryList
             .map((cart) => cart.toJson())
             .toList();
@@ -202,10 +210,19 @@ class _MyosotisDonationHistoryScreenState
           ),
           footer: CustomTableFooter<String, Map<String, dynamic>>(
             totalItems: totalCount,
+            totalAmount: totalAmount,
             controller: tableController,
           ),
           columns: [
             // RowSelectorColumn(),
+            TableColumn(
+              id: 'idMyosotisFormData',
+              title: const Text('#'),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['idMyosotisFormData'].toString().padLeft(6, '0')),
+              size: const FixedColumnSize(100),
+              sortable: true,
+            ),
             TableColumn(
               id: 'nameMyosotisConfiguration',
               title: const Text('Nome configurazione'),
@@ -229,18 +246,36 @@ class _MyosotisDonationHistoryScreenState
             TableColumn(
               id: 'cf',
               title: const Text('CF/PIVA'),
-              cellBuilder: (context, item, index) => SelectableText(item['cf'] != null
-                  ? item['cf'].toString()
-                  : item['piva'].toString()),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['cf'] != null
+                      ? item['cf'].toString()
+                      : item['piva'].toString()),
               size: const FixedColumnSize(200),
-              sortable: true,
+              sortable: false,
             ),
             TableColumn(
               id: 'email',
               title: const Text('Email'),
-              cellBuilder: (context, item, index) => SelectableText(item['email']),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['email']),
               size: const FixedColumnSize(300),
               sortable: true,
+            ),
+            TableColumn(
+              id: 'phone',
+              title: const Text('Telefono'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['phone']),
+              size: const FixedColumnSize(200),
+              sortable: false,
+            ),
+            TableColumn(
+              id: 'mobile',
+              title: const Text('Cellulare'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['mobile']),
+              size: const FixedColumnSize(200),
+              sortable: false,
             ),
             TableColumn(
               id: 'dateDonation',
@@ -258,7 +293,15 @@ class _MyosotisDonationHistoryScreenState
               cellBuilder: (context, item, index) =>
                   SelectableText(item['amountDonation'].toStringAsFixed(2)),
               size: const FixedColumnSize(200),
-              sortable: false,
+              sortable: true,
+            ),
+            TableColumn(
+              id: 'paymentType',
+              title: const Text('Tipo pagamento'),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['paymentType'].toString().split('.').last),
+              size: const FixedColumnSize(150),
+              sortable: true,
             ),
             TableColumn(
               id: 'externalIdPayment1',
@@ -266,7 +309,7 @@ class _MyosotisDonationHistoryScreenState
               cellBuilder: (context, item, index) =>
                   SelectableText(item['externalIdPayment1']),
               size: const FixedColumnSize(200),
-              sortable: true,
+              sortable: false,
             ),
             TableColumn(
               id: 'stateDescription',
@@ -279,87 +322,11 @@ class _MyosotisDonationHistoryScreenState
             TableColumn(
               id: 'idGive',
               title: const Text('Id give'),
-              cellBuilder: (context, item, index) => SelectableText(item['idGive']),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['idGive']),
               size: const FixedColumnSize(2000),
-              sortable: true,
+              sortable: false,
             ),
-
-            // TableColumn(
-            //   id: 'actions',
-            //   title: const Text('Azioni'),
-            //   cellBuilder: (context, item, index) => PopupMenuButton<int>(
-            //     icon: const Icon(Icons.more_vert),
-            //     itemBuilder: (context) => [
-            //       if (item['idStakeholder'] != null)
-            //         PopupMenuItem<int>(
-            //           value: 1,
-            //           child: const Text('Emissione ricevuta'),
-            //         ),
-            //       if (item['idStakeholder'] == null &&
-            //           item['docNumberCart'] > 0)
-            //         PopupMenuItem<int>(
-            //           value: 2,
-            //           child: const Text('Associazione donatore'),
-            //         ),
-            //       if (item['fiscalizationExternalId'] != null)
-            //         PopupMenuItem<int>(
-            //           value: 3,
-            //           child: const Text('Visualizza scontrino'),
-            //         ),
-            //       if (item['paymentTypeCart'].toString().isNotEmpty)
-            //         PopupMenuItem<int>(
-            //           value: 4,
-            //           child: const Text('Storna carrello'),
-            //         ),
-            //       if (item['paymentTypeCart'].toString().isNotEmpty)
-            //         PopupMenuItem<int>(
-            //           value: 5,
-            //           child: const Text('Annulla carrello'),
-            //         ),
-            //     ],
-            //     onSelected: (value) {
-            //       if (value == 1) {
-            //         Navigator.of(context).pushNamed(AppRouter.shPdfInvoice,
-            //             arguments: item['idCart']);
-            //       }
-            //       if (value == 2) {
-            //         Navigator.of(context).pushNamed(AppRouter.shManage,
-            //             arguments: item['idCart']);
-            //       }
-            //       if (value == 3) {
-            //         Navigator.of(context).pushNamed(AppRouter.receiptPdf,
-            //             arguments: item['fiscalizationExternalId']);
-            //       }
-            //       if (value == 4) {
-            //         var dialog = CustomAlertDialog(
-            //           title: "Cambio di stato",
-            //           content: Text("Si desidera stornare il carrello?"),
-            //           yesCallBack: () {
-            //             changeCartState(item['idCart'], 7);
-            //           },
-            //           noCallBack: () {},
-            //         );
-            //         showDialog(
-            //             context: context,
-            //             builder: (BuildContext context) => dialog);
-            //       }
-            //       if (value == 5) {
-            //         var dialog = CustomAlertDialog(
-            //           title: "Cambio di stato",
-            //           content: Text("Si desidera annullare il carrello?"),
-            //           yesCallBack: () {
-            //             changeCartState(item['idCart'], 8);
-            //           },
-            //           noCallBack: () {},
-            //         );
-            //         showDialog(
-            //             context: context,
-            //             builder: (BuildContext context) => dialog);
-            //       }
-            //     },
-            //   ),
-            //   size: const FixedColumnSize(100),
-            // ),
           ],
           filters: [
             CustomDropdownTableFilter<StateModel>(
@@ -367,6 +334,7 @@ class _MyosotisDonationHistoryScreenState
                 final states = [
                   StateModel(id: 1, name: '1-Creato'),
                   StateModel(id: 2, name: '2-Acquisito'),
+                  StateModel(id: 3, name: '3-Ringraziato'),
                 ];
                 return states;
               },
@@ -387,6 +355,11 @@ class _MyosotisDonationHistoryScreenState
               id: "endDate",
               chipFormatter: (value) => 'A "$value"',
               name: "A",
+            ),
+            StringTextTableFilter(
+              id: "nameMyosotisConfiguration",
+              chipFormatter: (value) => "Nome configurazione myosotis: $value",
+              name: "Nome configurazione myosotis",
             ),
           ],
         ),

@@ -6,6 +6,7 @@ class ProductHistoryModel {
     required this.totalPages,
     required this.pageSize,
     required this.totalCount,
+    required this.totalAmount,
     required this.hasPrevious,
     required this.hasNext,
     required this.productHistoryList, // Add to constructor
@@ -15,6 +16,7 @@ class ProductHistoryModel {
   late final int totalPages;
   late final int pageSize;
   late final int totalCount;
+  late final double totalAmount;
   late final bool hasPrevious;
   late final bool hasNext;
   late final List<CartProductModel> productHistoryList;
@@ -25,6 +27,7 @@ class ProductHistoryModel {
     totalPages = 0;
     pageSize = 0;
     totalCount = 0;
+    totalAmount = 0;
     hasPrevious = false;
     hasNext = false;
     productHistoryList = List.empty();
@@ -36,6 +39,7 @@ class ProductHistoryModel {
     totalPages = json['totalPages'];
     pageSize = json['pageSize'];
     totalCount = json['totalCount'];
+    totalAmount = json['totalAmount'];
     hasPrevious = json['hasPrevious'];
     hasNext = json['hasNext'];
     productHistoryList = List.from(json['data'])

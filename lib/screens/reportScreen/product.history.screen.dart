@@ -42,6 +42,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
   String sortColumnAndDirection = '';
   bool isRefreshing = true; // Track if data is refreshing
   int totalCount = 0;
+  double totalAmount = 0;
 
   @override
   void didChangeDependencies() {
@@ -127,6 +128,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
 
       if (response is ProductHistoryModel) {
         totalCount = response.totalCount;
+        totalAmount = response.totalAmount;
         List<Map<String, dynamic>> data = response.productHistoryList
             .map((cart) =>
                 cart.toJson()) // Assuming CartModel has a toJson method
@@ -208,16 +210,17 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             ],
           ),
           footer: CustomTableFooter<String, Map<String, dynamic>>(
-            totalItems: totalCount, 
-            controller: tableController, 
+            totalItems: totalCount,
+            totalAmount: totalAmount,
+            controller: tableController,
           ),
           columns: [
             // RowSelectorColumn(),
             TableColumn(
               id: 'docNumberCart',
               title: const Text('#'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['docNumberCart'].toString().padLeft(6, '0')),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['docNumberCart'].toString().padLeft(6, '0')),
               size: const FixedColumnSize(100),
               sortable: true,
             ),
@@ -258,8 +261,8 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
             TableColumn(
               id: 'priceCartProduct',
               title: const Text('Prezzo'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['priceCartProduct'].toStringAsFixed(2) + ' €'),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['priceCartProduct'].toStringAsFixed(2) + ' €'),
               size: const FixedColumnSize(150),
               sortable: true,
             ),

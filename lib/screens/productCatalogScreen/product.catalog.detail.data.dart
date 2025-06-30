@@ -67,6 +67,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       TextEditingController();
   final TextEditingController textEditingControllerBarcodeProduct =
       TextEditingController();
+  final TextEditingController textEditingControllerSkuProduct =
+      TextEditingController();
   // final TextEditingController textEditingControllerIdFinalizzazione =
   //     TextEditingController();
   // final TextEditingController textEditingControllerIdEvento =
@@ -303,6 +305,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       textEditingControllerPriceProduct.text = t2;
       textEditingControllerBarcodeProduct.text =
           widget.productCatalogModelArgument.barcode.toString();
+      textEditingControllerSkuProduct.text =
+          widget.productCatalogModelArgument.sku.toString();
       freePriceProduct.value =
           widget.productCatalogModelArgument.freePriceProduct;
       outOfAssortment.value =
@@ -806,6 +810,50 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                 ),
                                 trailing: const Icon(Icons.edit),
                                 leading: const Icon(Icons.barcode_reader),
+                                onTap: () {},
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          Tooltip(
+                            message: 'Stock-keeping unit prodotto',
+                            child: Card(
+                              color: Theme.of(context).cardColor,
+                              elevation: 4,
+                              child: ListTile(
+                                // title: Text(
+                                //   'qui ci va la descrizione del progetto',
+                                //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, ),
+                                // ),
+                                subtitle: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        //onChanged: ,
+                                        controller:
+                                            textEditingControllerSkuProduct,
+                                        // keyboardType: const TextInputType
+                                        //     .numberWithOptions(),
+
+                                        minLines: 1,
+                                        maxLines: 1,
+
+                                        onTapOutside: (event) {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                trailing: const Icon(Icons.edit),
+                                leading: const Icon(Icons.warehouse),
                                 onTap: () {},
                               ),
                             ),
@@ -1657,6 +1705,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                     outOfAssortment: outOfAssortment.value,
                     wishlisted: false,
                     barcode: textEditingControllerBarcodeProduct.text,
+                    sku: textEditingControllerSkuProduct.text,
                     valueVat: selectedVat,
                     deleted: deleted,
                     idUserAppInstitution:
@@ -1752,6 +1801,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   wishlisted: false,
                                   barcode:
                                       textEditingControllerBarcodeProduct.text,
+                                  sku: textEditingControllerSkuProduct.text,
                                   valueVat: selectedVat,
                                   deleted: deleted,
                                   idUserAppInstitution: cUserAppInstitutionModel

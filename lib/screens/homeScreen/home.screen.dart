@@ -134,9 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
     ]),
     MenuList('Myosotis', Icons.app_settings_alt, null, 1, [
       MenuList('Configurazioni Myosotis', Icons.app_settings_alt,
-          const MyosotisConfigurationNavigator(), 3, null),
+          const MyosotisConfigurationNavigator(), 2, null),
       MenuList('Report donazioni', Icons.dashboard,
-          const MyosotisDonationHistoryNavigator(), 3, null),
+          const MyosotisDonationHistoryNavigator(), 1, null),
       MenuList('Report Accessi', Icons.dashboard,
           const MyosotisAccessHistoryNavigator(), 3, null),
     ]),

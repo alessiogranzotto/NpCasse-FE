@@ -422,39 +422,43 @@ class AuthenticationNotifier with ChangeNotifier {
           idUser: userModel.idUser,
           idUserAppInstitution:
               getSelectedUserAppInstitution().idUserAppInstitution);
-      final Map<String, dynamic> parseData2 = await jsonDecode(response2);
-      bool isOk = parseData2['isOk'];
-      if (!isOk) {
-        String errorDescription = parseData2['errorDescription'];
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
-              title: "Autenticazione",
-              message: errorDescription,
-              contentType: "failure"));
-          // _actualState = 'ErrorState';
+      if (response2 != null) {
+        final Map<String, dynamic> parseData2 = await jsonDecode(response2);
+        bool isOk = parseData2['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData2['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Autenticazione",
+                    message: errorDescription,
+                    contentType: "failure"));
+            // _actualState = 'ErrorState';
 
-          _isLoading = false;
+            _isLoading = false;
+            notifyListeners();
+            // Navigator.pop(context);
+          }
+        } else {
+          userModel.name = parseData2['okResult']['name'];
+          userModel.surname = parseData2['okResult']['surname'];
+          userModel.email = parseData2['okResult']['email'];
+          userModel.phone = parseData2['okResult']['phone'];
+          userModel.token = parseData2['okResult']['token'];
+          userModel.refreshToken = parseData2['okResult']['refreshToken'];
+          userModel.expirationTime =
+              DateTime.parse(parseData2['okResult']['expirationTime']);
+          userModel.userTokenExpiration =
+              parseData2['okResult']['userTokenExpiration'];
+          userModel.userOtpMode = parseData2['okResult']['userOtpMode'];
+          userModel.userMaxInactivity =
+              parseData2['okResult']['userMaxInactivity'];
+          setUser(userModel);
           notifyListeners();
-          // Navigator.pop(context);
         }
       } else {
-        userModel.name = parseData2['okResult']['name'];
-        userModel.surname = parseData2['okResult']['surname'];
-        userModel.email = parseData2['okResult']['email'];
-        userModel.phone = parseData2['okResult']['phone'];
-        userModel.token = parseData2['okResult']['token'];
-        userModel.refreshToken = parseData2['okResult']['refreshToken'];
-        userModel.expirationTime =
-            DateTime.parse(parseData2['okResult']['expirationTime']);
-        userModel.userTokenExpiration =
-            parseData2['okResult']['userTokenExpiration'];
-        userModel.userOtpMode = parseData2['okResult']['userOtpMode'];
-        userModel.userMaxInactivity =
-            parseData2['okResult']['userMaxInactivity'];
-        setUser(userModel);
-        notifyListeners();
+        exit;
       }
-
       bool isAuthenticated = userModel.token.isNotEmpty;
       if (isAuthenticated) {
         WriteCache.setString(
@@ -497,6 +501,7 @@ class AuthenticationNotifier with ChangeNotifier {
           _isLoading = false;
           notifyListeners();
         }
+        exit;
       }
     } on SocketException catch (_) {
       if (context.mounted) {

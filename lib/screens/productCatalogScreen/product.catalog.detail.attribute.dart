@@ -703,7 +703,7 @@ class _ProductAttributeDetailState
                       contentType: "success"));
               Navigator.of(context).pop();
               // productAttributeCombinationNotifier.refresh();
-              // productCatalogNotifier.refresh();
+              productCatalogNotifier.refresh();
               // wishlistProductNotifier.refresh();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

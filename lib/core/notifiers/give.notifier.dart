@@ -232,13 +232,22 @@ class GiveNotifier with ChangeNotifier {
         bool isOk = parseData['isOk'];
         if (!isOk) {
           String errorDescription = parseData['errorDescription'];
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackUtil.stylishSnackBar(
-                    title: "Anagrafiche",
-                    message: errorDescription,
-                    contentType: "failure"));
-            // Navigator.pop(context);
+          if (errorDescription == 'Errore deduplica') {
+            cStakeholderGiveModelWithRulesSearch =
+                StakeholderGiveModelWithRulesSearch.fromJson(
+                    parseData['okResult']);
+            cStakeholderGiveModelWithRulesSearch.operationResult =
+                parseData['errorDescription'] ?? 'Ok';
+            return cStakeholderGiveModelWithRulesSearch;
+          } else {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackUtil.stylishSnackBar(
+                      title: "Anagrafiche",
+                      message: errorDescription,
+                      contentType: "failure"));
+              // Navigator.pop(context);
+            }
           }
         } else {
           cStakeholderGiveModelWithRulesSearch =

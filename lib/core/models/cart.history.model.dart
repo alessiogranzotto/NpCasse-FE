@@ -6,6 +6,7 @@ class CartHistoryModel {
     required this.totalPages,
     required this.pageSize,
     required this.totalCount,
+    required this.totalAmount,
     required this.hasPrevious,
     required this.hasNext,
     required this.CartHistoryList, // Add to constructor
@@ -15,6 +16,7 @@ class CartHistoryModel {
   late final int totalPages;
   late final int pageSize;
   late final int totalCount;
+  late final double totalAmount;
   late final bool hasPrevious;
   late final bool hasNext;
   late final List<CartModel> CartHistoryList;
@@ -36,11 +38,11 @@ class CartHistoryModel {
     totalPages = json['totalPages'];
     pageSize = json['pageSize'];
     totalCount = json['totalCount'];
+    totalAmount = json['totalAmount'];
     hasPrevious = json['hasPrevious'];
     hasNext = json['hasNext'];
-    CartHistoryList = List.from(json['data'])
-        .map((e) => CartModel.fromJson(e))
-        .toList();
+    CartHistoryList =
+        List.from(json['data']).map((e) => CartModel.fromJson(e)).toList();
   }
 
   // JSON serialization

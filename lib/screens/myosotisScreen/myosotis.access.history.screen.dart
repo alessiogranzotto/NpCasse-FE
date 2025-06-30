@@ -25,6 +25,7 @@ class _MyosotisAccessHistoryScreenState
       PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
   int totalCount = 0;
+  double totalAmount = 0;
   List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
   List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
   List<String> filterStringModel = [];
@@ -40,8 +41,7 @@ class _MyosotisAccessHistoryScreenState
     if (reportMyosotisAccessNotifier.isUpdated && !isRefreshing) {
       // Post-frame callback to avoid infinite loop during build phase
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        reportMyosotisAccessNotifier
-            .setUpdate(false); // Reset the update flag
+        reportMyosotisAccessNotifier.setUpdate(false); // Reset the update flag
         tableController.refresh();
       });
     }
@@ -83,19 +83,18 @@ class _MyosotisAccessHistoryScreenState
         isRefreshing = true;
       });
 
-      var response =
-          await reportMyosotisAccessNotifier.findMyosotisAccessList(
-              context: context,
-              token: authNotifier.token,
-              idUserAppInstitution:
-                  cUserAppInstitutionModel.idUserAppInstitution,
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-              orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
-              filter: filterStringModel);
+      var response = await reportMyosotisAccessNotifier.findMyosotisAccessList(
+          context: context,
+          token: authNotifier.token,
+          idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+          orderBy: (sortBy != null) ? [sortColumnAndDirection] : [],
+          filter: filterStringModel);
 
       if (response is MyosotisAccessHistoryModel) {
         totalCount = response.totalCount;
+        totalAmount = response.totalAmount;
         List<Map<String, dynamic>> data = response.myosotisAccessHistoryList
             .map((cart) => cart.toJson())
             .toList();
@@ -147,15 +146,17 @@ class _MyosotisAccessHistoryScreenState
               fetchData(pageSize, sortModel, filterModel, pageToken),
           footer: CustomTableFooter<String, Map<String, dynamic>>(
             totalItems: totalCount,
+            totalAmount: totalAmount,
             controller: tableController,
           ),
           columns: [
             TableColumn(
               id: 'shortMessage',
               title: const Text('Request from'),
-              cellBuilder: (context, item, index) => SelectableText(item['shortMessage']),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['shortMessage']),
               size: const FixedColumnSize(400),
-              sortable: true,
+              sortable: false,
             ),
             TableColumn(
               id: 'dateIns',
@@ -164,7 +165,8 @@ class _MyosotisAccessHistoryScreenState
                 final dateStr = item['dateIns'] as String;
                 final parsedDate = DateTime.tryParse(dateStr);
                 final formatted = parsedDate != null
-                    ? DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate.toLocal())
+                    ? DateFormat('yyyy-MM-dd HH:mm:ss')
+                        .format(parsedDate.toLocal())
                     : 'Invalid date';
 
                 return SelectableText(formatted);

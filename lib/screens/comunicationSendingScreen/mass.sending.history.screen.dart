@@ -31,6 +31,8 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
   String? sortDirection;
   String sortColumnAndDirection = '';
   int totalCount = 0;
+  double totalAmount = 0;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -113,6 +115,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
 
       if (response is MassSendingHistoryModel) {
         totalCount = response.totalCount;
+        totalAmount = response.totalAmount;
         List<Map<String, dynamic>> data = response.massSendingHistoryList
             .map((massSendingJob) => massSendingJob.toJson())
             .toList();
@@ -218,6 +221,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
             ),
             footer: CustomTableFooter<String, Map<String, dynamic>>(
               totalItems: totalCount,
+              totalAmount: totalAmount,
               controller: tableController,
             ),
             columns: [
@@ -226,7 +230,8 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 id: 'massSendingModelNameComunication',
                 title: const Text('Nome comunicazione'),
                 cellBuilder: (context, item, index) {
-                  return SelectableText(item['massSendingModelNameComunication']);
+                  return SelectableText(
+                      item['massSendingModelNameComunication']);
                 },
                 size: const FixedColumnSize(200),
                 sortable: true,

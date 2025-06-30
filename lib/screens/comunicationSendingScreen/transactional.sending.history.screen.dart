@@ -32,6 +32,8 @@ class _TransactionalSendingHistoryScreenState
   String? sortDirection;
   String sortColumnAndDirection = '';
   int totalCount = 0;
+  double totalAmount = 0;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -118,6 +120,7 @@ class _TransactionalSendingHistoryScreenState
 
       if (response is TransactionalSendingHistoryModel) {
         totalCount = response.totalCount;
+        totalAmount = response.totalAmount;
         List<Map<String, dynamic>> data =
             response.TransactionalSendingHistoryList.map(
                 (TransactionalSendingJob) =>
@@ -226,6 +229,7 @@ class _TransactionalSendingHistoryScreenState
             ),
             footer: CustomTableFooter<String, Map<String, dynamic>>(
               totalItems: totalCount,
+              totalAmount: totalAmount,
               controller: tableController,
             ),
             columns: [
@@ -234,7 +238,8 @@ class _TransactionalSendingHistoryScreenState
                 id: 'transactionSendingModelNameComunication',
                 title: const Text('Transazionale'),
                 cellBuilder: (context, item, index) {
-                  return SelectableText(item['transactionSendingModelNameComunication']);
+                  return SelectableText(
+                      item['transactionSendingModelNameComunication']);
                 },
                 size: const FixedColumnSize(200),
                 sortable: true,

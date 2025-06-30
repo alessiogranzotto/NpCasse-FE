@@ -26,6 +26,7 @@
 //   }
 // }
 
+import 'package:flutter/material.dart';
 import 'package:np_casse/core/models/comunication.sending.model.dart';
 
 class MyosotisConfigurationModel {
@@ -124,12 +125,15 @@ class MyosotisConfigurationModel {
 class MyosotisConfigurationDetailModel {
   MyosotisConfigurationDetailModel(
       {required this.typeFormStartup,
+      required this.buttonColor,
+      required this.formFont,
       required this.showLogo,
       required this.bigImageString,
       required this.smallImageString,
       required this.title,
       required this.subtitle,
       required this.preestablishedAmount,
+      required this.buttonNoAmountsText,
       required this.showFreePrice,
       required this.causalDonationText,
       required this.idFormGive,
@@ -138,6 +142,7 @@ class MyosotisConfigurationDetailModel {
       required this.customIdGive,
       required this.showPrivacy,
       required this.textPrivacy,
+      required this.urlPrivacy,
       required this.isMandatoryPrivacy,
       required this.showNewsletter,
       required this.textNewsletter,
@@ -149,10 +154,14 @@ class MyosotisConfigurationDetailModel {
       required this.mandatoryCompanyFormField,
       required this.preestablishedPaymentMethodApp,
       required this.preestablishedPaymentMethodWeb,
+      required this.paymentManager,
       required this.thankYouMethod,
       required this.idTransactionalSending,
-      required this.idWaMessageToSend});
+      required this.waTemplateName,
+      required this.tyEndMessage});
   late String typeFormStartup;
+  late int buttonColor;
+  late String formFont;
   late bool showLogo;
   late String logoEncoded;
   late String bigImageString;
@@ -161,6 +170,7 @@ class MyosotisConfigurationDetailModel {
   late String subtitle;
   late List<String> preestablishedAmount;
   late bool showFreePrice;
+  late String buttonNoAmountsText;
   //
   late String idGiveFromProjectOrFixedValue;
   late List<String> customIdGive;
@@ -171,6 +181,7 @@ class MyosotisConfigurationDetailModel {
   late List<ProductCausalDonation> productCausalDonation;
   late bool showPrivacy;
   late String textPrivacy;
+  late String urlPrivacy;
   late bool isMandatoryPrivacy;
   late bool showNewsletter;
   late String textNewsletter;
@@ -182,13 +193,18 @@ class MyosotisConfigurationDetailModel {
   late List<String> mandatoryCompanyFormField;
   late List<String> preestablishedPaymentMethodApp;
   late List<String> preestablishedPaymentMethodWeb;
+  late String paymentManager;
 
   late String thankYouMethod;
   late int idTransactionalSending;
-  late int idWaMessageToSend;
+  late String waTemplateName;
+
+  late String tyEndMessage;
 
   MyosotisConfigurationDetailModel.empty() {
     typeFormStartup = "";
+    buttonColor = 0;
+    formFont = "";
     showLogo = false;
     logoEncoded = "";
     bigImageString = "";
@@ -197,6 +213,7 @@ class MyosotisConfigurationDetailModel {
     subtitle = "";
     preestablishedAmount = [];
     showFreePrice = false;
+    buttonNoAmountsText = '';
     idGiveFromProjectOrFixedValue = "";
     customIdGive = [];
     causalDonationText = '';
@@ -205,6 +222,7 @@ class MyosotisConfigurationDetailModel {
     productCausalDonation = [];
     showPrivacy = false;
     textPrivacy = '';
+    urlPrivacy = '';
     isMandatoryPrivacy = false;
 
     showNewsletter = false;
@@ -218,13 +236,28 @@ class MyosotisConfigurationDetailModel {
     mandatoryCompanyFormField = [];
     preestablishedPaymentMethodApp = [];
     preestablishedPaymentMethodWeb = [];
+    paymentManager = "";
     thankYouMethod = "";
     idTransactionalSending = 0;
-    idWaMessageToSend = 0;
+    waTemplateName = "";
+    tyEndMessage = "";
   }
   // JSON deserialization
   MyosotisConfigurationDetailModel.fromJson(Map<String, dynamic> json) {
     typeFormStartup = json['typeFormStartup'];
+
+    if (json['buttonColor'] != null) {
+      buttonColor = json['buttonColor'];
+    } else {
+      buttonColor = Colors.red.toARGB32();
+      ;
+    }
+    if (json['formFont'] != null) {
+      formFont = json['formFont'];
+    } else {
+      formFont = "Roboto";
+    }
+
     showLogo = json['showLogo'];
     logoEncoded = json['logoEncoded'] ?? '';
     bigImageString = json['bigImageString'];
@@ -239,6 +272,7 @@ class MyosotisConfigurationDetailModel {
     }
     showFreePrice = json['showFreePrice'];
 
+    buttonNoAmountsText = json['buttonNoAmountsText'];
     idGiveFromProjectOrFixedValue = json['idGiveFromProjectOrFixedValue'];
     if (json['customIdGive'] != null) {
       // customIdGive = List.from(json['customIdGive']);
@@ -263,6 +297,7 @@ class MyosotisConfigurationDetailModel {
 
     showPrivacy = json['showPrivacy'];
     textPrivacy = json['textPrivacy'];
+    urlPrivacy = json['urlPrivacy'];
     isMandatoryPrivacy = json['isMandatoryPrivacy'];
     showNewsletter = json['showNewsletter'];
     textNewsletter = json['textNewsletter'];
@@ -304,6 +339,13 @@ class MyosotisConfigurationDetailModel {
     } else {
       preestablishedPaymentMethodWeb = List.empty();
     }
+
+    if (json['paymentManager'] != null) {
+      paymentManager = json['paymentManager'];
+    } else {
+      paymentManager = '';
+    }
+
     if (json['thankYouMethod'] != null) {
       thankYouMethod = json['thankYouMethod'];
     } else {
@@ -314,17 +356,21 @@ class MyosotisConfigurationDetailModel {
     } else {
       idTransactionalSending = 0;
     }
-    if (json['idWAMessageToSend'] != null) {
-      idWaMessageToSend = json['idWAMessageToSend'];
+    if (json['waTemplateName'] != null) {
+      waTemplateName = json['waTemplateName'];
     } else {
-      idWaMessageToSend = 0;
+      waTemplateName = "";
     }
+
+    tyEndMessage = json['tyEndMessage'];
   }
 
   // JSON serialization
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['typeFormStartup'] = typeFormStartup;
+    data['buttonColor'] = buttonColor;
+    data['formFont'] = formFont;
     data['showLogo'] = showLogo;
     data['bigImageString'] = bigImageString;
     data['smallImageString'] = smallImageString;
@@ -332,6 +378,7 @@ class MyosotisConfigurationDetailModel {
     data['subtitle'] = subtitle;
     data['preestablishedAmount'] = preestablishedAmount;
     data['showFreePrice'] = showFreePrice;
+    data['buttonNoAmountsText'] = buttonNoAmountsText;
 
     data['causalDonationText'] = causalDonationText;
     data['idFormGive'] = idFormGive;
@@ -342,6 +389,7 @@ class MyosotisConfigurationDetailModel {
 
     data['showPrivacy'] = showPrivacy;
     data['textPrivacy'] = textPrivacy;
+    data['urlPrivacy'] = urlPrivacy;
     data['isMandatoryPrivacy'] = isMandatoryPrivacy;
     data['showNewsletter'] = showNewsletter;
     data['textNewsletter'] = textNewsletter;
@@ -353,11 +401,13 @@ class MyosotisConfigurationDetailModel {
     data['mandatoryCompanyFormField'] = mandatoryCompanyFormField;
     data['preestablishedPaymentMethodApp'] = preestablishedPaymentMethodApp;
     data['preestablishedPaymentMethodWeb'] = preestablishedPaymentMethodWeb;
+    data['paymentManager'] = paymentManager;
 
     data['thankYouMethod'] = thankYouMethod;
     data['idTransactionalSending'] = idTransactionalSending;
-    data['idWaMessageToSend'] = idWaMessageToSend;
+    data['waTemplateName'] = waTemplateName;
 
+    data['tyEndMessage'] = tyEndMessage;
     return data;
   }
 }
@@ -376,6 +426,7 @@ class MyosotisConfigurationDetailEmpty {
   late final List<String> availableFormStartup;
   late final List<String> availablePaymentMethodApp;
   late final List<String> availablePaymentMethodWeb;
+  late final List<String> availablePaymentManager;
   late final List<String> availablePersonalFormField;
   late final List<String> availableCompanyFormField;
   late final List<SubCategoryShort> availableSubCategoryCausalDonation;
@@ -386,6 +437,7 @@ class MyosotisConfigurationDetailEmpty {
     availableFormStartup = [];
     availablePaymentMethodApp = [];
     availablePaymentMethodWeb = [];
+    availablePaymentManager = [];
     availablePersonalFormField = [];
     availableCompanyFormField = [];
     availableSubCategoryCausalDonation = [];
@@ -398,6 +450,7 @@ class MyosotisConfigurationDetailEmpty {
     availableFormStartup = List.from(json['availableFormStartup']);
     availablePaymentMethodApp = List.from(json['availablePaymentMethodApp']);
     availablePaymentMethodWeb = List.from(json['availablePaymentMethodWeb']);
+    availablePaymentManager = List.from(json['availablePaymentManager']);
     availablePersonalFormField = List.from(json['availablePersonalFormField']);
     availableCompanyFormField = List.from(json['availableCompanyFormField']);
 

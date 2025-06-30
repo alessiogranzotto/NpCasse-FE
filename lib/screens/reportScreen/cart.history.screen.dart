@@ -26,6 +26,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       PagedDataTableController();
   bool isRefreshing = true; // Track if data is refreshing
   int totalCount = 0;
+  double totalAmount = 0;
+
   List<DropdownMenuItem<StateModel>> categoryDropdownItems = [];
   List<DropdownMenuItem<StateModel>> subCategoryDropdownItems = [];
   List<String> filterStringModel = [];
@@ -105,6 +107,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
 
       if (response is CartHistoryModel) {
         totalCount = response.totalCount;
+        totalAmount = response.totalAmount;
         List<Map<String, dynamic>> data =
             response.CartHistoryList.map((cart) => cart.toJson()).toList();
 
@@ -216,6 +219,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
           ),
           footer: CustomTableFooter<String, Map<String, dynamic>>(
             totalItems: totalCount,
+            totalAmount: totalAmount,
             controller: tableController,
           ),
           columns: [
@@ -223,8 +227,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'docNumberCart',
               title: const Text('#'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['docNumberCart'].toString().padLeft(6, '0')),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['docNumberCart'].toString().padLeft(6, '0')),
               size: const FixedColumnSize(100),
               sortable: true,
             ),
@@ -239,8 +243,8 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
             TableColumn(
               id: 'paymentTypeCart',
               title: const Text('Tipo pagamento'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['paymentTypeCart'].toString().split('.').last),
+              cellBuilder: (context, item, index) => SelectableText(
+                  item['paymentTypeCart'].toString().split('.').last),
               size: const FixedColumnSize(150),
               sortable: true,
             ),
@@ -333,7 +337,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
                       child: const Text('Associa donatore'),
                     ),
                   if (item['fiscalizationExternalId'] != null &&
-                      item['fiscalization'] == 5)
+                      [1, 3, 5, 9].contains(item['fiscalization']))
                     PopupMenuItem<int>(
                       value: 3,
                       child: const Text('Visualizza scontrino'),
