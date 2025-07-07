@@ -15,7 +15,9 @@ class GiveIdsFlatStructureModel {
       required this.idPagamentoCartaDiCredito,
       required this.idPagamentoAssegno,
       required this.codiceSottoconto,
-      required this.codiceCentroRicavo});
+      required this.codiceCentroRicavo,
+      required this.fonteSh,
+      required this.ringraziato});
   late String idFinalizzazione;
   late String idEvento;
   late String idAttivita;
@@ -30,6 +32,8 @@ class GiveIdsFlatStructureModel {
   late String idPagamentoAssegno;
   late String codiceSottoconto;
   late String codiceCentroRicavo;
+  late String fonteSh;
+  late String ringraziato;
 
   GiveIdsFlatStructureModel.empty() {
     idFinalizzazione = '';
@@ -46,6 +50,8 @@ class GiveIdsFlatStructureModel {
     idPagamentoAssegno = '';
     codiceSottoconto = '';
     codiceCentroRicavo = '';
+    fonteSh = '';
+    ringraziato = '';
   }
   GiveIdsFlatStructureModel.fromCustomIdGive(
       List<String> customIdGive, String area) {
@@ -63,6 +69,8 @@ class GiveIdsFlatStructureModel {
     idPagamentoAssegno = '';
     codiceSottoconto = '';
     codiceCentroRicavo = '';
+    fonteSh = '';
+    ringraziato = '';
     if (area == "Product") {
       for (String item in customIdGive) {
         var split = item.split('=');
@@ -86,6 +94,10 @@ class GiveIdsFlatStructureModel {
           codiceSottoconto = split[1];
         } else if (split[0] == idGiveListNameProduct[9]) {
           codiceCentroRicavo = split[1];
+        } else if (split[0] == idGiveListNameProduct[10]) {
+          fonteSh = split[1];
+        } else if (split[0] == idGiveListNameProduct[11]) {
+          ringraziato = split[1];
         }
       }
     } else if (area == "Category") {
@@ -119,6 +131,10 @@ class GiveIdsFlatStructureModel {
           idPagamentoCartaDiCredito = split[1];
         } else if (split[0] == idGiveListNameCategory[13]) {
           idPagamentoAssegno = split[1];
+        } else if (split[0] == idGiveListNameCategory[14]) {
+          fonteSh = split[1];
+        } else if (split[0] == idGiveListNameCategory[15]) {
+          ringraziato = split[1];
         }
       }
     }
@@ -139,6 +155,8 @@ class GiveIdsFlatStructureModel {
     idPagamentoAssegno = json['idPagamentoAssegno'];
     codiceSottoconto = json['codiceSottoconto'];
     codiceCentroRicavo = json['codiceCentroRicavo'];
+    fonteSh = json['fonteSh'];
+    ringraziato = json['ringraziato'];
   }
 
   Map<String, dynamic> toJson() {
@@ -157,6 +175,8 @@ class GiveIdsFlatStructureModel {
     data['idPagamentoAssegno'] = idPagamentoAssegno;
     data['codiceSottoconto'] = codiceSottoconto;
     data['codiceCentroRicavo'] = codiceCentroRicavo;
+    data['fonteSh'] = fonteSh;
+    data['ringraziato'] = ringraziato;
     return data;
   }
 }

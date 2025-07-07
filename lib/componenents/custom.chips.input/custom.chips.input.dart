@@ -160,15 +160,32 @@ class ChipsInputEditingController<T> extends TextEditingController {
 
   /// Called whenever chip is either added or removed
   /// from the outside the context of the text field.
+  // void updateValues(List<T> values) {
+  //   if (values.length != this.values.length) {
+  //     final String char = String.fromCharCode(kObjectReplacementChar);
+  //     final int length = values.length;
+  //     value = TextEditingValue(
+  //       text: char * length,
+  //       selection: TextSelection.collapsed(offset: length),
+  //     );
+  //     this.values = values;
+  //   }
+  // }
+
   void updateValues(List<T> values) {
     if (values.length != this.values.length) {
       final String char = String.fromCharCode(kObjectReplacementChar);
       final int length = values.length;
-      value = TextEditingValue(
-        text: char * length,
-        selection: TextSelection.collapsed(offset: length),
-      );
-      this.values = values;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (this.values.length != values.length) {
+          value = TextEditingValue(
+            text: char * length,
+            selection: TextSelection.collapsed(offset: length),
+          );
+          this.values = values;
+        }
+      });
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/app/providers/provider.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/core/themes/themes.dart';
+import 'package:np_casse/screens/homeScreen/theme.mode.dart';
 import 'package:provider/provider.dart';
 import 'package:paged_datatable/paged_datatable.dart'; // Import your PagedDataTable
 import 'package:intl/date_symbol_data_local.dart'; // Import this for locale initialization
@@ -37,6 +38,7 @@ class Core extends StatelessWidget {
   const Core({super.key});
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProviderNotifier>(context);
     return MaterialApp(
       title: 'Give Pro',
       localizationsDelegates: [
@@ -49,7 +51,7 @@ class Core extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRouter.generateRoute,
       initialRoute: AppRouter.splashRoute,
-      themeMode: ThemeMode.light,
+      themeMode: themeProvider.themeMode,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.blueTheme,
     );

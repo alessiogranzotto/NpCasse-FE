@@ -231,32 +231,40 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
           //CONTROL FOR INT OR STRING
           bool canContinue = false;
           if (splitOnEqual.length == 2) {
-            if (text.toLowerCase().startsWith('id') &&
-                num.tryParse(splitOnEqual[1]) != null) {
-              canContinue = true;
-            } else if (text.toLowerCase().startsWith('codice') &&
-                splitOnEqual[1].isNotEmpty) {
-              canContinue = true;
-            }
-          }
-          if (canContinue) {
             final bestMatch = StringSimilarity.findBestMatch(
                 splitOnEqual[0].toLowerCase(), idGiveListNameProduct);
+
             if (bestMatch.bestMatch.rating != null) {
               if (bestMatch.bestMatch.rating! > 0.40) {
                 String finalString =
                     bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
-                if (!customIdGive.any((item) => item
-                    .toLowerCase()
-                    .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
-                  setState(() {
-                    customIdGive = <String>[...customIdGive, finalString];
-                  });
-                  isOk = true;
+                if (finalString.startsWith('Id') &&
+                    num.tryParse(splitOnEqual[1]) != null) {
+                  canContinue = true;
+                } else if (finalString.startsWith('Codice') &&
+                    splitOnEqual[1].isNotEmpty) {
+                  canContinue = true;
+                } else if (finalString.startsWith('FonteSh') &&
+                    num.tryParse(splitOnEqual[1]) != null) {
+                  canContinue = true;
+                } else if (finalString.startsWith('Ringraziato') &&
+                    ["0", "1"].contains(splitOnEqual[1])) {
+                  canContinue = true;
+                }
+                if (canContinue) {
+                  if (!customIdGive.any((item) => item
+                      .toLowerCase()
+                      .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
+                    setState(() {
+                      customIdGive = <String>[...customIdGive, finalString];
+                    });
+                    isOk = true;
+                  }
                 }
               }
             }
           }
+
           if (!isOk) {
             ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
                 title: "Prodotti",
@@ -422,6 +430,29 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
         customIdGive.add("IdPromotore=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idPromotore
+                .toString());
+      } else {
+        // textEditingControllerIdPromotore.text = '';
+      }
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel.fonteSh
+          .isNotEmpty) {
+        // textEditingControllerIdPromotore.text = widget
+        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
+        //     .toString();
+        customIdGive.add("FonteSh=" +
+            widget.productCatalogModelArgument.giveIdsFlatStructureModel.fonteSh
+                .toString());
+      } else {
+        // textEditingControllerIdPromotore.text = '';
+      }
+      if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
+          .ringraziato.isNotEmpty) {
+        // textEditingControllerIdPromotore.text = widget
+        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
+        //     .toString();
+        customIdGive.add("Ringraziato=" +
+            widget.productCatalogModelArgument.giveIdsFlatStructureModel
+                .ringraziato
                 .toString());
       } else {
         // textEditingControllerIdPromotore.text = '';
@@ -923,7 +954,7 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                     dropdownItemDecoration:
                                         DropdownItemDecoration(
                                       selectedIcon: const Icon(Icons.check_box,
-                                          color: Colors.green),
+                                          color: CustomColors.darkBlue),
                                       disabledIcon: Icon(Icons.lock,
                                           color: Colors.grey.shade300),
                                     ),

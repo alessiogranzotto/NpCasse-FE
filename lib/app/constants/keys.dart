@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.040';
+  static String version = '1.20.041';
 }
 
 // class AppRegex {
@@ -248,6 +248,9 @@ class AppStrings {
   static const pleaseEntertTyEndMessageConfiguration =
       "Inserire il messaggio di ringraziamento finale";
 
+  static const showContinuousDonation = "Mostra donazioni continuative";
+  static const pleaseEnterFrequencyContinuousDonation =
+      "Inserire frequenze donazioni continuative";
   //COMUNICAZIONI
   static const nameComunicationSending = "Nome comunicazione";
   static const pleaseEnterNameComunicationSending =

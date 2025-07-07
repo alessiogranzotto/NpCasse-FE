@@ -25,6 +25,7 @@ import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.history.navigator.dart';
+import 'package:np_casse/screens/homeScreen/theme.mode.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.history.navigator.dart';
@@ -606,13 +607,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         image: AssetImage(AppAssets.logoGivePro_scritta_lato),
                         fit: BoxFit.fill,
                         // height: 50,
-                        width: 100,
+                        width: 80,
                         alignment: Alignment.center),
-                    Text('(' + AppKeys.version + ')',
+                    Text(AppKeys.version,
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.primary)),
                   ],
                 ),
+                // Row(
+                //   children: [Expanded(child: ThemeSwitcher())],
+                // )
               ],
             ),
           ),

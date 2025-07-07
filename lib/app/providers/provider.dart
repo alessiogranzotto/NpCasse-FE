@@ -20,6 +20,7 @@ import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/screens/homeScreen/theme.mode.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -61,6 +62,7 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => TransactionalSendingNotifier()),
     ChangeNotifierProvider(create: (_) => ReportMassSendingNotifier()),
     ChangeNotifierProvider(create: (_) => ReportTransactionalSendingNotifier()),
+    ChangeNotifierProvider(create: (_) => ThemeProviderNotifier()),
 
     // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),
   ];

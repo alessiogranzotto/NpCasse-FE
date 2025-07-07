@@ -516,8 +516,8 @@ class _ProductAttributeDetailState
                     //   ),
                     // ),
                     dropdownItemDecoration: DropdownItemDecoration(
-                      selectedIcon:
-                          const Icon(Icons.check_box, color: Colors.green),
+                      selectedIcon: const Icon(Icons.check_box,
+                          color: CustomColors.darkBlue),
                       disabledIcon:
                           Icon(Icons.lock, color: Colors.grey.shade300),
                     ),

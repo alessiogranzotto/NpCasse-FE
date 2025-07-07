@@ -132,7 +132,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     });
   }
 
-  void finalizeStripePayment() {
+  void finalizeStripePayment(String paymentIntendId, String paymentStatus) {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
 
@@ -140,7 +140,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-
+    print(paymentIntendId);
+    print(paymentStatus);
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
         .setCartCheckout(
@@ -153,7 +154,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                 double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
             typePayment: strTypePayment,
             fiscalization: int.parse(selectedFiscalization),
-            modeCartCheckout: 0)
+            modeCartCheckout: 0,
+            paymentIntendId: paymentIntendId,
+            paymentStatus: paymentStatus)
         .then((value) {
       if (value > 0) {
         setState(() {
@@ -193,7 +196,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                 double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
             typePayment: strTypePayment,
             fiscalization: int.parse(selectedFiscalization),
-            modeCartCheckout: 2)
+            modeCartCheckout: 2,
+            paymentIntendId: '',
+            paymentStatus: '')
         .then((value) {
       if (value > 0) {
         // if (context.mounted) {
@@ -242,7 +247,9 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                   double.tryParse(rateDiscoutTextEditingController.text) ?? 0,
               typePayment: strTypePayment,
               fiscalization: int.parse(selectedFiscalization),
-              modeCartCheckout: 1)
+              modeCartCheckout: 1,
+              paymentIntendId: '',
+              paymentStatus: '')
           .then((value) {
         if (value > 0) {
           if (context.mounted) {
@@ -390,13 +397,16 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         'amount': amount,
         'currency': currency,
       });
+      final transactionId = paymentResult?['transactionId'] ?? '';
+      final paymentStatus = paymentResult?['status'] ?? 'Unknown';
+
       setState(() {
         _stripeStatus = paymentResult;
         disabledFinalizeButton = false;
         textEditingControllerCashInserted.text = '';
       });
       disconnectReader();
-      finalizeStripePayment();
+      finalizeStripePayment(transactionId, paymentStatus);
     } on PlatformException catch (e) {
       setState(() {
         _stripeStatus = '${e.message}';

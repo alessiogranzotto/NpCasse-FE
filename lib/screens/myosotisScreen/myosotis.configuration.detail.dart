@@ -43,6 +43,8 @@ class _MyosotisConfigurationDetailState
   bool isLoadingDetailEmpty = true;
   bool isLoadingDetail = true;
 
+  ValueNotifier<List<String>> selectedFrequenciesNotifier = ValueNotifier([]);
+
   void _showColorPicker() {
     Color tempColor = buttonColorNotifier.value; // copia temporanea del colore
 
@@ -384,6 +386,22 @@ class _MyosotisConfigurationDetailState
   //THANK YOU END MESSAGE
   late final TextEditingController tyEndMessageMyosotisConfigurationController;
 
+  //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+  final ValueNotifier<bool> showContinuousDonationNotifier =
+      ValueNotifier<bool>(false);
+
+  //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
+  final bool setContinuousDonationAsPredefined = false;
+
+  //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
+  final bool setContinuousDonationFrom = false;
+
+  //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
+  List<String> availableFrequencyContinuousDonation = [];
+
+  //FREQUENCY CONTINUOUS DONATION CONFIGURATION
+  List<FrequencyContinuousDonation> frequencyContinuousDonation = [];
+
   void initializeControllers() {
     nameMyosotisConfigurationController = TextEditingController()
       ..addListener(dataControllerListener);
@@ -671,6 +689,16 @@ class _MyosotisConfigurationDetailState
     //THANK YOU END MESSAGE CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.tyEndMessage =
         myosotisConfigurationDetailModel.tyEndMessage;
+
+    //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .showContinuousDonation =
+        myosotisConfigurationDetailModel.showContinuousDonation;
+
+    //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .frequencyContinuousDonation =
+        myosotisConfigurationDetailModel.frequencyContinuousDonation;
   }
 
   setInitialData(
@@ -981,6 +1009,18 @@ class _MyosotisConfigurationDetailState
     tyEndMessageMyosotisConfigurationController.text = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.tyEndMessage;
 
+    //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    showContinuousDonationNotifier.value = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.showContinuousDonation;
+
+    //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    availableFrequencyContinuousDonation =
+        myosotisConfigurationDetailEmpty.availableFrequencyContinuousDonation;
+
+    //FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    frequencyContinuousDonation = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.frequencyContinuousDonation;
+
     if (isEdit) {
       //MASTER
 
@@ -988,18 +1028,19 @@ class _MyosotisConfigurationDetailState
     } else {}
 
     isButtonNoAmountTextEnabledNotifier = ValueNotifier<bool>(
-        !showFreePriceNotifier.value && preetablishedAmounts.isEmpty);
-    print(isButtonNoAmountTextEnabledNotifier.value);
+        !showFreePriceNotifier.value &&
+            preetablishedAmounts.isEmpty &&
+            !showContinuousDonationNotifier.value);
   }
 
   void updateButtonNoAmountTextEnabledNotifier() {
-    final shouldEnable =
-        !showFreePriceNotifier.value && preetablishedAmounts.isEmpty;
+    final shouldEnable = !showFreePriceNotifier.value &&
+        preetablishedAmounts.isEmpty &&
+        !showContinuousDonationNotifier.value;
     isButtonNoAmountTextEnabledNotifier.value = shouldEnable;
     if (!shouldEnable) {
       buttonNoAmountsTextMyosotisConfigurationController.text = "";
     }
-    print(isButtonNoAmountTextEnabledNotifier.value);
   }
 
   void refreshAvailableMandatoryPersonalFormField(List<String> selectedItems) {
@@ -1074,7 +1115,9 @@ class _MyosotisConfigurationDetailState
   bool isValidFont(String fontValue) {
     try {
       // Proviamo a ottenere il font
-      final textStyle = GoogleFonts.getFont(fontValue);
+      if (fontValue.isNotEmpty) {
+        final textStyle = GoogleFonts.getFont(fontValue);
+      }
       // Se la chiamata va a buon fine, il font è valido
       return true;
     } catch (e) {
@@ -1190,14 +1233,31 @@ class _MyosotisConfigurationDetailState
         String input = text.trim();
         try {
           var splitOnEqual = input.split('=');
+
+          //CONTROL FOR INT OR STRING
+          bool canContinue = false;
           if (splitOnEqual.length == 2) {
-            if (num.tryParse(splitOnEqual[1]) != null) {
-              final bestMatch = StringSimilarity.findBestMatch(
-                  splitOnEqual[0].toLowerCase(), idGiveListNameMyosotis);
-              if (bestMatch.bestMatch.rating != null) {
-                if (bestMatch.bestMatch.rating! > 0.40) {
-                  String finalString =
-                      bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
+            final bestMatch = StringSimilarity.findBestMatch(
+                splitOnEqual[0].toLowerCase(), idGiveListNameMyosotis);
+
+            if (bestMatch.bestMatch.rating != null) {
+              if (bestMatch.bestMatch.rating! > 0.40) {
+                String finalString =
+                    bestMatch.bestMatch.target! + "=" + splitOnEqual[1];
+                if (finalString.startsWith('Id') &&
+                    num.tryParse(splitOnEqual[1]) != null) {
+                  canContinue = true;
+                } else if (finalString.startsWith('Codice') &&
+                    splitOnEqual[1].isNotEmpty) {
+                  canContinue = true;
+                } else if (finalString.startsWith('FonteSh') &&
+                    num.tryParse(splitOnEqual[1]) != null) {
+                  canContinue = true;
+                } else if (finalString.startsWith('Ringraziato') &&
+                    ["0", "1"].contains(splitOnEqual[1])) {
+                  canContinue = true;
+                }
+                if (canContinue) {
                   if (!customIdGive.any((item) => item
                       .toLowerCase()
                       .contains(bestMatch.bestMatch.target!.toLowerCase()))) {
@@ -1210,6 +1270,7 @@ class _MyosotisConfigurationDetailState
               }
             }
           }
+
           if (!isOk) {
             ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
                 title: "Configurazione Myosotis",
@@ -1710,6 +1771,63 @@ class _MyosotisConfigurationDetailState
                                 }),
                           ),
                         ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable: showContinuousDonationNotifier,
+                              builder: (context, value, child) {
+                                return CheckboxListTile(
+                                  title: SizedBox(
+                                    width: 100,
+                                    child:
+                                        Text(AppStrings.showContinuousDonation),
+                                  ),
+                                  value: value,
+                                  onChanged: (bool? newValue) {
+                                    showContinuousDonationNotifier.value =
+                                        newValue ?? false;
+                                    updateButtonNoAmountTextEnabledNotifier();
+                                    if (!showContinuousDonationNotifier.value &&
+                                        frequencyContinuousDonation
+                                            .isNotEmpty) {
+                                      frequencyContinuousDonation.clear();
+                                    }
+                                  },
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: showContinuousDonationNotifier,
+                        builder: (context, value, child) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 500),
+                              child: value
+                                  ? FrequencyDonationAmountList(
+                                      frequencyContinuousDonation:
+                                          frequencyContinuousDonation,
+                                      availableFrequencies:
+                                          availableFrequencyContinuousDonation,
+                                      onChanged: (updatedList) {
+                                        setState(() {
+                                          frequencyContinuousDonation =
+                                              updatedList;
+                                        });
+                                      },
+                                    )
+                                  : Container(), // Contenitore vuoto che occupa lo spazio senza causare problemi
+                            ),
+                          );
+                        },
                       ),
                       Row(
                         children: [
@@ -2269,7 +2387,7 @@ class _MyosotisConfigurationDetailState
                           ),
                           dropdownItemDecoration: DropdownItemDecoration(
                             selectedIcon: const Icon(Icons.check_box,
-                                color: Colors.green),
+                                color: CustomColors.darkBlue),
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
@@ -2329,7 +2447,7 @@ class _MyosotisConfigurationDetailState
                           ),
                           dropdownItemDecoration: DropdownItemDecoration(
                             selectedIcon: const Icon(Icons.check_box,
-                                color: Colors.green),
+                                color: CustomColors.darkBlue),
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
@@ -2408,7 +2526,7 @@ class _MyosotisConfigurationDetailState
                           ),
                           dropdownItemDecoration: DropdownItemDecoration(
                             selectedIcon: const Icon(Icons.check_box,
-                                color: Colors.green),
+                                color: CustomColors.darkBlue),
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
@@ -2468,7 +2586,7 @@ class _MyosotisConfigurationDetailState
                           ),
                           dropdownItemDecoration: DropdownItemDecoration(
                             selectedIcon: const Icon(Icons.check_box,
-                                color: Colors.green),
+                                color: CustomColors.darkBlue),
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
@@ -2525,7 +2643,7 @@ class _MyosotisConfigurationDetailState
                           ),
                           dropdownItemDecoration: DropdownItemDecoration(
                             selectedIcon: const Icon(Icons.check_box,
-                                color: Colors.green),
+                                color: CustomColors.darkBlue),
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
@@ -2582,7 +2700,7 @@ class _MyosotisConfigurationDetailState
                           ),
                           dropdownItemDecoration: DropdownItemDecoration(
                             selectedIcon: const Icon(Icons.check_box,
-                                color: Colors.green),
+                                color: CustomColors.darkBlue),
                             disabledIcon:
                                 Icon(Icons.lock, color: Colors.grey.shade300),
                           ),
@@ -2870,9 +2988,9 @@ class _MyosotisConfigurationDetailState
                           thankYouMethod: thankYouMethod.value,
                           idTransactionalSending: idTransactionalSending,
                           waTemplateName: waTemplateNameController.text,
-                          tyEndMessage: tyEndMessageMyosotisConfigurationController.text
-                          //
-                          );
+                          tyEndMessage: tyEndMessageMyosotisConfigurationController.text,
+                          showContinuousDonation: showContinuousDonationNotifier.value,
+                          frequencyContinuousDonation: frequencyContinuousDonation);
                   MyosotisConfigurationModel myosotisConfigurationModel =
                       MyosotisConfigurationModel(
                           idMyosotisConfiguration: widget
@@ -3017,22 +3135,192 @@ class _MyosotisConfigurationDetailState
           )
         ]));
   }
+}
 
-  // Future<void> _onSearchChanged(String value) async {
-  //   final List<String> results = await _suggestionCallback(value);
-  //   setState(() {
-  //     _suggestions = results
-  //         .where((String topping) => !_toppings.contains(topping))
-  //         .toList();
-  //   });
-  // }
+class FrequencyDonationAmountList extends StatefulWidget {
+  final List<FrequencyContinuousDonation> frequencyContinuousDonation;
+  final List<String> availableFrequencies;
+  final ValueChanged<List<FrequencyContinuousDonation>> onChanged; // callback
 
-  // FutureOr<List<String>> _suggestionCallback(String text) {
-  //   if (text.isNotEmpty) {
-  //     return _pizzaToppings.where((String topping) {
-  //       return topping.toLowerCase().contains(text.toLowerCase());
-  //     }).toList();
-  //   }
-  //   return const <String>[];
-  // }
+  const FrequencyDonationAmountList({
+    Key? key,
+    required this.frequencyContinuousDonation,
+    required this.availableFrequencies,
+    required this.onChanged,
+  }) : super(key: key);
+
+  @override
+  State<FrequencyDonationAmountList> createState() =>
+      _FrequencyDonationAmountListState();
+}
+
+class _FrequencyDonationAmountListState
+    extends State<FrequencyDonationAmountList> {
+  late List<FrequencyContinuousDonation> frequencyItem;
+
+  @override
+  void initState() {
+    super.initState();
+    frequencyItem = widget.frequencyContinuousDonation
+        .map((d) => FrequencyContinuousDonation(
+              nameFrequencyContinuousDonation:
+                  d.nameFrequencyContinuousDonation,
+              amountFrequencyContinuousDonation:
+                  List.from(d.amountFrequencyContinuousDonation),
+            ))
+        .toList();
+  }
+
+  void notifyParent() {
+    widget.onChanged(frequencyItem);
+  }
+
+  void addFrequencyItem() {
+    setState(() {
+      frequencyItem.add(FrequencyContinuousDonation(
+        nameFrequencyContinuousDonation: widget.availableFrequencies.isNotEmpty
+            ? widget.availableFrequencies.first
+            : '',
+        amountFrequencyContinuousDonation: [],
+      ));
+    });
+    notifyParent();
+  }
+
+  void removeFrequencyItem(int index) {
+    setState(() {
+      frequencyItem.removeAt(index);
+    });
+    notifyParent();
+  }
+
+  void onChipDeleted(String topping, int index) {
+    setState(() {
+      frequencyItem[index].amountFrequencyContinuousDonation.remove(topping);
+    });
+    notifyParent();
+  }
+
+  void onChipTapped(String topping, int index) {
+    // Se modifichi qualcosa qui, chiama notifyParent anche qui
+  }
+
+  void onFrequencyChanged(String? value, int index) {
+    if (value == null) return;
+    setState(() {
+      frequencyItem[index].nameFrequencyContinuousDonation = value;
+    });
+    notifyParent();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: frequencyItem.length,
+          itemBuilder: (context, index) {
+            final item = frequencyItem[index];
+            return buildDonationRow(item, index);
+          },
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            textStyle:
+                const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+          onPressed: addFrequencyItem,
+          child: const Text("Aggiungi frequenza ed importi"),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDonationRow(FrequencyContinuousDonation donation, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Align(
+                alignment: Alignment.center,
+                child: CustomDropDownButtonFormField(
+                  enabled: true,
+                  actualValue: donation.nameFrequencyContinuousDonation,
+                  labelText: 'Frequenza donazione',
+                  listOfValue: widget.availableFrequencies
+                      .map((value) => DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          ))
+                      .toList(),
+                  onItemChanged: (value) => onFrequencyChanged(value, index),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 4,
+              child: Align(
+                alignment: Alignment.center,
+                child: ChipsInput<String>(
+                  values: donation.amountFrequencyContinuousDonation,
+                  label: 'Importi predefiniti',
+                  strutStyle: const StrutStyle(fontSize: 12),
+                  onChanged: (data) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) return;
+                      setState(() {
+                        donation.amountFrequencyContinuousDonation =
+                            List.from(data);
+                      });
+                      notifyParent();
+                    });
+                  },
+                  onSubmitted: (data) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) return;
+                      setState(() {
+                        if (!donation.amountFrequencyContinuousDonation
+                            .contains(data)) {
+                          donation.amountFrequencyContinuousDonation.add(data);
+                        }
+                      });
+                      notifyParent();
+                    });
+                  },
+                  chipBuilder: chipBuilderFrequencyItem(index),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Align(
+              alignment: Alignment.center,
+              child: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () => removeFrequencyItem(index),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget Function(BuildContext, String) chipBuilderFrequencyItem(int index) {
+    return (BuildContext context, String topping) {
+      return ToppingInputChip(
+        topping: topping,
+        onDeleted: (data) => onChipDeleted(data, index),
+        onSelected: (data) => onChipTapped(data, index),
+      );
+    };
+  }
 }

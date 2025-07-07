@@ -158,7 +158,9 @@ class MyosotisConfigurationDetailModel {
       required this.thankYouMethod,
       required this.idTransactionalSending,
       required this.waTemplateName,
-      required this.tyEndMessage});
+      required this.tyEndMessage,
+      required this.showContinuousDonation,
+      required this.frequencyContinuousDonation});
   late String typeFormStartup;
   late int buttonColor;
   late String formFont;
@@ -201,6 +203,9 @@ class MyosotisConfigurationDetailModel {
 
   late String tyEndMessage;
 
+  late bool showContinuousDonation;
+  late List<FrequencyContinuousDonation> frequencyContinuousDonation;
+
   MyosotisConfigurationDetailModel.empty() {
     typeFormStartup = "";
     buttonColor = 0;
@@ -241,6 +246,8 @@ class MyosotisConfigurationDetailModel {
     idTransactionalSending = 0;
     waTemplateName = "";
     tyEndMessage = "";
+    showContinuousDonation = false;
+    frequencyContinuousDonation = [];
   }
   // JSON deserialization
   MyosotisConfigurationDetailModel.fromJson(Map<String, dynamic> json) {
@@ -306,7 +313,7 @@ class MyosotisConfigurationDetailModel {
     if (json['visiblePersonalFormField'] != null) {
       visiblePersonalFormField = List.from(json['visiblePersonalFormField']);
     } else {
-      preestablishedAmount = List.empty();
+      visiblePersonalFormField = List.empty();
     }
     if (json['mandatoryPersonalFormField'] != null) {
       mandatoryPersonalFormField =
@@ -319,7 +326,7 @@ class MyosotisConfigurationDetailModel {
     if (json['visibleCompanyFormField'] != null) {
       visibleCompanyFormField = List.from(json['visibleCompanyFormField']);
     } else {
-      preestablishedAmount = List.empty();
+      visibleCompanyFormField = List.empty();
     }
     if (json['mandatoryCompanyFormField'] != null) {
       mandatoryCompanyFormField = List.from(json['mandatoryCompanyFormField']);
@@ -363,6 +370,17 @@ class MyosotisConfigurationDetailModel {
     }
 
     tyEndMessage = json['tyEndMessage'];
+
+    showContinuousDonation = json['showContinuousDonation'];
+
+    if (json['frequencyContinuousDonation'] != null) {
+      frequencyContinuousDonation =
+          List.from(json['frequencyContinuousDonation'])
+              .map((e) => FrequencyContinuousDonation.fromJson(e))
+              .toList();
+    } else {
+      frequencyContinuousDonation = List.empty();
+    }
   }
 
   // JSON serialization
@@ -408,6 +426,9 @@ class MyosotisConfigurationDetailModel {
     data['waTemplateName'] = waTemplateName;
 
     data['tyEndMessage'] = tyEndMessage;
+    data['showContinuousDonation'] = showContinuousDonation;
+    data['frequencyContinuousDonation'] =
+        frequencyContinuousDonation.map((e) => e.toJson()).toList();
     return data;
   }
 }
@@ -422,6 +443,7 @@ class MyosotisConfigurationDetailEmpty {
     required this.availableSubCategoryCausalDonation,
     required this.availableThankYouMethod,
     required this.availableTransactionalSending,
+    required this.availableFrequencyContinuousDonation,
   });
   late final List<String> availableFormStartup;
   late final List<String> availablePaymentMethodApp;
@@ -432,6 +454,7 @@ class MyosotisConfigurationDetailEmpty {
   late final List<SubCategoryShort> availableSubCategoryCausalDonation;
   late final List<String> availableThankYouMethod;
   late final List<TransactionalSendingShort> availableTransactionalSending;
+  late final List<String> availableFrequencyContinuousDonation;
 
   MyosotisConfigurationDetailEmpty.empty() {
     availableFormStartup = [];
@@ -443,6 +466,7 @@ class MyosotisConfigurationDetailEmpty {
     availableSubCategoryCausalDonation = [];
     availableThankYouMethod = [];
     availableTransactionalSending = [];
+    availableFrequencyContinuousDonation = [];
   }
 
   // JSON deserialization
@@ -465,6 +489,9 @@ class MyosotisConfigurationDetailEmpty {
         List.from(json['availableTransactionalSending'])
             .map((e) => TransactionalSendingShort.fromJson(e))
             .toList();
+
+    availableFrequencyContinuousDonation =
+        List.from(json['availableFrequencyContinuousDonation']);
   }
 }
 
@@ -552,5 +579,33 @@ class ProductCausalDonation {
     nameProduct = json['nameProduct'];
     priceProduct = json['priceProduct'];
     freePriceProduct = json['freePriceProduct'];
+  }
+}
+
+class FrequencyContinuousDonation {
+  FrequencyContinuousDonation(
+      {required this.nameFrequencyContinuousDonation,
+      required this.amountFrequencyContinuousDonation});
+  late String nameFrequencyContinuousDonation;
+  late List<String> amountFrequencyContinuousDonation;
+
+  FrequencyContinuousDonation.empty() {
+    nameFrequencyContinuousDonation = '';
+    amountFrequencyContinuousDonation = [];
+  }
+
+  // JSON deserialization
+  FrequencyContinuousDonation.fromJson(Map<String, dynamic> json) {
+    nameFrequencyContinuousDonation = json['nameFrequencyContinuousDonation'];
+    amountFrequencyContinuousDonation =
+        List.from(json['amountFrequencyContinuousDonation']);
+  }
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['nameFrequencyContinuousDonation'] = nameFrequencyContinuousDonation;
+    data['amountFrequencyContinuousDonation'] =
+        amountFrequencyContinuousDonation;
+
+    return data;
   }
 }

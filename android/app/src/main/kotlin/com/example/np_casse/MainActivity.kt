@@ -484,7 +484,12 @@ private fun processPayment(amount: Long, currency: String, result: MethodChannel
                         terminalInstance.confirmPaymentIntent(collectedIntent, object : PaymentIntentCallback {
                             override fun onSuccess(confirmedIntent: PaymentIntent) {
                                 if (confirmedIntent.status == PaymentIntentStatus.SUCCEEDED) {
-                                    result.success("Payment Successful")
+                                    val transactionId = confirmedIntent.id
+                                    val paymentResult = mapOf(
+                                        "status" to "Payment Successful",
+                                        "transactionId" to transactionId
+                                    )
+                                    result.success(paymentResult)
                                 } else {
                                     Log.e("PAYMENT_UNEXPECTED_STATUS",
                                         "${confirmedIntent.status}")

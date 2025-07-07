@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-const List<String> idGiveListNameAll = [
-  'IdFinalizzazione',
-  'IdEvento',
-  'IdAttività',
-  'IdAgenda',
-  'IdComunicazioni',
-  'IdTipDonazione',
-  'IdCatalogo',
-  'IdPromotore',
-  'IdPagamentoContante',
-  'IdPagamentoBancomat',
-  'IdPagamentoCartaDiCredito',
-  'IdPagamentoAssegno',
-  'FonteSh'
-];
+// const List<String> idGiveListNameAll = [
+//   'IdFinalizzazione',
+//   'IdEvento',
+//   'IdAttività',
+//   'IdAgenda',
+//   'IdComunicazioni',
+//   'IdTipDonazione',
+//   'IdCatalogo',
+//   'IdPromotore',
+//   'IdPagamentoContante',
+//   'IdPagamentoBancomat',
+//   'IdPagamentoCartaDiCredito',
+//   'IdPagamentoAssegno',
+//   'FonteSh'
+// ];
 
 const List<String> idGiveListNameProduct = [
   'IdFinalizzazione',
@@ -26,7 +26,9 @@ const List<String> idGiveListNameProduct = [
   'IdCatalogo',
   'IdPromotore',
   'CodiceSottoconto',
-  'CodiceCentroRicavo'
+  'CodiceCentroRicavo',
+  'FonteSh',
+  'Ringraziato'
 ];
 
 const List<String> idGiveListNameCategory = [
@@ -43,7 +45,9 @@ const List<String> idGiveListNameCategory = [
   'IdPagamentoContante',
   'IdPagamentoBancomat',
   'IdPagamentoCartaDiCredito',
-  'IdPagamentoAssegno'
+  'IdPagamentoAssegno',
+  'FonteSh',
+  'Ringraziato'
 ];
 
 const List<String> idGiveListNameMyosotis = [
@@ -94,6 +98,8 @@ class FunctionalColorUtils {
           return Colors.indigo[100]!;
         case 'FonteSh':
           return Colors.purple[100]!;
+        case 'Ringraziato':
+          return Colors.pink[100]!;
         case 'CodiceSottoconto':
           return Colors.amber[100]!;
         case 'CodiceCentroRicavo':

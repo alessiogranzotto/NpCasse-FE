@@ -657,7 +657,7 @@ class _TransactionalSendingDetailScreen
                                 ),
                                 dropdownItemDecoration: DropdownItemDecoration(
                                   selectedIcon: const Icon(Icons.check_box,
-                                      color: Colors.green),
+                                      color: CustomColors.darkBlue),
                                   disabledIcon: Icon(Icons.lock,
                                       color: Colors.grey.shade300),
                                 ),

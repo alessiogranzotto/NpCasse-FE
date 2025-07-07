@@ -111,7 +111,7 @@ class MassSendingAPI {
       required int idUserAppInstitution,
       required DateTime dateTimePlanMassSending}) async {
     final Uri uri = Uri.parse(
-        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending/' +
+        '${ApiRoutes.baseComunicationSendingURL}/Mass-sending' +
             '/$idMassSending/Plan' +
             '?IdUserAppInstitution=$idUserAppInstitution');
 
