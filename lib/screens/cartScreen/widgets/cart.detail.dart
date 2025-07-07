@@ -399,14 +399,13 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       });
       final transactionId = paymentResult?['transactionId'] ?? '';
       final paymentStatus = paymentResult?['status'] ?? 'Unknown';
+      finalizeStripePayment(transactionId, paymentStatus);
 
       setState(() {
         _stripeStatus = paymentResult;
-        disabledFinalizeButton = false;
         textEditingControllerCashInserted.text = '';
       });
       disconnectReader();
-      finalizeStripePayment(transactionId, paymentStatus);
     } on PlatformException catch (e) {
       setState(() {
         _stripeStatus = '${e.message}';
