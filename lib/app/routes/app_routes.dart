@@ -16,7 +16,7 @@ import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.screen.d
 import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.detail.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.event.detail.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.statistics.dart';
-import 'package:np_casse/screens/homeScreen/home.screen.dart';
+import 'package:np_casse/screens/homeScreen/main.screen.dart';
 import 'package:np_casse/screens/loginScreen/login.view.dart';
 import 'package:np_casse/screens/loginScreen/register.view.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.detail.dart';
@@ -153,11 +153,11 @@ class AppRouter {
       case homeRoute:
         {
           return MaterialPageRoute(
-            builder: (_) => HomeScreen(),
+            builder: (_) => MasterScreen(),
           );
           // return PageRouteBuilder(
           //   pageBuilder: (context, animation, secondaryAnimation) =>
-          //       const HomeScreen(),
+          //       const MasterScreen(),
           //   transitionsBuilder:
           //       (context, animation, secondaryAnimation, child) {
           //     const begin = Offset(0.0, 1.0);

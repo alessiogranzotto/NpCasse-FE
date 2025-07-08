@@ -526,21 +526,21 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
 
     return Expanded(
       flex: 2,
-      child: Container(
-        margin: EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(4)),
-        ),
-        child: Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: Border.all(color: Colors.grey.shade200)),
-            padding: EdgeInsets.only(left: 12, top: 8, right: 12, bottom: 8),
-            child: SingleChildScrollView(
+      child: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(4)),
+          ),
+          child: Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  border: Border.all(color: Colors.grey.shade200)),
+              padding: EdgeInsets.only(left: 12, top: 8, right: 12, bottom: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -1128,8 +1128,12 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                                       onPressed: disabledFinalizeButton
                                           ? null
                                           : finalizeFunctionKnown,
-                                      child: const Text(
-                                          "Check Out (richiedi ricevuta)")),
+                                      child: Column(
+                                        children: [
+                                          const Text("Check Out"),
+                                          Text("(richiedi ricevuta)"),
+                                        ],
+                                      )),
                                 ),
                               ],
                             ),
