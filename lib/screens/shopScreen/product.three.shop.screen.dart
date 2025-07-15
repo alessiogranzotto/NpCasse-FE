@@ -20,10 +20,10 @@ class ProductThreeShopScreen extends StatefulWidget {
 }
 
 class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
-  double widgetWidth = 325;
-  double widgetHeight = 580;
-  double widgetHeightHalf = 430;
-  double gridMainAxisSpacing = 10;
+  double widgetWidth = 290;
+  double widgetHeight = 505;
+  double widgetHeightHalf = 355;
+  double gridChildSpace = 5;
 
   Timer? _timer;
   Icon icona = const Icon(Icons.search);
@@ -348,8 +348,8 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                               crossAxisCount:
                                   (MediaQuery.of(context).size.width ~/
                                       widgetWidth),
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: gridMainAxisSpacing,
+                              crossAxisSpacing: gridChildSpace,
+                              mainAxisSpacing: gridChildSpace,
                               height: cHeight,
                             ),
                             physics: const ScrollPhysics(),

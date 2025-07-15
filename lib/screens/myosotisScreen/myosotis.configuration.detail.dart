@@ -4,7 +4,6 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/app/utilities/image_utils.dart';
 import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
@@ -14,6 +13,7 @@ import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.widget/myosotis.configuration.detail.widget.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:string_similarity/string_similarity.dart';
@@ -38,6 +38,9 @@ class _MyosotisConfigurationDetailState
       ValueNotifier(false);
   ValueNotifier<bool> isButtonNoAmountTextEnabledNotifier =
       ValueNotifier(false);
+  ValueNotifier<bool> isSetContinuousDonationAsPreferedEnabledNotifier =
+      ValueNotifier(false);
+
   bool isEdit = false;
   bool isLoading = true;
   bool isLoadingDetailEmpty = true;
@@ -276,15 +279,33 @@ class _MyosotisConfigurationDetailState
   //FORM STARTUP CONFIGURATION-AVAILABLE VALUE
   late List<String> preetablishedFormStartup = [];
 
-  //PREESTABLISHED AMOUNTS CONFIGURATION
+  //SHOW PREESTABLISHED AMOUNTS DONATION CONFIGURATION  - SINGLE DONATION
+  final ValueNotifier<bool> showPreestablishedAmountNotifier =
+      ValueNotifier<bool>(false);
+
+  //PREESTABLISHED AMOUNTS CONFIGURATION  - SINGLE DONATION
   late List<String> preetablishedAmounts = [];
 
-  //SHOW FREE PRICE CONFIGURATION
+  //SHOW FREE PRICE CONFIGURATION - SINGLE DONATION
   final ValueNotifier<bool> showFreePriceNotifier = ValueNotifier<bool>(false);
+
+  //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+  final ValueNotifier<bool> showContinuousDonationNotifier =
+      ValueNotifier<bool>(false);
+
+  //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
+  List<String> availableFrequencyContinuousDonation = [];
+
+  //FREQUENCY CONTINUOUS DONATION CONFIGURATION
+  List<FrequencyContinuousDonation> frequencyContinuousDonation = [];
 
   //BUTTON TEXT NO AMOUNTS
   late final TextEditingController
       buttonNoAmountsTextMyosotisConfigurationController;
+
+  //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
+  final ValueNotifier<bool> setContinuousDonationAsPredefinedNotifier =
+      ValueNotifier<bool>(false);
 
   //ID GIVE FROM PROJECT OR FIXED
   final ValueNotifier<String> idGiveFromProjectOrFixedValue =
@@ -386,21 +407,11 @@ class _MyosotisConfigurationDetailState
   //THANK YOU END MESSAGE
   late final TextEditingController tyEndMessageMyosotisConfigurationController;
 
-  //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
-  final ValueNotifier<bool> showContinuousDonationNotifier =
-      ValueNotifier<bool>(false);
+  //OPTIONAL FIELDS CONFIGURATION
+  List<OptionalField> optionalField = [];
 
-  //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
-  final bool setContinuousDonationAsPredefined = false;
-
-  //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
-  final bool setContinuousDonationFrom = false;
-
-  //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
-  List<String> availableFrequencyContinuousDonation = [];
-
-  //FREQUENCY CONTINUOUS DONATION CONFIGURATION
-  List<FrequencyContinuousDonation> frequencyContinuousDonation = [];
+  //OPTIONAL FIELDS CONFIGURATION
+  List<String> availableTypeOptionalField = [];
 
   void initializeControllers() {
     nameMyosotisConfigurationController = TextEditingController()
@@ -563,7 +574,12 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.formFont =
         myosotisConfigurationDetailModel.formFont;
 
-    //PREESTABLISHED AMOUNTS CONFIGURATION
+    //SHOW PREESTABLISHED AMOUNTS DONATION CONFIGURATION  - SINGLE DONATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .showPreestablishedAmount =
+        myosotisConfigurationDetailModel.showPreestablishedAmount;
+
+    //PREESTABLISHED AMOUNTS CONFIGURATION - SINGLE DONATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
             .preestablishedAmount =
         myosotisConfigurationDetailModel.preestablishedAmount;
@@ -572,10 +588,25 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
         .showFreePrice = myosotisConfigurationDetailModel.showFreePrice;
 
+    //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .showContinuousDonation =
+        myosotisConfigurationDetailModel.showContinuousDonation;
+
+    //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .frequencyContinuousDonation =
+        myosotisConfigurationDetailModel.frequencyContinuousDonation;
+
     //BUTTON TEXT NO AMOUNTS CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
             .buttonNoAmountsText =
         myosotisConfigurationDetailModel.buttonNoAmountsText;
+
+    //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .setContinuousDonationAsPredefined =
+        myosotisConfigurationDetailModel.setContinuousDonationAsPredefined;
 
     // //SHOW CAUSAL DONATION
     // widget.myosotisConfiguration.myosotisConfigurationDetailModel
@@ -690,15 +721,9 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.tyEndMessage =
         myosotisConfigurationDetailModel.tyEndMessage;
 
-    //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    //OPTIONAL FIELDS CONFIGURATION
     widget.myosotisConfiguration.myosotisConfigurationDetailModel
-            .showContinuousDonation =
-        myosotisConfigurationDetailModel.showContinuousDonation;
-
-    //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
-    widget.myosotisConfiguration.myosotisConfigurationDetailModel
-            .frequencyContinuousDonation =
-        myosotisConfigurationDetailModel.frequencyContinuousDonation;
+        .optionalField = myosotisConfigurationDetailModel.optionalField;
   }
 
   setInitialData(
@@ -765,7 +790,7 @@ class _MyosotisConfigurationDetailState
     if (isValidFont(rawFont)) {
       fontToUse = rawFont;
     } else {
-      fontToUse = 'Roboto'; // Colore di default se non valido
+      fontToUse = 'Roboto'; // Font di default se non valido
     }
     formFontNotifier.value = fontToUse;
 
@@ -773,13 +798,35 @@ class _MyosotisConfigurationDetailState
     preetablishedFormStartup =
         myosotisConfigurationDetailEmpty.availableFormStartup;
 
-    //PREESTABLISHED AMOUNTS CONFIGURATION
+    //SHOW PREESTABLISHED AMOUNTS DONATION CONFIGURATION  - SINGLE DONATION
+    showPreestablishedAmountNotifier.value = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.showPreestablishedAmount;
+
+    //PREESTABLISHED AMOUNTS CONFIGURATION - SINGLE DONATION
     preetablishedAmounts = new List<String>.from(widget.myosotisConfiguration
         .myosotisConfigurationDetailModel.preestablishedAmount);
 
-    //SHOW FREE PRICE CONFIGURATION
+    //SHOW FREE PRICE CONFIGURATION - SINGLE DONATION
     showFreePriceNotifier.value = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.showFreePrice;
+
+    //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    showContinuousDonationNotifier.value = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.showContinuousDonation;
+
+    //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    availableFrequencyContinuousDonation =
+        myosotisConfigurationDetailEmpty.availableFrequencyContinuousDonation;
+
+    //FREQUENCY CONTINUOUS DONATION CONFIGURATION
+    frequencyContinuousDonation = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.frequencyContinuousDonation;
+
+    //SET CONTINUOUS DONATION AS PREDEFINED CONFIGURATION
+    setContinuousDonationAsPredefinedNotifier.value = widget
+        .myosotisConfiguration
+        .myosotisConfigurationDetailModel
+        .setContinuousDonationAsPredefined;
 
     //BUTTON TEXT NO AMOUNTS CONFIGURATION
     buttonNoAmountsTextMyosotisConfigurationController.text = widget
@@ -1009,18 +1056,13 @@ class _MyosotisConfigurationDetailState
     tyEndMessageMyosotisConfigurationController.text = widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.tyEndMessage;
 
-    //SHOW FREQUENCY CONTINUOUS DONATION CONFIGURATION
-    showContinuousDonationNotifier.value = widget.myosotisConfiguration
-        .myosotisConfigurationDetailModel.showContinuousDonation;
+    //OPTIONAL FIELD CONFIGURATION
+    optionalField = widget
+        .myosotisConfiguration.myosotisConfigurationDetailModel.optionalField;
 
-    //AVAILABLE FREQUENCY CONTINUOUS DONATION CONFIGURATION
-    availableFrequencyContinuousDonation =
-        myosotisConfigurationDetailEmpty.availableFrequencyContinuousDonation;
-
-    //FREQUENCY CONTINUOUS DONATION CONFIGURATION
-    frequencyContinuousDonation = widget.myosotisConfiguration
-        .myosotisConfigurationDetailModel.frequencyContinuousDonation;
-
+    //AVAILABLE TYPE OPTIONAL FIELDS CONFIGURATION
+    availableTypeOptionalField =
+        myosotisConfigurationDetailEmpty.availableTypeOptionalField;
     if (isEdit) {
       //MASTER
 
@@ -1028,19 +1070,25 @@ class _MyosotisConfigurationDetailState
     } else {}
 
     isButtonNoAmountTextEnabledNotifier = ValueNotifier<bool>(
-        !showFreePriceNotifier.value &&
-            preetablishedAmounts.isEmpty &&
+        !showPreestablishedAmountNotifier.value &&
             !showContinuousDonationNotifier.value);
+    isSetContinuousDonationAsPreferedEnabledNotifier = ValueNotifier<bool>(
+        showPreestablishedAmountNotifier.value &&
+            showContinuousDonationNotifier.value);
   }
 
-  void updateButtonNoAmountTextEnabledNotifier() {
-    final shouldEnable = !showFreePriceNotifier.value &&
-        preetablishedAmounts.isEmpty &&
+  void updateAdditionalControlNotifier() {
+    final shouldEnableNoAmountText = !showPreestablishedAmountNotifier.value &&
         !showContinuousDonationNotifier.value;
-    isButtonNoAmountTextEnabledNotifier.value = shouldEnable;
-    if (!shouldEnable) {
+    isButtonNoAmountTextEnabledNotifier.value = shouldEnableNoAmountText;
+    if (!shouldEnableNoAmountText) {
       buttonNoAmountsTextMyosotisConfigurationController.text = "";
     }
+    final shouldEnableSetContinuosDonationAsPrefered =
+        showPreestablishedAmountNotifier.value &&
+            showContinuousDonationNotifier.value;
+    isSetContinuousDonationAsPreferedEnabledNotifier.value =
+        shouldEnableSetContinuosDonationAsPrefered;
   }
 
   void refreshAvailableMandatoryPersonalFormField(List<String> selectedItems) {
@@ -1117,6 +1165,8 @@ class _MyosotisConfigurationDetailState
       // Proviamo a ottenere il font
       if (fontValue.isNotEmpty) {
         final textStyle = GoogleFonts.getFont(fontValue);
+      } else {
+        return false;
       }
       // Se la chiamata va a buon fine, il font è valido
       return true;
@@ -1180,7 +1230,6 @@ class _MyosotisConfigurationDetailState
         enabledUrlMyosotisConfiguration.remove(topping);
       } else if (area == 'preetablishedAmounts') {
         preetablishedAmounts.remove(topping);
-        updateButtonNoAmountTextEnabledNotifier();
       } else if (area == 'customIdGive') {
         customIdGive.remove(topping);
       }
@@ -1421,127 +1470,17 @@ class _MyosotisConfigurationDetailState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          SizedBox(
-                            width: 240,
-                            child: Card(
-                              elevation: 8,
-                              child: Container(
-                                decoration: BoxDecoration(boxShadow: [
-                                  BoxShadow(
-                                      color: Theme.of(context)
-                                          .shadowColor
-                                          .withOpacity(0.6),
-                                      offset: const Offset(0.0, 0.0), //(x,y)
-                                      blurRadius: 4.0,
-                                      blurStyle: BlurStyle.solid)
-                                ], color: Theme.of(context).cardColor),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 0),
-                                      height: 180,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: (ImageUtils
-                                                    .getImageFromStringBase64(
-                                                        stringImage:
-                                                            bigImageString)
-                                                .image)),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Immagine di sfondo grande"),
-                                        Tooltip(
-                                          message:
-                                              'Upload immagine di sfondo grande',
-                                          child: IconButton(
-                                              onPressed: () {
-                                                ImageUtils.imageSelectorFile()
-                                                    .then((value) {
-                                                  setState(() {
-                                                    bigImageString = value;
-                                                  });
-                                                });
-                                              },
-                                              icon: const Icon(
-                                                Icons.upload,
-                                                size: 20,
-                                              )),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                          ImagePickerCard(
+                            label: 'Immagine di sfondo grande',
+                            imageBase64: bigImageString,
+                            onPick: (img) =>
+                                setState(() => bigImageString = img),
                           ),
-                          SizedBox(
-                            width: 240,
-                            child: Card(
-                              elevation: 8,
-                              child: Container(
-                                decoration: BoxDecoration(boxShadow: [
-                                  BoxShadow(
-                                      color: Theme.of(context)
-                                          .shadowColor
-                                          .withOpacity(0.6),
-                                      offset: const Offset(0.0, 0.0), //(x,y)
-                                      blurRadius: 4.0,
-                                      blurStyle: BlurStyle.solid)
-                                ], color: Theme.of(context).cardColor),
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 0),
-                                      height: 180,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            fit: BoxFit.cover,
-                                            image: (ImageUtils
-                                                    .getImageFromStringBase64(
-                                                        stringImage:
-                                                            smallImageString)
-                                                .image)),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("Immagine di sfondo piccola"),
-                                        Tooltip(
-                                          message:
-                                              'Upload immagine di sfondo piccola',
-                                          child: IconButton(
-                                              onPressed: () {
-                                                ImageUtils.imageSelectorFile()
-                                                    .then((value) {
-                                                  setState(() {
-                                                    smallImageString = value;
-                                                  });
-                                                });
-                                              },
-                                              icon: const Icon(
-                                                Icons.upload,
-                                                size: 20,
-                                              )),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                          ImagePickerCard(
+                            label: 'Immagine di sfondo piccola',
+                            imageBase64: smallImageString,
+                            onPick: (img) =>
+                                setState(() => smallImageString = img),
                           ),
                         ],
                       ),
@@ -1677,9 +1616,9 @@ class _MyosotisConfigurationDetailState
                           SizedBox(width: 8),
                           SizedBox(
                             width: 250,
-                            child: ValueListenableBuilder<String?>(
+                            child: ValueListenableBuilder<String>(
                               valueListenable: formFontNotifier,
-                              builder: (BuildContext context, String? value,
+                              builder: (BuildContext context, String value,
                                   Widget? child) {
                                 return InkWell(
                                   onTap: _showFontPicker,
@@ -1713,7 +1652,7 @@ class _MyosotisConfigurationDetailState
                                           Text(
                                             overflow: TextOverflow.ellipsis,
                                             ' ${value}',
-                                            style: GoogleFonts.getFont(value!),
+                                            style: GoogleFonts.getFont(value),
                                           ),
                                           SizedBox(width: 20),
                                         ],
@@ -1730,45 +1669,108 @@ class _MyosotisConfigurationDetailState
                       Row(
                         children: [
                           Expanded(
-                            flex: 3,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: ChipsInput<String>(
-                                values: preetablishedAmounts,
-                                label: AppStrings.preestablishedAmount,
-                                decoration: const InputDecoration(),
-                                strutStyle: const StrutStyle(fontSize: 12),
-                                onChanged: (data) {
-                                  onChanged(data, 'preestablishedAmount');
-                                  updateButtonNoAmountTextEnabledNotifier();
-                                },
-                                onSubmitted: (data) {
-                                  onSubmitted(data, 'preestablishedAmount');
-                                  updateButtonNoAmountTextEnabledNotifier();
-                                },
-                                chipBuilder: chipBuilderPreetablishedAmounts,
-                              ),
+                            flex: 1,
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable: showPreestablishedAmountNotifier,
+                              builder: (context, value, child) {
+                                return CheckboxListTile(
+                                  title:
+                                      Text(AppStrings.showPreestablishedAmount),
+                                  value: value,
+                                  onChanged: (bool? newValue) {
+                                    showPreestablishedAmountNotifier.value =
+                                        newValue ?? false;
+                                    updateAdditionalControlNotifier();
+                                    if (!showPreestablishedAmountNotifier
+                                        .value) {
+                                      showFreePriceNotifier.value = false;
+                                      setState(() {
+                                        preetablishedAmounts.clear();
+                                      });
+                                    }
+                                  },
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                );
+                              },
                             ),
                           ),
                           Expanded(
-                            flex: 1,
+                            flex: 2,
                             child: ValueListenableBuilder<bool>(
-                                valueListenable: showFreePriceNotifier,
-                                builder: (context, value, child) {
-                                  return CheckboxListTile(
-                                      title: SizedBox(
-                                          width: 100,
-                                          child: Text(AppStrings
-                                              .showFreePriceConfiguration)),
-                                      value: value,
-                                      onChanged: (bool? value) {
-                                        showFreePriceNotifier.value =
-                                            value ?? false;
-                                        updateButtonNoAmountTextEnabledNotifier();
-                                      },
-                                      controlAffinity:
-                                          ListTileControlAffinity.leading);
-                                }),
+                              valueListenable: showPreestablishedAmountNotifier,
+                              builder: (context, value, child) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: AnimatedSwitcher(
+                                    duration:
+                                        const Duration(milliseconds: 1000),
+                                    child: value
+                                        ? Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 3,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: ChipsInput<String>(
+                                                    values:
+                                                        preetablishedAmounts,
+                                                    label: AppStrings
+                                                        .preestablishedAmount,
+                                                    decoration:
+                                                        const InputDecoration(),
+                                                    strutStyle:
+                                                        const StrutStyle(
+                                                            fontSize: 12),
+                                                    onChanged: (data) {
+                                                      onChanged(data,
+                                                          'preestablishedAmount');
+                                                    },
+                                                    onSubmitted: (data) {
+                                                      onSubmitted(data,
+                                                          'preestablishedAmount');
+                                                    },
+                                                    chipBuilder:
+                                                        chipBuilderPreetablishedAmounts,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: ValueListenableBuilder<
+                                                        bool>(
+                                                    valueListenable:
+                                                        showFreePriceNotifier,
+                                                    builder: (context, value,
+                                                        child) {
+                                                      return CheckboxListTile(
+                                                          title: SizedBox(
+                                                              width: 100,
+                                                              child: Text(AppStrings
+                                                                  .showFreePriceConfiguration)),
+                                                          value: value,
+                                                          onChanged:
+                                                              (bool? value) {
+                                                            showFreePriceNotifier
+                                                                    .value =
+                                                                value ?? false;
+                                                            updateAdditionalControlNotifier();
+                                                          },
+                                                          controlAffinity:
+                                                              ListTileControlAffinity
+                                                                  .leading);
+                                                    }),
+                                              ),
+                                            ],
+                                          )
+                                        : SizedBox(
+                                            height:
+                                                76), // Contenitore vuoto che occupa lo spazio senza causare problemi
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -1780,16 +1782,13 @@ class _MyosotisConfigurationDetailState
                               valueListenable: showContinuousDonationNotifier,
                               builder: (context, value, child) {
                                 return CheckboxListTile(
-                                  title: SizedBox(
-                                    width: 100,
-                                    child:
-                                        Text(AppStrings.showContinuousDonation),
-                                  ),
+                                  title:
+                                      Text(AppStrings.showContinuousDonation),
                                   value: value,
                                   onChanged: (bool? newValue) {
                                     showContinuousDonationNotifier.value =
                                         newValue ?? false;
-                                    updateButtonNoAmountTextEnabledNotifier();
+                                    updateAdditionalControlNotifier();
                                     if (!showContinuousDonationNotifier.value &&
                                         frequencyContinuousDonation
                                             .isNotEmpty) {
@@ -1810,10 +1809,10 @@ class _MyosotisConfigurationDetailState
                           return Padding(
                             padding: const EdgeInsets.all(8),
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 1000),
                               child: value
                                   ? FrequencyDonationAmountList(
-                                      frequencyContinuousDonation:
+                                      frequencyContinuousDonationList:
                                           frequencyContinuousDonation,
                                       availableFrequencies:
                                           availableFrequencyContinuousDonation,
@@ -1829,26 +1828,80 @@ class _MyosotisConfigurationDetailState
                           );
                         },
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: ValueListenableBuilder<bool>(
-                              valueListenable:
-                                  isButtonNoAmountTextEnabledNotifier,
-                              builder: (context, isEnabled, _) {
-                                return CustomTextFormField(
-                                  enabled: isEnabled,
-                                  controller:
-                                      buttonNoAmountsTextMyosotisConfigurationController,
-                                  labelText: AppStrings.buttonNoAmountsText,
-                                  keyboardType: TextInputType.name,
-                                  textInputAction: TextInputAction.next,
-                                );
-                              },
+                      ValueListenableBuilder<bool>(
+                        valueListenable: isButtonNoAmountTextEnabledNotifier,
+                        builder: (context, value, child) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 1000),
+                              child: value
+                                  ? Row(
+                                      children: [
+                                        Expanded(
+                                          child: ValueListenableBuilder<bool>(
+                                            valueListenable:
+                                                isButtonNoAmountTextEnabledNotifier,
+                                            builder: (context, isEnabled, _) {
+                                              return CustomTextFormField(
+                                                enabled: isEnabled,
+                                                controller:
+                                                    buttonNoAmountsTextMyosotisConfigurationController,
+                                                labelText: AppStrings
+                                                    .buttonNoAmountsText,
+                                                keyboardType:
+                                                    TextInputType.name,
+                                                textInputAction:
+                                                    TextInputAction.next,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(), // Contenitore vuoto che occupa lo spazio senza causare problemi
                             ),
-                          ),
-                        ],
+                          );
+                        },
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable:
+                            isSetContinuousDonationAsPreferedEnabledNotifier,
+                        builder: (context, value, child) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 1000),
+                              child: value
+                                  ? Row(
+                                      children: [
+                                        Expanded(
+                                          child: ValueListenableBuilder<bool>(
+                                            valueListenable:
+                                                setContinuousDonationAsPredefinedNotifier,
+                                            builder: (context, value, child) {
+                                              return CheckboxListTile(
+                                                title: Text(AppStrings
+                                                    .setContinuousDonationAsPredefined),
+                                                value: value,
+                                                onChanged: (bool? newValue) {
+                                                  setContinuousDonationAsPredefinedNotifier
+                                                          .value =
+                                                      newValue ?? false;
+                                                },
+                                                controlAffinity:
+                                                    ListTileControlAffinity
+                                                        .leading,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(), // Contenitore vuoto che occupa lo spazio senza causare problemi
+                            ),
+                          );
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
@@ -2913,6 +2966,15 @@ class _MyosotisConfigurationDetailState
                           ),
                         ],
                       ),
+                      OptionalFieldWidget(
+                        optionalFieldList: optionalField,
+                        availableTypeOptionalField: availableTypeOptionalField,
+                        onChanged: (updatedList) {
+                          setState(() {
+                            optionalField = updatedList;
+                          });
+                        },
+                      ),
                       SizedBox(height: 180),
                     ],
                   ),
@@ -2936,11 +2998,18 @@ class _MyosotisConfigurationDetailState
                           title: titleMyosotisConfigurationController.text,
                           subtitle:
                               subtitleMyosotisConfigurationController.text,
+                          showPreestablishedAmount:
+                              showPreestablishedAmountNotifier.value,
                           preestablishedAmount: preetablishedAmounts,
                           showFreePrice: showFreePriceNotifier.value,
-                          buttonNoAmountsText:
-                              buttonNoAmountsTextMyosotisConfigurationController
-                                  .text,
+                          showContinuousDonation:
+                              showContinuousDonationNotifier.value,
+                          frequencyContinuousDonation:
+                              frequencyContinuousDonation,
+                          setContinuousDonationAsPredefined:
+                              setContinuousDonationAsPredefinedNotifier.value,
+                          buttonNoAmountsText: buttonNoAmountsTextMyosotisConfigurationController
+                              .text,
                           showPrivacy: showPrivacyNotifier.value,
                           textPrivacy:
                               textPrivacyMyosotisConfigurationController.text,
@@ -2948,9 +3017,8 @@ class _MyosotisConfigurationDetailState
                               urlPrivacyMyosotisConfigurationController.text,
                           isMandatoryPrivacy: isMandatoryPrivacyNotifier.value,
                           showNewsletter: showNewsletterNotifier.value,
-                          textNewsletter:
-                              textNewsletterMyosotisConfigurationController
-                                  .text,
+                          textNewsletter: textNewsletterMyosotisConfigurationController
+                              .text,
                           isMandatoryNewsletter:
                               isMandatoryNewsletterNotifier.value,
                           visiblePersonalFormField:
@@ -2971,11 +3039,8 @@ class _MyosotisConfigurationDetailState
                                   .map((e) => e.value)
                                   .toList(),
                           preestablishedPaymentMethodApp:
-                              paymentMethodAppController.selectedItems
-                                  .map((e) => e.value)
-                                  .toList(),
-                          preestablishedPaymentMethodWeb:
-                              paymentMethodWebController.selectedItems.map((e) => e.value).toList(),
+                              paymentMethodAppController.selectedItems.map((e) => e.value).toList(),
+                          preestablishedPaymentMethodWeb: paymentMethodWebController.selectedItems.map((e) => e.value).toList(),
                           paymentManager: paymentManager!,
                           // showCausalDonation: showCausalDonationNotifier.value,
                           causalDonationText: causalDonationTextMyosotisConfigurationController.text,
@@ -2989,8 +3054,8 @@ class _MyosotisConfigurationDetailState
                           idTransactionalSending: idTransactionalSending,
                           waTemplateName: waTemplateNameController.text,
                           tyEndMessage: tyEndMessageMyosotisConfigurationController.text,
-                          showContinuousDonation: showContinuousDonationNotifier.value,
-                          frequencyContinuousDonation: frequencyContinuousDonation);
+                          optionalField: optionalField);
+
                   MyosotisConfigurationModel myosotisConfigurationModel =
                       MyosotisConfigurationModel(
                           idMyosotisConfiguration: widget
@@ -3134,193 +3199,5 @@ class _MyosotisConfigurationDetailState
             ),
           )
         ]));
-  }
-}
-
-class FrequencyDonationAmountList extends StatefulWidget {
-  final List<FrequencyContinuousDonation> frequencyContinuousDonation;
-  final List<String> availableFrequencies;
-  final ValueChanged<List<FrequencyContinuousDonation>> onChanged; // callback
-
-  const FrequencyDonationAmountList({
-    Key? key,
-    required this.frequencyContinuousDonation,
-    required this.availableFrequencies,
-    required this.onChanged,
-  }) : super(key: key);
-
-  @override
-  State<FrequencyDonationAmountList> createState() =>
-      _FrequencyDonationAmountListState();
-}
-
-class _FrequencyDonationAmountListState
-    extends State<FrequencyDonationAmountList> {
-  late List<FrequencyContinuousDonation> frequencyItem;
-
-  @override
-  void initState() {
-    super.initState();
-    frequencyItem = widget.frequencyContinuousDonation
-        .map((d) => FrequencyContinuousDonation(
-              nameFrequencyContinuousDonation:
-                  d.nameFrequencyContinuousDonation,
-              amountFrequencyContinuousDonation:
-                  List.from(d.amountFrequencyContinuousDonation),
-            ))
-        .toList();
-  }
-
-  void notifyParent() {
-    widget.onChanged(frequencyItem);
-  }
-
-  void addFrequencyItem() {
-    setState(() {
-      frequencyItem.add(FrequencyContinuousDonation(
-        nameFrequencyContinuousDonation: widget.availableFrequencies.isNotEmpty
-            ? widget.availableFrequencies.first
-            : '',
-        amountFrequencyContinuousDonation: [],
-      ));
-    });
-    notifyParent();
-  }
-
-  void removeFrequencyItem(int index) {
-    setState(() {
-      frequencyItem.removeAt(index);
-    });
-    notifyParent();
-  }
-
-  void onChipDeleted(String topping, int index) {
-    setState(() {
-      frequencyItem[index].amountFrequencyContinuousDonation.remove(topping);
-    });
-    notifyParent();
-  }
-
-  void onChipTapped(String topping, int index) {
-    // Se modifichi qualcosa qui, chiama notifyParent anche qui
-  }
-
-  void onFrequencyChanged(String? value, int index) {
-    if (value == null) return;
-    setState(() {
-      frequencyItem[index].nameFrequencyContinuousDonation = value;
-    });
-    notifyParent();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: frequencyItem.length,
-          itemBuilder: (context, index) {
-            final item = frequencyItem[index];
-            return buildDonationRow(item, index);
-          },
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            textStyle:
-                const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-          ),
-          onPressed: addFrequencyItem,
-          child: const Text("Aggiungi frequenza ed importi"),
-        ),
-      ],
-    );
-  }
-
-  Widget buildDonationRow(FrequencyContinuousDonation donation, int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              flex: 3,
-              child: Align(
-                alignment: Alignment.center,
-                child: CustomDropDownButtonFormField(
-                  enabled: true,
-                  actualValue: donation.nameFrequencyContinuousDonation,
-                  labelText: 'Frequenza donazione',
-                  listOfValue: widget.availableFrequencies
-                      .map((value) => DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          ))
-                      .toList(),
-                  onItemChanged: (value) => onFrequencyChanged(value, index),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              flex: 4,
-              child: Align(
-                alignment: Alignment.center,
-                child: ChipsInput<String>(
-                  values: donation.amountFrequencyContinuousDonation,
-                  label: 'Importi predefiniti',
-                  strutStyle: const StrutStyle(fontSize: 12),
-                  onChanged: (data) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (!mounted) return;
-                      setState(() {
-                        donation.amountFrequencyContinuousDonation =
-                            List.from(data);
-                      });
-                      notifyParent();
-                    });
-                  },
-                  onSubmitted: (data) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (!mounted) return;
-                      setState(() {
-                        if (!donation.amountFrequencyContinuousDonation
-                            .contains(data)) {
-                          donation.amountFrequencyContinuousDonation.add(data);
-                        }
-                      });
-                      notifyParent();
-                    });
-                  },
-                  chipBuilder: chipBuilderFrequencyItem(index),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Align(
-              alignment: Alignment.center,
-              child: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => removeFrequencyItem(index),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget Function(BuildContext, String) chipBuilderFrequencyItem(int index) {
-    return (BuildContext context, String topping) {
-      return ToppingInputChip(
-        topping: topping,
-        onDeleted: (data) => onChipDeleted(data, index),
-        onSelected: (data) => onChipTapped(data, index),
-      );
-    };
   }
 }

@@ -357,7 +357,7 @@ class _MasterScreenState extends State<MasterScreen> {
     );
     try {
       // Simula una chiamata API
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
       AuthenticationNotifier authenticationNotifier =
           Provider.of<AuthenticationNotifier>(context, listen: false);
       authenticationNotifier.userLogout(context);

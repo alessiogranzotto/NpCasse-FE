@@ -104,43 +104,44 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
   Widget build(BuildContext context) {
     controller.updateValues(<T>[...widget.values]);
 
-    return Wrap(children: [
-      TextFormField(
+    return SizedBox(
+      height: 60,
+      child: TextFormField(
+        expands: true,
         maxLines: null,
+        minLines: null,
         textInputAction: TextInputAction.next,
         style: widget.style,
         strutStyle: widget.strutStyle,
         decoration: InputDecoration(
           labelText: widget.label,
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          labelStyle: Theme.of(context).textTheme.labelLarge!,
-          hintStyle: Theme.of(context)
-              .textTheme
-              .labelLarge!
-              .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
+          labelStyle: Theme.of(context).textTheme.labelLarge,
+          hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).hintColor.withOpacity(0.3),
+              ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
-                // color:
-                //     Theme.of(context).colorScheme.inversePrimary.withOpacity(0.8),
-                color: Colors.grey,
-                width: 1.0),
+              color: Colors.grey,
+              width: 1.0,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: BorderRadius.circular(10.0),
             borderSide: BorderSide(
-                //color: Theme.of(context).colorScheme.inversePrimary,
-                color: Colors.black,
-                width: 1.0),
+              color: Colors.black,
+              width: 1.0,
+            ),
           ),
         ),
         controller: controller,
-        onChanged: (String value) =>
+        onChanged: (value) =>
             widget.onTextChanged?.call(controller.textWithoutReplacements),
-        onFieldSubmitted: (String value) =>
+        onFieldSubmitted: (value) =>
             widget.onSubmitted?.call(controller.textWithoutReplacements),
       ),
-    ]);
+    );
   }
 }
 

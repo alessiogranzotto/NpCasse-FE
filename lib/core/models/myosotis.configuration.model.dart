@@ -27,7 +27,6 @@
 // }
 
 import 'package:flutter/material.dart';
-import 'package:np_casse/core/models/comunication.sending.model.dart';
 
 class MyosotisConfigurationModel {
   MyosotisConfigurationModel({
@@ -132,9 +131,13 @@ class MyosotisConfigurationDetailModel {
       required this.smallImageString,
       required this.title,
       required this.subtitle,
+      required this.showPreestablishedAmount,
       required this.preestablishedAmount,
-      required this.buttonNoAmountsText,
       required this.showFreePrice,
+      required this.showContinuousDonation,
+      required this.frequencyContinuousDonation,
+      required this.setContinuousDonationAsPredefined,
+      required this.buttonNoAmountsText,
       required this.causalDonationText,
       required this.idFormGive,
       required this.idSubCategoryCausalDonation,
@@ -159,8 +162,7 @@ class MyosotisConfigurationDetailModel {
       required this.idTransactionalSending,
       required this.waTemplateName,
       required this.tyEndMessage,
-      required this.showContinuousDonation,
-      required this.frequencyContinuousDonation});
+      required this.optionalField});
   late String typeFormStartup;
   late int buttonColor;
   late String formFont;
@@ -170,9 +172,14 @@ class MyosotisConfigurationDetailModel {
   late String smallImageString;
   late String title;
   late String subtitle;
-  late List<String> preestablishedAmount;
+  late bool showPreestablishedAmount;
   late bool showFreePrice;
+  late List<String> preestablishedAmount;
+  late bool showContinuousDonation;
+  late List<FrequencyContinuousDonation> frequencyContinuousDonation;
+  late bool setContinuousDonationAsPredefined;
   late String buttonNoAmountsText;
+
   //
   late String idGiveFromProjectOrFixedValue;
   late List<String> customIdGive;
@@ -203,8 +210,7 @@ class MyosotisConfigurationDetailModel {
 
   late String tyEndMessage;
 
-  late bool showContinuousDonation;
-  late List<FrequencyContinuousDonation> frequencyContinuousDonation;
+  late List<OptionalField> optionalField;
 
   MyosotisConfigurationDetailModel.empty() {
     typeFormStartup = "";
@@ -216,9 +222,14 @@ class MyosotisConfigurationDetailModel {
     smallImageString = "";
     title = "";
     subtitle = "";
+    showPreestablishedAmount = false;
     preestablishedAmount = [];
     showFreePrice = false;
+    showContinuousDonation = false;
+    frequencyContinuousDonation = [];
+    setContinuousDonationAsPredefined = false;
     buttonNoAmountsText = '';
+
     idGiveFromProjectOrFixedValue = "";
     customIdGive = [];
     causalDonationText = '';
@@ -246,8 +257,8 @@ class MyosotisConfigurationDetailModel {
     idTransactionalSending = 0;
     waTemplateName = "";
     tyEndMessage = "";
-    showContinuousDonation = false;
-    frequencyContinuousDonation = [];
+
+    optionalField = [];
   }
   // JSON deserialization
   MyosotisConfigurationDetailModel.fromJson(Map<String, dynamic> json) {
@@ -259,10 +270,8 @@ class MyosotisConfigurationDetailModel {
       buttonColor = Colors.red.toARGB32();
       ;
     }
-    if (json['formFont'] != null) {
+    if (json['formFont'] != '') {
       formFont = json['formFont'];
-    } else {
-      formFont = "Roboto";
     }
 
     showLogo = json['showLogo'];
@@ -271,18 +280,28 @@ class MyosotisConfigurationDetailModel {
     smallImageString = json['smallImageString'];
     title = json['title'];
     subtitle = json['subtitle'];
+    showPreestablishedAmount = json['showPreestablishedAmount'];
 
-    if (json['preestablishedAmount'] != null) {
-      preestablishedAmount = List.from(json['preestablishedAmount']);
-    } else {
-      preestablishedAmount = List.empty();
-    }
+    preestablishedAmount = List.from(json['preestablishedAmount']);
     showFreePrice = json['showFreePrice'];
 
+    showContinuousDonation = json['showContinuousDonation'];
+
+    if (json['frequencyContinuousDonation'] != null) {
+      frequencyContinuousDonation =
+          List.from(json['frequencyContinuousDonation'])
+              .map((e) => FrequencyContinuousDonation.fromJson(e))
+              .toList();
+    } else {
+      frequencyContinuousDonation = List.empty();
+    }
     buttonNoAmountsText = json['buttonNoAmountsText'];
+    setContinuousDonationAsPredefined =
+        json['setContinuousDonationAsPredefined'];
+
     idGiveFromProjectOrFixedValue = json['idGiveFromProjectOrFixedValue'];
+
     if (json['customIdGive'] != null) {
-      // customIdGive = List.from(json['customIdGive']);
       customIdGive = (json['customIdGive'] as List<dynamic>)
           .map((item) =>
               '${item['customIdGiveName']}=${item['customIdGiveValue']}')
@@ -310,29 +329,12 @@ class MyosotisConfigurationDetailModel {
     textNewsletter = json['textNewsletter'];
     isMandatoryNewsletter = json['isMandatoryNewsletter'];
 
-    if (json['visiblePersonalFormField'] != null) {
-      visiblePersonalFormField = List.from(json['visiblePersonalFormField']);
-    } else {
-      visiblePersonalFormField = List.empty();
-    }
-    if (json['mandatoryPersonalFormField'] != null) {
-      mandatoryPersonalFormField =
-          List.from(json['mandatoryPersonalFormField']);
-    } else {
-      mandatoryPersonalFormField = List.empty();
-    }
+    visiblePersonalFormField = List.from(json['visiblePersonalFormField']);
+    mandatoryPersonalFormField = List.from(json['mandatoryPersonalFormField']);
 
     showCompanyForm = json['showCompanyForm'];
-    if (json['visibleCompanyFormField'] != null) {
-      visibleCompanyFormField = List.from(json['visibleCompanyFormField']);
-    } else {
-      visibleCompanyFormField = List.empty();
-    }
-    if (json['mandatoryCompanyFormField'] != null) {
-      mandatoryCompanyFormField = List.from(json['mandatoryCompanyFormField']);
-    } else {
-      mandatoryCompanyFormField = List.empty();
-    }
+    visibleCompanyFormField = List.from(json['visibleCompanyFormField']);
+    mandatoryCompanyFormField = List.from(json['mandatoryCompanyFormField']);
 
     if (json['preestablishedPaymentMethodApp'] != null) {
       preestablishedPaymentMethodApp =
@@ -347,39 +349,24 @@ class MyosotisConfigurationDetailModel {
       preestablishedPaymentMethodWeb = List.empty();
     }
 
-    if (json['paymentManager'] != null) {
-      paymentManager = json['paymentManager'];
-    } else {
-      paymentManager = '';
-    }
+    paymentManager = json['paymentManager'];
 
-    if (json['thankYouMethod'] != null) {
-      thankYouMethod = json['thankYouMethod'];
-    } else {
-      thankYouMethod = 'Nessun ringraziamento';
-    }
+    thankYouMethod = json['thankYouMethod'];
     if (json['idTransactionalSending'] != null) {
       idTransactionalSending = json['idTransactionalSending'];
     } else {
       idTransactionalSending = 0;
     }
-    if (json['waTemplateName'] != null) {
-      waTemplateName = json['waTemplateName'];
-    } else {
-      waTemplateName = "";
-    }
+    waTemplateName = json['waTemplateName'];
 
     tyEndMessage = json['tyEndMessage'];
 
-    showContinuousDonation = json['showContinuousDonation'];
-
-    if (json['frequencyContinuousDonation'] != null) {
-      frequencyContinuousDonation =
-          List.from(json['frequencyContinuousDonation'])
-              .map((e) => FrequencyContinuousDonation.fromJson(e))
-              .toList();
+    if (json['optionalField'] != null) {
+      optionalField = List.from(json['optionalField'])
+          .map((e) => OptionalField.fromJson(e))
+          .toList();
     } else {
-      frequencyContinuousDonation = List.empty();
+      optionalField = List.empty();
     }
   }
 
@@ -394,8 +381,14 @@ class MyosotisConfigurationDetailModel {
     data['smallImageString'] = smallImageString;
     data['title'] = title;
     data['subtitle'] = subtitle;
+    data['showPreestablishedAmount'] = showPreestablishedAmount;
     data['preestablishedAmount'] = preestablishedAmount;
     data['showFreePrice'] = showFreePrice;
+    data['showContinuousDonation'] = showContinuousDonation;
+    data['frequencyContinuousDonation'] =
+        frequencyContinuousDonation.map((e) => e.toJson()).toList();
+    data['setContinuousDonationAsPredefined'] =
+        setContinuousDonationAsPredefined;
     data['buttonNoAmountsText'] = buttonNoAmountsText;
 
     data['causalDonationText'] = causalDonationText;
@@ -426,9 +419,8 @@ class MyosotisConfigurationDetailModel {
     data['waTemplateName'] = waTemplateName;
 
     data['tyEndMessage'] = tyEndMessage;
-    data['showContinuousDonation'] = showContinuousDonation;
-    data['frequencyContinuousDonation'] =
-        frequencyContinuousDonation.map((e) => e.toJson()).toList();
+    data['optionalField'] = optionalField.map((e) => e.toJson()).toList();
+
     return data;
   }
 }
@@ -444,6 +436,7 @@ class MyosotisConfigurationDetailEmpty {
     required this.availableThankYouMethod,
     required this.availableTransactionalSending,
     required this.availableFrequencyContinuousDonation,
+    required this.availableTypeOptionalField,
   });
   late final List<String> availableFormStartup;
   late final List<String> availablePaymentMethodApp;
@@ -455,6 +448,7 @@ class MyosotisConfigurationDetailEmpty {
   late final List<String> availableThankYouMethod;
   late final List<TransactionalSendingShort> availableTransactionalSending;
   late final List<String> availableFrequencyContinuousDonation;
+  late final List<String> availableTypeOptionalField;
 
   MyosotisConfigurationDetailEmpty.empty() {
     availableFormStartup = [];
@@ -467,6 +461,7 @@ class MyosotisConfigurationDetailEmpty {
     availableThankYouMethod = [];
     availableTransactionalSending = [];
     availableFrequencyContinuousDonation = [];
+    availableTypeOptionalField = [];
   }
 
   // JSON deserialization
@@ -492,6 +487,8 @@ class MyosotisConfigurationDetailEmpty {
 
     availableFrequencyContinuousDonation =
         List.from(json['availableFrequencyContinuousDonation']);
+
+    availableTypeOptionalField = List.from(json['availableTypeOptionalField']);
   }
 }
 
@@ -585,13 +582,16 @@ class ProductCausalDonation {
 class FrequencyContinuousDonation {
   FrequencyContinuousDonation(
       {required this.nameFrequencyContinuousDonation,
-      required this.amountFrequencyContinuousDonation});
+      required this.amountFrequencyContinuousDonation,
+      required this.showFreeAmountNotifier});
   late String nameFrequencyContinuousDonation;
   late List<String> amountFrequencyContinuousDonation;
+  late ValueNotifier<bool> showFreeAmountNotifier;
 
   FrequencyContinuousDonation.empty() {
     nameFrequencyContinuousDonation = '';
     amountFrequencyContinuousDonation = [];
+    showFreeAmountNotifier = ValueNotifier(false);
   }
 
   // JSON deserialization
@@ -599,12 +599,57 @@ class FrequencyContinuousDonation {
     nameFrequencyContinuousDonation = json['nameFrequencyContinuousDonation'];
     amountFrequencyContinuousDonation =
         List.from(json['amountFrequencyContinuousDonation']);
+    showFreeAmountNotifier = ValueNotifier(json['showFreeAmount'] ?? false);
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['nameFrequencyContinuousDonation'] = nameFrequencyContinuousDonation;
     data['amountFrequencyContinuousDonation'] =
         amountFrequencyContinuousDonation;
+    data['showFreeAmount'] = showFreeAmountNotifier.value;
+
+    return data;
+  }
+}
+
+class OptionalField {
+  OptionalField(
+      {required this.labelOptionalField,
+      required this.typeOptionalField,
+      required this.availableItemOptionalField,
+      required this.mantainOptionalFieldOnTransactionNotifier,
+      required this.giveFieldNameOptionalField});
+  late String labelOptionalField;
+  late String typeOptionalField;
+  late List<String> availableItemOptionalField;
+  late ValueNotifier<bool> mantainOptionalFieldOnTransactionNotifier;
+  late String giveFieldNameOptionalField;
+
+  OptionalField.empty() {
+    labelOptionalField = '';
+    typeOptionalField = '';
+    availableItemOptionalField = [];
+    mantainOptionalFieldOnTransactionNotifier = ValueNotifier(false);
+    giveFieldNameOptionalField = '';
+  }
+
+  // JSON deserialization
+  OptionalField.fromJson(Map<String, dynamic> json) {
+    labelOptionalField = json['labelOptionalField'];
+    typeOptionalField = json['typeOptionalField'];
+    availableItemOptionalField = List.from(json['availableItemOptionalField']);
+    mantainOptionalFieldOnTransactionNotifier =
+        ValueNotifier(json['mantainOptionalFieldOnTransaction'] ?? false);
+    giveFieldNameOptionalField = json['giveFieldNameOptionalField'];
+  }
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['labelOptionalField'] = labelOptionalField;
+    data['typeOptionalField'] = typeOptionalField;
+    data['availableItemOptionalField'] = availableItemOptionalField;
+    data['mantainOptionalFieldOnTransaction'] =
+        mantainOptionalFieldOnTransactionNotifier.value;
+    data['giveFieldNameOptionalField'] = giveFieldNameOptionalField;
 
     return data;
   }

@@ -275,20 +275,9 @@ class _ProductCardState extends State<ProductCard> {
     UserAppInstitutionModel? cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    return Card(
-      elevation: 8,
-      child: Container(
-        //margin: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.6),
-                  offset: const Offset(0.0, 0.0), //(x,y)
-                  blurRadius: 4.0,
-                  blurStyle: BlurStyle.solid)
-            ],
-            //color: Colors.white,
-            color: Theme.of(context).cardColor),
+    return HoverElevationCard(
+      child: Card(
+        // elevation: 8,
 
         child: Column(
           children: [
@@ -323,17 +312,76 @@ class _ProductCardState extends State<ProductCard> {
                           )
                         : const SizedBox.shrink()
                   ]),
-            SizedBox(
-              height: 40,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  productCatalog.nameProduct,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleSmall,
+            Row(
+              children: [
+                ValueListenableBuilder<bool>(
+                  builder: (BuildContext context, bool value, Widget? child) {
+                    return IconButton(
+                      onPressed: () async {
+                        productCatalog.wishlisted = !productCatalog.wishlisted;
+                        wishlistProductNotifier
+                            .updateWishlistedProductState(
+                                context: context,
+                                token: authenticationNotifier.token,
+                                idUserAppInstitution: cUserAppInstitutionModel
+                                    .idUserAppInstitution,
+                                idProduct: productCatalog.idProduct,
+                                state: productCatalog.wishlisted)
+                            .then((value) {
+                          if (value) {
+                            if (!productCatalog.wishlisted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackUtil.stylishSnackBar(
+                                      title: "Prodotti",
+                                      message:
+                                          '${productCatalog.nameProduct} rimosso dai preferiti',
+                                      contentType: "success"));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackUtil.stylishSnackBar(
+                                      title: "Prodotti",
+                                      message:
+                                          '${productCatalog.nameProduct} aggiunto ai preferiti',
+                                      contentType: "success"));
+                            }
+                            wishListedNotifier.value =
+                                productCatalog.wishlisted;
+                            //wishlistProductNotifier.refresh();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackUtil.stylishSnackBar(
+                                    title: "Prodotti",
+                                    message: "Errore di connessione",
+                                    contentType: "success"));
+                          }
+                        });
+                      },
+                      icon: productCatalog.wishlisted
+                          ? const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 20,
+                            )
+                          : const Icon(
+                              Icons.favorite_border,
+                              size: 20,
+                            ),
+                    );
+                  },
+                  valueListenable: wishListedNotifier,
                 ),
-              ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Text(
+                      productCatalog.nameProduct,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+              ],
             ),
             // SizedBox(
             //   height: 30,
@@ -369,22 +417,19 @@ class _ProductCardState extends State<ProductCard> {
                   ),
 
             Container(
-              height: 140,
-              child: GridView.builder(
-                padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(4),
+              height: 110,
+              child: ListView.builder(
+                shrinkWrap: true,
                 itemCount: productCatalog.smartProductAttributeJson.length,
-                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  childAspectRatio: 4,
-                  mainAxisSpacing: 2.0,
-                  crossAxisSpacing: 2.0,
-                ),
                 itemBuilder: (BuildContext context, int index) {
                   var cSmartProductAttributeJson =
                       productCatalog.smartProductAttributeJson[index];
 
-                  return SizedBox(
-                    width: 100,
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6.0), // ← spazio tra elementi
+
                     child: GestureDetector(
                       onTap: () {
                         // Clear the current selected value for the variant
@@ -398,6 +443,7 @@ class _ProductCardState extends State<ProductCard> {
                             .labelMedium!
                             .copyWith(color: Colors.blueGrey),
                         decoration: InputDecoration(
+                          isDense: true,
                           prefixIcon: Icon(Icons.shop),
                           labelText:
                               cSmartProductAttributeJson.nameProductAttribute,
@@ -475,164 +521,8 @@ class _ProductCardState extends State<ProductCard> {
               Row(
                 children: [
                   productCatalog.freePriceProduct
-                      ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  width: 160,
-                                  height: 40,
-                                  child: ValueListenableBuilder<double>(
-                                    builder: (BuildContext context,
-                                        double value, Widget? child) {
-                                      return TextFormField(
-                                        maxLines: 1,
-                                        textAlign: TextAlign.center,
-                                        controller:
-                                            textEditingControllerFreePriceProduct,
-                                        keyboardType: const TextInputType
-                                            .numberWithOptions(
-                                            decimal: true, signed: false),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w900),
-                                        decoration: const InputDecoration(
-                                          contentPadding: EdgeInsets.zero,
-                                          suffixIcon: Icon(Icons.euro),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0)),
-                                            borderSide: BorderSide(
-                                                color: Colors.black,
-                                                width: 0.2),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0)),
-                                            borderSide: BorderSide(
-                                                color: Colors.red, width: 0.2),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    valueListenable: freePriceProductNotifier,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                      ? Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: ValueListenableBuilder<double>(
-                                builder: (BuildContext context, double value,
-                                    Widget? child) {
-                                  return CircleAvatar(
-                                    radius: 32,
-                                    backgroundColor: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Text(
-                                          "${priceNotifier.value.toStringAsFixed(2).replaceAll('.', ',')}€",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headlineMedium),
-                                    ),
-                                  );
-                                },
-                                valueListenable: priceNotifier,
-                              ),
-                            ),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: Container(
-                            //     decoration: BoxDecoration(
-                            //       border: Border.all(
-                            //         color:
-                            //             Theme.of(context).colorScheme.onSurface,
-                            //       ),
-                            //       borderRadius: BorderRadius.circular(10),
-                            //     ),
-                            //     child: Row(
-                            //       mainAxisAlignment: MainAxisAlignment.end,
-                            //       mainAxisSize: MainAxisSize.min,
-                            //       children: [
-                            //         SizedBox(
-                            //           child: IconButton(
-                            //               onPressed: () {
-                            //                 if (quantityForProductNotifier
-                            //                         .value >
-                            //                     0) {
-                            //                   quantityForProductNotifier
-                            //                       .value--;
-                            //                 }
-                            //                 if (quantityForProductNotifier
-                            //                         .value >
-                            //                     0) {
-                            //                   enableQuantity = true;
-                            //                 } else {
-                            //                   enableQuantity = false;
-                            //                 }
-                            //                 addToCartButtonEnabled.value =
-                            //                     checkEnableButton();
-                            //               },
-                            //               icon: const Icon(
-                            //                   size: 20, Icons.remove)),
-                            //         ),
-                            //         SizedBox(
-                            //           child: ValueListenableBuilder<int>(
-                            //             builder: (BuildContext context,
-                            //                 int value, Widget? child) {
-                            //               return Text('$value',
-                            //                   style: Theme.of(context)
-                            //                       .textTheme
-                            //                       .titleMedium!
-                            //                       .copyWith(
-                            //                           fontWeight:
-                            //                               FontWeight.w900));
-                            //             },
-                            //             valueListenable:
-                            //                 quantityForProductNotifier,
-                            //           ),
-                            //         ),
-                            //         SizedBox(
-                            //           child: IconButton(
-                            //               onPressed: () {
-                            //                 quantityForProductNotifier.value++;
-                            //                 if (quantityForProductNotifier
-                            //                         .value >
-                            //                     0) {
-                            //                   enableQuantity = true;
-                            //                 } else {
-                            //                   enableQuantity = false;
-                            //                 }
-                            //                 addToCartButtonEnabled.value =
-                            //                     checkEnableButton();
-                            //               },
-                            //               icon:
-                            //                   const Icon(size: 20, Icons.add)),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
@@ -648,7 +538,103 @@ class _ProductCardState extends State<ProductCard> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     SizedBox(
+                                      width: 160,
+                                      height: 40,
+                                      child: ValueListenableBuilder<double>(
+                                        builder: (BuildContext context,
+                                            double value, Widget? child) {
+                                          return TextFormField(
+                                            maxLines: 1,
+                                            textAlign: TextAlign.center,
+                                            controller:
+                                                textEditingControllerFreePriceProduct,
+                                            keyboardType: const TextInputType
+                                                .numberWithOptions(
+                                                decimal: true, signed: false),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium!
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.w900),
+                                            decoration: const InputDecoration(
+                                              contentPadding: EdgeInsets.zero,
+                                              suffixIcon: Icon(Icons.euro),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.black,
+                                                    width: 0.2),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(10.0)),
+                                                borderSide: BorderSide(
+                                                    color: Colors.red,
+                                                    width: 0.2),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        valueListenable:
+                                            freePriceProductNotifier,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4.0),
+                              child: ValueListenableBuilder<double>(
+                                builder: (BuildContext context, double value,
+                                    Widget? child) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondaryContainer,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      "${priceNotifier.value.toStringAsFixed(2).replaceAll('.', ',')}€",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium, // leggermente più piccolo
+                                    ),
+                                  );
+                                },
+                                valueListenable: priceNotifier,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
                                       child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(
+                                              minWidth: 28, minHeight: 28),
                                           onPressed: () {
                                             var q = int.tryParse(
                                                 textEditingControllerQuantityForProduct
@@ -665,10 +651,10 @@ class _ProductCardState extends State<ProductCard> {
                                             }
                                           },
                                           icon: const Icon(
-                                              size: 20, Icons.remove)),
+                                              size: 16, Icons.remove_circle)),
                                     ),
                                     SizedBox(
-                                      width: 40,
+                                      width: 36,
                                       child: TextFormField(
                                           textAlign: TextAlign.center,
                                           controller:
@@ -694,6 +680,9 @@ class _ProductCardState extends State<ProductCard> {
                                     ),
                                     SizedBox(
                                       child: IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(
+                                              minWidth: 28, minHeight: 28),
                                           onPressed: () {
                                             var q = int.tryParse(
                                                 textEditingControllerQuantityForProduct
@@ -707,8 +696,8 @@ class _ProductCardState extends State<ProductCard> {
                                                   .text = q.toString();
                                             }
                                           },
-                                          icon:
-                                              const Icon(size: 20, Icons.add)),
+                                          icon: const Icon(
+                                              size: 16, Icons.add_circle)),
                                     ),
                                   ],
                                 ),
@@ -720,204 +709,163 @@ class _ProductCardState extends State<ProductCard> {
               ),
               Row(
                 children: [
-                  SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: ValueListenableBuilder<bool>(
-                      builder:
-                          (BuildContext context, bool value, Widget? child) {
-                        return IconButton(
-                          onPressed: () async {
-                            productCatalog.wishlisted =
-                                !productCatalog.wishlisted;
-                            wishlistProductNotifier
-                                .updateWishlistedProductState(
+                  ValueListenableBuilder<bool>(
+                    builder: (BuildContext context, bool value, Widget? child) {
+                      return IconButton(
+                        color: addToCartButtonEnabled.value
+                            ? Colors.black
+                            : Colors.grey,
+                        onPressed: () {
+                          if (!addToCartButtonEnabled.value) {
+                            return;
+                          } else {
+                            UIBlock.block(context);
+                            addToCartButtonEnabled.value = false;
+                            int quantity = 0;
+                            var q = int.tryParse(
+                                textEditingControllerQuantityForProduct.text);
+                            if (q != null) {
+                              quantity = q;
+                            }
+                            if (productCatalog.freePriceProduct) {
+                              quantity = 1;
+                            }
+                            List<CartProductVariants> cartProductVariants = [];
+                            for (int i = 0;
+                                i <
+                                    productCatalog
+                                        .smartProductAttributeJson.length;
+                                i++) {
+                              CartProductVariants v = CartProductVariants(
+                                  idProductAttribute: productCatalog
+                                      .smartProductAttributeJson[i]
+                                      .idProductAttribute,
+                                  nameProductAttribute: productCatalog
+                                      .smartProductAttributeJson[i]
+                                      .nameProductAttribute,
+                                  valueVariant: selectedValueVariant[i] ?? '');
+
+                              cartProductVariants.add(v);
+                            }
+                            cartNotifier
+                                .addToCart(
                                     context: context,
                                     token: authenticationNotifier.token,
                                     idUserAppInstitution:
                                         cUserAppInstitutionModel
                                             .idUserAppInstitution,
                                     idProduct: productCatalog.idProduct,
-                                    state: productCatalog.wishlisted)
+                                    idCategory: idCategory,
+                                    quantity: quantity,
+                                    price: productCatalog.freePriceProduct
+                                        ? freePriceProductNotifier.value
+                                        : priceNotifier.value,
+                                    cartProductVariants: cartProductVariants,
+                                    notes:
+                                        textEditingControllerNoteProduct.text)
                                 .then((value) {
+                              addToCartButtonEnabled.value = true;
+                              UIBlock.unblock(context);
                               if (value) {
-                                if (!productCatalog.wishlisted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackUtil.stylishSnackBar(
-                                          title: "Prodotti",
-                                          message:
-                                              '${productCatalog.nameProduct} rimosso dai preferiti',
-                                          contentType: "success"));
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackUtil.stylishSnackBar(
-                                          title: "Prodotti",
-                                          message:
-                                              '${productCatalog.nameProduct} aggiunto ai preferiti',
-                                          contentType: "success"));
-                                }
-                                wishListedNotifier.value =
-                                    productCatalog.wishlisted;
-                                //wishlistProductNotifier.refresh();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackUtil.stylishSnackBar(
+                                        title: "Prodotti",
+                                        message:
+                                            '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
+                                        contentType: "success"));
+                                textEditingControllerNoteProduct.clear();
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackUtil.stylishSnackBar(
                                         title: "Prodotti",
                                         message: "Errore di connessione",
-                                        contentType: "success"));
+                                        contentType: "failure"));
                               }
                             });
-                          },
-                          icon: productCatalog.wishlisted
-                              ? const Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                  size: 20,
-                                )
-                              : const Icon(
-                                  Icons.favorite_border,
-                                  size: 20,
-                                ),
-                        );
-                      },
-                      valueListenable: wishListedNotifier,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: ValueListenableBuilder<bool>(
-                      builder:
-                          (BuildContext context, bool value, Widget? child) {
-                        return IconButton(
-                          color: addToCartButtonEnabled.value
-                              ? Colors.black
-                              : Colors.grey,
-                          onPressed: () {
-                            if (!addToCartButtonEnabled.value) {
-                              return;
-                            } else {
-                              UIBlock.block(context);
-                              addToCartButtonEnabled.value = false;
-                              int quantity = 0;
-                              var q = int.tryParse(
-                                  textEditingControllerQuantityForProduct.text);
-                              if (q != null) {
-                                quantity = q;
-                              }
-                              if (productCatalog.freePriceProduct) {
-                                quantity = 1;
-                              }
-                              List<CartProductVariants> cartProductVariants =
-                                  [];
-                              for (int i = 0;
-                                  i <
-                                      productCatalog
-                                          .smartProductAttributeJson.length;
-                                  i++) {
-                                CartProductVariants v = CartProductVariants(
-                                    idProductAttribute: productCatalog
-                                        .smartProductAttributeJson[i]
-                                        .idProductAttribute,
-                                    nameProductAttribute: productCatalog
-                                        .smartProductAttributeJson[i]
-                                        .nameProductAttribute,
-                                    valueVariant:
-                                        selectedValueVariant[i] ?? '');
-
-                                cartProductVariants.add(v);
-                              }
-                              cartNotifier
-                                  .addToCart(
-                                      context: context,
-                                      token: authenticationNotifier.token,
-                                      idUserAppInstitution:
-                                          cUserAppInstitutionModel
-                                              .idUserAppInstitution,
-                                      idProduct: productCatalog.idProduct,
-                                      idCategory: idCategory,
-                                      quantity: quantity,
-                                      price: productCatalog.freePriceProduct
-                                          ? freePriceProductNotifier.value
-                                          : priceNotifier.value,
-                                      cartProductVariants: cartProductVariants,
-                                      notes:
-                                          textEditingControllerNoteProduct.text)
-                                  .then((value) {
-                                addToCartButtonEnabled.value = true;
-                                UIBlock.unblock(context);
-                                if (value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackUtil.stylishSnackBar(
-                                          title: "Prodotti",
-                                          message:
-                                              '$quantity x ${productCatalog.nameProduct} aggiunti al carrello',
-                                          contentType: "success"));
-                                  textEditingControllerNoteProduct.clear();
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackUtil.stylishSnackBar(
-                                          title: "Prodotti",
-                                          message: "Errore di connessione",
-                                          contentType: "failure"));
-                                }
-                              });
-                            }
-                          },
-                          icon: const Icon(Icons.shopping_cart),
-                        );
-                      },
-                      valueListenable: addToCartButtonEnabled,
-                    ),
+                          }
+                        },
+                        icon: const Icon(Icons.shopping_cart),
+                      );
+                    },
+                    valueListenable: addToCartButtonEnabled,
                   ),
                 ],
               ),
             ]),
             Padding(
-              padding: const EdgeInsets.only(
-                  top: 16.0, bottom: 0.0, left: 4.0, right: 4.0),
-              child: SizedBox(
-                height: 100,
-                child: Column(
-                  children: [
-                    Tooltip(
-                      message: 'Note prodotto',
-                      child: Card(
-                        color: Theme.of(context).cardColor,
-                        elevation: 4,
-                        child: ListTile(
-                          title: Text(
-                            'Note prodotto',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          subtitle: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: textEditingControllerNoteProduct,
-                                  minLines: 1,
-                                  maxLines: 2,
-                                  onTapOutside: (event) {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          // trailing: const Icon(Icons.edit),
-                          onTap: () {},
-                        ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+              child: Tooltip(
+                message: 'Note prodotto',
+                child: Card(
+                  color: Theme.of(context).cardColor,
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: TextField(
+                      controller: textEditingControllerNoteProduct,
+                      minLines: 1,
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'Inserisci note per il prodotto...',
+                        hintStyle:
+                            TextStyle(color: Theme.of(context).hintColor),
                       ),
+                      onTapOutside: (event) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                      },
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class HoverElevationCard extends StatefulWidget {
+  final Widget child;
+
+  const HoverElevationCard({super.key, required this.child});
+
+  @override
+  State<HoverElevationCard> createState() => _HoverElevationCardState();
+}
+
+class _HoverElevationCardState extends State<HoverElevationCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Theme.of(context).shadowColor,
+            width: 2.0,
+          ),
+        ),
+        child: AnimatedPhysicalModel(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          elevation: isHovered ? 24.0 : 6.0, // <– cambia l’elevation qui
+          shape: BoxShape.rectangle,
+          shadowColor: Colors.black,
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          child: widget.child,
         ),
       ),
     );

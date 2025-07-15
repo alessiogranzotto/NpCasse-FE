@@ -19,10 +19,10 @@ class WishlistScreen extends StatelessWidget {
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
-    double widgetWitdh = 325;
-    double widgetHeight = 580;
-    double widgetHeightHalf = 430;
-    double gridMainAxisSpacing = 10;
+    double widgetWidth = 290;
+    double widgetHeight = 505;
+    double widgetHeightHalf = 355;
+    double gridChildSpace = 5;
 
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -93,19 +93,9 @@ class WishlistScreen extends StatelessWidget {
                                 SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
                               crossAxisCount:
                                   (MediaQuery.of(context).size.width) ~/
-                                      widgetWitdh,
-                              crossAxisSpacing: 10,
-                              // (((MediaQuery.of(context)
-                              //             .size
-                              //             .width) -
-                              //         (widgetWitdh *
-                              //             ((MediaQuery.of(context)
-                              //                     .size
-                              //                     .width) ~/
-                              //                 widgetWitdh))) /
-                              //     ((MediaQuery.of(context).size.width) ~/
-                              //         widgetWitdh)),
-                              mainAxisSpacing: gridMainAxisSpacing,
+                                      widgetWidth,
+                              crossAxisSpacing: gridChildSpace,
+                              mainAxisSpacing: gridChildSpace,
                               height: cHeight,
                             ),
                             physics: const ScrollPhysics(),

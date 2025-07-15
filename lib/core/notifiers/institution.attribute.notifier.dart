@@ -179,7 +179,7 @@ class InstitutionAttributeNotifier with ChangeNotifier {
       bool? isDelayed}) async {
     try {
       if (isDelayed != null && isDelayed) {
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 1));
       }
       var response = await institutionAttributeAPI.getInstitutionUser(
           token: token,

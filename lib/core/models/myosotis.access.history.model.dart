@@ -39,7 +39,9 @@ class MyosotisAccessHistoryModel {
     totalPages = json['totalPages'];
     pageSize = json['pageSize'];
     totalCount = json['totalCount'];
-    totalAmount = json['totalAmount'];
+    totalAmount = (json['totalAmount'] is int)
+        ? (json['totalAmount'] as int).toDouble()
+        : (json['totalAmount'] ?? 0.0).toDouble();
     hasPrevious = json['hasPrevious'];
     hasNext = json['hasNext'];
     myosotisAccessHistoryList = List.from(json['data'])

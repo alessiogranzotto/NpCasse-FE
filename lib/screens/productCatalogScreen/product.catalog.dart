@@ -22,6 +22,7 @@ class ProductCatalogScreen extends StatefulWidget {
 }
 
 class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
+  bool filtersExpanded = true;
   final double widgetWitdh = 300;
   final double widgetRatio = 1;
   final double gridMainAxisSpacing = 10;
@@ -129,254 +130,215 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Consumer<ProductCatalogNotifier>(
-                    builder: (context, productCatalogNotifier, _) {
-                      return FutureBuilder(
-                        future: productCatalogNotifier.getCategories(
-                            context: context,
-                            token: authenticationNotifier.token,
-                            idUserAppInstitution:
-                                cUserAppInstitutionModel.idUserAppInstitution,
-                            idCategory: 0,
-                            levelCategory: 'FirstLevelCategory',
-                            readAlsoDeleted: false,
-                            numberResult: 'All',
-                            nameDescSearch: '',
-                            readImageData: false,
-                            orderBy: 'NameCategory'),
-                        builder: (context, snapshot) {
-                          List<DropdownMenuItem<String>> tAvailableCategory =
-                              [];
-                          if (snapshot.data != null) {
-                            var tSnapshot =
-                                snapshot.data as List<CategoryCatalogModel>;
+      body: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Consumer<ProductCatalogNotifier>(
+                  builder: (context, productCatalogNotifier, _) {
+                    return FutureBuilder(
+                      future: productCatalogNotifier.getCategories(
+                          context: context,
+                          token: authenticationNotifier.token,
+                          idUserAppInstitution:
+                              cUserAppInstitutionModel.idUserAppInstitution,
+                          idCategory: 0,
+                          levelCategory: 'FirstLevelCategory',
+                          readAlsoDeleted: false,
+                          numberResult: 'All',
+                          nameDescSearch: '',
+                          readImageData: false,
+                          orderBy: 'NameCategory'),
+                      builder: (context, snapshot) {
+                        List<DropdownMenuItem<String>> tAvailableCategory = [];
+                        if (snapshot.data != null) {
+                          var tSnapshot =
+                              snapshot.data as List<CategoryCatalogModel>;
 
-                            for (int i = 0; i < tSnapshot.length; i++) {
-                              tAvailableCategory.add(
-                                DropdownMenuItem(
-                                    child: Text(tSnapshot[i].nameCategory),
-                                    value: tSnapshot[i].idCategory.toString()),
-                              );
-                            }
+                          for (int i = 0; i < tSnapshot.length; i++) {
+                            tAvailableCategory.add(
+                              DropdownMenuItem(
+                                  child: Text(tSnapshot[i].nameCategory),
+                                  value: tSnapshot[i].idCategory.toString()),
+                            );
                           }
+                        }
 
-                          return CustomDropDownButtonFormField(
-                              enabled: true,
-                              actualValue: selectedIdCategory,
-                              labelText: 'Categoria',
-                              listOfValue: tAvailableCategory,
-                              onItemChanged: (value) {
-                                onChangeSelectedIdCategory(value);
-                              });
-                        },
-                      );
-                    },
-                  ),
+                        return CustomDropDownButtonFormField(
+                            enabled: true,
+                            actualValue: selectedIdCategory,
+                            labelText: 'Categoria',
+                            listOfValue: tAvailableCategory,
+                            onItemChanged: (value) {
+                              onChangeSelectedIdCategory(value);
+                            });
+                      },
+                    );
+                  },
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Consumer<ProductCatalogNotifier>(
-                    builder: (context, productCatalogNotifier, _) {
-                      return FutureBuilder(
-                        future: productCatalogNotifier.getCategories(
-                            context: context,
-                            token: authenticationNotifier.token,
-                            idUserAppInstitution:
-                                cUserAppInstitutionModel.idUserAppInstitution,
-                            idCategory: int.parse(selectedIdCategory ?? '0'),
-                            levelCategory: 'SubCategory',
-                            readAlsoDeleted: false,
-                            numberResult: 'All',
-                            nameDescSearch: '',
-                            readImageData: false,
-                            orderBy: 'NameCategory'),
-                        builder: (context, snapshot) {
-                          List<DropdownMenuItem<String>> tAvailableCategory =
-                              [];
-                          if (snapshot.data != null) {
-                            var tSnapshot =
-                                snapshot.data as List<CategoryCatalogModel>;
+              ),
+              Expanded(
+                flex: 2,
+                child: Consumer<ProductCatalogNotifier>(
+                  builder: (context, productCatalogNotifier, _) {
+                    return FutureBuilder(
+                      future: productCatalogNotifier.getCategories(
+                          context: context,
+                          token: authenticationNotifier.token,
+                          idUserAppInstitution:
+                              cUserAppInstitutionModel.idUserAppInstitution,
+                          idCategory: int.parse(selectedIdCategory ?? '0'),
+                          levelCategory: 'SubCategory',
+                          readAlsoDeleted: false,
+                          numberResult: 'All',
+                          nameDescSearch: '',
+                          readImageData: false,
+                          orderBy: 'NameCategory'),
+                      builder: (context, snapshot) {
+                        List<DropdownMenuItem<String>> tAvailableCategory = [];
+                        if (snapshot.data != null) {
+                          var tSnapshot =
+                              snapshot.data as List<CategoryCatalogModel>;
 
-                            for (int i = 0; i < tSnapshot.length; i++) {
-                              tAvailableCategory.add(
-                                DropdownMenuItem(
-                                    child: Text(tSnapshot[i].nameCategory),
-                                    value: tSnapshot[i].idCategory.toString()),
-                              );
-                            }
+                          for (int i = 0; i < tSnapshot.length; i++) {
+                            tAvailableCategory.add(
+                              DropdownMenuItem(
+                                  child: Text(tSnapshot[i].nameCategory),
+                                  value: tSnapshot[i].idCategory.toString()),
+                            );
                           }
+                        }
 
-                          return CustomDropDownButtonFormField(
-                              enabled: true,
-                              actualValue: selectedIdSubCategory,
-                              labelText: 'Sottocategoria',
-                              listOfValue: tAvailableCategory,
-                              onItemChanged: (value) {
-                                onChangeSelectedIdSubCategory(value);
-                              });
-                        },
-                      );
-                    },
+                        return CustomDropDownButtonFormField(
+                            enabled: true,
+                            actualValue: selectedIdSubCategory,
+                            labelText: 'Sottocategoria',
+                            listOfValue: tAvailableCategory,
+                            onItemChanged: (value) {
+                              onChangeSelectedIdSubCategory(value);
+                            });
+                      },
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 32.0),
+                child: Tooltip(
+                  message: 'Azzera filtri categoria',
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.black,
+                    child: IconButton(
+                        icon: const Icon(Icons.clear_rounded, size: 16.0),
+                        color: Colors.white,
+                        onPressed: () => setState(() {
+                              selectedIdCategory = null;
+                              selectedIdSubCategory = null;
+                            })),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 32.0),
-                  child: Tooltip(
-                    message: 'Azzera filtri categoria',
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Colors.black,
-                      child: IconButton(
-                          icon: const Icon(Icons.clear_rounded, size: 16.0),
-                          color: Colors.white,
-                          onPressed: () => setState(() {
-                                selectedIdCategory = null;
-                                selectedIdSubCategory = null;
-                              })),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    style: Theme.of(context)
+              ),
+              Expanded(
+                flex: 2,
+                child: TextFormField(
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelLarge!
+                      .copyWith(color: Colors.blueGrey),
+                  onChanged: (String value) {
+                    if (_timer?.isActive ?? false) {
+                      _timer!.cancel();
+                    }
+                    _timer = Timer(const Duration(milliseconds: 1000), () {
+                      setState(() {
+                        iconaNameDescSearch = const Icon(Icons.cancel);
+                        if (value.isEmpty) {
+                          iconaNameDescSearch = const Icon(Icons.search);
+                        }
+                      });
+                    });
+                  },
+                  controller: nameDescSearchController,
+                  decoration: InputDecoration(
+                    labelText: "Ricerca per nome, descrizione o barcode",
+                    labelStyle: Theme.of(context)
                         .textTheme
-                        .labelLarge!
+                        .labelMedium!
                         .copyWith(color: Colors.blueGrey),
-                    onChanged: (String value) {
-                      if (_timer?.isActive ?? false) {
-                        _timer!.cancel();
-                      }
-                      _timer = Timer(const Duration(milliseconds: 1000), () {
+                    hintText: "Ricerca per nome, descrizione o barcode",
+                    hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).hintColor.withOpacity(0.3)),
+                    suffixIcon: IconButton(
+                      icon: iconaNameDescSearch,
+                      onPressed: () {
                         setState(() {
-                          iconaNameDescSearch = const Icon(Icons.cancel);
-                          if (value.isEmpty) {
+                          if (iconaNameDescSearch.icon == Icons.search) {
+                            iconaNameDescSearch = const Icon(Icons.cancel);
+                          } else {
                             iconaNameDescSearch = const Icon(Icons.search);
+                            nameDescSearchController.text = "";
                           }
                         });
-                      });
-                    },
-                    controller: nameDescSearchController,
-                    decoration: InputDecoration(
-                      labelText: "Ricerca per nome, descrizione o barcode",
-                      labelStyle: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: Colors.blueGrey),
-                      hintText: "Ricerca per nome, descrizione o barcode",
-                      hintStyle: Theme.of(context)
-                          .textTheme
-                          .labelLarge!
-                          .copyWith(
-                              color:
-                                  Theme.of(context).hintColor.withOpacity(0.3)),
-                      suffixIcon: IconButton(
-                        icon: iconaNameDescSearch,
-                        onPressed: () {
-                          setState(() {
-                            if (iconaNameDescSearch.icon == Icons.search) {
-                              iconaNameDescSearch = const Icon(Icons.cancel);
-                            } else {
-                              iconaNameDescSearch = const Icon(Icons.search);
-                              nameDescSearchController.text = "";
-                            }
-                          });
-                        },
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Colors.blue, width: 1.0),
-                      ),
-                      errorBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(color: Colors.red, width: 1.0),
-                      ),
-                      focusedErrorBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                            color: Colors.deepOrangeAccent, width: 1.0),
-                      ),
+                      },
+                    ),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                    ),
+                    errorBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(color: Colors.red, width: 1.0),
+                    ),
+                    focusedErrorBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                          color: Colors.deepOrangeAccent, width: 1.0),
                     ),
                   ),
                 ),
+              ),
+              Expanded(
+                  flex: 1,
+                  child: CustomDropDownButtonFormField(
+                    enabled: true,
+                    actualValue: numberResult,
+                    labelText: 'Mostra risultati',
+                    listOfValue: availableNumberResult,
+                    onItemChanged: (value) {
+                      onChangeNumberResult(value);
+                    },
+                  )),
+              Expanded(
+                  flex: 2,
+                  child: CustomDropDownButtonFormField(
+                    enabled: true,
+                    actualValue: orderBy,
+                    labelText: 'Ordinamento',
+                    listOfValue: availableOrderBy,
+                    onItemChanged: (value) {
+                      onChangeOrderBy(value);
+                    },
+                  )),
+              if (screenWidth > 1002) ...[
                 Expanded(
-                    flex: 1,
-                    child: CustomDropDownButtonFormField(
-                      enabled: true,
-                      actualValue: numberResult,
-                      labelText: 'Mostra risultati',
-                      listOfValue: availableNumberResult,
-                      onItemChanged: (value) {
-                        onChangeNumberResult(value);
-                      },
-                    )),
-                Expanded(
-                    flex: 2,
-                    child: CustomDropDownButtonFormField(
-                      enabled: true,
-                      actualValue: orderBy,
-                      labelText: 'Ordinamento',
-                      listOfValue: availableOrderBy,
-                      onItemChanged: (value) {
-                        onChangeOrderBy(value);
-                      },
-                    )),
-                if (screenWidth > 1002) ...[
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      // crossAxisAlignment: CrossAxisAlignment.stretch,
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildCheckboxTile(
-                          value: readAlsoDeleted,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              readAlsoDeleted = value!;
-                            });
-                          },
-                          title: 'Mostra anche cancellati',
-                          context: context,
-                        ),
-                        _buildCheckboxTile(
-                          value: readImageData,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              readImageData = value!;
-                            });
-                          },
-                          title: 'Visualizza immagine',
-                          context: context,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            // Second row of checkboxes for small screens
-            if (screenWidth <= 1002) ...[
-              Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: _buildCheckboxTile(
+                  flex: 2,
+                  child: Column(
+                    // crossAxisAlignment: CrossAxisAlignment.stretch,
+                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildCheckboxTile(
                         value: readAlsoDeleted,
                         onChanged: (bool? value) {
                           setState(() {
@@ -385,10 +347,8 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                         },
                         title: 'Mostra anche cancellati',
                         context: context,
-                      )),
-                  Expanded(
-                      flex: 1,
-                      child: _buildCheckboxTile(
+                      ),
+                      _buildCheckboxTile(
                         value: readImageData,
                         onChanged: (bool? value) {
                           setState(() {
@@ -397,115 +357,155 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                         },
                         title: 'Visualizza immagine',
                         context: context,
-                      )),
-                ],
-              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
-            SizedBox(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Consumer<ProductCatalogNotifier>(
-                builder: (context, productCatalogNotifier, _) {
-                  return FutureBuilder(
-                    future: productCatalogNotifier.getProducts(
-                        context: context,
-                        token: authenticationNotifier.token,
-                        idUserAppInstitution:
-                            cUserAppInstitutionModel.idUserAppInstitution,
-                        idCategory: selectedIdSubCategory == null
-                            ? int.parse(selectedIdCategory ?? '0')
-                            : int.parse(selectedIdSubCategory ?? '0'),
-                        readAlsoDeleted: readAlsoDeleted,
-                        numberResult: numberResult,
-                        nameDescSearch: nameDescSearchController.text,
-                        readImageData: readImageData,
-                        orderBy: orderBy,
-                        shoWVariant: false,
-                        viewOutOfAssortment: true),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Center(
-                                  child: SizedBox(
-                                      width: 100,
-                                      height: 100,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 5,
-                                        color: Colors.redAccent,
-                                      ))),
-                            ],
-                          ),
-                        );
-                      } else if (!snapshot.hasData) {
-                        return const Center(
-                          child: Text(
-                            'No data...',
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                            ),
-                          ),
-                        );
-                      } else {
-                        var tSnapshot =
-                            snapshot.data as List<ProductCatalogModel>;
-
-                        var t = tSnapshot
-                            .any((element) => element.imageData.isNotEmpty);
-                        bool areAllWithNoImage = !t;
-                        double cHeight = 0;
-
-                        if (readImageData) {
-                          cHeight = widgetHeight;
-                        } else {
-                          cHeight = widgetHeightHalf;
-                        }
-                        if (areAllWithNoImage) {
-                          cHeight = widgetHeightHalf;
-                        } else {
-                          cHeight = widgetHeight;
-                        }
-
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              GridView.builder(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-                                    crossAxisCount:
-                                        (MediaQuery.of(context).size.width) ~/
-                                            widgetWitdh,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: gridMainAxisSpacing,
-                                    height: cHeight,
-                                  ),
-                                  physics: const ScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: tSnapshot.length,
-                                  // scrollDirection: Axis.horizontal,
-                                  itemBuilder: (context, index) {
-                                    ProductCatalogModel product =
-                                        tSnapshot[index];
-                                    return ProductCatalogCard(
-                                      product: product,
-                                      readImageData: readImageData,
-                                      areAllWithNoImage: areAllWithNoImage,
-                                    );
-                                  }),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
-              ),
+          ),
+          // Second row of checkboxes for small screens
+          if (screenWidth <= 1002) ...[
+            Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child: _buildCheckboxTile(
+                      value: readAlsoDeleted,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          readAlsoDeleted = value!;
+                        });
+                      },
+                      title: 'Mostra anche cancellati',
+                      context: context,
+                    )),
+                Expanded(
+                    flex: 1,
+                    child: _buildCheckboxTile(
+                      value: readImageData,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          readImageData = value!;
+                        });
+                      },
+                      title: 'Visualizza immagine',
+                      context: context,
+                    )),
+              ],
             ),
           ],
-        ),
+          Expanded(
+            // height: MediaQuery.of(context).size.height,
+            // width: MediaQuery.of(context).size.width,
+            child: Consumer<ProductCatalogNotifier>(
+              builder: (context, productCatalogNotifier, _) {
+                return FutureBuilder(
+                  future: productCatalogNotifier.getProducts(
+                      context: context,
+                      token: authenticationNotifier.token,
+                      idUserAppInstitution:
+                          cUserAppInstitutionModel.idUserAppInstitution,
+                      idCategory: selectedIdSubCategory == null
+                          ? int.parse(selectedIdCategory ?? '0')
+                          : int.parse(selectedIdSubCategory ?? '0'),
+                      readAlsoDeleted: readAlsoDeleted,
+                      numberResult: numberResult,
+                      nameDescSearch: nameDescSearchController.text,
+                      readImageData: readImageData,
+                      orderBy: orderBy,
+                      shoWVariant: false,
+                      viewOutOfAssortment: true),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(
+                                child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 5,
+                                      color: Colors.redAccent,
+                                    ))),
+                          ],
+                        ),
+                      );
+                    } else if (!snapshot.hasData) {
+                      return const Center(
+                        child: Text(
+                          'No data...',
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      );
+                    } else {
+                      var tSnapshot =
+                          snapshot.data as List<ProductCatalogModel>;
+
+                      var t = tSnapshot
+                          .any((element) => element.imageData.isNotEmpty);
+                      bool areAllWithNoImage = !t;
+                      double cHeight = 0;
+
+                      if (readImageData) {
+                        cHeight = widgetHeight;
+                      } else {
+                        cHeight = widgetHeightHalf;
+                      }
+                      if (areAllWithNoImage) {
+                        cHeight = widgetHeightHalf;
+                      } else {
+                        cHeight = widgetHeight;
+                      }
+
+                      return SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+                                  crossAxisCount:
+                                      (MediaQuery.of(context).size.width) ~/
+                                          widgetWitdh,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: gridMainAxisSpacing,
+                                  height: cHeight,
+                                ),
+                                // gridDelegate:
+                                //     SliverGridDelegateWithMaxCrossAxisExtent(
+                                //   maxCrossAxisExtent: widgetWitdh,
+                                //   mainAxisSpacing: gridMainAxisSpacing,
+                                //   crossAxisSpacing: 10,
+                                //   childAspectRatio: widgetWitdh / cHeight,
+                                // ),
+                                physics: const ScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: tSnapshot.length,
+                                // scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  ProductCatalogModel product =
+                                      tSnapshot[index];
+                                  return ProductCatalogCard(
+                                    product: product,
+                                    readImageData: readImageData,
+                                    areAllWithNoImage: areAllWithNoImage,
+                                  );
+                                }),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Wrap(

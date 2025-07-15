@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.043';
+  static String version = '1.20.045';
 }
 
 // class AppRegex {
@@ -188,6 +188,8 @@ class AppStrings {
 
   static const idDeviceMyosotisConfiguration = 'Id device abilitati';
   static const urlMyosotisConfiguration = 'Url abilitati';
+
+  static const showPreestablishedAmount = 'Mostra donazioni singole';
   static const preestablishedAmount = 'Importi predefiniti';
 
   static const formStartupMyosotisConfiguration =
@@ -209,6 +211,8 @@ class AppStrings {
   static const projectToHelp = 'Progetti da sostenere';
 
   static const showFreePriceConfiguration = 'Mostra importo libero';
+  static const setContinuousDonationAsPredefined =
+      'Imposta donazioni continuative come predefinite';
 
   static const buttonNoAmountsText = "Testo bottone form senza importi";
   static const showPrivacy = 'Mostra accetta privacy';
@@ -251,6 +255,17 @@ class AppStrings {
   static const showContinuousDonation = "Mostra donazioni continuative";
   static const pleaseEnterFrequencyContinuousDonation =
       "Inserire frequenze donazioni continuative";
+
+  static const labelOptionalField = "Etichetta campo opzionale";
+  static const giveFieldOptionalField = "Campo GIVE";
+
+  static const availableItemOptionalField = 'Elementi selezionabili';
+
+  //
+  //
+  //
+  //
+  //
   //COMUNICAZIONI
   static const nameComunicationSending = "Nome comunicazione";
   static const pleaseEnterNameComunicationSending =

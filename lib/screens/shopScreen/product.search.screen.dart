@@ -23,10 +23,10 @@ class ProductSearchScreen extends StatefulWidget {
 }
 
 class __ProductSearchScreenState extends State<ProductSearchScreen> {
-  double widgetWitdh = 325;
-  double widgetHeight = 580;
-  double widgetHeightHalf = 430;
-  double gridMainAxisSpacing = 10;
+  double widgetWidth = 290;
+  double widgetHeight = 505;
+  double widgetHeightHalf = 355;
+  double gridChildSpace = 5;
 
   Timer? _timer;
   Icon icona = const Icon(Icons.search);
@@ -349,9 +349,9 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                                   SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
                                 crossAxisCount:
                                     (MediaQuery.of(context).size.width) ~/
-                                        widgetWitdh,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: gridMainAxisSpacing,
+                                        widgetWidth,
+                                crossAxisSpacing: gridChildSpace,
+                                mainAxisSpacing: gridChildSpace,
                                 height: cHeight,
                               ),
                               physics: const ScrollPhysics(),
@@ -361,10 +361,13 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                               itemBuilder: (context, index) {
                                 ProductCatalogModel productCatalog =
                                     tSnapshot[index];
-                                return ProductCard(
-                                  productCatalog: productCatalog,
-                                  areAllWithNoImage: areAllWithNoImage,
-                                  comeFrom: "Search",
+                                return Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: ProductCard(
+                                    productCatalog: productCatalog,
+                                    areAllWithNoImage: areAllWithNoImage,
+                                    comeFrom: "Search",
+                                  ),
                                 );
                               });
                         }
