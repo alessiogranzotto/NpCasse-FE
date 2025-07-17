@@ -383,7 +383,7 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
                   numberResult: 'All',
                   nameDescSearch: '',
                   readImageData: false,
-                  shoWVariant: false,
+                  showVariant: false,
                   orderBy: 'NameProduct',
                   viewOutOfAssortment: true,
                 );

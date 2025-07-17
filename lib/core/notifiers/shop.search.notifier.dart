@@ -78,7 +78,7 @@ class ShopSearchNotifier with ChangeNotifier {
       required String nameDescSearch,
       required bool readImageData,
       required String orderBy,
-      required bool shoWVariant,
+      required bool showVariant,
       required bool viewOutOfAssortment}) async {
     try {
       var response = await commonAPI.getProducts(
@@ -90,7 +90,7 @@ class ShopSearchNotifier with ChangeNotifier {
           nameDescSearch: nameDescSearch,
           readImageData: readImageData,
           orderBy: orderBy,
-          showVariant: shoWVariant,
+          showVariant: showVariant,
           viewOutOfAssortment: viewOutOfAssortment);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);

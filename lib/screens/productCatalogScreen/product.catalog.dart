@@ -29,7 +29,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
   final double widgetHeight = 350;
   final double widgetHeightHalf = 200;
   Timer? _timer;
-
+  final ValueNotifier<bool> isDownloading = ValueNotifier(false);
   TextEditingController nameDescSearchController = TextEditingController();
   bool readImageData = false;
   bool readAlsoDeleted = false;
@@ -80,9 +80,49 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
     });
   }
 
+  void handleDownloadProductCatalog(BuildContext context) async {
+    isDownloading.value = true;
+    try {
+      final productCatalogNotifier =
+          Provider.of<ProductCatalogNotifier>(context, listen: false);
+      var authenticationNotifier =
+          Provider.of<AuthenticationNotifier>(context, listen: false);
+      UserAppInstitutionModel cUserAppInstitutionModel =
+          authenticationNotifier.getSelectedUserAppInstitution();
+
+      await productCatalogNotifier.downloadProductCatalog(
+        context: context,
+        token: authenticationNotifier.token,
+        idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+        idCategory: selectedIdSubCategory == null
+            ? int.parse(selectedIdCategory ?? '0')
+            : int.parse(selectedIdSubCategory ?? '0'),
+        readAlsoDeleted: readAlsoDeleted,
+        numberResult: numberResult,
+        nameDescSearch: nameDescSearchController.text,
+        readImageData: false,
+        orderBy: orderBy,
+        showVariant: true,
+        viewOutOfAssortment: true,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore durante l\'esportazione: $e')),
+      );
+    } finally {
+      isDownloading.value = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    nameDescSearchController.dispose();
   }
 
   Widget _buildCheckboxTile({
@@ -102,6 +142,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
       onChanged: onChanged,
       title: Text(
         title,
+        overflow: TextOverflow.ellipsis,
         style: Theme.of(context)
             .textTheme
             .labelMedium!
@@ -132,269 +173,32 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
       ),
       body: Column(
         children: [
-          Row(
+          ExpansionTile(
+            backgroundColor: Colors.white,
+            collapsedBackgroundColor: Colors.grey.shade200,
+            leading: const Icon(Icons.filter_alt, color: Colors.blueGrey),
+            collapsedIconColor: Colors.blueGrey,
+            iconColor: Colors.blue,
+            expansionAnimationStyle: AnimationStyle(
+              duration: Duration(milliseconds: 1000),
+              curve: Curves.easeInOut,
+              reverseCurve: Curves.easeInOut,
+            ),
+            title: const Text(
+              'Ricerche catalogo prodotti',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
             children: [
-              Expanded(
-                flex: 2,
-                child: Consumer<ProductCatalogNotifier>(
-                  builder: (context, productCatalogNotifier, _) {
-                    return FutureBuilder(
-                      future: productCatalogNotifier.getCategories(
-                          context: context,
-                          token: authenticationNotifier.token,
-                          idUserAppInstitution:
-                              cUserAppInstitutionModel.idUserAppInstitution,
-                          idCategory: 0,
-                          levelCategory: 'FirstLevelCategory',
-                          readAlsoDeleted: false,
-                          numberResult: 'All',
-                          nameDescSearch: '',
-                          readImageData: false,
-                          orderBy: 'NameCategory'),
-                      builder: (context, snapshot) {
-                        List<DropdownMenuItem<String>> tAvailableCategory = [];
-                        if (snapshot.data != null) {
-                          var tSnapshot =
-                              snapshot.data as List<CategoryCatalogModel>;
-
-                          for (int i = 0; i < tSnapshot.length; i++) {
-                            tAvailableCategory.add(
-                              DropdownMenuItem(
-                                  child: Text(tSnapshot[i].nameCategory),
-                                  value: tSnapshot[i].idCategory.toString()),
-                            );
-                          }
-                        }
-
-                        return CustomDropDownButtonFormField(
-                            enabled: true,
-                            actualValue: selectedIdCategory,
-                            labelText: 'Categoria',
-                            listOfValue: tAvailableCategory,
-                            onItemChanged: (value) {
-                              onChangeSelectedIdCategory(value);
-                            });
-                      },
-                    );
-                  },
-                ),
+              _buildFiltersRow(
+                screenWidth: screenWidth,
+                authenticationNotifier: authenticationNotifier,
+                cUserAppInstitutionModel: cUserAppInstitutionModel,
               ),
-              Expanded(
-                flex: 2,
-                child: Consumer<ProductCatalogNotifier>(
-                  builder: (context, productCatalogNotifier, _) {
-                    return FutureBuilder(
-                      future: productCatalogNotifier.getCategories(
-                          context: context,
-                          token: authenticationNotifier.token,
-                          idUserAppInstitution:
-                              cUserAppInstitutionModel.idUserAppInstitution,
-                          idCategory: int.parse(selectedIdCategory ?? '0'),
-                          levelCategory: 'SubCategory',
-                          readAlsoDeleted: false,
-                          numberResult: 'All',
-                          nameDescSearch: '',
-                          readImageData: false,
-                          orderBy: 'NameCategory'),
-                      builder: (context, snapshot) {
-                        List<DropdownMenuItem<String>> tAvailableCategory = [];
-                        if (snapshot.data != null) {
-                          var tSnapshot =
-                              snapshot.data as List<CategoryCatalogModel>;
-
-                          for (int i = 0; i < tSnapshot.length; i++) {
-                            tAvailableCategory.add(
-                              DropdownMenuItem(
-                                  child: Text(tSnapshot[i].nameCategory),
-                                  value: tSnapshot[i].idCategory.toString()),
-                            );
-                          }
-                        }
-
-                        return CustomDropDownButtonFormField(
-                            enabled: true,
-                            actualValue: selectedIdSubCategory,
-                            labelText: 'Sottocategoria',
-                            listOfValue: tAvailableCategory,
-                            onItemChanged: (value) {
-                              onChangeSelectedIdSubCategory(value);
-                            });
-                      },
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 32.0),
-                child: Tooltip(
-                  message: 'Azzera filtri categoria',
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Colors.black,
-                    child: IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 16.0),
-                        color: Colors.white,
-                        onPressed: () => setState(() {
-                              selectedIdCategory = null;
-                              selectedIdSubCategory = null;
-                            })),
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: TextFormField(
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelLarge!
-                      .copyWith(color: Colors.blueGrey),
-                  onChanged: (String value) {
-                    if (_timer?.isActive ?? false) {
-                      _timer!.cancel();
-                    }
-                    _timer = Timer(const Duration(milliseconds: 1000), () {
-                      setState(() {
-                        iconaNameDescSearch = const Icon(Icons.cancel);
-                        if (value.isEmpty) {
-                          iconaNameDescSearch = const Icon(Icons.search);
-                        }
-                      });
-                    });
-                  },
-                  controller: nameDescSearchController,
-                  decoration: InputDecoration(
-                    labelText: "Ricerca per nome, descrizione o barcode",
-                    labelStyle: Theme.of(context)
-                        .textTheme
-                        .labelMedium!
-                        .copyWith(color: Colors.blueGrey),
-                    hintText: "Ricerca per nome, descrizione o barcode",
-                    hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        color: Theme.of(context).hintColor.withOpacity(0.3)),
-                    suffixIcon: IconButton(
-                      icon: iconaNameDescSearch,
-                      onPressed: () {
-                        setState(() {
-                          if (iconaNameDescSearch.icon == Icons.search) {
-                            iconaNameDescSearch = const Icon(Icons.cancel);
-                          } else {
-                            iconaNameDescSearch = const Icon(Icons.search);
-                            nameDescSearchController.text = "";
-                          }
-                        });
-                      },
-                    ),
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.blue, width: 1.0),
-                    ),
-                    errorBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(color: Colors.red, width: 1.0),
-                    ),
-                    focusedErrorBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                          color: Colors.deepOrangeAccent, width: 1.0),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                  flex: 1,
-                  child: CustomDropDownButtonFormField(
-                    enabled: true,
-                    actualValue: numberResult,
-                    labelText: 'Mostra risultati',
-                    listOfValue: availableNumberResult,
-                    onItemChanged: (value) {
-                      onChangeNumberResult(value);
-                    },
-                  )),
-              Expanded(
-                  flex: 2,
-                  child: CustomDropDownButtonFormField(
-                    enabled: true,
-                    actualValue: orderBy,
-                    labelText: 'Ordinamento',
-                    listOfValue: availableOrderBy,
-                    onItemChanged: (value) {
-                      onChangeOrderBy(value);
-                    },
-                  )),
-              if (screenWidth > 1002) ...[
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.stretch,
-                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildCheckboxTile(
-                        value: readAlsoDeleted,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            readAlsoDeleted = value!;
-                          });
-                        },
-                        title: 'Mostra anche cancellati',
-                        context: context,
-                      ),
-                      _buildCheckboxTile(
-                        value: readImageData,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            readImageData = value!;
-                          });
-                        },
-                        title: 'Visualizza immagine',
-                        context: context,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
             ],
           ),
-          // Second row of checkboxes for small screens
-          if (screenWidth <= 1002) ...[
-            Row(
-              children: [
-                Expanded(
-                    flex: 1,
-                    child: _buildCheckboxTile(
-                      value: readAlsoDeleted,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          readAlsoDeleted = value!;
-                        });
-                      },
-                      title: 'Mostra anche cancellati',
-                      context: context,
-                    )),
-                Expanded(
-                    flex: 1,
-                    child: _buildCheckboxTile(
-                      value: readImageData,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          readImageData = value!;
-                        });
-                      },
-                      title: 'Visualizza immagine',
-                      context: context,
-                    )),
-              ],
-            ),
-          ],
           Expanded(
             // height: MediaQuery.of(context).size.height,
             // width: MediaQuery.of(context).size.width,
@@ -414,7 +218,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       nameDescSearch: nameDescSearchController.text,
                       readImageData: readImageData,
                       orderBy: orderBy,
-                      shoWVariant: false,
+                      showVariant: false,
                       viewOutOfAssortment: true),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -466,6 +270,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
                       return SingleChildScrollView(
                         child: Column(
                           children: [
+                            SizedBox(height: 10),
                             GridView.builder(
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
@@ -548,6 +353,361 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFiltersRow({
+    required double screenWidth,
+    required AuthenticationNotifier authenticationNotifier,
+    required UserAppInstitutionModel cUserAppInstitutionModel,
+  }) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isLargeScreen = constraints.maxWidth > 1024;
+
+        if (isLargeScreen) {
+          // Layout a due righe per schermi grandi
+          return Column(
+            children: [
+              Row(
+                children: [
+                  _buildCategoriaDropdown(
+                      authenticationNotifier, cUserAppInstitutionModel),
+                  _buildSubCategoriaDropdown(
+                      authenticationNotifier, cUserAppInstitutionModel),
+                  _buildResetFilterButton(),
+                  _buildOrderByDropdown(),
+                  _buildNumberResultDropdown(),
+                  const SizedBox(width: 8),
+                ],
+              ),
+              Row(
+                children: [
+                  const SizedBox(width: 8),
+                  _buildSearchField(context),
+                  _buildCheckboxDeleted(context),
+                  _buildCheckboxImage(context),
+                  _buildExportButton(context),
+                  const SizedBox(width: 8),
+                ],
+              ),
+              SizedBox(
+                height: 8,
+              )
+            ],
+          );
+        } else {
+          // Layout a tre righe per schermi piccoli
+          return Column(
+            children: [
+              Row(
+                children: [
+                  _buildCategoriaDropdown(
+                      authenticationNotifier, cUserAppInstitutionModel),
+                  _buildSubCategoriaDropdown(
+                      authenticationNotifier, cUserAppInstitutionModel),
+                  _buildNumberResultDropdown(),
+                ],
+              ),
+              Row(
+                children: [
+                  const SizedBox(width: 8),
+                  _buildSearchField(context),
+                  const SizedBox(width: 8),
+                  _buildResetFilterButton(),
+                  const SizedBox(width: 8),
+                  _buildOrderByDropdown(),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildOrderByDropdown(),
+                  _buildCheckboxDeleted(context),
+                  _buildCheckboxImage(context),
+                  _buildExportButton(context),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ],
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildCategoriaDropdown(
+      AuthenticationNotifier auth, UserAppInstitutionModel user) {
+    return Expanded(
+      flex: 2,
+      child: Consumer<ProductCatalogNotifier>(
+        builder: (context, notifier, _) {
+          return FutureBuilder(
+            future: notifier.getCategories(
+              context: context,
+              token: auth.token,
+              idUserAppInstitution: user.idUserAppInstitution,
+              idCategory: 0,
+              levelCategory: 'FirstLevelCategory',
+              readAlsoDeleted: false,
+              numberResult: 'All',
+              nameDescSearch: '',
+              readImageData: false,
+              orderBy: 'NameCategory',
+            ),
+            builder: (context, snapshot) {
+              List<DropdownMenuItem<String>> items = [];
+              if (snapshot.data != null) {
+                var categories = snapshot.data as List<CategoryCatalogModel>;
+                items = categories
+                    .map((cat) => DropdownMenuItem(
+                          child: Text(cat.nameCategory),
+                          value: cat.idCategory.toString(),
+                        ))
+                    .toList();
+              }
+              return CustomDropDownButtonFormField(
+                enabled: true,
+                actualValue: selectedIdCategory,
+                labelText: 'Categoria',
+                listOfValue: items,
+                onItemChanged: (value) => onChangeSelectedIdCategory(value),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSubCategoriaDropdown(
+      AuthenticationNotifier auth, UserAppInstitutionModel user) {
+    return Expanded(
+      flex: 2,
+      child: Consumer<ProductCatalogNotifier>(
+        builder: (context, notifier, _) {
+          return FutureBuilder(
+            future: notifier.getCategories(
+              context: context,
+              token: auth.token,
+              idUserAppInstitution: user.idUserAppInstitution,
+              idCategory: int.parse(selectedIdCategory ?? '0'),
+              levelCategory: 'SubCategory',
+              readAlsoDeleted: false,
+              numberResult: 'All',
+              nameDescSearch: '',
+              readImageData: false,
+              orderBy: 'NameCategory',
+            ),
+            builder: (context, snapshot) {
+              List<DropdownMenuItem<String>> items = [];
+              if (snapshot.data != null) {
+                var categories = snapshot.data as List<CategoryCatalogModel>;
+                items = categories
+                    .map((cat) => DropdownMenuItem(
+                          child: Text(cat.nameCategory),
+                          value: cat.idCategory.toString(),
+                        ))
+                    .toList();
+              }
+              return CustomDropDownButtonFormField(
+                enabled: true,
+                actualValue: selectedIdSubCategory,
+                labelText: 'Sottocategoria',
+                listOfValue: items,
+                onItemChanged: (value) => onChangeSelectedIdSubCategory(value),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildResetFilterButton() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 32.0),
+      child: Tooltip(
+        message: 'Azzera filtri categoria',
+        child: CircleAvatar(
+          radius: 16,
+          backgroundColor: Colors.black,
+          child: IconButton(
+            icon: const Icon(Icons.clear_rounded, size: 16.0),
+            color: Colors.white,
+            onPressed: () => setState(() {
+              selectedIdCategory = null;
+              selectedIdSubCategory = null;
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField(BuildContext context) {
+    return Expanded(
+      flex: 2,
+      child: TextFormField(
+        controller: nameDescSearchController,
+        style: Theme.of(context)
+            .textTheme
+            .labelLarge!
+            .copyWith(color: Colors.blueGrey),
+        onChanged: (value) {
+          if (_timer?.isActive ?? false) _timer!.cancel();
+          _timer = Timer(const Duration(milliseconds: 1000), () {
+            setState(() {
+              iconaNameDescSearch = value.isEmpty
+                  ? const Icon(Icons.search)
+                  : const Icon(Icons.cancel);
+            });
+          });
+        },
+        decoration: InputDecoration(
+          labelText: "Ricerca per nome, descrizione o barcode",
+          hintText: "Ricerca per nome, descrizione o barcode",
+          labelStyle: Theme.of(context)
+              .textTheme
+              .labelMedium!
+              .copyWith(color: Colors.blueGrey),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .labelLarge!
+              .copyWith(color: Theme.of(context).hintColor.withOpacity(0.3)),
+          suffixIcon: IconButton(
+            icon: iconaNameDescSearch,
+            onPressed: () {
+              setState(() {
+                if (iconaNameDescSearch.icon == Icons.search) {
+                  iconaNameDescSearch = const Icon(Icons.cancel);
+                } else {
+                  iconaNameDescSearch = const Icon(Icons.search);
+                  nameDescSearchController.clear();
+                }
+              });
+            },
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.blue, width: 1.0),
+          ),
+          errorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.red, width: 1.0),
+          ),
+          focusedErrorBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(color: Colors.deepOrangeAccent, width: 1.0),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrderByDropdown() {
+    return Expanded(
+      flex: 1,
+      child: CustomDropDownButtonFormField(
+        enabled: true,
+        actualValue: orderBy,
+        labelText: 'Ordinamento',
+        listOfValue: availableOrderBy,
+        onItemChanged: (value) => onChangeOrderBy(value),
+      ),
+    );
+  }
+
+  Widget _buildNumberResultDropdown() {
+    return Expanded(
+      flex: 1,
+      child: CustomDropDownButtonFormField(
+        enabled: true,
+        actualValue: numberResult,
+        labelText: 'Mostra risultati',
+        listOfValue: availableNumberResult,
+        onItemChanged: (value) => onChangeNumberResult(value),
+      ),
+    );
+  }
+
+  Widget _buildCheckboxDeleted(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: _buildCheckboxTile(
+        value: readAlsoDeleted,
+        onChanged: (val) => setState(() => readAlsoDeleted = val!),
+        title: 'Mostra anche cancellati',
+        context: context,
+      ),
+    );
+  }
+
+  Widget _buildCheckboxImage(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: _buildCheckboxTile(
+        value: readImageData,
+        onChanged: (val) => setState(() => readImageData = val!),
+        title: 'Visualizza immagine',
+        context: context,
+      ),
+    );
+  }
+
+  Widget _buildExportButton(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isDownloading,
+      builder: (context, downloading, _) {
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            fixedSize: const Size(170, 48),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onPressed:
+              downloading ? null : () => handleDownloadProductCatalog(context),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              downloading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Icon(Icons.file_download_outlined),
+              const SizedBox(width: 8),
+              SizedBox(
+                height: 20,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    downloading ? ' Esportazione...' : 'Export Excel',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -302,7 +302,7 @@ class __ProductSearchScreenState extends State<ProductSearchScreen> {
                           nameDescSearch: nameDescSearchController.text,
                           orderBy: orderBy,
                           readImageData: readImageData,
-                          shoWVariant: true,
+                          showVariant: true,
                           viewOutOfAssortment: viewOutOfAssortment),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==

@@ -4,12 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 enum AppThemeMode {
   light,
-  system,
+  givepro,
   dark,
 }
 
 class ThemeProviderNotifier extends ChangeNotifier {
-  AppThemeMode _appThemeMode = AppThemeMode.system;
+  AppThemeMode _appThemeMode = AppThemeMode.givepro;
 
   AppThemeMode get appThemeMode => _appThemeMode;
 
@@ -19,7 +19,7 @@ class ThemeProviderNotifier extends ChangeNotifier {
         return ThemeMode.light;
       case AppThemeMode.dark:
         return ThemeMode.dark;
-      case AppThemeMode.system:
+      case AppThemeMode.givepro:
         return ThemeMode.system;
     }
   }
@@ -39,7 +39,7 @@ class ThemeProviderNotifier extends ChangeNotifier {
     final saved = prefs.getString('appThemeMode') ?? 'system';
     _appThemeMode = AppThemeMode.values.firstWhere(
       (e) => e.name == saved,
-      orElse: () => AppThemeMode.system,
+      orElse: () => AppThemeMode.givepro,
     );
     notifyListeners();
   }
@@ -66,7 +66,7 @@ class ThemeSwitcher extends StatelessWidget {
           icon: Icon(Icons.light_mode),
         ),
         ButtonSegment(
-          value: AppThemeMode.system,
+          value: AppThemeMode.givepro,
           // label: Text('Sistema'),
           icon: Icon(Icons.settings),
         ),

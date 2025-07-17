@@ -8,6 +8,7 @@ import 'package:np_casse/core/models/category.catalog.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/vat.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
+import 'package:np_casse/core/utils/download.file.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
@@ -82,7 +83,7 @@ class ProductCatalogNotifier with ChangeNotifier {
       required String nameDescSearch,
       required bool readImageData,
       required String orderBy,
-      required bool shoWVariant,
+      required bool showVariant,
       required bool viewOutOfAssortment}) async {
     try {
       var response = await commonAPI.getProducts(
@@ -94,7 +95,7 @@ class ProductCatalogNotifier with ChangeNotifier {
           nameDescSearch: nameDescSearch,
           readImageData: readImageData,
           orderBy: orderBy,
-          showVariant: shoWVariant,
+          showVariant: showVariant,
           viewOutOfAssortment: viewOutOfAssortment);
       if (response != null) {
         final Map<String, dynamic> parseData = await jsonDecode(response);
@@ -248,6 +249,66 @@ class ProductCatalogNotifier with ChangeNotifier {
         }
       }
       return isOk;
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Prodotti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
+  }
+
+  Future<void> downloadProductCatalog(
+      {required BuildContext context,
+      String? token,
+      required int idUserAppInstitution,
+      required int idCategory,
+      required bool readAlsoDeleted,
+      required String numberResult,
+      required String nameDescSearch,
+      required bool readImageData,
+      required String orderBy,
+      required bool showVariant,
+      required bool viewOutOfAssortment}) async {
+    try {
+      bool isOk = false;
+      var response = await productCatalogAPI.downloadProductCatalog(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          idCategory: idCategory,
+          readAlsoDeleted: readAlsoDeleted,
+          numberResult: numberResult,
+          nameDescSearch: nameDescSearch,
+          readImageData: readImageData,
+          orderBy: orderBy,
+          showVariant: showVariant,
+          viewOutOfAssortment: viewOutOfAssortment);
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          if (parseData['okResult'] != null) {
+            await DownloadFile.downloadFile(parseData['okResult'], context);
+            return null;
+          } else {
+            return null;
+          }
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
     } on SocketException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(

@@ -301,7 +301,7 @@ class _ProductThreeShopScreenState extends State<ProductThreeShopScreen> {
                         nameDescSearch: nameDescSearchController.text,
                         orderBy: orderBy,
                         readImageData: readImageData,
-                        shoWVariant: true,
+                        showVariant: true,
                         viewOutOfAssortment: viewOutOfAssortment,
                       ),
                       builder: (context, snapshot) {
