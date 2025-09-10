@@ -16,14 +16,6 @@ class ProductAttributeCombinationAPI {
     final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
         '/$idProduct/ProductAttributeCombination' +
         '?IdUserAppInstitution=$idUserAppInstitution');
-    print(uri);
-    var t = List.from(productAttributeCombinationList)
-        .map((e) => jsonEncode(productAttributeCombinationList))
-        .toList();
-    print(t);
-    var tt = jsonEncode(productAttributeCombinationList);
-    ;
-    print(tt);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',

@@ -46,10 +46,6 @@ class _ProductAttributeValueEditableListTile
   // List<String> customStringInserted = [];
   List<ProductAttributeJson> customProductAttributeJson = [];
 
-  void customTextSelected(int i) {
-    print(i);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -135,8 +131,6 @@ class _ProductAttributeValueEditableListTile
                               });
                             },
                             onSelected: (ProductAttributeValueModel selection) {
-                              print(selection.name);
-                              // customStringInserted[i] = selection.name;
                               customProductAttributeJson[i].value =
                                   selection.name;
                             },
@@ -151,8 +145,6 @@ class _ProductAttributeValueEditableListTile
                             ) {
                               return CustomTextFormField(
                                 onChanged: (String value) {
-                                  print(value);
-                                  // customStringInserted[i] = value;
                                   customProductAttributeJson[i].value = value;
                                 },
                                 controller: textEditingController,

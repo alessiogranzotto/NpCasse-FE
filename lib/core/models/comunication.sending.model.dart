@@ -167,65 +167,138 @@ class MassSendingModel {
   MassSendingModel({
     required this.idMassSending,
     required this.idInstitution,
-    required this.idUserAppInstitution,
-    required this.archived,
+    this.dateIns,
+    this.idUserAppInstitutionIns,
+    this.dateMod,
+    this.idUserAppInstitutionMod,
+    this.idUserAppInstitution,
+    required this.deleted,
     required this.nameMassSending,
     required this.descriptionMassSending,
     required this.senderMassSending,
     required this.emailSenderMassSending,
     required this.idTemplateMassSending,
-    this.stateMassSending,
     this.planningDate,
+    this.stateMassSending,
+    required this.frequencyTypeMassSending,
+    this.executeStepMassSending,
+    this.advanceHoursLoadAccumulatorMassSending,
+    required this.emailDeduplicationMassSending,
+    required this.onlyToNewSendMassSending,
+    required this.onlyToNotOpenMassSending,
+    this.lastExecutionMassSending,
+    this.nextExecutionMassSending,
     this.stateMassSendingDescription,
-    required this.massSendingGiveAccumulator,
+    required this.massSendingGiveAccumulators,
   });
 
   late final int idMassSending;
   late final int idInstitution;
-  late final int idUserAppInstitution;
-  late final bool archived;
+  DateTime? dateIns;
+  int? idUserAppInstitutionIns;
+  DateTime? dateMod;
+  int? idUserAppInstitutionMod;
+  int? idUserAppInstitution;
+  late final bool deleted;
   late final String nameMassSending;
   late final String descriptionMassSending;
   late final String senderMassSending;
   late final String emailSenderMassSending;
   late final String idTemplateMassSending;
-  late final int? stateMassSending;
-  late final DateTime? planningDate;
-  late final String? stateMassSendingDescription;
-  late final List<MassSendingGiveAccumulator> massSendingGiveAccumulator;
+  DateTime? planningDate;
+  int? stateMassSending;
+
+  String? frequencyTypeMassSending;
+  int? executeStepMassSending;
+  int? advanceHoursLoadAccumulatorMassSending;
+  late final bool emailDeduplicationMassSending;
+  late final bool onlyToNewSendMassSending;
+  late final bool onlyToNotOpenMassSending;
+  DateTime? lastExecutionMassSending;
+  DateTime? nextExecutionMassSending;
+
+  String? stateMassSendingDescription;
+  late final List<MassSendingGiveAccumulator> massSendingGiveAccumulators;
 
   MassSendingModel.empty() {
     idMassSending = 0;
     idInstitution = 0;
-    archived = false;
+    dateIns = null;
+    idUserAppInstitutionIns = null;
+    dateMod = null;
+    idUserAppInstitutionMod = null;
+    idUserAppInstitution = null;
+    deleted = false;
     nameMassSending = '';
     descriptionMassSending = '';
     senderMassSending = '';
     emailSenderMassSending = '';
     idTemplateMassSending = '';
-    massSendingGiveAccumulator = List.empty();
+    planningDate = null;
+    stateMassSending = null;
+    frequencyTypeMassSending = null;
+    executeStepMassSending = null;
+    advanceHoursLoadAccumulatorMassSending = null;
+    emailDeduplicationMassSending = false;
+    onlyToNewSendMassSending = false;
+    onlyToNotOpenMassSending = false;
+    lastExecutionMassSending = null;
+    nextExecutionMassSending = null;
+    stateMassSendingDescription = '';
+    massSendingGiveAccumulators = List.empty();
   }
 
   // JSON deserialization
   MassSendingModel.fromJson(Map<String, dynamic> json) {
     idMassSending = json['idMassSending'];
     idInstitution = json['idInstitution'];
-    archived = json['archived'];
+    var dateTimeC =
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateIns'], true);
+    var dateLocalC = dateTimeC.toLocal();
+    dateIns = dateLocalC;
+    idUserAppInstitutionIns = json['idUserAppInstitutionIns'];
+
+    if (json['dateMod'] != null) {
+      var dateTimeU =
+          DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateMod'], true);
+      var dateLocalU = dateTimeU.toLocal();
+      dateMod = dateLocalU;
+    }
+    if (json['idUserAppInstitutionMod'] != null) {
+      idUserAppInstitutionMod = json['idUserAppInstitutionMod'];
+    }
+
+    deleted = json['deleted'];
     nameMassSending = json['nameMassSending'];
     descriptionMassSending = json['descriptionMassSending'];
     senderMassSending = json['senderMassSending'];
     emailSenderMassSending = json['emailSenderMassSending'];
     idTemplateMassSending = json['idTemplateMassSending'];
-    stateMassSending = json['stateMassSending'] ?? null;
-    if (json['planningDate'] != null) {
-      var dateTimeC =
-          DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['planningDate'], true);
-      planningDate = dateTimeC.toLocal();
-    } else {
-      planningDate = null;
+    var dateTimePD =
+        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['planningDate'], true);
+    planningDate = dateTimePD.toLocal();
+    stateMassSending = json['stateMassSending'];
+    frequencyTypeMassSending = json['frequencyTypeMassSending'];
+    executeStepMassSending = json['executeStepMassSending'];
+    advanceHoursLoadAccumulatorMassSending =
+        json['advanceHoursLoadAccumulatorMassSending'];
+    emailDeduplicationMassSending = json['emailDeduplicationMassSending'];
+    onlyToNewSendMassSending = json['onlyToNewSendMassSending'];
+    onlyToNotOpenMassSending = json['onlyToNotOpenMassSending'];
+    if (json['lastExecutionMassSending'] != null) {
+      var dateTimeLE = DateFormat("yyyy-MM-ddTHH:mm:ss")
+          .parse(json['lastExecutionMassSending'], true);
+      var dateLocalLE = dateTimeLE.toLocal();
+      lastExecutionMassSending = dateLocalLE;
+    }
+    if (json['nextExecutionMassSending'] != null) {
+      var dateTimeNE = DateFormat("yyyy-MM-ddTHH:mm:ss")
+          .parse(json['nextExecutionMassSending'], true);
+      var dateLocalNE = dateTimeNE.toLocal();
+      nextExecutionMassSending = dateLocalNE;
     }
     stateMassSendingDescription = json['stateMassSendingDescription'] ?? null;
-    massSendingGiveAccumulator = List.from(json['massSendingGiveAccumulators'])
+    massSendingGiveAccumulators = List.from(json['massSendingGiveAccumulators'])
         .map((e) => MassSendingGiveAccumulator.fromJson(e))
         .toList();
   }
@@ -236,15 +309,22 @@ class MassSendingModel {
     data['idMassSending'] = idMassSending;
     data['idInstitution'] = idInstitution;
     data['idUserAppInstitution'] = idUserAppInstitution;
-    data['archived'] = archived;
+    data['deleted'] = deleted;
     data['nameMassSending'] = nameMassSending;
     data['descriptionMassSending'] = descriptionMassSending;
     data['senderMassSending'] = senderMassSending;
     data['emailSenderMassSending'] = emailSenderMassSending;
     data['idTemplateMassSending'] = idTemplateMassSending;
-    data['idGiveAccumulator'] = stateMassSending;
-    data['stateMassSending'] = stateMassSending;
-    data['planningDate'] = stateMassSending;
+    data['planningDate'] = planningDate?.toIso8601String();
+    data['frequencyTypeMassSending'] = frequencyTypeMassSending;
+    data['executeStepMassSending'] = executeStepMassSending;
+    data['advanceHoursLoadAccumulatorMassSending'] =
+        advanceHoursLoadAccumulatorMassSending;
+    data['emailDeduplicationMassSending'] = emailDeduplicationMassSending;
+    data['onlyToNewSendMassSending'] = onlyToNewSendMassSending;
+    data['onlyToNotOpenMassSending'] = onlyToNotOpenMassSending;
+    data['massSendingGiveAccumulators'] =
+        massSendingGiveAccumulators.map((e) => e.toJson()).toList();
     return data;
   }
 }

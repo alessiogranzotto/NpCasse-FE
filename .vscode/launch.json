@@ -7,6 +7,6 @@
         "name": "Flutter",
         "request": "launch",
         "type": "dart",
-        "args": ["-d", "chrome","--web-port", "61994"],
+        "args": ["-d", "chrome","--web-port", "61995"],
     }
 ]}

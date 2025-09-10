@@ -21,10 +21,6 @@ class ProductCatalogAPI {
     final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
         '/$idProduct/GetProductPrice?IdUserAppInstitution=$idUserAppInstitution' +
         paramEncode);
-    print(uri);
-    String x = jsonEncode(parameters);
-    print(x);
-    //https://localhost:7264/api/Product/1/GetProductPrice?IdUserAppInstitution=5&Parameters=1&Parameters=2&Parameters=3'\
     final http.Response response = await client.get(
       uri,
       headers: {

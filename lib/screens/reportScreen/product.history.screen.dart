@@ -81,39 +81,40 @@ class _ProductHistoryScreenState extends State<ProductHistoryScreen> {
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = '$sortBy;$sortDirection';
+        sortColumnAndDirection = '$sortBy:::$sortDirection';
       }
       filterStringModel = [];
       if (filterModel != null) {
         if (filterModel['categoryFilter'] != null) {
           CategoryCatalogModel cCategoryCatalogModel =
               filterModel['categoryFilter'];
-          filterStringModel.add('Filter=categoryFilter:' +
+          filterStringModel.add('Filter=categoryFilter:::' +
               cCategoryCatalogModel.idCategory.toString());
         }
         if (filterModel['subcategoryFilter'] != null) {
           CategoryCatalogModel cCategoryCatalogModel =
               filterModel['subcategoryFilter'];
-          filterStringModel.add('Filter=subcategoryFilter:' +
+          filterStringModel.add('Filter=subcategoryFilter:::' +
               cCategoryCatalogModel.idCategory.toString());
         }
         if (filterModel['productFilter'] != null) {
           ProductCatalogModel cProductCatalogModel =
               filterModel['productFilter'];
-          filterStringModel.add('Filter=productFilter:' +
+          filterStringModel.add('Filter=productFilter:::' +
               cProductCatalogModel.idProduct.toString());
         }
         if (filterModel['orderNumber'] != null) {
           int orderNumber = filterModel['orderNumber'];
-          filterStringModel.add('Filter=orderNumber:' + orderNumber.toString());
+          filterStringModel
+              .add('Filter=orderNumber:::' + orderNumber.toString());
         }
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
-          filterStringModel.add('Filter=startDate:' + cStartDate);
+          filterStringModel.add('Filter=startDate:::' + cStartDate);
         }
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
-          filterStringModel.add('Filter=endDate:' + cEndDate);
+          filterStringModel.add('Filter=endDate:::' + cEndDate);
         }
       }
 

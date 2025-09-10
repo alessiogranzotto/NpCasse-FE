@@ -21,7 +21,8 @@ class CustomTextFormField extends StatelessWidget {
       this.onTap,
       this.enabled,
       this.maxLength,
-      this.inputFormatter});
+      this.inputFormatter,
+      this.autofillHints});
 
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
@@ -41,6 +42,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool? enabled;
   final int? maxLength;
   final List<TextInputFormatter>? inputFormatter;
+  final Iterable<String>? autofillHints;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,7 @@ class CustomTextFormField extends StatelessWidget {
       child: TextFormField(
         cursorColor: Theme.of(context).colorScheme.inversePrimary,
         controller: controller,
+        autofillHints: autofillHints,
         enabled: enabled ?? true,
         maxLength: maxLength ?? maxLength,
         inputFormatters:

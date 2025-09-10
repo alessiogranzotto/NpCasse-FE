@@ -5,6 +5,7 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
+import 'package:np_casse/componenents/empty.data.widget.dart';
 import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -92,6 +93,8 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                         onChangeNumberResult(value);
                       },
                     )),
+                // Icona di refresh
+                const SizedBox(width: 10),
                 Expanded(
                   flex: 2,
                   child: TextFormField(
@@ -164,6 +167,7 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 10),
                 Expanded(
                     flex: 2,
                     child: CheckboxListTile(
@@ -187,6 +191,16 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                             .copyWith(color: Colors.blueGrey),
                       ),
                     )),
+                const Spacer(),
+                IconButton(
+                  onPressed: () {
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.refresh),
+                  iconSize: 32,
+                  tooltip: 'Aggiorna dati',
+                ),
+                const SizedBox(width: 10),
               ],
             ),
             SizedBox(
@@ -225,17 +239,20 @@ class _MassSendingScreenState extends State<MassSendingScreen> {
                           ),
                         );
                       } else if (!snapshot.hasData) {
-                        return const Center(
-                          child: Text(
-                            'No data...',
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                            ),
-                          ),
+                        return EmptyDataWidget(
+                          title: "Dati non presenti",
+                          message:
+                              "Non ci sono elementi da mostrare al momento.",
                         );
                       } else {
                         var tSnapshot = snapshot.data as List<MassSendingModel>;
-
+                        if (tSnapshot.isEmpty) {
+                          return EmptyDataWidget(
+                            title: "Dati non presenti",
+                            message:
+                                "Non ci sono elementi da mostrare al momento.",
+                          );
+                        }
                         return SingleChildScrollView(
                           child: Column(
                             children: [

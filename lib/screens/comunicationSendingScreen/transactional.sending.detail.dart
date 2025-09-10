@@ -338,8 +338,6 @@ class _TransactionalSendingDetailScreen
             label: availableInvoiceTypeModel[i].emailName,
             value: availableInvoiceTypeModel[i]));
       }
-
-      // print(isPresent);
     }
   }
 
@@ -515,7 +513,6 @@ class _TransactionalSendingDetailScreen
                               listOfValue: availableSmtp2GoTemplateItem,
                               onItemChanged: (value) {
                                 smtp2GoTemplate = value;
-                                print(smtp2GoTemplate);
                                 if (smtp2GoTemplate != null &&
                                     smtp2GoTemplate!.name.isNotEmpty) {
                                   viewTemplateValidNotifier.value = true;
@@ -568,7 +565,6 @@ class _TransactionalSendingDetailScreen
                                     availableInvoiceTypeModelItemSingle,
                                 onItemChanged: (value) {
                                   invoiceTypeModelMyosotis = value;
-                                  print(invoiceTypeModelMyosotis);
                                   if (invoiceTypeModelMyosotis != null &&
                                       invoiceTypeModelMyosotis!
                                           .emailName.isNotEmpty) {

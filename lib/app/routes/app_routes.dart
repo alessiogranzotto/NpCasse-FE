@@ -7,6 +7,7 @@ import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
+import 'package:np_casse/core/models/task.planned.model.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:np_casse/screens/cartScreen/pdf.invoice.screen.dart';
 import 'package:np_casse/screens/cartScreen/sh.manage.screen.dart';
@@ -27,6 +28,7 @@ import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.statisti
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.screen.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
+import 'package:np_casse/screens/taskScreen/task.planned.detail.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.detail.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/productAttribute.screen.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.detail.attribute.dart';
@@ -123,14 +125,7 @@ class AppRouter {
       "/transactionalSendingStatistic";
 
   static const String receiptPdf = "/receiptPdf";
-
-  // static const String searchRoute = "/search";
-  // static const String profileRoute = "/profile";
-  // static const String accountInfo = "/accountInfo";
-  // static const String categoryRoute = "/category";
-  // static const String prodDetailRoute = "/productDetail";
-  // static const String editProfileRoute = "/editProfile";
-  // static const String changePassRoute = "/changePassword";
+  static const String taskPlannedDetailRoute = "/taskPlannedDetail";
 
 // Route _createRoute() {
 //   return PageRouteBuilder(
@@ -460,6 +455,18 @@ class AppRouter {
             settings: settings,
           );
         }
+
+      case taskPlannedDetailRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => TaskPlannedDetailScreen(
+              taskPlanned: ModalRoute.of(context)!.settings.arguments
+                  as TaskPlannedModel,
+            ),
+            settings: settings,
+          );
+        }
+
       case onBoardRoute:
         {
           return MaterialPageRoute(

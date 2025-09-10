@@ -83,7 +83,7 @@ class IntegerTextTableFilter extends TableFilter<int> {
       ],
       decoration: InputDecoration(
         labelText: name,
-        hintText: 'Enter an integer', // Placeholder
+        hintText: 'Inserire un valore numerico', // Placeholder
         hintStyle: TextStyle(color: Colors.grey), // Set hint text color to grey
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.black, width: 2),
@@ -96,7 +96,7 @@ class IntegerTextTableFilter extends TableFilter<int> {
         ),
       ).copyWith(
         hintText: decoration?.hintText ??
-            'Enter an integer', // Fallback to custom hintText if provided
+            'Inserire un valore numerico', // Fallback to custom hintText if provided
       ),
       onChanged: (value) {
         // Update the state only if the value is a valid integer

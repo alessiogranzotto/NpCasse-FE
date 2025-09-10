@@ -18,6 +18,8 @@ import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
+import 'package:np_casse/core/notifiers/task.common.notifier.dart';
+import 'package:np_casse/core/notifiers/task.planned.notifier.dart';
 import 'package:np_casse/core/notifiers/transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/homeScreen/theme.mode.dart';
@@ -62,6 +64,8 @@ class AppProvider {
     ChangeNotifierProvider(create: (_) => TransactionalSendingNotifier()),
     ChangeNotifierProvider(create: (_) => ReportMassSendingNotifier()),
     ChangeNotifierProvider(create: (_) => ReportTransactionalSendingNotifier()),
+    ChangeNotifierProvider(create: (_) => TaskCommonNotifier()),
+    ChangeNotifierProvider(create: (_) => TaskPlannedNotifier()),
     ChangeNotifierProvider(create: (_) => ThemeProviderNotifier()),
 
     // ChangeNotifierProvider(create: (_) => ShopCategoryNotifier()),

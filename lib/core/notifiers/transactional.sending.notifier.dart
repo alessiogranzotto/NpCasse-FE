@@ -37,7 +37,6 @@ class TransactionalSendingNotifier with ChangeNotifier {
           orderBy: orderBy,
           type: type);
       if (response != null) {
-        print(response);
         final Map<String, dynamic> parseData = await jsonDecode(response);
         bool isOk = parseData['isOk'];
         if (!isOk) {

@@ -769,7 +769,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                       child: Column(
                         children: [
                           Tooltip(
-                            message: 'Prodotto cancellato',
+                            message: 'Prodotto archiviato',
                             child: Card(
                               color: Theme.of(context).cardColor,
                               elevation: 4,
@@ -779,7 +779,7 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                     child: CheckboxListTile(
                                         title: const SizedBox(
                                             width: 100,
-                                            child: Text("Cancellato")),
+                                            child: Text("Archiviato")),
                                         value: deleted,
                                         onChanged: (bool? value) {
                                           if (isEdit && tempDeleted) {

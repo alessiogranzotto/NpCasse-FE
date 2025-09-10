@@ -48,188 +48,6 @@ class _MyosotisConfigurationDetailState
 
   ValueNotifier<List<String>> selectedFrequenciesNotifier = ValueNotifier([]);
 
-  void _showColorPicker() {
-    Color tempColor = buttonColorNotifier.value; // copia temporanea del colore
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Scegli un colore'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: tempColor,
-              onColorChanged: (color) {
-                tempColor = color; // aggiorna la copia temporanea
-              },
-              pickerAreaBorderRadius:
-                  const BorderRadius.all(Radius.circular(12)),
-              paletteType: PaletteType.hsl,
-              labelTypes: [
-                ColorLabelType.rgb,
-                ColorLabelType.hsv,
-                ColorLabelType.hex,
-              ],
-              displayThumbColor: true,
-              pickerAreaHeightPercent: 0.7,
-              colorPickerWidth: 300,
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              child: const Text('Annulla'),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.grey[300],
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(); // chiude senza salvare
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Conferma'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: Colors.grey[300],
-                disabledForegroundColor: Colors.grey[600],
-              ),
-              onPressed: () {
-                buttonColorNotifier.value =
-                    tempColor; // salva il colore selezionato
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showFontPicker() {
-    final List<String> fontNames = GoogleFonts.asMap().keys.toList()..sort();
-    final TextEditingController controller = TextEditingController();
-    String? tempFont;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Scegli un Google Font'),
-              content: SizedBox(
-                height: 200,
-                width: 300,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Autocomplete<String>(
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text.isEmpty) {
-                          return const Iterable<String>.empty();
-                        }
-                        return fontNames.where((font) => font
-                            .toLowerCase()
-                            .contains(textEditingValue.text.toLowerCase()));
-                      },
-                      onSelected: (String font) {
-                        controller.text = font;
-                        setState(() => tempFont = font);
-                      },
-                      optionsViewBuilder: (context, onSelected, options) {
-                        return Align(
-                          alignment: Alignment.topLeft,
-                          child: SizedBox(
-                            width: 220,
-                            child: Material(
-                              elevation: 4.0,
-                              child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: options.length,
-                                itemBuilder: (context, index) {
-                                  final font = options.elementAt(index);
-                                  return ListTile(
-                                    title: Text(font),
-                                    onTap: () => onSelected(font),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      fieldViewBuilder: (context, textEditingController,
-                          focusNode, onFieldSubmitted) {
-                        controller.text = textEditingController.text;
-                        return TextField(
-                          controller: textEditingController,
-                          focusNode: focusNode,
-                          decoration: const InputDecoration(
-                            hintText: 'Selezionare un font...',
-                            border: OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.grey), // bordo quando non focus
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.blue,
-                                  width: 2), // bordo quando focus
-                            ),
-                          ),
-                          onChanged: (value) {
-                            if (fontNames.contains(value)) {
-                              setState(() => tempFont = value);
-                            } else {
-                              setState(() => tempFont = null);
-                            }
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    if (tempFont != null)
-                      Text(
-                        'The quick brown fox jumps over the lazy dog',
-                        style: GoogleFonts.getFont(tempFont!, fontSize: 20),
-                      ),
-                  ],
-                ),
-              ),
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.grey[300],
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Annulla'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: Colors.grey[300],
-                    disabledForegroundColor: Colors.grey[600],
-                  ),
-                  onPressed: tempFont != null
-                      ? () {
-                          formFontNotifier.value = tempFont!;
-                          Navigator.of(context).pop();
-                        }
-                      : null,
-                  child: const Text('Conferma'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
   List<String> idGiveFromProjectOrFixedOption = [
     'Id Give da prodotti',
     'Id Give fissi'
@@ -412,6 +230,191 @@ class _MyosotisConfigurationDetailState
 
   //OPTIONAL FIELDS CONFIGURATION
   List<String> availableTypeOptionalField = [];
+
+  //OPTIONAL FIELDS CONFIGURATION
+  List<String> availableTextTypeOptionalField = [];
+
+  void _showColorPicker() {
+    Color tempColor = buttonColorNotifier.value; // copia temporanea del colore
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Scegli un colore'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: tempColor,
+              onColorChanged: (color) {
+                tempColor = color; // aggiorna la copia temporanea
+              },
+              pickerAreaBorderRadius:
+                  const BorderRadius.all(Radius.circular(12)),
+              paletteType: PaletteType.hsl,
+              labelTypes: [
+                ColorLabelType.rgb,
+                ColorLabelType.hsv,
+                ColorLabelType.hex,
+              ],
+              displayThumbColor: true,
+              pickerAreaHeightPercent: 0.7,
+              colorPickerWidth: 300,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              child: const Text('Annulla'),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.grey[300],
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // chiude senza salvare
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Conferma'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                disabledForegroundColor: Colors.grey[600],
+              ),
+              onPressed: () {
+                buttonColorNotifier.value =
+                    tempColor; // salva il colore selezionato
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showFontPicker() {
+    final List<String> fontNames = GoogleFonts.asMap().keys.toList()..sort();
+    final TextEditingController controller = TextEditingController();
+    String? tempFont;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Scegli un Google Font'),
+              content: SizedBox(
+                height: 200,
+                width: 300,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Autocomplete<String>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text.isEmpty) {
+                          return const Iterable<String>.empty();
+                        }
+                        return fontNames.where((font) => font
+                            .toLowerCase()
+                            .contains(textEditingValue.text.toLowerCase()));
+                      },
+                      onSelected: (String font) {
+                        controller.text = font;
+                        setState(() => tempFont = font);
+                      },
+                      optionsViewBuilder: (context, onSelected, options) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: SizedBox(
+                            width: 220,
+                            child: Material(
+                              elevation: 4.0,
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: options.length,
+                                itemBuilder: (context, index) {
+                                  final font = options.elementAt(index);
+                                  return ListTile(
+                                    title: Text(font),
+                                    onTap: () => onSelected(font),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      fieldViewBuilder: (context, textEditingController,
+                          focusNode, onFieldSubmitted) {
+                        controller.text = textEditingController.text;
+                        return TextField(
+                          controller: textEditingController,
+                          focusNode: focusNode,
+                          decoration: const InputDecoration(
+                            hintText: 'Selezionare un font...',
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.grey), // bordo quando non focus
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Colors.blue,
+                                  width: 2), // bordo quando focus
+                            ),
+                          ),
+                          onChanged: (value) {
+                            if (fontNames.contains(value)) {
+                              setState(() => tempFont = value);
+                            } else {
+                              setState(() => tempFont = null);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    if (tempFont != null)
+                      Text(
+                        'The quick brown fox jumps over the lazy dog',
+                        style: GoogleFonts.getFont(tempFont!, fontSize: 20),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.grey[300],
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Annulla'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    disabledBackgroundColor: Colors.grey[300],
+                    disabledForegroundColor: Colors.grey[600],
+                  ),
+                  onPressed: tempFont != null
+                      ? () {
+                          formFontNotifier.value = tempFont!;
+                          Navigator.of(context).pop();
+                        }
+                      : null,
+                  child: const Text('Conferma'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   void initializeControllers() {
     nameMyosotisConfigurationController = TextEditingController()
@@ -1063,6 +1066,10 @@ class _MyosotisConfigurationDetailState
     //AVAILABLE TYPE OPTIONAL FIELDS CONFIGURATION
     availableTypeOptionalField =
         myosotisConfigurationDetailEmpty.availableTypeOptionalField;
+
+    //AVAILABLE TEXT TYPE OPTIONAL FIELDS CONFIGURATION
+    availableTextTypeOptionalField =
+        myosotisConfigurationDetailEmpty.availableTextTypeOptionalField;
     if (isEdit) {
       //MASTER
 
@@ -1183,6 +1190,7 @@ class _MyosotisConfigurationDetailState
     getMyosotisConfigurationData();
   }
 
+  @override
   void dispose() {
     disposeControllers();
     super.dispose();
@@ -2969,6 +2977,8 @@ class _MyosotisConfigurationDetailState
                       OptionalFieldWidget(
                         optionalFieldList: optionalField,
                         availableTypeOptionalField: availableTypeOptionalField,
+                        availableTextTypeOptionalField:
+                            availableTextTypeOptionalField,
                         onChanged: (updatedList) {
                           setState(() {
                             optionalField = updatedList;

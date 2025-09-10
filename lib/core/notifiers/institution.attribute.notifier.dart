@@ -136,7 +136,6 @@ class InstitutionAttributeNotifier with ChangeNotifier {
           emailName: emailName);
 
       if (response != null) {
-        print(response);
         final Map<String, dynamic> parseData = await jsonDecode(response);
         isOk = parseData['isOk'];
         if (!isOk) {

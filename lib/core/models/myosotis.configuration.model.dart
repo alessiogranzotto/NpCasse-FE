@@ -70,7 +70,7 @@ class MyosotisConfigurationModel {
     idInstitution = json['idInstitution'];
 
     archived = json['archived'];
-    idUserAppInstitution = json['idUserAppInstitution'] ?? 0; // Handle null
+    // idUserAppInstitution = json['idUserAppInstitution'] ?? 0; // Handle null
 
     if (json['enabledDeviceMyosotisConfigurations'] != null) {
       var t = List.from(json['enabledDeviceMyosotisConfigurations'])
@@ -437,6 +437,7 @@ class MyosotisConfigurationDetailEmpty {
     required this.availableTransactionalSending,
     required this.availableFrequencyContinuousDonation,
     required this.availableTypeOptionalField,
+    required this.availableTextTypeOptionalField,
   });
   late final List<String> availableFormStartup;
   late final List<String> availablePaymentMethodApp;
@@ -449,6 +450,7 @@ class MyosotisConfigurationDetailEmpty {
   late final List<TransactionalSendingShort> availableTransactionalSending;
   late final List<String> availableFrequencyContinuousDonation;
   late final List<String> availableTypeOptionalField;
+  late final List<String> availableTextTypeOptionalField;
 
   MyosotisConfigurationDetailEmpty.empty() {
     availableFormStartup = [];
@@ -462,6 +464,7 @@ class MyosotisConfigurationDetailEmpty {
     availableTransactionalSending = [];
     availableFrequencyContinuousDonation = [];
     availableTypeOptionalField = [];
+    availableTextTypeOptionalField = [];
   }
 
   // JSON deserialization
@@ -489,6 +492,8 @@ class MyosotisConfigurationDetailEmpty {
         List.from(json['availableFrequencyContinuousDonation']);
 
     availableTypeOptionalField = List.from(json['availableTypeOptionalField']);
+    availableTextTypeOptionalField =
+        List.from(json['availableTextTypeOptionalField']);
   }
 }
 
@@ -613,43 +618,61 @@ class FrequencyContinuousDonation {
 }
 
 class OptionalField {
-  OptionalField(
-      {required this.labelOptionalField,
-      required this.typeOptionalField,
-      required this.availableItemOptionalField,
-      required this.mantainOptionalFieldOnTransactionNotifier,
-      required this.giveFieldNameOptionalField});
+  OptionalField({
+    required this.labelOptionalField,
+    required this.typeOptionalField,
+    required this.selectableDDOptionalField,
+    required this.mantainOptionalFieldOnTransactionNotifier,
+    required this.giveFieldNameOptionalField,
+    required this.mandatoryOptionalFieldNotifier,
+    required this.textTypeOptionalField,
+    // required this.availableTextTypeOptionalField
+  });
   late String labelOptionalField;
   late String typeOptionalField;
-  late List<String> availableItemOptionalField;
+  late List<String> selectableDDOptionalField;
   late ValueNotifier<bool> mantainOptionalFieldOnTransactionNotifier;
   late String giveFieldNameOptionalField;
+  late ValueNotifier<bool> mandatoryOptionalFieldNotifier;
+  late String textTypeOptionalField;
+  // late List<String> availableTextTypeOptionalField;
 
   OptionalField.empty() {
     labelOptionalField = '';
     typeOptionalField = '';
-    availableItemOptionalField = [];
+    selectableDDOptionalField = [];
     mantainOptionalFieldOnTransactionNotifier = ValueNotifier(false);
     giveFieldNameOptionalField = '';
+    mandatoryOptionalFieldNotifier = ValueNotifier(false);
+    // availableTextTypeOptionalField = [];
+    textTypeOptionalField = '';
   }
 
   // JSON deserialization
   OptionalField.fromJson(Map<String, dynamic> json) {
     labelOptionalField = json['labelOptionalField'];
     typeOptionalField = json['typeOptionalField'];
-    availableItemOptionalField = List.from(json['availableItemOptionalField']);
+    selectableDDOptionalField = List.from(json['selectableDDOptionalField']);
     mantainOptionalFieldOnTransactionNotifier =
         ValueNotifier(json['mantainOptionalFieldOnTransaction'] ?? false);
     giveFieldNameOptionalField = json['giveFieldNameOptionalField'];
+    mandatoryOptionalFieldNotifier =
+        ValueNotifier(json['mandatoryOptionalField'] ?? false);
+    textTypeOptionalField = json['textTypeOptionalField'];
+    // availableTextTypeOptionalField =
+    //     List.from(json['availableTextTypeOptionalField']);
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['labelOptionalField'] = labelOptionalField;
     data['typeOptionalField'] = typeOptionalField;
-    data['availableItemOptionalField'] = availableItemOptionalField;
+    data['selectableDDOptionalField'] = selectableDDOptionalField;
     data['mantainOptionalFieldOnTransaction'] =
         mantainOptionalFieldOnTransactionNotifier.value;
     data['giveFieldNameOptionalField'] = giveFieldNameOptionalField;
+    data['mandatoryOptionalField'] = mandatoryOptionalFieldNotifier.value;
+    data['textTypeOptionalField'] = textTypeOptionalField;
+    // data['availableTextTypeOptionalField'] = availableTextTypeOptionalField;
 
     return data;
   }

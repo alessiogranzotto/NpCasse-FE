@@ -67,7 +67,7 @@ class _MyosotisDonationHistoryScreenState
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = '$sortBy;$sortDirection';
+        sortColumnAndDirection = '$sortBy:::$sortDirection';
       }
 
       filterStringModel = [];
@@ -75,26 +75,26 @@ class _MyosotisDonationHistoryScreenState
         if (filterModel['stateFilter'] != null) {
           StateModel stateModel = filterModel['stateFilter'];
           filterStringModel
-              .add('Filter=stateFilter:' + stateModel.id.toString());
+              .add('Filter=stateFilter:::' + stateModel.id.toString());
         }
         if (filterModel['paymentTypeFilter'] != null) {
           StateModel stateModel = filterModel['paymentTypeFilter'];
           filterStringModel
-              .add('Filter=paymentTypeFilter:' + stateModel.id.toString());
+              .add('Filter=paymentTypeFilter:::' + stateModel.id.toString());
         }
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
-          filterStringModel.add('Filter=startDate:' + cStartDate);
+          filterStringModel.add('Filter=startDate:::' + cStartDate);
         }
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
-          filterStringModel.add('Filter=endDate:' + cEndDate);
+          filterStringModel.add('Filter=endDate:::' + cEndDate);
         }
         if (filterModel['nameMyosotisConfiguration'] != null) {
           String nameMyosotisConfiguration =
               filterModel['nameMyosotisConfiguration'];
-          filterStringModel.add(
-              'Filter=nameMyosotisConfiguration:' + nameMyosotisConfiguration);
+          filterStringModel.add('Filter=nameMyosotisConfiguration:::' +
+              nameMyosotisConfiguration);
         }
       }
 
@@ -312,6 +312,14 @@ class _MyosotisDonationHistoryScreenState
               sortable: false,
             ),
             TableColumn(
+              id: 'externalIdPayment2',
+              title: const Text('Id sottoscrizione'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['externalIdPayment2']),
+              size: const FixedColumnSize(200),
+              sortable: false,
+            ),
+            TableColumn(
               id: 'stateDescription',
               title: const Text('Stato'),
               cellBuilder: (context, item, index) =>
@@ -324,6 +332,38 @@ class _MyosotisDonationHistoryScreenState
               title: const Text('Id give'),
               cellBuilder: (context, item, index) =>
                   SelectableText(item['idGive']),
+              size: const FixedColumnSize(2000),
+              sortable: false,
+            ),
+            TableColumn(
+              id: 'typeDonation',
+              title: const Text('Tipo donazione'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['typeDonation']),
+              size: const FixedColumnSize(150),
+              sortable: false,
+            ),
+            TableColumn(
+              id: 'frequency',
+              title: const Text('Frequenza donazione'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['frequency']),
+              size: const FixedColumnSize(200),
+              sortable: false,
+            ),
+            TableColumn(
+              id: 'currency',
+              title: const Text('Valuta'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['currency']),
+              size: const FixedColumnSize(100),
+              sortable: false,
+            ),
+            TableColumn(
+              id: 'optionalField',
+              title: const Text('Dati opzionali'),
+              cellBuilder: (context, item, index) =>
+                  SelectableText(item['optionalField']),
               size: const FixedColumnSize(2000),
               sortable: false,
             ),

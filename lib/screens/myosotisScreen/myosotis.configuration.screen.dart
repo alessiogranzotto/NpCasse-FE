@@ -5,6 +5,7 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/customized_component/sliver_grid_delegate_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
+import 'package:np_casse/componenents/empty.data.widget.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -232,18 +233,21 @@ class _MyosotisConfigurationScreenState
                           ),
                         );
                       } else if (!snapshot.hasData) {
-                        return const Center(
-                          child: Text(
-                            'No data...',
-                            style: TextStyle(
-                              color: Colors.redAccent,
-                            ),
-                          ),
+                        return EmptyDataWidget(
+                          title: "Dati non presenti",
+                          message:
+                              "Non ci sono elementi da mostrare al momento.",
                         );
                       } else {
                         var tSnapshot =
                             snapshot.data as List<MyosotisConfigurationModel>;
-
+                        if (tSnapshot.isEmpty) {
+                          return EmptyDataWidget(
+                            title: "Dati non presenti",
+                            message:
+                                "Non ci sono elementi da mostrare al momento.",
+                          );
+                        }
                         return SingleChildScrollView(
                           child: Column(
                             children: [

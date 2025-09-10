@@ -39,9 +39,9 @@ class MassSendingAPI {
   Future addOrUpdateMassSending(
       {String? token, required MassSendingModel massSendingModel}) async {
     int idMassSending = massSendingModel.idMassSending;
+    final http.Response response;
     var t = jsonEncode(massSendingModel);
     print(t);
-    final http.Response response;
     if (idMassSending == 0) {
       final Uri uri =
           Uri.parse('${ApiRoutes.baseComunicationSendingURL}/Mass-sending/');
@@ -115,8 +115,6 @@ class MassSendingAPI {
             '/$idMassSending/Plan' +
             '?IdUserAppInstitution=$idUserAppInstitution');
 
-    var t = dateTimePlanMassSending.toIso8601String();
-    print(t);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',

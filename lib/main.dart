@@ -7,6 +7,7 @@ import 'package:np_casse/screens/homeScreen/theme.mode.dart';
 import 'package:provider/provider.dart';
 import 'package:paged_datatable/paged_datatable.dart'; // Import your PagedDataTable
 import 'package:intl/date_symbol_data_local.dart'; // Import this for locale initialization
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   initializeDateFormatting('it', null);
@@ -41,12 +42,15 @@ class Core extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProviderNotifier>(context);
     return MaterialApp(
       title: 'Give Pro',
-      localizationsDelegates: [
-        PagedDataTableLocalization.delegate, // Add this line
+      supportedLocales: const [
+        Locale('it'), // Italiano
+        Locale('en'), // Inglese
       ],
-      supportedLocales: [
-        const Locale('en', ''), // English
-        // You can add more locales here if needed
+      localizationsDelegates: const [
+        PagedDataTableLocalization.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       debugShowCheckedModeBanner: false,
       onGenerateRoute: AppRouter.generateRoute,

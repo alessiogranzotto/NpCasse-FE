@@ -311,12 +311,14 @@ class _FrequencyDonationAmountListState
 class OptionalFieldWidget extends StatefulWidget {
   final List<OptionalField> optionalFieldList;
   final List<String> availableTypeOptionalField;
+  final List<String> availableTextTypeOptionalField;
   final ValueChanged<List<OptionalField>> onChanged; // callback
 
   const OptionalFieldWidget({
     Key? key,
     required this.optionalFieldList,
     required this.availableTypeOptionalField,
+    required this.availableTextTypeOptionalField,
     required this.onChanged,
   }) : super(key: key);
 
@@ -337,11 +339,14 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
         .map((d) => OptionalField(
               labelOptionalField: d.labelOptionalField,
               typeOptionalField: d.typeOptionalField,
-              availableItemOptionalField:
-                  List.from(d.availableItemOptionalField),
-              giveFieldNameOptionalField: d.giveFieldNameOptionalField,
+              selectableDDOptionalField: List.from(d.selectableDDOptionalField),
               mantainOptionalFieldOnTransactionNotifier:
                   d.mantainOptionalFieldOnTransactionNotifier,
+              giveFieldNameOptionalField: d.giveFieldNameOptionalField,
+              mandatoryOptionalFieldNotifier: d.mandatoryOptionalFieldNotifier,
+              textTypeOptionalField: d.textTypeOptionalField,
+              // availableTextTypeOptionalField:
+              //     List.from(d.availableTextTypeOptionalField),
             ))
         .toList();
     labelOptionalFieldController = optionalFieldItem
@@ -370,11 +375,15 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
   void addOptionalFieldItem() {
     setState(() {
       optionalFieldItem.add(OptionalField(
-          labelOptionalField: '',
-          typeOptionalField: widget.availableTypeOptionalField.first,
-          availableItemOptionalField: [],
-          giveFieldNameOptionalField: '',
-          mantainOptionalFieldOnTransactionNotifier: ValueNotifier(false)));
+        labelOptionalField: '',
+        typeOptionalField: widget.availableTypeOptionalField.first,
+        selectableDDOptionalField: [],
+        giveFieldNameOptionalField: '',
+        mantainOptionalFieldOnTransactionNotifier: ValueNotifier(false),
+        mandatoryOptionalFieldNotifier: ValueNotifier(false),
+        textTypeOptionalField: widget.availableTextTypeOptionalField.first,
+        // availableTextTypeOptionalField: []
+      ));
       labelOptionalFieldController.add(TextEditingController());
       giveFieldNameOptionalFieldController.add(TextEditingController());
       showAvailableItemOptionalFieldList.add(ValueNotifier<bool>(false));
@@ -395,7 +404,7 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
 
   void onChipDeleted(String topping, int index) {
     setState(() {
-      optionalFieldItem[index].availableItemOptionalField.remove(topping);
+      optionalFieldItem[index].selectableDDOptionalField.remove(topping);
     });
     notifyParent();
   }
@@ -404,10 +413,23 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
     // Se modifichi qualcosa qui, chiama notifyParent anche qui
   }
 
-  void onOptionalFieldTypeChanged(String? value, int index) {
+  void onTypeOptionalFieldChanged(String? value, int index) {
     if (value == null) return;
     setState(() {
       optionalFieldItem[index].typeOptionalField = value;
+      optionalFieldItem[index].selectableDDOptionalField = [];
+      optionalFieldItem[index].textTypeOptionalField =
+          widget.availableTextTypeOptionalField.first;
+      showAvailableItemOptionalFieldList[index].value =
+          value == 'Elenco a discesa';
+    });
+    notifyParent();
+  }
+
+  void onTextTypeOptionalFieldChanged(String? value, int index) {
+    if (value == null) return;
+    setState(() {
+      optionalFieldItem[index].textTypeOptionalField = value;
       showAvailableItemOptionalFieldList[index].value =
           value == 'Elenco a discesa';
     });
@@ -512,6 +534,26 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
             const SizedBox(width: 4),
             Expanded(
               flex: 1,
+              child: Center(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: optionalField.mandatoryOptionalFieldNotifier,
+                  builder: (context, value, child) {
+                    return CheckboxListTile(
+                      title: Text('Elemento obbligatorio'),
+                      value: value,
+                      onChanged: (bool? newValue) {
+                        optionalField.mandatoryOptionalFieldNotifier.value =
+                            newValue ?? false;
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              flex: 1,
               child: Align(
                 alignment: Alignment.center,
                 child: CustomTextFormField(
@@ -545,7 +587,7 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                   onItemChanged: (value) {
                     showAvailableItemOptionalFieldList[index].value =
                         (value ?? '') == 'Elenco a discesa';
-                    onOptionalFieldTypeChanged(value, index);
+                    onTypeOptionalFieldChanged(value, index);
                   },
                 ),
               ),
@@ -556,51 +598,63 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
               child: ValueListenableBuilder<bool>(
                 valueListenable: showAvailableItemOptionalFieldList[index],
                 builder: (context, value, child) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 1000),
-                      child: value
-                          ? Align(
-                              alignment: Alignment.center,
-                              child: ChipsInput<String>(
-                                values:
-                                    optionalField.availableItemOptionalField,
-                                label: AppStrings.availableItemOptionalField,
-                                strutStyle: const StrutStyle(fontSize: 12),
-                                onChanged: (data) {
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    if (!mounted) return;
-                                    setState(() {
-                                      optionalField.availableItemOptionalField =
-                                          List.from(data);
-                                    });
-                                    notifyParent();
+                  return AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 1000),
+                    child: value
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: ChipsInput<String>(
+                              values: optionalField.selectableDDOptionalField,
+                              label: AppStrings.availableTypeOptionalField,
+                              strutStyle: const StrutStyle(fontSize: 12),
+                              onChanged: (data) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  if (!mounted) return;
+                                  setState(() {
+                                    optionalField.selectableDDOptionalField =
+                                        List.from(data);
                                   });
-                                },
-                                onSubmitted: (data) {
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((_) {
-                                    if (!mounted) return;
-                                    setState(() {
-                                      if (!optionalField
-                                          .availableItemOptionalField
-                                          .contains(data)) {
-                                        optionalField.availableItemOptionalField
-                                            .add(data);
-                                      }
-                                    });
-                                    notifyParent();
+                                  notifyParent();
+                                });
+                              },
+                              onSubmitted: (data) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  if (!mounted) return;
+                                  setState(() {
+                                    if (!optionalField.selectableDDOptionalField
+                                        .contains(data)) {
+                                      optionalField.selectableDDOptionalField
+                                          .add(data);
+                                    }
                                   });
-                                },
-                                chipBuilder: chipBuilderOptionalField(index),
-                              ),
-                            )
-                          : SizedBox(
-                              height:
-                                  60), // Contenitore vuoto che occupa lo spazio senza causare problemi
-                    ),
+                                  notifyParent();
+                                });
+                              },
+                              chipBuilder: chipBuilderOptionalField(index),
+                            ),
+                          )
+                        : Align(
+                            alignment: Alignment.center,
+                            child: CustomDropDownButtonFormField(
+                              enabled: true,
+                              actualValue: optionalField.textTypeOptionalField,
+                              labelText: 'Formato elemento',
+                              listOfValue: widget.availableTextTypeOptionalField
+                                  .map((value) => DropdownMenuItem(
+                                        value: value,
+                                        child: Text(value),
+                                      ))
+                                  .toList(),
+                              onItemChanged: (value) {
+                                showAvailableItemOptionalFieldList[index]
+                                        .value =
+                                    (value ?? '') == 'Elenco a discesa';
+                                onTextTypeOptionalFieldChanged(value, index);
+                              },
+                            ),
+                          ), // Contenitore vuoto che occupa lo spazio senza causare problemi
                   );
                 },
               ),

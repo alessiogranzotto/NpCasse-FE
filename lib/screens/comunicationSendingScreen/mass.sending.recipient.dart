@@ -45,7 +45,7 @@ class _MassSendingRecipientState extends State<MassSendingRecipientScreen> {
 
   void dataControllerListener() {}
 
-  Future<void> getMassSendingData() async {
+  Future<void> getAccumulatorFromGive() async {
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
@@ -80,11 +80,10 @@ class _MassSendingRecipientState extends State<MassSendingRecipientScreen> {
     isEdit = widget.massSendingModel.idMassSending != 0;
 
     for (int i = 0; i < availableAccumulatorGive.length; i++) {
-      var isPresent = widget.massSendingModel.massSendingGiveAccumulator
+      var isPresent = widget.massSendingModel.massSendingGiveAccumulators
           .map((e) => e.idGiveAccumulator)
           .contains(availableAccumulatorGive[i].id);
 
-      print(isPresent);
       availableAccumulatorGiveItem.add(DropdownItem(
           selected: isPresent,
           label: availableAccumulatorGive[i].id.toString() +
@@ -102,7 +101,6 @@ class _MassSendingRecipientState extends State<MassSendingRecipientScreen> {
   void initState() {
     super.initState();
     initializeControllers();
-    getMassSendingData();
   }
 
   void dispose() {
@@ -119,6 +117,7 @@ class _MassSendingRecipientState extends State<MassSendingRecipientScreen> {
         authenticationNotifier.getSelectedUserAppInstitution();
     MassSendingNotifier massSendingNotifier =
         Provider.of<MassSendingNotifier>(context);
+
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
@@ -177,7 +176,7 @@ class _MassSendingRecipientState extends State<MassSendingRecipientScreen> {
                                           spacing: 10,
                                         ),
                                         fieldDecoration: FieldDecoration(
-                                          hintText: 'Selezionare accumulatore',
+                                          hintText: 'Selezionare accumulatori',
                                           hintStyle: Theme.of(context)
                                               .textTheme
                                               .labelMedium!

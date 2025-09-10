@@ -23,8 +23,6 @@ class CommonAPI {
         '&NameDescSearch=$nameDescSearch' +
         '&ReadImageData=$readImageData' +
         '&OrderBy=$orderBy');
-    print(uri);
-    //'https://localhost:7264/api/Category?IdUserAppInstitution=5&IdCategory=0&LevelCategory=AllCategory&ReadAlsoDeleted=true&NumberResult=10&NameDescSearch=ff&ReadImageData=true&OrderBy=NameCategory' \
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -65,7 +63,6 @@ class CommonAPI {
         '&OrderBy=$orderBy' +
         '&ShowVariant=$showVariant' +
         '&viewOutOfAssortment=$viewOutOfAssortment');
-    print(uri);
     final http.Response response = await client.get(
       uri,
       headers: {

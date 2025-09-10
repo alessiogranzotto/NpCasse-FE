@@ -17,16 +17,18 @@ import 'package:np_casse/core/notifiers/product.attribute.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.massive.sending.notifier.dart';
+import 'package:np_casse/core/notifiers/report.myosotis.access.notifier.dart';
+import 'package:np_casse/core/notifiers/report.myosotis.donation.notifier.dart';
 import 'package:np_casse/core/notifiers/report.product.notifier.dart';
 import 'package:np_casse/core/notifiers/report.transactional.sending.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
+import 'package:np_casse/core/notifiers/task.planned.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.history.navigator.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
-import 'package:np_casse/screens/homeScreen/theme.mode.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.history.navigator.dart';
@@ -34,6 +36,7 @@ import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.navigato
 import 'package:np_casse/screens/myosotisScreen/myosotis.access.history.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.donation.history.navigator.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.navigator.dart';
+import 'package:np_casse/screens/taskScreen/task.planned.navigator.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.navigator.dart';
 import 'package:np_casse/screens/productCatalogScreen/product.catalog.navigator.dart';
 import 'package:np_casse/screens/reportScreen/cart.history.navigator.dart';
@@ -139,7 +142,7 @@ class _MasterScreenState extends State<MasterScreen> {
           const MyosotisConfigurationNavigator(), 2, null),
       MenuList('Report donazioni', Icons.dashboard,
           const MyosotisDonationHistoryNavigator(), 1, null),
-      MenuList('Report Accessi', Icons.dashboard,
+      MenuList('Report accessi', Icons.dashboard,
           const MyosotisAccessHistoryNavigator(), 3, null),
     ]),
     MenuList('Report', Icons.dashboard, null, 1, [
@@ -148,6 +151,8 @@ class _MasterScreenState extends State<MasterScreen> {
       MenuList('Report prodotti', Icons.dashboard,
           const ProductHistoryNavigator(), 1, null),
     ]),
+    MenuList('Procedure pianificate', Icons.schedule,
+        const TaskPlannedNavigator(), 3, null),
     MenuList('Associazioni', Icons.settings_outlined, const InstitutionScreen(),
         1, null),
     MenuList('Uscita', Icons.logout, const LogoutScreen(), 1, null),
@@ -211,6 +216,14 @@ class _MasterScreenState extends State<MasterScreen> {
       MyosotisConfigurationNotifier myosotisConfigurationNotifier =
           Provider.of<MyosotisConfigurationNotifier>(context, listen: false);
       myosotisConfigurationNotifier.refresh();
+    } else if (subMenu == "Report donazioni") {
+      ReportMyosotisDonationNotifier reportMyosotisDonationNotifier =
+          Provider.of<ReportMyosotisDonationNotifier>(context, listen: false);
+      reportMyosotisDonationNotifier.setUpdate(true);
+    } else if (subMenu == "Report accessi") {
+      ReportMyosotisAccessNotifier reportMyosotisAccessNotifier =
+          Provider.of<ReportMyosotisAccessNotifier>(context, listen: false);
+      reportMyosotisAccessNotifier.setUpdate(true);
     }
     // else if (subMenu == "Impostazioni amministratore") {
     //   InstitutionAttributeAdminNotifier institutionAttributeAdminNotifier =
@@ -226,6 +239,10 @@ class _MasterScreenState extends State<MasterScreen> {
       ReportProductNotifier reportProductNotifier =
           Provider.of<ReportProductNotifier>(context, listen: false);
       reportProductNotifier.setUpdate(true);
+    } else if (subMenu == "Procedure pianificate") {
+      TaskPlannedNotifier taskPlannedNotifier =
+          Provider.of<TaskPlannedNotifier>(context, listen: false);
+      taskPlannedNotifier.refresh();
     }
     setState(() {
       selectedScreen = subMenu;
@@ -406,7 +423,6 @@ class _MasterScreenState extends State<MasterScreen> {
         final Uri url = Uri.parse(
           'https://www.give-newsletter.cloud/templateGivePro/index.php?token=$temp_token&nomeLogin=${cUserAppInstitutionModel.idInstitutionNavigation.nameInstitution}',
         );
-        print(url);
         if (kIsWeb) {
           //  Web: devi specificare _blank per aprire una nuova scheda
           if (!await launchUrl(url, webOnlyWindowName: '_blank')) {

@@ -97,7 +97,7 @@ class ReportApi {
     }
   }
 
-    Future findMyosotisAccessList(
+  Future findMyosotisAccessList(
       {required String? token,
       required int idUserAppInstitution,
       required int pageNumber,
@@ -109,7 +109,7 @@ class ReportApi {
       filterJoined = filterJoined + "&" + item;
     }
     final Uri uri = Uri.parse(
-        '${ApiRoutes.basLogURL}/Find-myosotis-request-log?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
+        '${ApiRoutes.baseLogURL}/Find-myosotis-request-log?idUserAppInstitution=$idUserAppInstitution&pageNumber=$pageNumber&pageSize=$pageSize&orderBy=$orderBy$filterJoined');
     final http.Response response = await client.get(
       uri,
       headers: {

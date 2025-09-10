@@ -94,8 +94,6 @@ class MyosotisConfigurationAPI {
       required MyosotisConfigurationModel myosotisConfigurationModel}) async {
     int idMyosotisConfiguration =
         myosotisConfigurationModel.idMyosotisConfiguration;
-    var t = jsonEncode(myosotisConfigurationModel);
-    print(t);
     final http.Response response;
     if (idMyosotisConfiguration == 0) {
       final Uri uri = Uri.parse('${ApiRoutes.baseMyosotisConfigurationURL}');

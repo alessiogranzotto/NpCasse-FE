@@ -63,18 +63,18 @@ class _MyosotisAccessHistoryScreenState
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = '$sortBy;$sortDirection';
+        sortColumnAndDirection = '$sortBy:::$sortDirection';
       }
 
       filterStringModel = [];
       if (filterModel != null) {
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
-          filterStringModel.add('Filter=startDate:' + cStartDate);
+          filterStringModel.add('Filter=startDate:::' + cStartDate);
         }
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
-          filterStringModel.add('Filter=endDate:' + cEndDate);
+          filterStringModel.add('Filter=endDate:::' + cEndDate);
         }
       }
 
@@ -172,7 +172,7 @@ class _MyosotisAccessHistoryScreenState
                 return SelectableText(formatted);
               },
               size: const FixedColumnSize(200),
-              sortable: true,
+              sortable: false,
             ),
           ],
           filters: [

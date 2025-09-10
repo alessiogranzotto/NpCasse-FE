@@ -140,8 +140,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
         Provider.of<AuthenticationNotifier>(context, listen: false);
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
-    print(paymentIntendId);
-    print(paymentStatus);
     var strTypePayment = PaymentType.values[indexPayment].toString();
     cartNotifier
         .setCartCheckout(
@@ -293,9 +291,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       setState(() {
         isTerminalInitialized = true;
       });
-
-      // Optionally print the result from the native side
-      print(result);
     } on PlatformException catch (e) {
       // On error, handle initialization failure
       setState(() {
@@ -419,7 +414,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       setState(() {
         isReaderConnected = false;
       });
-      print(result); // This will print the success message from the native code
     } on PlatformException catch (e) {
       print("$e");
     }
@@ -428,7 +422,6 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   Future<void> uninitializeStripe() async {
     try {
       final String result = await platform.invokeMethod('uninitializeStripe');
-      print(result); // This will print the success message from the native code
     } on PlatformException catch (e) {
       print("Error uninitializing terminal: ${e.message}");
     }

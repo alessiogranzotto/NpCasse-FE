@@ -18,7 +18,6 @@ class ProductAttributeMappingAPI {
         '?IdUserAppInstitution=$idUserAppInstitution' +
         '&ReadAlsoDeleted=$readAlsoDeleted' +
         '&NumberResult=$numberResult');
-    print(uri);
     final http.Response response = await client.get(
       uri,
       headers: {
@@ -47,7 +46,6 @@ class ProductAttributeMappingAPI {
     final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
         '/$idProduct/ProductAttributeMapping' +
         '?IdUserAppInstitution=$idUserAppInstitution');
-    print(uri);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',

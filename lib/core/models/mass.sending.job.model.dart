@@ -15,6 +15,7 @@ class MassSendingJobModel {
     required this.businessNameSh,
     required this.emailSh,
     required this.emailId,
+    required this.batchOrder,
     required this.webhooksEvent,
     required this.dateLastUpdate,
     required this.massSendingModel,
@@ -32,6 +33,7 @@ class MassSendingJobModel {
   late final String businessNameSh;
   late final String emailSh;
   late final String emailId;
+  late final int batchOrder;
   late final List<WebhooksEvent>? webhooksEvent;
   late final DateTime? dateLastUpdate;
   late final MassSendingModel massSendingModel;
@@ -49,6 +51,7 @@ class MassSendingJobModel {
     businessNameSh = '';
     emailSh = '';
     emailId = '';
+    batchOrder = 0;
     webhooksEvent = List.empty();
     dateLastUpdate = DateTime.now();
     massSendingModel = MassSendingModel.empty();
@@ -76,6 +79,7 @@ class MassSendingJobModel {
     businessNameSh = json['businessNameSh'];
     emailSh = json['emailSh'];
     emailId = json['emailId'];
+    batchOrder = json['batchOrder'];
 
     webhooksEvent = List.from(json['webhooksEvent'])
         .map((e) => WebhooksEvent.fromJson(e))
@@ -114,6 +118,7 @@ class MassSendingJobModel {
     data['businessNameSh'] = businessNameSh;
     data['emailSh'] = emailSh;
     data['emailId'] = emailId;
+    data['batchOrder'] = batchOrder;
     data['webhooksEvent'] = webhooksEvent;
     data['dateLastUpdate'] = dateLastUpdate;
     data['idMassSendingNavigation'] = massSendingModel;

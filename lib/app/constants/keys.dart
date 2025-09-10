@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.046';
+  static String version = '1.20.054';
 }
 
 // class AppRegex {
@@ -259,7 +259,7 @@ class AppStrings {
   static const labelOptionalField = "Etichetta campo opzionale";
   static const giveFieldOptionalField = "Campo GIVE";
 
-  static const availableItemOptionalField = 'Elementi selezionabili';
+  static const availableTypeOptionalField = 'Elementi selezionabili';
 
   //
   //
@@ -290,16 +290,60 @@ class AppStrings {
       "Inserire oggetto comunicazione";
 
   static const comunicationSendingTemplate = "Template invio comunicazione";
+  static const pleaseEnterComunicationSendingTemplate =
+      "Inserire template invio comunicazione";
   static const comunicationAttachSendingTemplate =
       "Template allegato comunicazione";
 
-  static const datePlanComunicationSending = "Data spedizione pianificata";
+  static const datePlanComunicationSending = "Data esecuzione";
   static const pleaseEnterDatePlanComunicationSending =
-      "Inserire data spedizione pianificata";
+      "Inserire data esecuzione";
 
-  static const hourPlanComunicationSending = "Ora spedizione pianificata";
+  static const hourPlanComunicationSending = "Ora esecuzione";
   static const pleaseEnterHourPlanComunicationSending =
-      "Inserire ora spedizione pianificata";
+      "Inserire ora esecuzione";
+
+  static const frequencyMassSending = "Frequenza esecuzione";
+  static const pleaseEnterFrequencyMassSending =
+      "Inserire tipo frequenza esecuzione";
+
+  static const advanceHoursLoadAccumulatorMassSending =
+      "Ore anticipo lettura accumulatori";
+
+  static const pleaseEnterExecuteStepMassSending =
+      "Inserire intervallo esecuzione";
+
+  static const availableTaskCommon = "Tipologia procedura";
+  static const pleaseEnterAvailableTaskCommon =
+      "Selezionare tipologia procedura";
+
+  static const nameTaskPlanned = "Nome procedura pianificata";
+  static var pleaseEnterNameTaskPlanned = "Inserire nome procedura pianificata";
+
+  static const exportModeTaskPlanned = "Tipo esportazione";
+  static const pleaseEnterExportModeTaskPlanned = "Inserire tipo esportazione";
+
+  static const sendModeTaskPlanned = "Modalità invio";
+  static const pleaseEnterSendModeTaskPlanned = "Inserire modalità invio";
+
+  static const recipientEmailTaskPlanned = "Destinatari email (separati da ;)";
+  static const pleaseEnterRecipientEmailTaskPlanned =
+      "Inserire destinatari email";
+
+  static const ftpServerTaskPlanned = "Nome ftp server";
+  static const pleaseEnterFtpServerTaskPlanned = "Inserire nome ftp server";
+
+  static const ftpUsernameTaskPlanned = "Username ftp server";
+  static const pleaseEnterFtpUsernameTaskPlanned =
+      "Inserire username ftp server";
+
+  static const ftpPasswordTaskPlanned = "Password ftp server";
+  static const pleaseEnterFtpPassword = "Inserire password ftp server";
+
+  static const rangeExtractionTaskPlanned = "Modalità estrazione dati";
+  static const pleaseEnterRangeExtractionTaskPlanned =
+      "Inserire modalità estrazione dati";
+  static const timePlanTaskPlanned = "Orario esecuzione";
 }
 
 class AppColors {

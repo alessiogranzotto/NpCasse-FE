@@ -63,7 +63,8 @@ class ApiRoutes {
       "$casseURL/api/MyosotisConfiguration";
   static const String baseComunicationSendingURL =
       "$casseURL/api/ComunicationSending";
-  static const String basLogURL = "$casseURL/api/Log";
+  static const String baseLogURL = "$casseURL/api/Log";
+  static const String baseTaskURL = "$casseURL/api/Task";
   // static const String storeURL = "$baseURL/api/Store";
 
   static const String baseProductURL = "$whURL/api/Product";

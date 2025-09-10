@@ -148,7 +148,6 @@ class GiveAPI {
       "tipo_donatore": tipo_donatore,
       "forza_duplicato": forza_duplicato
     });
-    print(t);
     final http.Response response = await client.post(uri,
         headers: {
           'Content-Type': 'application/json',

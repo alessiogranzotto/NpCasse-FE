@@ -65,7 +65,7 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = '$sortBy;$sortDirection';
+        sortColumnAndDirection = '$sortBy:::$sortDirection';
       }
 
       filterStringModel = [];
@@ -73,21 +73,21 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
         if (filterModel['stateFilter'] != null) {
           StateModel stateModel = filterModel['stateFilter'];
           filterStringModel
-              .add('Filter=stateFilter:' + stateModel.id.toString());
+              .add('Filter=stateFilter:::' + stateModel.id.toString());
         }
         if (filterModel['paymentTypeFilter'] != null) {
           StateModel stateModel = filterModel['paymentTypeFilter'];
           filterStringModel
-              .add('Filter=paymentTypeFilter:' + stateModel.id.toString());
+              .add('Filter=paymentTypeFilter:::' + stateModel.id.toString());
         }
 
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
-          filterStringModel.add('Filter=startDate:' + cStartDate);
+          filterStringModel.add('Filter=startDate:::' + cStartDate);
         }
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
-          filterStringModel.add('Filter=endDate:' + cEndDate);
+          filterStringModel.add('Filter=endDate:::' + cEndDate);
         }
       }
 

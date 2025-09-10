@@ -81,6 +81,7 @@ class _MassSendingPlanState extends State<MassSendingPlanScreen> {
     setInitialData();
   }
 
+  @override
   void dispose() {
     disposeControllers();
     super.dispose();

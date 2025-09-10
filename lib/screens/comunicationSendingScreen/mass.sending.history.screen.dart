@@ -64,7 +64,7 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = '$sortBy;$sortDirection';
+        sortColumnAndDirection = '$sortBy:::$sortDirection';
       }
 
       filterStringModel = [];
@@ -72,30 +72,34 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
         if (filterModel['stateFilter'] != null) {
           StateModel stateModel = filterModel['stateFilter'];
           filterStringModel
-              .add('Filter=stateFilter:' + stateModel.id.toString());
+              .add('Filter=stateFilter:::' + stateModel.id.toString());
         }
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
-          filterStringModel.add('Filter=startDate:' + cStartDate);
+          filterStringModel.add('Filter=startDate:::' + cStartDate);
         }
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
-          filterStringModel.add('Filter=endDate:' + cEndDate);
+          filterStringModel.add('Filter=endDate:::' + cEndDate);
         }
 
         if (filterModel['massSendingModelNameComunication'] != null) {
           String massSendingModelNameComunication =
               filterModel['massSendingModelNameComunication'];
-          filterStringModel.add('Filter=massSendingModelNameComunication:' +
+          filterStringModel.add('Filter=massSendingModelNameComunication:::' +
               massSendingModelNameComunication);
         }
         if (filterModel['denominationSh'] != null) {
           String denominationSh = filterModel['denominationSh'];
-          filterStringModel.add('Filter=denominationSh:' + denominationSh);
+          filterStringModel.add('Filter=denominationSh:::' + denominationSh);
         }
         if (filterModel['emailSh'] != null) {
           String emailSh = filterModel['emailSh'];
-          filterStringModel.add('Filter=emailSh:' + emailSh);
+          filterStringModel.add('Filter=emailSh:::' + emailSh);
+        }
+        if (filterModel['batchOrder'] != null) {
+          int batchOrder = filterModel['batchOrder'];
+          filterStringModel.add('Filter=batchOrder:::' + batchOrder.toString());
         }
       }
 
@@ -234,6 +238,16 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                       item['massSendingModelNameComunication']);
                 },
                 size: const FixedColumnSize(200),
+                sortable: true,
+              ),
+              TableColumn(
+                id: 'batchOrder',
+                title: const Text('Step'),
+                cellBuilder: (context, item, index) {
+                  return SelectableText(
+                      item['batchOrder'].toString().padLeft(4, '0'));
+                },
+                size: const FixedColumnSize(80),
                 sortable: true,
               ),
               TableColumn(
@@ -384,6 +398,11 @@ class _MassSendingHistoryScreenState extends State<MassSendingHistoryScreen> {
                 id: "massSendingModelNameComunication",
                 chipFormatter: (value) => "Nome comunicazione: $value",
                 name: "Nome comunicazione",
+              ),
+              IntegerTextTableFilter(
+                id: "batchOrder",
+                chipFormatter: (value) => "Step: $value",
+                name: "Step",
               ),
               StringTextTableFilter(
                 id: "denominationSh",

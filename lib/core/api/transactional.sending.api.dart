@@ -42,8 +42,6 @@ class TransactionalSendingAPI {
       required TransactionalSendingModel transactionalSendingModel}) async {
     int idTransactionalSending =
         transactionalSendingModel.idTransactionalSending;
-    var t = jsonEncode(transactionalSendingModel);
-    print(t);
     final http.Response response;
     if (idTransactionalSending == 0) {
       final Uri uri = Uri.parse(

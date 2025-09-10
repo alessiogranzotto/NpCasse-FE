@@ -40,6 +40,10 @@ class MyosotisDonationModel {
     this.externalIdPayment2,
     required this.idGive,
     required this.state,
+    required this.typeDonation,
+    required this.frequency,
+    required this.currency,
+    required this.optionalField,
     required this.stateDescription,
     required this.nameMyosotisConfiguration,
   });
@@ -82,8 +86,14 @@ class MyosotisDonationModel {
   late final String? externalIdPayment2;
   late final String idGive;
   late final int state;
-  late final String nameMyosotisConfiguration;
+
+  late final String typeDonation;
+  late final String frequency;
+  late final String currency;
+  late final String? optionalField;
+
   late final String stateDescription;
+  late final String nameMyosotisConfiguration;
 
   // Empty constructor with default values
   MyosotisDonationModel.empty() {}
@@ -132,8 +142,13 @@ class MyosotisDonationModel {
     externalIdPayment2 = json['externalIdPayment2'] ?? '';
     idGive = json['idGive'];
     state = json['state'];
-    nameMyosotisConfiguration = json['nameMyosotisConfiguration'];
+    typeDonation = json['typeDonation'];
+    frequency = json['frequency'];
+    currency = json['currency'];
+    optionalField = json['optionalField'] ?? '';
     stateDescription = json['stateDescription'];
+
+    nameMyosotisConfiguration = json['nameMyosotisConfiguration'];
   }
 
   // JSON serialization
@@ -177,8 +192,12 @@ class MyosotisDonationModel {
     data['externalIdPayment2'] = externalIdPayment2;
     data['idGive'] = idGive;
     data['state'] = state;
-    data['nameMyosotisConfiguration'] = nameMyosotisConfiguration;
+    data['typeDonation'] = typeDonation;
+    data['frequency'] = frequency;
+    data['currency'] = currency;
+    data['optionalField'] = optionalField;
     data['stateDescription'] = stateDescription;
+    data['nameMyosotisConfiguration'] = nameMyosotisConfiguration;
     return data;
   }
 }

@@ -66,7 +66,7 @@ class _TransactionalSendingHistoryScreenState
       if (sortModel != null) {
         sortBy = sortModel.fieldName;
         sortDirection = sortModel.descending ? 'DESC' : 'ASC';
-        sortColumnAndDirection = '$sortBy;$sortDirection';
+        sortColumnAndDirection = '$sortBy:::$sortDirection';
       }
 
       filterStringModel = [];
@@ -74,31 +74,31 @@ class _TransactionalSendingHistoryScreenState
         if (filterModel['stateFilter'] != null) {
           StateModel stateModel = filterModel['stateFilter'];
           filterStringModel
-              .add('Filter=stateFilter:' + stateModel.id.toString());
+              .add('Filter=stateFilter:::' + stateModel.id.toString());
         }
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
-          filterStringModel.add('Filter=startDate:' + cStartDate);
+          filterStringModel.add('Filter=startDate:::' + cStartDate);
         }
         if (filterModel['endDate'] != null) {
           String cEndDate = filterModel['endDate'];
-          filterStringModel.add('Filter=endDate:' + cEndDate);
+          filterStringModel.add('Filter=endDate:::' + cEndDate);
         }
 
         if (filterModel['transactionalSendingModelNameComunication'] != null) {
           String transactionalSendingModelNameComunication =
               filterModel['transactionalSendingModelNameComunication'];
           filterStringModel.add(
-              'Filter=transactionalSendingModelNameComunication:' +
+              'Filter=transactionalSendingModelNameComunication:::' +
                   transactionalSendingModelNameComunication);
         }
         if (filterModel['denominationSh'] != null) {
           String denominationSh = filterModel['denominationSh'];
-          filterStringModel.add('Filter=denominationSh:' + denominationSh);
+          filterStringModel.add('Filter=denominationSh:::' + denominationSh);
         }
         if (filterModel['emailSh'] != null) {
           String emailSh = filterModel['emailSh'];
-          filterStringModel.add('Filter=emailSh:' + emailSh);
+          filterStringModel.add('Filter=emailSh:::' + emailSh);
         }
       }
 
