@@ -4,6 +4,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
+import 'package:np_casse/componenents/copyable.tooltip.dart';
 import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
@@ -2144,20 +2145,9 @@ class _MyosotisConfigurationDetailState
                                                                   SizedBox(
                                                                     width: 50,
                                                                     child:
-                                                                        Tooltip(
-                                                                      message: idGiveListNameMyosotis
-                                                                          .join(
-                                                                              "\n"),
-                                                                      preferBelow:
-                                                                          false,
-                                                                      verticalOffset:
-                                                                          12,
-                                                                      margin: EdgeInsets
-                                                                          .all(
-                                                                              16),
-                                                                      child: Icon(
-                                                                          Icons
-                                                                              .help_outline),
+                                                                        CopyableTooltip(
+                                                                      items:
+                                                                          idGiveListNameMyosotis,
                                                                     ),
                                                                   ),
                                                                   Expanded(

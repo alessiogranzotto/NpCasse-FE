@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.20.054';
+  static String version = '1.20.055';
 }
 
 // class AppRegex {
@@ -121,6 +121,8 @@ class AppStrings {
       'Id pagamento carta di credito';
   static const String pleaseEnterIdPaymentTypeCartaCredito =
       'Inserire Id di pagamento';
+
+  static const giveIdsPaymentMethod = "Id Give metodi di pagamento";
 
   static const String stripeApiKeyPrivate = 'Stripe api key (Private)';
   static const String stripeApiKeyPublic = 'Stripe api key (Public)';

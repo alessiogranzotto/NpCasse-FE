@@ -17,6 +17,7 @@ class UserSettingScreen extends StatefulWidget {
 }
 
 class _UserSettingScreenState extends State<UserSettingScreen> {
+  bool isLoading = false;
   final _formKey1 = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
   final _formKey3 = GlobalKey<FormState>();
@@ -222,6 +223,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
   }
 
   Future<void> getUserAttribute() async {
+    setState(() => isLoading = true);
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
     cUserModel = authenticationNotifier.getUser();
@@ -233,6 +235,7 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
     tokenExpirationController.text = cUserModel.userTokenExpiration.toString();
     maxInactivityController.text = cUserModel.userMaxInactivity.toString();
     canViewSecurity = authenticationNotifier.isUserAdminOrInstitutionAdmin();
+    setState(() => isLoading = true);
   }
 
   @override
@@ -248,448 +251,372 @@ class _UserSettingScreenState extends State<UserSettingScreen> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Row(
-            children: [
-              Expanded(
-                child: Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ExpansionPanelList(
-                          expansionCallback: (int index, bool isExpanded) {
-                            setState(() {
-                              panelOpen[index] = isExpanded;
-                            });
-                          },
-                          animationDuration: Duration(milliseconds: 500),
-                          elevation: 1,
-                          children: [
-                            ExpansionPanel(
-                              canTapOnHeader: true,
-                              headerBuilder:
-                                  (BuildContext context, bool isExpanded) {
-                                return ListTile(
-                                  title: Text('Anagrafica utente'),
-                                  leading: const Icon(Icons.account_circle),
-                                );
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ExpansionPanelList(
+              expansionCallback: (int index, bool isExpanded) {
+                setState(() {
+                  panelOpen[index] = isExpanded;
+                });
+              },
+              animationDuration: Duration(milliseconds: 500),
+              elevation: 1,
+              children: [
+                ExpansionPanel(
+                  canTapOnHeader: true,
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text('Anagrafica utente'),
+                      leading: const Icon(Icons.account_circle),
+                    );
+                  },
+                  body: Form(
+                    key: _formKey1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomTextFormField(
+                              controller: firstNameController,
+                              labelText: AppStrings.firstName,
+                              keyboardType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) =>
+                                  _formKey1.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings.pleaseEnterFirstName;
                               },
-                              body: Form(
-                                key: _formKey1,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          controller: firstNameController,
-                                          labelText: AppStrings.firstName,
-                                          keyboardType: TextInputType.name,
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey1
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterFirstName;
-                                          },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomTextFormField(
+                              controller: lastNameController,
+                              labelText: AppStrings.lastName,
+                              keyboardType: TextInputType.name,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) =>
+                                  _formKey1.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings.pleaseEnterLastName;
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomTextFormField(
+                              controller: emailController,
+                              labelText: AppStrings.email,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) =>
+                                  _formKey1.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isEmpty
+                                    ? AppStrings.pleaseEnterEmailAddress
+                                    : AppConstants.emailRegex.hasMatch(value)
+                                        ? null
+                                        : AppStrings.invalidEmailAddress;
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomTextFormField(
+                              controller: phoneController,
+                              labelText: AppStrings.telephoneNumber,
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) =>
+                                  _formKey2.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings.pleaseEnterTelephoneNumber;
+                              },
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ValueListenableBuilder(
+                                  valueListenable: userDataFieldValidNotifier,
+                                  builder: (_, isValid, __) {
+                                    return ElevatedButton(
+                                      onPressed: isValid
+                                          ? () {
+                                              updateUserData();
+                                            }
+                                          : null,
+                                      style: ElevatedButton.styleFrom(
+                                        side: BorderSide(
+                                          width: 1.0,
                                         ),
                                       ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          controller: lastNameController,
-                                          labelText: AppStrings.lastName,
-                                          keyboardType: TextInputType.name,
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey1
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterLastName;
-                                          },
-                                        ),
+                                      child: const Text(
+                                        AppStrings.update,
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14),
                                       ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          controller: emailController,
-                                          labelText: AppStrings.email,
-                                          keyboardType:
-                                              TextInputType.emailAddress,
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey1
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isEmpty
-                                                ? AppStrings
-                                                    .pleaseEnterEmailAddress
-                                                : AppConstants.emailRegex
-                                                        .hasMatch(value)
-                                                    ? null
-                                                    : AppStrings
-                                                        .invalidEmailAddress;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          controller: phoneController,
-                                          labelText: AppStrings.telephoneNumber,
-                                          keyboardType: TextInputType.phone,
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey2
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterTelephoneNumber;
-                                          },
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ValueListenableBuilder(
-                                              valueListenable:
-                                                  userDataFieldValidNotifier,
-                                              builder: (_, isValid, __) {
-                                                return ElevatedButton(
-                                                  onPressed: isValid
-                                                      ? () {
-                                                          updateUserData();
-                                                        }
-                                                      : null,
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    side: BorderSide(
-                                                      width: 1.0,
-                                                    ),
-                                                  ),
-                                                  child: const Text(
-                                                    AppStrings.update,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                    );
+                                  },
                                 ),
                               ),
-                              isExpanded: panelOpen[0],
-                            ),
-                            ExpansionPanel(
-                              canTapOnHeader: true,
-                              headerBuilder:
-                                  (BuildContext context, bool isExpanded) {
-                                return ListTile(
-                                  title: Text('Password'),
-                                  leading: const Icon(Icons.password),
-                                );
-                              },
-                              body: Form(
-                                key: _formKey2,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      ValueListenableBuilder(
-                                        valueListenable: passwordNotifier,
-                                        builder: (_, passwordObscure, __) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 20),
-                                            child: CustomTextFormField(
-                                              obscureText: passwordObscure,
-                                              controller: passwordController,
-                                              labelText: AppStrings.password,
-                                              textInputAction:
-                                                  TextInputAction.next,
-                                              keyboardType:
-                                                  TextInputType.visiblePassword,
-                                              onChanged: (_) => _formKey2
-                                                  .currentState
-                                                  ?.validate(),
-                                              validator: (value) {
-                                                return value!.isEmpty
-                                                    ? AppStrings
-                                                        .pleaseEnterPassword
-                                                    : AppConstants.passwordRegex
-                                                            .hasMatch(value)
-                                                        ? null
-                                                        : AppStrings
-                                                            .invalidPassword;
-                                              },
-                                              suffixIcon: IconButton(
-                                                onPressed: () =>
-                                                    passwordNotifier.value =
-                                                        !passwordObscure,
-                                                style: IconButton.styleFrom(
-                                                  minimumSize:
-                                                      const Size.square(48),
-                                                ),
-                                                icon: Icon(
-                                                  passwordObscure
-                                                      ? Icons
-                                                          .visibility_off_outlined
-                                                      : Icons
-                                                          .visibility_outlined,
-                                                  size: 20,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      ValueListenableBuilder(
-                                        valueListenable:
-                                            confirmPasswordNotifier,
-                                        builder: (_, passwordObscure, __) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 20),
-                                            child: CustomTextFormField(
-                                              obscureText: passwordObscure,
-                                              controller:
-                                                  confirmPasswordController,
-                                              labelText:
-                                                  AppStrings.confirmPassword,
-                                              textInputAction:
-                                                  TextInputAction.done,
-                                              keyboardType:
-                                                  TextInputType.visiblePassword,
-                                              onChanged: (_) => _formKey2
-                                                  .currentState
-                                                  ?.validate(),
-                                              validator: (value) {
-                                                return value!.isEmpty
-                                                    ? AppStrings
-                                                        .pleaseReEnterPassword
-                                                    : value !=
-                                                            passwordController
-                                                                .text
-                                                        ? AppStrings
-                                                            .passwordNotMatched
-                                                        : null;
-                                              },
-                                              suffixIcon: IconButton(
-                                                onPressed: () =>
-                                                    confirmPasswordNotifier
-                                                            .value =
-                                                        !passwordObscure,
-                                                style: IconButton.styleFrom(
-                                                  minimumSize:
-                                                      const Size.square(48),
-                                                ),
-                                                icon: Icon(
-                                                  passwordObscure
-                                                      ? Icons
-                                                          .visibility_off_outlined
-                                                      : Icons
-                                                          .visibility_outlined,
-                                                  size: 20,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ValueListenableBuilder(
-                                              valueListenable:
-                                                  passwordFieldValidNotifier,
-                                              builder: (_, isValid, __) {
-                                                return ElevatedButton(
-                                                  onPressed: isValid
-                                                      ? () {
-                                                          changePassword();
-                                                        }
-                                                      : null,
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    side: BorderSide(
-                                                      width: 1.0,
-                                                    ),
-                                                  ),
-                                                  child: const Text(
-                                                    AppStrings.changePassword,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              isExpanded: panelOpen[1],
-                            ),
-                            ExpansionPanel(
-                              canTapOnHeader: true,
-                              headerBuilder:
-                                  (BuildContext context, bool isExpanded) {
-                                return ListTile(
-                                  title: Text('Sicurezza'),
-                                  leading: const Icon(Icons.security),
-                                );
-                              },
-                              body: Form(
-                                key: _formKey3,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomDropDownButtonFormField(
-                                          enabled: canViewSecurity,
-                                          actualValue: valueOtpMode,
-                                          labelText: AppStrings.otpMode,
-                                          listOfValue: availableOtpMode,
-                                          onItemChanged: (value) {
-                                            valueOtpMode = value;
-                                            // onChangeNumberResult(value);
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          enabled: canViewSecurity,
-                                          controller: tokenExpirationController,
-                                          labelText: AppStrings.tokenExpiration,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatter: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey3
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterTokenExpiration;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: CustomTextFormField(
-                                          enabled: canViewSecurity,
-                                          controller: maxInactivityController,
-                                          labelText:
-                                              AppStrings.userMaxInactivity,
-                                          keyboardType: TextInputType.number,
-                                          inputFormatter: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
-                                          textInputAction: TextInputAction.next,
-                                          onChanged: (_) => _formKey3
-                                              .currentState
-                                              ?.validate(),
-                                          validator: (value) {
-                                            return value!.isNotEmpty
-                                                ? null
-                                                : AppStrings
-                                                    .pleaseEnterUserMaxInactivity;
-                                          },
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ValueListenableBuilder(
-                                              valueListenable:
-                                                  securityFieldValidNotifier,
-                                              builder: (_, isValid, __) {
-                                                return ElevatedButton(
-                                                  onPressed: isValid
-                                                      ? () {
-                                                          updateSecurityData();
-                                                        }
-                                                      : null,
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    side: BorderSide(
-                                                      width: 1.0,
-                                                    ),
-                                                  ),
-                                                  child: const Text(
-                                                    AppStrings.update,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 14),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              isExpanded: panelOpen[2],
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  isExpanded: panelOpen[0],
                 ),
-              ),
-            ],
-          );
-        },
+                ExpansionPanel(
+                  canTapOnHeader: true,
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text('Password'),
+                      leading: const Icon(Icons.password),
+                    );
+                  },
+                  body: Form(
+                    key: _formKey2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          ValueListenableBuilder(
+                            valueListenable: passwordNotifier,
+                            builder: (_, passwordObscure, __) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: CustomTextFormField(
+                                  obscureText: passwordObscure,
+                                  controller: passwordController,
+                                  labelText: AppStrings.password,
+                                  textInputAction: TextInputAction.next,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  onChanged: (_) =>
+                                      _formKey2.currentState?.validate(),
+                                  validator: (value) {
+                                    return value!.isEmpty
+                                        ? AppStrings.pleaseEnterPassword
+                                        : AppConstants.passwordRegex
+                                                .hasMatch(value)
+                                            ? null
+                                            : AppStrings.invalidPassword;
+                                  },
+                                  suffixIcon: IconButton(
+                                    onPressed: () => passwordNotifier.value =
+                                        !passwordObscure,
+                                    style: IconButton.styleFrom(
+                                      minimumSize: const Size.square(48),
+                                    ),
+                                    icon: Icon(
+                                      passwordObscure
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          ValueListenableBuilder(
+                            valueListenable: confirmPasswordNotifier,
+                            builder: (_, passwordObscure, __) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: CustomTextFormField(
+                                  obscureText: passwordObscure,
+                                  controller: confirmPasswordController,
+                                  labelText: AppStrings.confirmPassword,
+                                  textInputAction: TextInputAction.done,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  onChanged: (_) =>
+                                      _formKey2.currentState?.validate(),
+                                  validator: (value) {
+                                    return value!.isEmpty
+                                        ? AppStrings.pleaseReEnterPassword
+                                        : value != passwordController.text
+                                            ? AppStrings.passwordNotMatched
+                                            : null;
+                                  },
+                                  suffixIcon: IconButton(
+                                    onPressed: () => confirmPasswordNotifier
+                                        .value = !passwordObscure,
+                                    style: IconButton.styleFrom(
+                                      minimumSize: const Size.square(48),
+                                    ),
+                                    icon: Icon(
+                                      passwordObscure
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ValueListenableBuilder(
+                                  valueListenable: passwordFieldValidNotifier,
+                                  builder: (_, isValid, __) {
+                                    return ElevatedButton(
+                                      onPressed: isValid
+                                          ? () {
+                                              changePassword();
+                                            }
+                                          : null,
+                                      style: ElevatedButton.styleFrom(
+                                        side: BorderSide(
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        AppStrings.changePassword,
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  isExpanded: panelOpen[1],
+                ),
+                ExpansionPanel(
+                  canTapOnHeader: true,
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return ListTile(
+                      title: Text('Sicurezza'),
+                      leading: const Icon(Icons.security),
+                    );
+                  },
+                  body: Form(
+                    key: _formKey3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomDropDownButtonFormField(
+                              enabled: canViewSecurity,
+                              actualValue: valueOtpMode,
+                              labelText: AppStrings.otpMode,
+                              listOfValue: availableOtpMode,
+                              onItemChanged: (value) {
+                                valueOtpMode = value;
+                                // onChangeNumberResult(value);
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomTextFormField(
+                              enabled: canViewSecurity,
+                              controller: tokenExpirationController,
+                              labelText: AppStrings.tokenExpiration,
+                              keyboardType: TextInputType.number,
+                              inputFormatter: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) =>
+                                  _formKey3.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings.pleaseEnterTokenExpiration;
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: CustomTextFormField(
+                              enabled: canViewSecurity,
+                              controller: maxInactivityController,
+                              labelText: AppStrings.userMaxInactivity,
+                              keyboardType: TextInputType.number,
+                              inputFormatter: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              textInputAction: TextInputAction.next,
+                              onChanged: (_) =>
+                                  _formKey3.currentState?.validate(),
+                              validator: (value) {
+                                return value!.isNotEmpty
+                                    ? null
+                                    : AppStrings.pleaseEnterUserMaxInactivity;
+                              },
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ValueListenableBuilder(
+                                  valueListenable: securityFieldValidNotifier,
+                                  builder: (_, isValid, __) {
+                                    return ElevatedButton(
+                                      onPressed: isValid
+                                          ? () {
+                                              updateSecurityData();
+                                            }
+                                          : null,
+                                      style: ElevatedButton.styleFrom(
+                                        side: BorderSide(
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        AppStrings.update,
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  isExpanded: panelOpen[2],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

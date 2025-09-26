@@ -2,25 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/functional.dart';
 
 class ChipsInput<T> extends StatefulWidget {
-  const ChipsInput({
-    super.key,
-    required this.values,
-    this.decoration = const InputDecoration(),
-    this.style,
-    this.strutStyle,
-    required this.label,
-    required this.chipBuilder,
-    required this.onChanged,
-    this.onChipTapped,
-    this.onSubmitted,
-    this.onTextChanged,
-  });
+  const ChipsInput(
+      {super.key,
+      required this.values,
+      this.decoration = const InputDecoration(),
+      this.style,
+      this.strutStyle,
+      required this.label,
+      required this.chipBuilder,
+      required this.onChanged,
+      this.onChipTapped,
+      this.onSubmitted,
+      this.onTextChanged,
+      this.height});
 
   final List<T> values;
   final InputDecoration decoration;
   final TextStyle? style;
   final StrutStyle? strutStyle;
   final String label;
+  final double? height;
 
   final ValueChanged<List<T>> onChanged;
   final ValueChanged<T>? onChipTapped;
@@ -61,7 +62,6 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
 
   void _textListener() {
     final String currentText = controller.text;
-
     if (_previousSelection != null) {
       final int currentNumber = countReplacements(currentText);
       final int previousNumber = countReplacements(_previousText);
@@ -105,7 +105,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
     controller.updateValues(<T>[...widget.values]);
 
     return SizedBox(
-      height: 60,
+      height: widget.height ?? 60,
       child: TextFormField(
         expands: true,
         maxLines: null,
@@ -265,6 +265,10 @@ class ToppingInputChip extends StatelessWidget {
         //     child: Icon(Icons.numbers),
         //   ),
         // ),
+        deleteIcon: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Icon(Icons.close, size: 18),
+        ),
         onDeleted: () => onDeleted(topping),
         onSelected: (bool value) => onSelected(topping),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

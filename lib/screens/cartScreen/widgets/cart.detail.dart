@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jumping_dot/jumping_dot.dart';
 import 'package:np_casse/app/constants/colors.dart';
+import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/routes/api_routes.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
 import 'package:np_casse/app/utilities/money_formatter.dart';
@@ -16,8 +18,6 @@ import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/cart.screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
-enum PaymentType { contanti, bancomat, cartaCredito, assegni }
 
 class CartDetailScreen extends StatefulWidget {
   const CartDetailScreen({Key? key, required this.idCart}) : super(key: key);
@@ -35,7 +35,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   int indexPayment = 0;
   late double toBeReturnedCalculation;
   late String _toBeReturned = '---';
-  late bool _isSelectedPaymentVisible = true;
+  late bool _isSelectedPaymentVisible = false;
   late bool _isStripePayment = false;
   var rateDiscounted = 0.0;
   var totalDiscount = 0.0;
@@ -49,11 +49,13 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       false; // This will track if the reader has already been discovered.
   bool isReaderConnected = false;
 
-  final List<bool> _selectedPayment = <bool>[true, false, false, false];
+  List<bool> _selectedPaymentDynamic = <bool>[];
+  List<PaymentType> _availablePaymentsDynamic = [];
+
   String selectedFiscalization = "0";
   bool fiscalizationVisible = false;
   bool posAuthorization = false;
-  bool isLoadingFiscalization = true;
+  bool isLoadingAttribute = true;
   List<DropdownMenuItem<String>> availableFiscalization = [
     DropdownMenuItem(child: Text("Nessuna fiscalizzazione"), value: "0"),
     DropdownMenuItem(child: Text("Emissione scontrino"), value: "1"),
@@ -72,7 +74,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
 
   TextEditingController rateDiscoutTextEditingController =
       TextEditingController();
-
+  final ScrollController _scrollController = ScrollController();
   void adjustPrice() {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
@@ -89,6 +91,22 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
       cartNotifier.totalCartMoney.value =
           cartNotifier.subTotalCartMoney.value - totalDiscount;
     });
+  }
+
+  void _scrollLeft() {
+    _scrollController.animateTo(
+      _scrollController.offset - 100,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _scrollRight() {
+    _scrollController.animateTo(
+      _scrollController.offset + 100,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void cashInsertedOnChange() {
@@ -115,19 +133,22 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     }
   }
 
-  void checkImport(int index) {
+  void checkImport(PaymentType pt) {
     CartNotifier cartNotifier =
         Provider.of<CartNotifier>(context, listen: false);
     setState(() {
-      indexPayment = index;
+      // indexPayment = index;
       disabledFinalizeButton = true;
-      if (index == 3 && cartNotifier.subTotalCartMoney.value > 0) {
+      if (pt == PaymentType.Assegni &&
+          cartNotifier.subTotalCartMoney.value > 0) {
         disabledFinalizeButton = false;
         textEditingControllerCashInserted.text = '';
-      } else if (index == 1 || index == 2) {
+      } else if (pt == PaymentType.Bancomat || pt == PaymentType.CartaCredito) {
         posAuthorization
             ? disabledFinalizeButton = true
             : disabledFinalizeButton = false;
+      } else {
+        disabledFinalizeButton = false;
       }
     });
   }
@@ -433,7 +454,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
 
   Future<void> getInstitutionAttribute() async {
     setState(() {
-      isLoadingFiscalization = true;
+      isLoadingAttribute = true;
     });
     AuthenticationNotifier authenticationNotifier =
         Provider.of<AuthenticationNotifier>(context, listen: false);
@@ -443,47 +464,55 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     InstitutionAttributeNotifier institutionAttributeNotifier =
         Provider.of<InstitutionAttributeNotifier>(context, listen: false);
 
-    await institutionAttributeNotifier
-        .getInstitutionAttribute(
-            context: context,
-            token: authenticationNotifier.token,
-            idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
-            idInstitution:
-                cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
-            isDelayed: true)
-        .then((value) {
-      var snapshot = value as List<InstitutionAttributeModel>;
-      var itemInstitutionFiscalized = snapshot
-          .where((element) => element.attributeName == 'Institution.Fiscalized')
-          .firstOrNull;
-      if (itemInstitutionFiscalized != null &&
-          itemInstitutionFiscalized.attributeValue == "true") {
+    final snapshot = await institutionAttributeNotifier.getInstitutionAttribute(
+      context: context,
+      token: authenticationNotifier.token,
+      idUserAppInstitution: cUserAppInstitutionModel.idUserAppInstitution,
+      idInstitution:
+          cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
+      isDelayed: true,
+    ) as List<InstitutionAttributeModel>;
+    debugPrint(snapshot
+        .map((e) => "${e.attributeName}: ${e.attributeValue}")
+        .join(", "));
+    final itemInstitutionFiscalized = snapshot.firstWhereOrNull(
+      (e) => e.attributeName == 'Institution.Fiscalized',
+    );
+    final itemPosAuthorization = snapshot.firstWhereOrNull(
+      (e) => e.attributeName == 'Institution.PosAuthorization',
+    );
+
+    final itemGiveIdPaymentTypeVisibility = snapshot.firstWhereOrNull(
+      (e) => e.attributeName == 'Give.IdPaymentType.Visibility',
+    );
+
+    final visibilityPaymentSplit = itemGiveIdPaymentTypeVisibility
+        ?.attributeValue
+        .split(";")
+        .map((e) => e.trim());
+
+    if (visibilityPaymentSplit != null) {
+      _availablePaymentsDynamic = visibilityPaymentSplit
+          .map(mapDbValueToPaymentType)
+          .where((e) => e != null)
+          .cast<PaymentType>()
+          .toList();
+      _selectedPaymentDynamic =
+          List<bool>.filled(_availablePaymentsDynamic.length, false);
+    }
+
+    setState(() {
+      // Fiscalization
+      if (itemInstitutionFiscalized?.attributeValue == "true") {
         selectedFiscalization = "1";
-        setState(() {
-          fiscalizationVisible = true;
-        });
+        fiscalizationVisible = true;
       } else {
-        setState(() {
-          fiscalizationVisible = false;
-        });
+        fiscalizationVisible = false;
       }
-      var itemPosAuthorization = snapshot
-          .where((element) =>
-              element.attributeName == 'Institution.PosAuthorization')
-          .firstOrNull;
-      if (itemPosAuthorization != null &&
-          itemPosAuthorization.attributeValue == "true") {
-        setState(() {
-          posAuthorization = true;
-        });
-      } else {
-        setState(() {
-          posAuthorization = false;
-        });
-      }
-      setState(() {
-        isLoadingFiscalization = false;
-      });
+
+      posAuthorization = itemPosAuthorization?.attributeValue == "true";
+
+      isLoadingAttribute = false;
     });
   }
 
@@ -495,7 +524,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
     textEditingControllerCashInserted.addListener(cashInsertedOnChange);
     toBeReturnedCalculation = 0;
     _toBeReturned = '---';
-    _isSelectedPaymentVisible = true;
+    _isSelectedPaymentVisible = false;
     _isStripePayment = false;
   }
 
@@ -778,7 +807,7 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                         Row(
                           children: [
                             Text(
-                              'Metodo di pagamento ',
+                              'Metodo di pagamento',
                               style: CustomTextStyle.textFormFieldMedium
                                   .copyWith(
                                       color: Colors.grey.shade700,
@@ -786,138 +815,145 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                             ),
                           ],
                         ),
-                        ToggleButtons(
-                            direction: Axis.horizontal,
-                            onPressed: (int index) {
-                              setState(() {
-                                // The button that is tapped is set to true, and the others to false.
-                                for (int i = 0;
-                                    i < _selectedPayment.length;
-                                    i++) {
-                                  _selectedPayment[i] = i == index;
-                                }
-                                if (index == 0) {
-                                  _isSelectedPaymentVisible = true;
-                                  _isStripePayment = false;
-                                } else if (index == 1 || index == 2) {
-                                  posAuthorization
-                                      ? disabledFinalizeButton = true
-                                      : disabledFinalizeButton = false;
-                                  _isSelectedPaymentVisible = false;
-                                  _isStripePayment = true;
-                                  totalCartMoney =
-                                      (cartNotifier.totalCartMoney.value * 100)
-                                          .toInt();
-                                  if (!isTerminalInitialized) {
-                                    initializeStripe(
-                                        cUserAppInstitutionModel
-                                            .idUserAppInstitution,
-                                        authenticationNotifier.token);
-                                  }
-                                  if (!isReaderDiscovered) {
-                                    Future.delayed(Duration(seconds: 2), () {
-                                      // This callback is executed after the delay
-                                      _discoverReaders(
-                                          cUserAppInstitutionModel
-                                              .idUserAppInstitution,
-                                          authenticationNotifier.token);
-                                    });
-                                  } else {
-                                    getConnectedReaderInfo();
-                                  }
-                                } else {
-                                  _isSelectedPaymentVisible = false;
-                                  _isStripePayment = false;
-                                }
-                                checkImport(index);
-                              });
-                            },
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            selectedColor: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                            isSelected: _selectedPayment,
-                            children: const [
-                              Tooltip(
-                                message: 'Contanti',
-                                child: SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.euro,
-                                        size: 20,
-                                      ),
-                                      // Text('Contanti',
-                                      //     style:
-                                      //         Theme.of(context).textTheme.bodyMedium),
-                                    ],
+                        Container(
+                          height: 40,
+                          child: isLoadingAttribute
+                              ? Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: JumpingDots(
+                                    color: CustomColors.darkBlue,
+                                    radius: 10,
+                                    numberOfDots: 5,
                                   ),
-                                ),
-                              ),
-                              Tooltip(
-                                message: 'Bancomat',
-                                child: SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.card_giftcard,
-                                        size: 20,
+                                )
+                              : Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.arrow_left),
+                                      onPressed: _scrollLeft,
+                                    ),
+                                    SizedBox(
+                                      width: 250,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        controller: _scrollController,
+                                        child: ToggleButtons(
+                                          direction: Axis.horizontal,
+                                          onPressed: (int index) {
+                                            final selected =
+                                                _availablePaymentsDynamic[
+                                                    index];
+                                            setState(() {
+                                              for (int i = 0;
+                                                  i <
+                                                      _selectedPaymentDynamic
+                                                          .length;
+                                                  i++) {
+                                                _selectedPaymentDynamic[i] =
+                                                    i == index;
+                                              }
+
+                                              // Logica in base al tipo di pagamento selezionato
+                                              switch (selected) {
+                                                case PaymentType.Contanti:
+                                                  _isSelectedPaymentVisible =
+                                                      true;
+                                                  _isStripePayment = false;
+                                                  break;
+                                                case PaymentType.Bancomat:
+                                                case PaymentType.CartaCredito:
+                                                  disabledFinalizeButton =
+                                                      posAuthorization;
+                                                  _isSelectedPaymentVisible =
+                                                      false;
+                                                  _isStripePayment = true;
+                                                  totalCartMoney = (cartNotifier
+                                                              .totalCartMoney
+                                                              .value *
+                                                          100)
+                                                      .toInt();
+
+                                                  if (!isTerminalInitialized) {
+                                                    initializeStripe(
+                                                        cUserAppInstitutionModel
+                                                            .idUserAppInstitution,
+                                                        authenticationNotifier
+                                                            .token);
+                                                  }
+
+                                                  if (!isReaderDiscovered) {
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            seconds: 2), () {
+                                                      _discoverReaders(
+                                                          cUserAppInstitutionModel
+                                                              .idUserAppInstitution,
+                                                          authenticationNotifier
+                                                              .token);
+                                                    });
+                                                  } else {
+                                                    getConnectedReaderInfo();
+                                                  }
+                                                  break;
+                                                case PaymentType.Assegni:
+                                                case PaymentType.Paypal:
+                                                case PaymentType
+                                                      .PagamentoEsterno:
+                                                case PaymentType.Sdd:
+                                                case PaymentType
+                                                      .BonificoPromessa:
+                                                case PaymentType
+                                                      .BonificoIstantaneo:
+                                                case PaymentType.BonificoLink:
+                                                  _isSelectedPaymentVisible =
+                                                      false;
+                                                  _isStripePayment = false;
+                                                  break;
+                                              }
+
+                                              checkImport(selected);
+                                            });
+                                          },
+                                          isSelected: _selectedPaymentDynamic,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8)),
+                                          selectedColor: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryContainer,
+                                          children: _availablePaymentsDynamic
+                                              .map((payment) {
+                                            final paymentType =
+                                                mapPaymentTypeToDbValue(
+                                                    payment);
+                                            final key =
+                                                paymentTypeInfo[paymentType];
+
+                                            if (key == null) {
+                                              return const Tooltip(
+                                                message:
+                                                    'Metodo non supportato',
+                                                child: Icon(Icons.help_outline,
+                                                    size: 20),
+                                              );
+                                            }
+
+                                            return Tooltip(
+                                              message: key['tooltip'] as String,
+                                              child: Icon(
+                                                  key['icon'] as IconData,
+                                                  size: 20),
+                                            );
+                                          }).toList(),
+                                        ),
                                       ),
-                                      // Text('Bancomat',
-                                      //     style:
-                                      //         Theme.of(context).textTheme.bodyMedium),
-                                    ],
-                                  ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.arrow_right),
+                                      onPressed: _scrollRight,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Tooltip(
-                                message: 'Carte di credito',
-                                child: SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.credit_card,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Tooltip(
-                                message: 'Assegni',
-                                child: SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.fact_check,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ]),
+                        )
                       ],
                     ),
                   ),
@@ -1051,26 +1087,30 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
                   SizedBox(
                     height: 2,
                   ),
-                  isLoadingFiscalization
-                      ? SizedBox(
-                          height: 60,
-                          child: JumpingDots(
-                            color: CustomColors.darkBlue,
-                            radius: 10,
-                            numberOfDots: 5,
-                          ))
-                      : (fiscalizationVisible
-                          ? CustomDropDownButtonFormField(
-                              enabled: true,
-                              actualValue: selectedFiscalization,
-                              labelText: 'Fiscalizzazione',
-                              listOfValue: availableFiscalization,
-                              onItemChanged: (value) {
-                                onFiscalizationChanged(value);
-                              })
-                          : SizedBox(
-                              height: 60,
-                            )),
+                  Container(
+                    height: 60,
+                    child: isLoadingAttribute
+                        ? Align(
+                            alignment: Alignment.centerLeft,
+                            child: JumpingDots(
+                              color: CustomColors.darkBlue,
+                              radius: 10,
+                              numberOfDots: 5,
+                            ),
+                          )
+                        : (fiscalizationVisible
+                            ? CustomDropDownButtonFormField(
+                                enabled: true,
+                                actualValue: selectedFiscalization,
+                                labelText: 'Fiscalizzazione',
+                                listOfValue: availableFiscalization,
+                                onItemChanged: (value) {
+                                  onFiscalizationChanged(value);
+                                })
+                            : SizedBox(
+                                height: 60,
+                              )),
+                  ),
 
                   Column(
                     mainAxisSize: MainAxisSize.min,

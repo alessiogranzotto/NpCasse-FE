@@ -1162,7 +1162,7 @@ class _MassSendingDetailState extends State<MassSendingDetailScreen> {
                                     frequencyTypeMassSending.value!,
                                 executeStepMassSending:
                                     int.parse(executeStepController.text),
-                                advanceHoursLoadAccumulatorMassSending: int.parse(
+                                advanceHoursLoadAccumulatorMassSending: int.tryParse(
                                     advanceHoursLoadAccumulatorController.text),
                                 emailDeduplicationMassSending:
                                     emailDeduplicationNotifier.value,

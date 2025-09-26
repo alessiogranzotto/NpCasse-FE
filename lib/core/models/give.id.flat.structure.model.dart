@@ -1,23 +1,31 @@
 import 'package:np_casse/app/constants/functional.dart';
 
 class GiveIdsFlatStructureModel {
-  GiveIdsFlatStructureModel(
-      {required this.idFinalizzazione,
-      required this.idEvento,
-      required this.idAttivita,
-      required this.idAgenda,
-      required this.idComunicazioni,
-      required this.idTipDonazione,
-      required this.idCatalogo,
-      required this.idPromotore,
-      required this.idPagamentoContante,
-      required this.idPagamentoBancomat,
-      required this.idPagamentoCartaDiCredito,
-      required this.idPagamentoAssegno,
-      required this.codiceSottoconto,
-      required this.codiceCentroRicavo,
-      required this.fonteSh,
-      required this.ringraziato});
+  GiveIdsFlatStructureModel({
+    required this.idFinalizzazione,
+    required this.idEvento,
+    required this.idAttivita,
+    required this.idAgenda,
+    required this.idComunicazioni,
+    required this.idTipDonazione,
+    required this.idCatalogo,
+    required this.idPromotore,
+    required this.idPagamentoContante,
+    required this.idPagamentoBancomat,
+    required this.idPagamentoCartaDiCredito,
+    required this.idPagamentoAssegno,
+    required this.codiceSottoconto,
+    required this.codiceCentroRicavo,
+    required this.fonteSh,
+    required this.ringraziato,
+    required this.idPagamentoPaypal,
+    required this.idPagamentoEsterno,
+    required this.idPagamentoSdd,
+    required this.idPagamentoBonificoPromessa,
+    required this.idPagamentoBonificoIstantaneo,
+    required this.idPagamentoBonificoLink,
+  });
+
   late String idFinalizzazione;
   late String idEvento;
   late String idAttivita;
@@ -34,6 +42,12 @@ class GiveIdsFlatStructureModel {
   late String codiceCentroRicavo;
   late String fonteSh;
   late String ringraziato;
+  late String idPagamentoPaypal;
+  late String idPagamentoEsterno;
+  late String idPagamentoSdd;
+  late String idPagamentoBonificoPromessa;
+  late String idPagamentoBonificoIstantaneo;
+  late String idPagamentoBonificoLink;
 
   GiveIdsFlatStructureModel.empty() {
     idFinalizzazione = '';
@@ -52,7 +66,14 @@ class GiveIdsFlatStructureModel {
     codiceCentroRicavo = '';
     fonteSh = '';
     ringraziato = '';
+    idPagamentoPaypal = '';
+    idPagamentoEsterno = '';
+    idPagamentoSdd = '';
+    idPagamentoBonificoPromessa = '';
+    idPagamentoBonificoIstantaneo = '';
+    idPagamentoBonificoLink = '';
   }
+
   GiveIdsFlatStructureModel.fromCustomIdGive(
       List<String> customIdGive, String area) {
     idFinalizzazione = '';
@@ -71,71 +92,95 @@ class GiveIdsFlatStructureModel {
     codiceCentroRicavo = '';
     fonteSh = '';
     ringraziato = '';
-    if (area == "Product") {
-      for (String item in customIdGive) {
-        var split = item.split('=');
-        if (split[0] == idGiveListNameProduct[0]) {
-          idFinalizzazione = split[1];
-        } else if (split[0] == idGiveListNameProduct[1]) {
-          idEvento = split[1];
-        } else if (split[0] == idGiveListNameProduct[2]) {
-          idAttivita = split[1];
-        } else if (split[0] == idGiveListNameProduct[3]) {
-          idAgenda = split[1];
-        } else if (split[0] == idGiveListNameProduct[4]) {
-          idComunicazioni = split[1];
-        } else if (split[0] == idGiveListNameProduct[5]) {
-          idTipDonazione = split[1];
-        } else if (split[0] == idGiveListNameProduct[6]) {
-          idCatalogo = split[1];
-        } else if (split[0] == idGiveListNameProduct[7]) {
-          idPromotore = split[1];
-        } else if (split[0] == idGiveListNameProduct[8]) {
-          codiceSottoconto = split[1];
-        } else if (split[0] == idGiveListNameProduct[9]) {
-          codiceCentroRicavo = split[1];
-        } else if (split[0] == idGiveListNameProduct[10]) {
-          fonteSh = split[1];
-        } else if (split[0] == idGiveListNameProduct[11]) {
-          ringraziato = split[1];
+    idPagamentoPaypal = '';
+    idPagamentoEsterno = '';
+    idPagamentoSdd = '';
+    idPagamentoBonificoPromessa = '';
+    idPagamentoBonificoIstantaneo = '';
+    idPagamentoBonificoLink = '';
+
+    final List<String> keys =
+        area == "Product" ? idGiveListNameProduct : idGiveListNameCategory;
+
+    final Map<String, void Function(String)> mapping = {
+      for (int i = 0; i < keys.length; i++)
+        keys[i]: (val) {
+          switch (keys[i]) {
+            case 'IdFinalizzazione':
+              idFinalizzazione = val;
+              break;
+            case 'IdEvento':
+              idEvento = val;
+              break;
+            case 'IdAttività':
+              idAttivita = val;
+              break;
+            case 'IdAgenda':
+              idAgenda = val;
+              break;
+            case 'IdComunicazioni':
+              idComunicazioni = val;
+              break;
+            case 'IdTipDonazione':
+              idTipDonazione = val;
+              break;
+            case 'IdCatalogo':
+              idCatalogo = val;
+              break;
+            case 'IdPromotore':
+              idPromotore = val;
+              break;
+            case 'CodiceSottoconto':
+              codiceSottoconto = val;
+              break;
+            case 'CodiceCentroRicavo':
+              codiceCentroRicavo = val;
+              break;
+            case 'FonteSh':
+              fonteSh = val;
+              break;
+            case 'Ringraziato':
+              ringraziato = val;
+              break;
+            case 'IdPagamentoContante':
+              idPagamentoContante = val;
+              break;
+            case 'IdPagamentoBancomat':
+              idPagamentoBancomat = val;
+              break;
+            case 'IdPagamentoCartaDiCredito':
+              idPagamentoCartaDiCredito = val;
+              break;
+            case 'IdPagamentoAssegno':
+              idPagamentoAssegno = val;
+              break;
+            case 'IdPagamentoPaypal':
+              idPagamentoPaypal = val;
+              break;
+            case 'IdPagamentoEsterno':
+              idPagamentoEsterno = val;
+              break;
+            case 'IdPagamentoSdd':
+              idPagamentoSdd = val;
+              break;
+            case 'IdPagamentoBonificoPromessa':
+              idPagamentoBonificoPromessa = val;
+              break;
+            case 'IdPagamentoBonificoIstantaneo':
+              idPagamentoBonificoIstantaneo = val;
+              break;
+            case 'IdPagamentoBonificoLink':
+              idPagamentoBonificoLink = val;
+              break;
+          }
         }
-      }
-    } else if (area == "Category") {
-      for (String item in customIdGive) {
-        var split = item.split('=');
-        if (split[0] == idGiveListNameCategory[0]) {
-          idFinalizzazione = split[1];
-        } else if (split[0] == idGiveListNameCategory[1]) {
-          idEvento = split[1];
-        } else if (split[0] == idGiveListNameCategory[2]) {
-          idAttivita = split[1];
-        } else if (split[0] == idGiveListNameCategory[3]) {
-          idAgenda = split[1];
-        } else if (split[0] == idGiveListNameCategory[4]) {
-          idComunicazioni = split[1];
-        } else if (split[0] == idGiveListNameCategory[5]) {
-          idTipDonazione = split[1];
-        } else if (split[0] == idGiveListNameCategory[6]) {
-          idCatalogo = split[1];
-        } else if (split[0] == idGiveListNameProduct[7]) {
-          idPromotore = split[1];
-        } else if (split[0] == idGiveListNameProduct[8]) {
-          codiceSottoconto = split[1];
-        } else if (split[0] == idGiveListNameProduct[9]) {
-          codiceCentroRicavo = split[1];
-        } else if (split[0] == idGiveListNameCategory[10]) {
-          idPagamentoContante = split[1];
-        } else if (split[0] == idGiveListNameCategory[11]) {
-          idPagamentoBancomat = split[1];
-        } else if (split[0] == idGiveListNameCategory[12]) {
-          idPagamentoCartaDiCredito = split[1];
-        } else if (split[0] == idGiveListNameCategory[13]) {
-          idPagamentoAssegno = split[1];
-        } else if (split[0] == idGiveListNameCategory[14]) {
-          fonteSh = split[1];
-        } else if (split[0] == idGiveListNameCategory[15]) {
-          ringraziato = split[1];
-        }
+    };
+
+    // Iteriamo sugli elementi e assegnamo i valori usando la mappa
+    for (String item in customIdGive) {
+      var split = item.split('=');
+      if (split.length == 2 && mapping.containsKey(split[0])) {
+        mapping[split[0]]!(split[1]);
       }
     }
   }
@@ -153,6 +198,12 @@ class GiveIdsFlatStructureModel {
     idPagamentoBancomat = json['idPagamentoBancomat'];
     idPagamentoCartaDiCredito = json['idPagamentoCartaDiCredito'];
     idPagamentoAssegno = json['idPagamentoAssegno'];
+    idPagamentoPaypal = json['idPagamentoPaypal'];
+    idPagamentoEsterno = json['idPagamentoEsterno'];
+    idPagamentoSdd = json['idPagamentoSdd'];
+    idPagamentoBonificoPromessa = json['idPagamentoBonificoPromessa'];
+    idPagamentoBonificoIstantaneo = json['idPagamentoBonificoIstantaneo'];
+    idPagamentoBonificoLink = json['idPagamentoBonificoLink'];
     codiceSottoconto = json['codiceSottoconto'];
     codiceCentroRicavo = json['codiceCentroRicavo'];
     fonteSh = json['fonteSh'];
@@ -173,10 +224,17 @@ class GiveIdsFlatStructureModel {
     data['idPagamentoBancomat'] = idPagamentoBancomat;
     data['idPagamentoCartaDiCredito'] = idPagamentoCartaDiCredito;
     data['idPagamentoAssegno'] = idPagamentoAssegno;
+    data['idPagamentoPaypal'] = idPagamentoPaypal;
+    data['idPagamentoEsterno'] = idPagamentoEsterno;
+    data['idPagamentoSdd'] = idPagamentoSdd;
+    data['idPagamentoBonificoPromessa'] = idPagamentoBonificoPromessa;
+    data['idPagamentoBonificoIstantaneo'] = idPagamentoBonificoIstantaneo;
+    data['idPagamentoBonificoLink'] = idPagamentoBonificoLink;
     data['codiceSottoconto'] = codiceSottoconto;
     data['codiceCentroRicavo'] = codiceCentroRicavo;
     data['fonteSh'] = fonteSh;
     data['ringraziato'] = ringraziato;
+
     return data;
   }
 }

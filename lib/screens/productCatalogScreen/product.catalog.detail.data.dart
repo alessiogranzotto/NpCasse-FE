@@ -5,6 +5,7 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/componenents/copyable.tooltip.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
@@ -325,211 +326,95 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
       selectedVat = widget.productCatalogModelArgument.valueVat;
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .idFinalizzazione.isNotEmpty) {
-        // textEditingControllerIdFinalizzazione.text = widget
-        //     .productCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idFinalizzazione
-        //     .toString();
         customIdGive.add("IdFinalizzazione=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idFinalizzazione
                 .toString());
-      } else {
-        // textEditingControllerIdFinalizzazione.text = '';
-      }
+      } else {}
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel.idEvento
           .isNotEmpty) {
-        // textEditingControllerIdEvento.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idEvento
-        //     .toString();
-
         customIdGive.add("IdEvento=" +
             widget
                 .productCatalogModelArgument.giveIdsFlatStructureModel.idEvento
                 .toString());
-      } else {
-        // textEditingControllerIdEvento.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .idAttivita.isNotEmpty) {
-        // textEditingControllerIdAttivita.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idAttivita
-        //     .toString();
-
         customIdGive.add("IdAttività=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idAttivita
                 .toString());
-      } else {
-        // textEditingControllerIdAttivita.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
           .isNotEmpty) {
-        // textEditingControllerIdAgenda.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
-        //     .toString();
-
         customIdGive.add("IdAgenda=" +
             widget
                 .productCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
                 .toString());
-      } else {
-        // textEditingControllerIdAgenda.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .idComunicazioni.isNotEmpty) {
-        // textEditingControllerIdComunicazioni.text = widget
-        //     .productCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idComunicazioni
-        //     .toString();
         customIdGive.add("IdComunicazioni=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idComunicazioni
                 .toString());
-      } else {
-        // textEditingControllerIdComunicazioni.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .idTipDonazione.isNotEmpty) {
-        // textEditingControllerIdTipDonazione.text = widget
-        //     .productCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idTipDonazione
-        //     .toString();
         customIdGive.add("IdTipDonazione=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idTipDonazione
                 .toString());
-      } else {
-        // textEditingControllerIdTipDonazione.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .idCatalogo.isNotEmpty) {
-        // textEditingControllerIdCatalogo.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idCatalogo
-        //     .toString();
         customIdGive.add("IdCatalogo=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idCatalogo
                 .toString());
-      } else {
-        // textEditingControllerIdCatalogo.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .idPromotore.isNotEmpty) {
-        // textEditingControllerIdPromotore.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
-        //     .toString();
         customIdGive.add("IdPromotore=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .idPromotore
                 .toString());
-      } else {
-        // textEditingControllerIdPromotore.text = '';
-      }
+      } else {}
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel.fonteSh
           .isNotEmpty) {
-        // textEditingControllerIdPromotore.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
-        //     .toString();
         customIdGive.add("FonteSh=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel.fonteSh
                 .toString());
-      } else {
-        // textEditingControllerIdPromotore.text = '';
-      }
+      } else {}
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .ringraziato.isNotEmpty) {
-        // textEditingControllerIdPromotore.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
-        //     .toString();
         customIdGive.add("Ringraziato=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .ringraziato
                 .toString());
-      } else {
-        // textEditingControllerIdPromotore.text = '';
-      }
-      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-      //         .idPagamentoContante >
-      //     0) {
-      //   textEditingControllerIdPagamentoContante.text = widget
-      //       .productCatalogModelArgument
-      //       .giveIdsFlatStructureModel
-      //       .idPagamentoContante
-      //       .toString();
-      // } else {
-      //   textEditingControllerIdPagamentoContante.text = '';
-      // }
-      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-      //         .idPagamentoBancomat >
-      //     0) {
-      //   textEditingControllerIdPagamentoBancomat.text = widget
-      //       .productCatalogModelArgument
-      //       .giveIdsFlatStructureModel
-      //       .idPagamentoBancomat
-      //       .toString();
-      // } else {
-      //   textEditingControllerIdPagamentoBancomat.text = '';
-      // }
-      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-      //         .idPagamentoCartaDiCredito >
-      //     0) {
-      //   textEditingControllerIdPagamentoCartaDiCredito.text = widget
-      //       .productCatalogModelArgument
-      //       .giveIdsFlatStructureModel
-      //       .idPagamentoCartaDiCredito
-      //       .toString();
-      // } else {
-      //   textEditingControllerIdPagamentoCartaDiCredito.text = '';
-      // }
-      // if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
-      //         .idPagamentoAssegno >
-      //     0) {
-      //   textEditingControllerIdPagamentoAssegno.text = widget
-      //       .productCatalogModelArgument
-      //       .giveIdsFlatStructureModel
-      //       .idPagamentoAssegno
-      //       .toString();
-      // } else {
-      //   textEditingControllerIdPagamentoAssegno.text = '';
-      // }
+      } else {}
+
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .codiceSottoconto.isNotEmpty) {
-        // textEditingControllerIdPagamentoAssegno.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoAssegno
-        //     .toString();
         customIdGive.add("CodiceSottoconto=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .codiceSottoconto
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoAssegno.text = '';
-      }
+      } else {}
 
       if (widget.productCatalogModelArgument.giveIdsFlatStructureModel
           .codiceCentroRicavo.isNotEmpty) {
-        // textEditingControllerIdPagamentoAssegno.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoAssegno
-        //     .toString();
         customIdGive.add("CodiceCentroRicavo=" +
             widget.productCatalogModelArgument.giveIdsFlatStructureModel
                 .codiceCentroRicavo
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoAssegno.text = '';
-      }
+      } else {}
     } else {
       //tImageString = AppAssets.noImageString;
     }
@@ -1660,13 +1545,8 @@ class _ProductCatalogDetailState extends State<ProductCatalogDetailDataScreen> {
                                   children: [
                                     SizedBox(
                                       width: 50,
-                                      child: Tooltip(
-                                        message:
-                                            idGiveListNameProduct.join("\n"),
-                                        preferBelow: false,
-                                        verticalOffset: 12,
-                                        margin: EdgeInsets.all(16),
-                                        child: Icon(Icons.help_outline),
+                                      child: CopyableTooltip(
+                                        items: idGiveListNameProduct,
                                       ),
                                     ),
                                     Expanded(

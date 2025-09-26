@@ -130,13 +130,14 @@ class TaskPlannedModel {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
+
     data['idTaskPlanned'] = idTaskPlanned;
     data['nameTaskPlanned'] = nameTaskPlanned;
     data['idTaskCommon'] = idTaskCommon;
     data['idInstitution'] = idInstitution;
     data['rangeExtractionTaskPlanned'] = rangeExtractionTaskPlanned;
-    data['timePlanTaskPlanned'] = timePlanTaskPlanned != null
-        ? '${timePlanTaskPlanned!.hour.toString().padLeft(2, '0')}:${timePlanTaskPlanned!.minute.toString().padLeft(2, '0')}'
+    data['tempTimePlanTaskPlanned'] = timePlanTaskPlanned != null
+        ? toLocalDateTime(timePlanTaskPlanned!).toIso8601String()
         : null;
     data['exportModeTaskPlanned'] = exportModeTaskPlanned;
     data['sendModeTaskPlanned'] = sendModeTaskPlanned;
@@ -148,5 +149,16 @@ class TaskPlannedModel {
     data['idUserAppInstitution'] = idUserAppInstitution;
 
     return data;
+  }
+
+  DateTime toLocalDateTime(TimeOfDay time) {
+    final now = DateTime.now(); // data odierna locale sul device
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
   }
 }

@@ -87,7 +87,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
   bool editMode = false;
   int idSh = 0;
   bool isDeduplica = false;
-  bool enableNormalization = true;
+  bool enableNormalization = false;
 
   ValueNotifier<bool> visibilityDeduplicationButton =
       ValueNotifier<bool>(false);
@@ -783,7 +783,9 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
   }
 
   void onFullAddressSelected(GeoFullAddressItemModel geoFullAddressItemModel) {
-    setState(() {});
+    setState(() {
+      enableNormalization = true;
+    });
     cGeoFullAddressItemModel = geoFullAddressItemModel;
     countryController.text = cGeoFullAddressItemModel.countryEn;
     stateController.text = cGeoFullAddressItemModel.state;
@@ -1955,7 +1957,7 @@ class _ShShNewEditScreen extends State<ShNewEditScreen> {
                             ],
                           ),
                         )
-                      : const Center(child: Text('Not yet implemented'));
+                      : const Center(child: Text('View non implementata'));
                 },
               ),
             ),

@@ -218,16 +218,22 @@ class InstitutionAttributeNotifier with ChangeNotifier {
     }
   }
 
-  Future updateInstitutionPaymentMethodAttribute({
-    required BuildContext context,
-    required String? token,
-    required int idUserAppInstitution,
-    required int idInstitution,
-    required int idPaymentTypeContanti,
-    required int idPaymentTypeBancomat,
-    required int idPaymentTypeCartaCredito,
-    required int idPaymentTypeAssegni,
-  }) async {
+  Future updateInstitutionPaymentMethodAttribute(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required int idPaymentTypeContanti,
+      required int idPaymentTypeBancomat,
+      required int idPaymentTypeCartaCredito,
+      required int idPaymentTypeAssegni,
+      required int idPaymentTypePaypal,
+      required int idPaymentTypeEsterno,
+      required int iddPaymentTypeSdd,
+      required int idPaymentTypeBonificoPromessa,
+      required int idPaymentTypeBonificoIstantaneo,
+      required int idPaymentTypeBonificoLink,
+      required String paymentTypeVisibility}) async {
     try {
       var response =
           await institutionAttributeAPI.updateInstitutionPaymentMethodAttribute(
@@ -237,7 +243,14 @@ class InstitutionAttributeNotifier with ChangeNotifier {
               idPaymentTypeContanti: idPaymentTypeContanti,
               idPaymentTypeBancomat: idPaymentTypeBancomat,
               idPaymentTypeCartaCredito: idPaymentTypeCartaCredito,
-              idPaymentTypeAssegni: idPaymentTypeAssegni);
+              idPaymentTypeAssegni: idPaymentTypeAssegni,
+              idPaymentTypePaypal: idPaymentTypePaypal,
+              idPaymentTypeEsterno: idPaymentTypeEsterno,
+              idPaymentTypeSdd: iddPaymentTypeSdd,
+              idPaymentTypeBonificoPromessa: idPaymentTypeBonificoPromessa,
+              idPaymentTypeBonificoIstantaneo: idPaymentTypeBonificoIstantaneo,
+              idPaymentTypeBonificoLink: idPaymentTypeBonificoLink,
+              paymentTypeVisibility: paymentTypeVisibility);
 
       final Map<String, dynamic> parseData = await jsonDecode(response);
       bool isOk = parseData['isOk'];

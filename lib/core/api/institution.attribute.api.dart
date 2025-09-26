@@ -78,21 +78,44 @@ class InstitutionAttributeAPI {
       required int idPaymentTypeContanti,
       required int idPaymentTypeBancomat,
       required int idPaymentTypeCartaCredito,
-      required int idPaymentTypeAssegni}) async {
+      required int idPaymentTypeAssegni,
+      required int idPaymentTypePaypal,
+      required int idPaymentTypeEsterno,
+      required int idPaymentTypeSdd,
+      required int idPaymentTypeBonificoPromessa,
+      required int idPaymentTypeBonificoIstantaneo,
+      required int idPaymentTypeBonificoLink,
+      required String paymentTypeVisibility}) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
-    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
-        attributeName: 'Give.IdPaymentType.Contanti',
-        attributeValue: idPaymentTypeContanti.toString()));
-    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
-        attributeName: 'Give.IdPaymentType.Bancomat',
-        attributeValue: idPaymentTypeBancomat.toString()));
-    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
-        attributeName: 'Give.IdPaymentType.CartaCredito',
-        attributeValue: idPaymentTypeCartaCredito.toString()));
-    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
-        attributeName: 'Give.IdPaymentType.Assegni',
-        attributeValue: idPaymentTypeAssegni.toString()));
+    final paymentTypes = {
+      'Contanti': idPaymentTypeContanti,
+      'Bancomat': idPaymentTypeBancomat,
+      'CartaCredito': idPaymentTypeCartaCredito,
+      'Assegni': idPaymentTypeAssegni,
+      'Paypal': idPaymentTypePaypal,
+      'Esterno': idPaymentTypeEsterno,
+      'Sdd': idPaymentTypeSdd,
+      'BonificoPromessa': idPaymentTypeBonificoPromessa,
+      'BonificoIstantaneo': idPaymentTypeBonificoIstantaneo,
+      'BonificoLink': idPaymentTypeBonificoLink
+    };
 
+    for (var entry in paymentTypes.entries) {
+      if (entry.value > 0) {
+        cInstitutionAttributeModel.add(
+          InstitutionAttributeModel(
+            attributeName: 'Give.IdPaymentType.${entry.key}',
+            attributeValue: entry.value.toString(),
+          ),
+        );
+      }
+    }
+    cInstitutionAttributeModel.add(
+      InstitutionAttributeModel(
+        attributeName: 'Give.IdPaymentType.Visibility',
+        attributeValue: paymentTypeVisibility,
+      ),
+    );
     final Uri uri = Uri.parse(
         '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');
     final http.Response response = await client.put(uri,
@@ -102,9 +125,8 @@ class InstitutionAttributeAPI {
           'Access-Control-Allow-Origin': "*",
           "Authorization": token ?? ''
         },
-        body: jsonEncode({
-          "updateInstitutionAttributeRequest": cInstitutionAttributeModel,
-        }));
+        body: jsonEncode(
+            {"updateInstitutionAttributeRequest": cInstitutionAttributeModel}));
 
     if (response.statusCode == 200) {
       final dynamic body = response.body;

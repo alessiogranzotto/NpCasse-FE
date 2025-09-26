@@ -3,6 +3,7 @@ import 'package:np_casse/app/constants/colors.dart';
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/componenents/copyable.tooltip.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
@@ -227,223 +228,176 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
       tImageString = widget.categoryCatalogModelArgument.imageData;
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idFinalizzazione.isNotEmpty) {
-        // textEditingControllerIdFinalizzazione.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idFinalizzazione
-        //     .toString();
         customIdGive.add("IdFinalizzazione=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idFinalizzazione
                 .toString());
-      } else {
-        // textEditingControllerIdFinalizzazione.text = '';
-      }
+      } else {}
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
           .isNotEmpty) {
-        // textEditingControllerIdEvento.text = widget
-        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
-        //     .toString();
         customIdGive.add("IdEvento=" +
             widget
                 .categoryCatalogModelArgument.giveIdsFlatStructureModel.idEvento
                 .toString());
-      } else {
-        // textEditingControllerIdEvento.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idAttivita.isNotEmpty) {
-        // textEditingControllerIdAttivita.text = widget
-        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAttivita
-        //     .toString();
         customIdGive.add("IdAttività=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idAttivita
                 .toString());
-      } else {
-        // textEditingControllerIdAttivita.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
           .isNotEmpty) {
-        // textEditingControllerIdAgenda.text = widget
-        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
-        //     .toString();
         customIdGive.add("IdAgenda=" +
             widget
                 .categoryCatalogModelArgument.giveIdsFlatStructureModel.idAgenda
                 .toString());
-      } else {
-        // textEditingControllerIdAgenda.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idComunicazioni.isNotEmpty) {
-        // textEditingControllerIdComunicazioni.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idComunicazioni
-        //     .toString();
         customIdGive.add("IdComunicazioni=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idComunicazioni
                 .toString());
-      } else {
-        // textEditingControllerIdComunicazioni.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idTipDonazione.isNotEmpty) {
-        // textEditingControllerIdTipDonazione.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idTipDonazione
-        //     .toString();
         customIdGive.add("IdTipDonazione=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idTipDonazione
                 .toString());
-      } else {
-        // textEditingControllerIdTipDonazione.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idCatalogo.isNotEmpty) {
-        // textEditingControllerIdCatalogo.text = widget
-        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.idCatalogo
-        //     .toString();
         customIdGive.add("IdCatalogo=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idCatalogo
                 .toString());
-      } else {
-        // textEditingControllerIdCatalogo.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idPromotore.isNotEmpty) {
-        // textEditingControllerIdPromotore.text = widget
-        //     .categoryCatalogModelArgument.giveIdsFlatStructureModel.IdPromotore
-        //     .toString();
         customIdGive.add("IdPromotore=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idPromotore
                 .toString());
-      } else {
-        // textEditingControllerIdPromotore.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idPagamentoContante.isNotEmpty) {
-        // textEditingControllerIdPagamentoContante.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoContante
-        //     .toString();
         customIdGive.add("IdPagamentoContante=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idPagamentoContante
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoContante.text = '';
-      }
+      } else {}
+
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idPagamentoBancomat.isNotEmpty) {
-        // textEditingControllerIdPagamentoBancomat.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoBancomat
-        //     .toString();
         customIdGive.add("IdPagamentoBancomat=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idPagamentoBancomat
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoBancomat.text = '';
-      }
+      } else {}
+
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idPagamentoCartaDiCredito.isNotEmpty) {
-        // textEditingControllerIdPagamentoCartaDiCredito.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoCartaDiCredito
-        //     .toString();
         customIdGive.add("IdPagamentoCartaDiCredito=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idPagamentoCartaDiCredito
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoCartaDiCredito.text = '';
-      }
+      } else {}
+
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .idPagamentoAssegno.isNotEmpty) {
-        // textEditingControllerIdPagamentoAssegno.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoAssegno
-        //     .toString();
         customIdGive.add("IdPagamentoAssegno=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .idPagamentoAssegno
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoAssegno.text = '';
-      }
+      } else {}
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoPaypal.isNotEmpty) {
+        customIdGive.add("IdPagamentoPaypal=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoPaypal
+                .toString());
+      } else {}
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoEsterno.isNotEmpty) {
+        customIdGive.add("IdPagamentoEsterno=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoEsterno
+                .toString());
+      } else {}
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoSdd.isNotEmpty) {
+        customIdGive.add("IdPagamentoSdd=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoSdd
+                .toString());
+      } else {}
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoBonificoPromessa.isNotEmpty) {
+        customIdGive.add("IdPagamentoBonificoPromessa=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoBonificoPromessa
+                .toString());
+      } else {}
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoBonificoIstantaneo.isNotEmpty) {
+        customIdGive.add("IdPagamentoBonificoIstantaneo=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoBonificoIstantaneo
+                .toString());
+      } else {}
+
+      if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+          .idPagamentoBonificoLink.isNotEmpty) {
+        customIdGive.add("IdPagamentoBonificoLink=" +
+            widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
+                .idPagamentoBonificoLink
+                .toString());
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .codiceSottoconto.isNotEmpty) {
-        // textEditingControllerIdPagamentoAssegno.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoAssegno
-        //     .toString();
         customIdGive.add("CodiceSottoconto=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .codiceSottoconto
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoAssegno.text = '';
-      }
+      } else {}
 
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .codiceCentroRicavo.isNotEmpty) {
-        // textEditingControllerIdPagamentoAssegno.text = widget
-        //     .categoryCatalogModelArgument
-        //     .giveIdsFlatStructureModel
-        //     .idPagamentoAssegno
-        //     .toString();
         customIdGive.add("CodiceCentroRicavo=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .codiceCentroRicavo
                 .toString());
-      } else {
-        // textEditingControllerIdPagamentoAssegno.text = '';
-      }
+      } else {}
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel.fonteSh
           .isNotEmpty) {
-        // textEditingControllerIdPromotore.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
-        //     .toString();
         customIdGive.add("FonteSh=" +
             widget
                 .categoryCatalogModelArgument.giveIdsFlatStructureModel.fonteSh
                 .toString());
-      } else {
-        // textEditingControllerIdPromotore.text = '';
-      }
+      } else {}
       if (widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
           .ringraziato.isNotEmpty) {
-        // textEditingControllerIdPromotore.text = widget
-        //     .productCatalogModelArgument.giveIdsFlatStructureModel.idPromotore
-        //     .toString();
         customIdGive.add("Ringraziato=" +
             widget.categoryCatalogModelArgument.giveIdsFlatStructureModel
                 .ringraziato
                 .toString());
-      } else {
-        // textEditingControllerIdPromotore.text = '';
-      }
+      } else {}
     } else {
       //tImageString = AppAssets.noImageString;
     }
@@ -1506,13 +1460,8 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                                   children: [
                                     SizedBox(
                                       width: 50,
-                                      child: Tooltip(
-                                        message:
-                                            idGiveListNameCategory.join("\n"),
-                                        preferBelow: false,
-                                        verticalOffset: 12,
-                                        margin: EdgeInsets.all(16),
-                                        child: Icon(Icons.help_outline),
+                                      child: CopyableTooltip(
+                                        items: idGiveListNameCategory,
                                       ),
                                     ),
                                     Expanded(
@@ -1570,45 +1519,6 @@ class _CategoryCatalogDetailState extends State<CategoryCatalogDetailScreen> {
                   giveIdsFlatStructureModel:
                       GiveIdsFlatStructureModel.fromCustomIdGive(
                           customIdGive, "Category"),
-                  // giveIdsFlatStructureModel: GiveIdsFlatStructureModel(
-                  //   idFinalizzazione: int.tryParse(
-                  //           textEditingControllerIdFinalizzazione.text) ??
-                  //       0,
-                  //   idEvento: int.tryParse(
-                  //           textEditingControllerIdEvento.text) ??
-                  //       0,
-                  //   idAttivita: int.tryParse(
-                  //           textEditingControllerIdAttivita.text) ??
-                  //       0,
-                  //   idAgenda: int.tryParse(
-                  //           textEditingControllerIdAgenda.text) ??
-                  //       0,
-                  //   idComunicazioni: int.tryParse(
-                  //           textEditingControllerIdComunicazioni.text) ??
-                  //       0,
-                  //   idTipDonazione: int.tryParse(
-                  //           textEditingControllerIdTipDonazione.text) ??
-                  //       0,
-                  //   idCatalogo: int.tryParse(
-                  //           textEditingControllerIdCatalogo.text) ??
-                  //       0,
-                  //   idPagamentoContante: int.tryParse(
-                  //           textEditingControllerIdPagamentoContante
-                  //               .text) ??
-                  //       0,
-                  //   idPagamentoBancomat: int.tryParse(
-                  //           textEditingControllerIdPagamentoBancomat
-                  //               .text) ??
-                  //       0,
-                  //   idPagamentoCartaDiCredito: int.tryParse(
-                  //           textEditingControllerIdPagamentoCartaDiCredito
-                  //               .text) ??
-                  //       0,
-                  //   idPagamentoAssegno: int.tryParse(
-                  //           textEditingControllerIdPagamentoAssegno
-                  //               .text) ??
-                  //       0,
-                  //)
                 );
 
                 categoryCatalogNotifier
