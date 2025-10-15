@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/app/utilities/image.utils.dart';
 import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
@@ -234,6 +234,7 @@ class _FrequencyDonationAmountListState
               child: Align(
                 alignment: Alignment.center,
                 child: ChipsInput<String>(
+                  height: 60,
                   values: donation.amountFrequencyContinuousDonation,
                   label: 'Importi predefiniti',
                   strutStyle: const StrutStyle(fontSize: 12),
@@ -604,6 +605,7 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                         ? Align(
                             alignment: Alignment.center,
                             child: ChipsInput<String>(
+                              height: 60,
                               values: optionalField.selectableDDOptionalField,
                               label: AppStrings.availableTypeOptionalField,
                               strutStyle: const StrutStyle(fontSize: 12),

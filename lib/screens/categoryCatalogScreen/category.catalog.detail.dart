@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/constants/colors.dart';
+
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/app/utilities/image.utils.dart';
 import 'package:np_casse/componenents/copyable.tooltip.dart';
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart';
@@ -12,6 +12,7 @@ import 'package:np_casse/core/models/give.id.flat.structure.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/category.catalog.notifier.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 import 'package:string_similarity/string_similarity.dart';

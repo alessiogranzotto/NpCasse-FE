@@ -29,8 +29,9 @@ class ReportApi {
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
-    } else if (response.statusCode == 401) {
-      //REFRESH TOKEN??
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
       return null;
     }
   }
@@ -60,8 +61,9 @@ class ReportApi {
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
-    } else if (response.statusCode == 401) {
-      //REFRESH TOKEN??
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
       return null;
     }
   }
@@ -91,8 +93,9 @@ class ReportApi {
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
-    } else if (response.statusCode == 401) {
-      //REFRESH TOKEN??
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
       return null;
     }
   }
@@ -122,8 +125,9 @@ class ReportApi {
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
-    } else if (response.statusCode == 401) {
-      //REFRESH TOKEN??
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
       return null;
     }
   }
@@ -153,8 +157,9 @@ class ReportApi {
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
-    } else if (response.statusCode == 401) {
-      //REFRESH TOKEN??
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
       return null;
     }
   }
@@ -184,8 +189,9 @@ class ReportApi {
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;
-    } else if (response.statusCode == 401) {
-      //REFRESH TOKEN??
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
       return null;
     }
   }

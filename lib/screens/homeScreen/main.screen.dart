@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:np_casse/app/constants/assets.dart';
-import 'package:np_casse/app/constants/colors.dart';
+
 import 'package:np_casse/app/constants/keys.dart';
-import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/app/utilities/image.utils.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
@@ -25,10 +25,12 @@ import 'package:np_casse/core/notifiers/shop.navigate.notifier.dart';
 import 'package:np_casse/core/notifiers/shop.search.notifier.dart';
 import 'package:np_casse/core/notifiers/task.planned.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
 import 'package:np_casse/screens/cartScreen/cart.navigator.dart';
 import 'package:np_casse/screens/categoryCatalogScreen/category.catalog.navigator.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/transactional.sending.history.navigator.dart';
 import 'package:np_casse/screens/homeScreen/home.screen.dart';
+import 'package:np_casse/screens/homeScreen/my.give.pro.screen.dart';
 import 'package:np_casse/screens/institutionScreen/institution.view.dart';
 import 'package:np_casse/screens/loginScreen/logout.view.dart';
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.history.navigator.dart';
@@ -96,9 +98,16 @@ class _MasterScreenState extends State<MasterScreen> {
       previousSelectedInstitution; // Previous institution value
 
   List<MenuList> destinations = <MenuList>[
-    MenuList('Home', Icons.home, const HomeScreen(), 1, null),
+    // MenuList('My Give Pro', Icons.palette, const MyGiveProScreen(), 3, null),
+    MenuList('Home', Icons.palette, const HomeScreen(), 1, null),
     MenuList(
         'Preferiti', Icons.favorite_outlined, const WishlistScreen(), 1, null),
+    MenuList('Impostazioni', Icons.settings, null, 1, [
+      MenuList('Impostazioni utente', Icons.settings, const UserSettingScreen(),
+          1, null),
+      MenuList('Impostazioni ente', Icons.settings,
+          const InstitutionSettingScreen(), 2, null),
+    ]),
     MenuList('Shop', Icons.shop, null, 1, [
       MenuList('Naviga shop', Icons.navigation, const ShopNavigator(), 1, null),
       MenuList(
@@ -117,25 +126,17 @@ class _MasterScreenState extends State<MasterScreen> {
         'Stakeholder', Icons.people, const StakeholderNavigator(), 1, null),
     MenuList('Stakeholder Give Pro', Icons.people,
         const StakeholderGiveproNavigator(), 3, null),
-    MenuList('Impostazioni', Icons.settings, null, 1, [
-      MenuList('Impostazioni utente', Icons.settings, const UserSettingScreen(),
-          1, null),
-      MenuList('Impostazioni ente', Icons.settings,
-          const InstitutionSettingScreen(), 2, null),
-      // MenuList('Impostazioni amministratore', Icons.settings,
-      //     const AdminSettingScreen(), 3, null),
-    ]),
-    MenuList('Comunicazioni', Icons.email, null, 1, [
+    MenuList('Comunicazioni', Icons.email, null, 2, [
       MenuList('Crea template', Icons.new_label, const MassSendingNavigator(),
-          3, null),
+          2, null),
       MenuList(
-          'Invio massivo', Icons.send, const MassSendingNavigator(), 1, null),
+          'Invio massivo', Icons.send, const MassSendingNavigator(), 2, null),
       MenuList('Transazionali', Icons.transfer_within_a_station_sharp,
-          const TransactionalSendingNavigator(), 1, null),
+          const TransactionalSendingNavigator(), 2, null),
       MenuList('Report invio massivo', Icons.dashboard,
-          const MassSendingHistoryNavigator(), 1, null),
+          const MassSendingHistoryNavigator(), 2, null),
       MenuList('Report transazionali', Icons.dashboard,
-          const TransactionalSendingHistoryNavigator(), 1, null),
+          const TransactionalSendingHistoryNavigator(), 2, null),
     ]),
     MenuList('Myosotis', Icons.app_settings_alt, null, 1, [
       MenuList('Configurazioni Myosotis', Icons.app_settings_alt,

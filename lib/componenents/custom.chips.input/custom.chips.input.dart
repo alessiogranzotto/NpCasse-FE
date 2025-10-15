@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:np_casse/app/constants/functional.dart';
 
 class ChipsInput<T> extends StatefulWidget {
@@ -105,7 +106,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
     controller.updateValues(<T>[...widget.values]);
 
     return SizedBox(
-      height: widget.height ?? 60,
+      height: widget.height ?? 100,
       child: TextFormField(
         expands: true,
         maxLines: null,
@@ -249,22 +250,32 @@ class ToppingInputChip extends StatelessWidget {
   final ValueChanged<String> onDeleted;
   final ValueChanged<String> onSelected;
 
+  Future<void> copyToClipboard(BuildContext context) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: topping));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Testo copiato: "$topping"'),
+            duration: Duration(seconds: 1)),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Errore durante la copia: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 3),
-      child: InputChip(
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      InputChip(
         side: BorderSide(width: 1.5),
         key: ObjectKey(topping),
-        label: Text(topping),
         backgroundColor: FunctionalColorUtils.getColorForTag(topping),
-        // avatar: Padding(
-        //   padding: EdgeInsets.all(4),
-        //   child: CircleAvatar(
-        //     radius: 32,
-        //     child: Icon(Icons.numbers),
-        //   ),
-        // ),
+
+        // 👇 la label contiene il testo + il pulsante copia
+        label: Text(topping),
+
         deleteIcon: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Icon(Icons.close, size: 18),
@@ -274,6 +285,28 @@ class ToppingInputChip extends StatelessWidget {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: const EdgeInsets.all(2),
       ),
-    );
+      const SizedBox(width: 4),
+
+      // Icona copy esterna al chip
+      MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => copyToClipboard(context),
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: FunctionalColorUtils.getColorForTag(topping),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey.shade600, width: 1.5),
+            ),
+            child: const Icon(
+              Icons.copy,
+              size: 16,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(width: 24),
+    ]);
   }
 }

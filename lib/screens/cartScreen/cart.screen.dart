@@ -1,12 +1,14 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/constants/colors.dart';
-import 'package:np_casse/app/utilities/image_utils.dart';
+
+import 'package:np_casse/app/utilities/image.utils.dart';
 import 'package:np_casse/app/utilities/money_formatter.dart';
+import 'package:np_casse/componenents/empty.data.widget.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/cartScreen/widgets/cart.detail.dart';
 import 'package:provider/provider.dart';
@@ -159,16 +161,11 @@ class _CartScreenState extends State<CartScreen> {
                     // No data or null data handling
                     else if (!snapshot.hasData || snapshot.data == null) {
                       return Center(
-                        child: Text(
-                          'Il tuo carrello non contiene prodotti',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      );
-                    }
-
-                    // Data is available, process it
-                    else {
-                      // Extracting the cart data
+                          child: EmptyDataWidget(
+                        title: "Il tuo carrello non contiene prodotti",
+                        message: "Non ci sono elementi da mostrare al momento.",
+                      ));
+                    } else {
                       var tSnapshot =
                           snapshot.data.cartProducts as List<CartProductModel>;
                       idCart =
@@ -179,7 +176,7 @@ class _CartScreenState extends State<CartScreen> {
                         children: [
                           Expanded(
                             flex: 2,
-                            // child: SingleChildScrollView(
+
                             child: ListView.builder(
                               shrinkWrap: true,
                               itemCount: tSnapshot.length,

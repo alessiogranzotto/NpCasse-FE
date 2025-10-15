@@ -1,6 +1,6 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/constants/colors.dart';
+
 import 'package:np_casse/componenents/custom.multi.select.drop.down/src/multi_dropdown.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';
@@ -13,6 +13,7 @@ import 'package:np_casse/core/notifiers/product.attribute.combination.notifier.d
 import 'package:np_casse/core/notifiers/product.attribute.mapping.notifier.dart';
 import 'package:np_casse/core/notifiers/product.catalog.notifier.dart';
 import 'package:np_casse/core/notifiers/wishlist.product.notifier.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 

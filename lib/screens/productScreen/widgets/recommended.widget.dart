@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:np_casse/app/constants/colors.dart';
+//
 // import 'package:np_casse/app/routes/app_routes.dart';
 // import 'package:np_casse/core/models/product.model.dart';
 // import 'package:np_casse/presentation/screens/productDetailScreen/product.detail.screen.dart';

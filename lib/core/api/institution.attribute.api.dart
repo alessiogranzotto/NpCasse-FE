@@ -144,6 +144,7 @@ class InstitutionAttributeAPI {
     required int idInstitution,
     required String stripeApiKeyPrivate,
     required String stripeApiKeyPublic,
+    required String stripeIdConnectedAccount,
     required String paypalClientId,
   }) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
@@ -153,6 +154,9 @@ class InstitutionAttributeAPI {
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Stripe.ApiKeyPublic',
         attributeValue: stripeApiKeyPublic));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Stripe.IdConnectedAccount',
+        attributeValue: stripeIdConnectedAccount));
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Paypal.ClientId', attributeValue: paypalClientId));
 
@@ -348,13 +352,13 @@ class InstitutionAttributeAPI {
     }
   }
 
-  Future updateInstitutionParameterAttribute({
-    required String? token,
-    required int idUserAppInstitution,
-    required int idInstitution,
-    required String parameterIdShAnonymous,
-    required String parameterEmailUserAuthMyosotis,
-  }) async {
+  Future updateInstitutionParameterAttribute(
+      {required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required String parameterIdShAnonymous,
+      required String parameterEmailUserAuthMyosotis,
+      required String predefinedProduct}) async {
     List<InstitutionAttributeModel> cInstitutionAttributeModel = [];
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Parameter.IdShAnonymous',
@@ -362,6 +366,9 @@ class InstitutionAttributeAPI {
     cInstitutionAttributeModel.add(new InstitutionAttributeModel(
         attributeName: 'Parameter.EmailUserAuthMyosotis',
         attributeValue: parameterEmailUserAuthMyosotis));
+    cInstitutionAttributeModel.add(new InstitutionAttributeModel(
+        attributeName: 'Parameter.PredefinedProduct',
+        attributeValue: predefinedProduct));
 
     final Uri uri = Uri.parse(
         '${ApiRoutes.updateInstitutionAttributeURL}?IdUserAppInstitution=$idUserAppInstitution&IdInstitution=$idInstitution');

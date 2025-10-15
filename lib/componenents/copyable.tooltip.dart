@@ -56,7 +56,20 @@ class CopyableTooltip extends StatelessWidget {
                     ),
                     trailing: const Icon(Icons.copy, size: 18),
                     onTap: () async {
-                      await Clipboard.setData(ClipboardData(text: item));
+                      try {
+                        await Clipboard.setData(ClipboardData(text: item));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Testo copiato: "$item"'),
+                              duration: Duration(seconds: 1)),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Errore durante la copia: $e')),
+                        );
+                      }
+
                       Navigator.pop(context);
                     },
                   ),

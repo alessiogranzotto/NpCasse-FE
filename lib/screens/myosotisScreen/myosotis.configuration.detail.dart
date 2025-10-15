@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:np_casse/app/constants/colors.dart';
+
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/copyable.tooltip.dart';
@@ -13,6 +13,7 @@ import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/myosotis.configuration.notifier.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.widget/myosotis.configuration.detail.widget.dart';
 import 'package:provider/provider.dart';
@@ -1464,6 +1465,7 @@ class _MyosotisConfigurationDetailState
                       Padding(
                         padding: const EdgeInsets.all(8),
                         child: ChipsInput<String>(
+                          height: 60,
                           values: enabledUrlMyosotisConfiguration,
                           label: AppStrings.urlMyosotisConfiguration,
                           strutStyle: const StrutStyle(fontSize: 12),
@@ -1575,7 +1577,7 @@ class _MyosotisConfigurationDetailState
                             ),
                           ),
                           SizedBox(
-                            width: 200,
+                            width: 220,
                             child: ValueListenableBuilder<Color>(
                               valueListenable: buttonColorNotifier,
                               child: Text(
@@ -1723,6 +1725,7 @@ class _MyosotisConfigurationDetailState
                                                   padding:
                                                       const EdgeInsets.all(8),
                                                   child: ChipsInput<String>(
+                                                    height: 60,
                                                     values:
                                                         preetablishedAmounts,
                                                     label: AppStrings

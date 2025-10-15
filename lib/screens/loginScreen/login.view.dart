@@ -348,24 +348,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    if (authenticationNotifier.stepLoading == "user")
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          side: const BorderSide(width: 1.0),
-                        ),
-                        onPressed: isDownloadingApk ? null : downloadAndroidApp,
-                        child: const Wrap(
-                          children: [
-                            Icon(Icons.android, color: Colors.green),
-                            SizedBox(width: 10),
-                            Text(
-                              'Scarica l\'app',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      ),
                   ],
                 ),
               ),

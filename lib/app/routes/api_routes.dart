@@ -15,6 +15,8 @@ class ApiRoutes {
   static const String casseURL = prodCasseURL;
   static const String whURL = prodWhURL;
 
+  static const String baseVersionURL = "$casseURL/api/Version/Latest-version";
+
   static const String authenticateURL =
       "$authURL/api/user/utility/authenticate";
   static const String checkOtpURL = "$authURL/api/user/utility/check_otp";

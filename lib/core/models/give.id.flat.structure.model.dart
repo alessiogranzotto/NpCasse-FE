@@ -188,7 +188,7 @@ class GiveIdsFlatStructureModel {
   GiveIdsFlatStructureModel.fromJson(Map<String, dynamic> json) {
     idFinalizzazione = json['idFinalizzazione'];
     idEvento = json['idEvento'];
-    idAttivita = json['idAttivita'];
+    idAttivita = json['idAttività'];
     idAgenda = json['idAgenda'];
     idComunicazioni = json['idComunicazioni'];
     idTipDonazione = json['idTipDonazione'];
@@ -214,7 +214,7 @@ class GiveIdsFlatStructureModel {
     final data = <String, dynamic>{};
     data['idFinalizzazione'] = idFinalizzazione;
     data['idEvento'] = idEvento;
-    data['idAttivita'] = idAttivita;
+    data['idAttività'] = idAttivita;
     data['idAgenda'] = idAgenda;
     data['idComunicazioni'] = idComunicazioni;
     data['idTipDonazione'] = idTipDonazione;

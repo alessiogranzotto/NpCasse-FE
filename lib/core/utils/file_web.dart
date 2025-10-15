@@ -12,6 +12,5 @@ void downloadFileWeb(Uint8List fileBytes, String fileName, String contentType) {
   html.Url.revokeObjectUrl(url);
 }
 
-Future<void> downloadFileMobile(Uint8List fileBytes, String fileName, BuildContext context) async {
- 
-}
+Future<void> downloadFileMobile(
+    Uint8List fileBytes, String fileName, BuildContext context) async {}

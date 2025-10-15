@@ -1,7 +1,7 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:np_casse/app/utilities/image_utils.dart';
+import 'package:np_casse/app/utilities/image.utils.dart';
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
 import 'package:np_casse/core/models/product.attribute.combination.model.dart';

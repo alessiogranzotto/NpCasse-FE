@@ -45,6 +45,7 @@ class CommonAPI {
   Future getProducts(
       {required String? token,
       required int idUserAppInstitution,
+      int idProduct = 0,
       int idCategory = 0,
       bool readAlsoDeleted = false,
       String numberResult = '',
@@ -55,6 +56,7 @@ class CommonAPI {
       bool viewOutOfAssortment = false}) async {
     final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}' +
         '?IdUserAppInstitution=$idUserAppInstitution' +
+        '&IdProduct=$idProduct' +
         '&IdCategory=$idCategory' +
         '&ReadAlsoDeleted=$readAlsoDeleted' +
         '&NumberResult=$numberResult' +

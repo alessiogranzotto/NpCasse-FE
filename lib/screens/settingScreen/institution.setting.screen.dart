@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:np_casse/app/constants/colors.dart';
+
 import 'package:np_casse/app/constants/functional.dart';
 import 'package:np_casse/app/constants/keys.dart';
 import 'package:np_casse/componenents/copyable.tooltip.dart';
@@ -8,11 +8,14 @@ import 'package:np_casse/componenents/custom.chips.input/custom.chips.input.dart
 import 'package:np_casse/componenents/custom.drop.down.button.form.field.field.dart';
 import 'package:np_casse/componenents/custom.text.form.field.dart';
 import 'package:np_casse/core/models/institution.model.dart';
+import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/models/user.app.institution.model.dart';
 import 'package:np_casse/core/models/user.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/notifiers/institution.attribute.notifier.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
+import 'package:np_casse/screens/productCatalogScreen/product.autocomplete.dart';
 import 'package:provider/provider.dart';
 import 'package:string_similarity/string_similarity.dart';
 
@@ -39,12 +42,14 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
 
   late final TextEditingController stripeApiKeyPrivateController;
   late final TextEditingController stripeApiKeyPublicController;
+  late final TextEditingController stripeIdConnectedAccountController;
   late final TextEditingController paypalClientIdController;
   late final TextEditingController parameterIdShAnonymousApiKeyController;
+  late final TextEditingController preestablishedProductController;
 
   List<UserModelTeam> userModelTeam = List.empty();
-
   UserModelTeam? selectedUserModelTeam;
+  ProductCatalogModel? predefinedProductSelected;
 
   late TextEditingController tokenExpirationController =
       TextEditingController();
@@ -164,14 +169,22 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     }
   }
 
+  void onPredefinedProductSelected(ProductCatalogModel option) {
+    predefinedProductSelected = option;
+  }
+
   void initializeControllers() {
     stripeApiKeyPrivateController = TextEditingController()
       ..addListener(stripeControllerListener);
     stripeApiKeyPublicController = TextEditingController()
       ..addListener(stripeControllerListener);
+    stripeIdConnectedAccountController = TextEditingController()
+      ..addListener(stripeControllerListener);
     paypalClientIdController = TextEditingController()
       ..addListener(paypalControllerListener);
     parameterIdShAnonymousApiKeyController = TextEditingController()
+      ..addListener(parameterControllerListener);
+    preestablishedProductController = TextEditingController()
       ..addListener(parameterControllerListener);
 
     tokenExpirationController = TextEditingController()
@@ -190,6 +203,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
   void disposeControllers() {
     stripeApiKeyPrivateController.dispose();
     stripeApiKeyPublicController.dispose();
+    stripeIdConnectedAccountController.dispose();
     paypalClientIdController.dispose();
     tokenExpirationController.dispose();
     maxInactivityController.dispose();
@@ -197,6 +211,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
     institutionFiscalizationPasswordController.dispose();
     institutionFiscalizationPinController.dispose();
     parameterIdShAnonymousApiKeyController.dispose();
+    preestablishedProductController.dispose();
   }
 
   void casseModuleControllerListener() {
@@ -393,6 +408,14 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
           stripeApiKeyPublicController.text =
               itemStripeApiKeyPublic.attributeValue;
         }
+        var itemStripeIdConnectedAccount = cValue
+            .where((element) =>
+                element.attributeName == 'Stripe.IdConnectedAccount')
+            .firstOrNull;
+        if (itemStripeIdConnectedAccount != null) {
+          stripeIdConnectedAccountController.text =
+              itemStripeIdConnectedAccount.attributeValue;
+        }
 
         //PAYPAL
         var itemPaypalApiKey = cValue
@@ -485,6 +508,21 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
               .where((element) =>
                   element.email == itemEmailUserAuthMyosotis.attributeValue)
               .first;
+        }
+
+        var itemPredefinedProduct = cValue
+            .where((element) =>
+                element.attributeName == 'Parameter.PredefinedProduct')
+            .firstOrNull;
+        if (itemPredefinedProduct != null) {
+          List<String> predefinedProductSplit =
+              itemPredefinedProduct.attributeValue.split("*;*");
+
+          String namePredefinedProduct = predefinedProductSplit.length > 1
+              ? predefinedProductSplit[1]
+              : "";
+
+          preestablishedProductController.text = namePredefinedProduct;
         }
       }
     });
@@ -606,6 +644,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
             cUserAppInstitutionModel.idInstitutionNavigation.idInstitution,
         stripeApiKeyPrivate: stripeApiKeyPrivateController.text,
         stripeApiKeyPublic: stripeApiKeyPublicController.text,
+        stripeIdConnectedAccount: stripeIdConnectedAccountController.text,
         paypalClientId: paypalClientIdController.text,
       )
           .then((value) {
@@ -706,7 +745,13 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
 
       var institutionAttributeNotifier =
           Provider.of<InstitutionAttributeNotifier>(context, listen: false);
-
+      String predefinedProductSelectedToSave = "";
+      if (predefinedProductSelected != null) {
+        predefinedProductSelectedToSave =
+            predefinedProductSelected!.idProduct.toString() +
+                "*;*" +
+                predefinedProductSelected!.nameProduct.toString();
+      }
       institutionAttributeNotifier
           .updateInstitutionParameterAttribute(
               context: context,
@@ -719,7 +764,8 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                   parameterIdShAnonymousApiKeyController.text,
               parameterEmailUserAuthMyosotis: selectedUserModelTeam != null
                   ? selectedUserModelTeam!.email
-                  : "")
+                  : "",
+              predefinedProduct: predefinedProductSelectedToSave)
           .then((value) {
         if (value) {
           if (context.mounted) {
@@ -799,16 +845,17 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ExpansionPanelList(
-                    expansionCallback: (int index, bool isExpanded) {
-                      setState(() {
-                        panelOpen[index] = isExpanded;
-                      });
-                    },
+                  ExpansionPanelList.radio(
+                    // expansionCallback: (int index, bool isExpanded) {
+                    //   setState(() {
+                    //     panelOpen[index] = isExpanded;
+                    //   });
+                    // },
                     animationDuration: Duration(milliseconds: 250),
                     elevation: 1,
                     children: [
-                      ExpansionPanel(
+                      ExpansionPanelRadio(
+                        value: 0,
                         canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
@@ -839,7 +886,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                           values: customIdGive,
                                           label:
                                               AppStrings.giveIdsPaymentMethod,
-                                          height: 100,
+                                          height: 140,
                                           decoration: const InputDecoration(),
                                           strutStyle:
                                               const StrutStyle(fontSize: 12),
@@ -858,98 +905,194 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                   child: Stack(
                                     children: [
                                       // Container con bordo e padding
-                                      Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        margin: const EdgeInsets.only(
-                                            top: 12), // spazio per il titolo
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(
-                                                height:
-                                                    16), // margine superiore sotto il titolo
-                                            // Row dei checkbox
-                                            Row(
-                                              children:
-                                                  idGivePaymentType.map((key) {
-                                                final isEnabled = customIdGive
-                                                    .any((chip) => chip
-                                                        .startsWith("$key="));
-                                                if (!isEnabled) {
-                                                  paymentTypeVisibility[key] =
-                                                      false;
-                                                }
-                                                final checked =
-                                                    paymentTypeVisibility[
-                                                            key] ??
-                                                        false;
-                                                final iconData =
-                                                    paymentTypeInfo[key]
-                                                        ?['icon'] as IconData?;
-                                                final tooltipText =
-                                                    paymentTypeInfo[key]
-                                                                ?['tooltip']
-                                                            as String? ??
-                                                        key;
-
-                                                final Color activeColor =
-                                                    isEnabled
-                                                        ? Theme.of(context)
-                                                            .colorScheme
-                                                            .primary
-                                                        : Colors.grey;
-                                                final Color iconColor =
-                                                    isEnabled
-                                                        ? Colors.black
-                                                        : Colors.grey;
-
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 40, bottom: 8),
-                                                  child: Tooltip(
-                                                    message: tooltipText,
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Checkbox(
-                                                          value: checked,
-                                                          onChanged: isEnabled
-                                                              ? (val) {
-                                                                  setState(() {
-                                                                    paymentTypeVisibility[
-                                                                            key] =
-                                                                        val ??
-                                                                            false;
-                                                                  });
-                                                                }
-                                                              : null,
-                                                          checkColor:
-                                                              Colors.black,
-                                                          activeColor:
-                                                              activeColor,
-                                                        ),
-                                                        if (iconData != null)
-                                                          Icon(
-                                                            iconData,
-                                                            color: iconColor,
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }).toList(),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 460,
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
-                                          ],
-                                        ),
+                                            margin: const EdgeInsets.only(
+                                                top:
+                                                    12), // spazio per il titolo
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const SizedBox(
+                                                    height:
+                                                        16), // margine superiore sotto il titolo
+                                                // Row dei checkbox
+                                                Row(
+                                                  children: idGivePaymentType
+                                                      .take(5)
+                                                      .toList()
+                                                      .map((key) {
+                                                    final isEnabled =
+                                                        customIdGive.any(
+                                                            (chip) =>
+                                                                chip.startsWith(
+                                                                    "$key="));
+                                                    if (!isEnabled) {
+                                                      paymentTypeVisibility[
+                                                          key] = false;
+                                                    }
+                                                    final checked =
+                                                        paymentTypeVisibility[
+                                                                key] ??
+                                                            false;
+                                                    final iconData =
+                                                        paymentTypeInfo[key]
+                                                                ?['icon']
+                                                            as IconData?;
+                                                    final tooltipText =
+                                                        paymentTypeInfo[key]
+                                                                    ?['tooltip']
+                                                                as String? ??
+                                                            key;
+
+                                                    final Color activeColor =
+                                                        isEnabled
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .primary
+                                                            : Colors.grey;
+                                                    final Color iconColor =
+                                                        isEnabled
+                                                            ? Colors.black
+                                                            : Colors.grey;
+
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 32,
+                                                              bottom: 8),
+                                                      child: Tooltip(
+                                                        message: tooltipText,
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Checkbox(
+                                                              value: checked,
+                                                              onChanged:
+                                                                  isEnabled
+                                                                      ? (val) {
+                                                                          setState(
+                                                                              () {
+                                                                            paymentTypeVisibility[key] =
+                                                                                val ?? false;
+                                                                          });
+                                                                        }
+                                                                      : null,
+                                                              checkColor:
+                                                                  Colors.black,
+                                                              activeColor:
+                                                                  activeColor,
+                                                            ),
+                                                            if (iconData !=
+                                                                null)
+                                                              Icon(
+                                                                iconData,
+                                                                color:
+                                                                    iconColor,
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                                Row(
+                                                  children: idGivePaymentType
+                                                      .skip(5)
+                                                      .toList()
+                                                      .map((key) {
+                                                    final isEnabled =
+                                                        customIdGive.any(
+                                                            (chip) =>
+                                                                chip.startsWith(
+                                                                    "$key="));
+                                                    if (!isEnabled) {
+                                                      paymentTypeVisibility[
+                                                          key] = false;
+                                                    }
+                                                    final checked =
+                                                        paymentTypeVisibility[
+                                                                key] ??
+                                                            false;
+                                                    final iconData =
+                                                        paymentTypeInfo[key]
+                                                                ?['icon']
+                                                            as IconData?;
+                                                    final tooltipText =
+                                                        paymentTypeInfo[key]
+                                                                    ?['tooltip']
+                                                                as String? ??
+                                                            key;
+
+                                                    final Color activeColor =
+                                                        isEnabled
+                                                            ? Theme.of(context)
+                                                                .colorScheme
+                                                                .primary
+                                                            : Colors.grey;
+                                                    final Color iconColor =
+                                                        isEnabled
+                                                            ? Colors.black
+                                                            : Colors.grey;
+
+                                                    return Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 32,
+                                                              bottom: 8),
+                                                      child: Tooltip(
+                                                        message: tooltipText,
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Checkbox(
+                                                              value: checked,
+                                                              onChanged:
+                                                                  isEnabled
+                                                                      ? (val) {
+                                                                          setState(
+                                                                              () {
+                                                                            paymentTypeVisibility[key] =
+                                                                                val ?? false;
+                                                                          });
+                                                                        }
+                                                                      : null,
+                                                              checkColor:
+                                                                  Colors.black,
+                                                              activeColor:
+                                                                  activeColor,
+                                                            ),
+                                                            if (iconData !=
+                                                                null)
+                                                              Icon(
+                                                                iconData,
+                                                                color:
+                                                                    iconColor,
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       // Titolo sospeso sul bordo
                                       Positioned(
@@ -1006,9 +1149,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                             ),
                           ),
                         ),
-                        isExpanded: panelOpen[0],
+                        // isExpanded: panelOpen[0],
                       ),
-                      ExpansionPanel(
+                      ExpansionPanelRadio(
+                        value: 1,
                         canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
@@ -1090,6 +1234,39 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                   padding: const EdgeInsets.only(bottom: 20),
                                   child: CustomTextFormField(
                                     obscureText: true,
+                                    controller:
+                                        stripeIdConnectedAccountController,
+                                    labelText: AppStrings
+                                            .stripeIdConnectedAccount +
+                                        ((stripeIdConnectedAccountController
+                                                    .text.length >
+                                                5
+                                            ? " ******" +
+                                                stripeIdConnectedAccountController
+                                                    .text
+                                                    .substring(
+                                                        stripeIdConnectedAccountController
+                                                                .text.length -
+                                                            5,
+                                                        stripeIdConnectedAccountController
+                                                            .text.length)
+                                            : "")),
+                                    keyboardType: TextInputType.name,
+                                    textInputAction: TextInputAction.next,
+                                    onChanged: (_) =>
+                                        _formKey1.currentState?.validate(),
+                                    // validator: (value) {
+                                    //   return value!.isNotEmpty
+                                    //       ? null
+                                    //       : AppStrings
+                                    //           .pleaseEnterstripeApiKey;
+                                    // },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: CustomTextFormField(
+                                    obscureText: true,
                                     controller: paypalClientIdController,
                                     labelText: AppStrings.paypalApiKey +
                                         ((paypalClientIdController.text.length >
@@ -1149,9 +1326,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                             ),
                           ),
                         ),
-                        isExpanded: panelOpen[1],
+                        // isExpanded: panelOpen[1],
                       ),
-                      ExpansionPanel(
+                      ExpansionPanelRadio(
+                        value: 2,
                         canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
@@ -1255,9 +1433,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                             ),
                           ),
                         ),
-                        isExpanded: panelOpen[2],
+                        // isExpanded: panelOpen[2],
                       ),
-                      ExpansionPanel(
+                      ExpansionPanelRadio(
+                        value: 3,
                         canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
@@ -1402,9 +1581,10 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                             ),
                           ),
                         ),
-                        isExpanded: panelOpen[3],
+                        // isExpanded: panelOpen[3],
                       ),
-                      ExpansionPanel(
+                      ExpansionPanelRadio(
+                        value: 4,
                         canTapOnHeader: true,
                         headerBuilder: (BuildContext context, bool isExpanded) {
                           return ListTile(
@@ -1497,6 +1677,27 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                                     },
                                   ),
                                 ),
+                                ProductAutocomplete(
+                                  focusNode: FocusNode(),
+                                  cTextEditingController:
+                                      preestablishedProductController,
+                                  enabled: true,
+                                  // onChanged: (String value) {
+                                  //   cityController.text = value;
+                                  //   onChangeField();
+                                  // },
+                                  onValueSelected: (option) {
+                                    //cityController.text = option.city;
+                                    onPredefinedProductSelected(option);
+                                  },
+                                  hintText: 'Prodotto predefinito',
+                                  labelText: 'Prodotto predefinito',
+                                  // validator: (value) =>
+                                  //     value!.toString().isEmpty
+                                  //         ? "inserire il comune"
+                                  //         : null,
+                                ),
+                                SizedBox(height: 16),
                                 Row(
                                   children: [
                                     Padding(
@@ -1531,7 +1732,7 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
                             ),
                           ),
                         ),
-                        isExpanded: panelOpen[4],
+                        // isExpanded: panelOpen[4],
                       ),
                     ],
                   ),

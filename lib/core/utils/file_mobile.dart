@@ -4,17 +4,18 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' as io;
 import 'package:flutter_media_store/flutter_media_store.dart';
 
-Future<void> downloadFileMobile(Uint8List fileBytes, String fileName, BuildContext context) async {
+Future<void> downloadFileMobile(
+    Uint8List fileBytes, String fileName, BuildContext context) async {
   try {
     // Check for permission
     PermissionStatus status = await Permission.manageExternalStorage.request();
-
 
     // Request permission if not granted
     if (!status.isGranted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Permission denied. Please enable storage access in settings."),
+          content: Text(
+              "Permission denied. Please enable storage access in settings."),
           backgroundColor: Colors.red,
         ),
       );
@@ -24,7 +25,8 @@ Future<void> downloadFileMobile(Uint8List fileBytes, String fileName, BuildConte
 
     // For Android 10+ with MediaStore, save the file in the Downloads folder
     if (io.Platform.isAndroid) {
-      final sanitizedFileName = fileName.replaceAll(RegExp(r'[\/\\:*?"<>|]'), '_');
+      final sanitizedFileName =
+          fileName.replaceAll(RegExp(r'[\/\\:*?"<>|]'), '_');
 
       // Dynamically determine MIME type based on file extension
       String mimeType = _getMimeType(fileName);
@@ -34,11 +36,11 @@ Future<void> downloadFileMobile(Uint8List fileBytes, String fileName, BuildConte
 
       // Attempt to save the file with the determined MIME type
       mediaStore.saveFile(
-        rootFolderName: "",  // Root folder (public folder)
-        folderName: "",       // Folder inside the root folder (e.g., Downloads)
-        fileData: fileBytes,          // Provide the file byte data
-        fileName: sanitizedFileName,  // Provide the sanitized file name
-        mimeType: mimeType,           // Use the determined MIME type
+        rootFolderName: "", // Root folder (public folder)
+        folderName: "", // Folder inside the root folder (e.g., Downloads)
+        fileData: fileBytes, // Provide the file byte data
+        fileName: sanitizedFileName, // Provide the sanitized file name
+        mimeType: mimeType, // Use the determined MIME type
         onSuccess: (path, uri) {
           // Show success Snackbar with path and uri
           ScaffoldMessenger.of(context).showSnackBar(
@@ -103,6 +105,6 @@ String _getMimeType(String fileName) {
       return 'application/octet-stream'; // Generic MIME type for unknown files
   }
 }
-void downloadFileWeb(Uint8List fileBytes, String fileName, String contentType) {
 
-}
+void downloadFileWeb(
+    Uint8List fileBytes, String fileName, String contentType) {}

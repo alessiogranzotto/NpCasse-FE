@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/app/providers/provider.dart';
 import 'package:np_casse/app/routes/app_routes.dart';
-import 'package:np_casse/core/themes/themes.dart';
+import 'package:np_casse/app/versionService/version.service.dart';
+import 'package:np_casse/core/themes/app.theme.dart';
+import 'package:np_casse/core/themes/theme.notifier.dart';
 import 'package:np_casse/screens/homeScreen/theme.mode.dart';
 import 'package:provider/provider.dart';
 import 'package:paged_datatable/paged_datatable.dart'; // Import your PagedDataTable
@@ -28,13 +30,61 @@ class NpCasseApp extends StatelessWidget {
   const NpCasseApp({super.key});
   @override
   Widget build(BuildContext context) {
+    final versionService = VersionServiceImpl();
     return MultiProvider(
-      providers: AppProvider.providers,
+      providers: [
+        ...AppProvider.providers,
+        Provider<VersionService>.value(value: versionService),
+      ],
       child: const Core(),
     );
   }
 }
 
+// class Core extends StatelessWidget {
+//   const Core({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Consumer<ThemeNotifier>(
+//       builder: (context, themeNotifier, child) {
+//         // Determina ThemeMode in base al tema corrente
+//         ThemeMode mode;
+//         switch (themeNotifier.currentMode) {
+//           case AppThemeMode.light:
+//           case AppThemeMode.blue: // blue è ora chiaro
+//             mode = ThemeMode.light;
+//             break;
+//           case AppThemeMode.dark:
+//             mode = ThemeMode.dark;
+//             break;
+//         }
+
+//         return MaterialApp(
+//           title: 'Give Pro',
+//           debugShowCheckedModeBanner: false,
+//           onGenerateRoute: AppRouter.generateRoute,
+//           initialRoute: AppRouter.splashRoute,
+//           supportedLocales: const [
+//             Locale('it'),
+//             Locale('en'),
+//           ],
+//           localizationsDelegates: const [
+//             PagedDataTableLocalization.delegate,
+//             GlobalMaterialLocalizations.delegate,
+//             GlobalWidgetsLocalizations.delegate,
+//             GlobalCupertinoLocalizations.delegate,
+//           ],
+//           themeMode: mode,
+
+//           // Ora usiamo direttamente il tema corrente dal notifier
+//           theme: themeNotifier.currentTheme,
+//           darkTheme: themeNotifier.currentTheme,
+//         );
+//       },
+//     );
+//   }
+// }
 class Core extends StatelessWidget {
   const Core({super.key});
   @override

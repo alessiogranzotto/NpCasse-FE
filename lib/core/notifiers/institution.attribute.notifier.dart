@@ -297,6 +297,7 @@ class InstitutionAttributeNotifier with ChangeNotifier {
     required int idInstitution,
     required String stripeApiKeyPrivate,
     required String stripeApiKeyPublic,
+    required String stripeIdConnectedAccount,
     required String paypalClientId,
   }) async {
     try {
@@ -307,6 +308,7 @@ class InstitutionAttributeNotifier with ChangeNotifier {
         idInstitution: idInstitution,
         stripeApiKeyPrivate: stripeApiKeyPrivate,
         stripeApiKeyPublic: stripeApiKeyPublic,
+        stripeIdConnectedAccount: stripeIdConnectedAccount,
         paypalClientId: paypalClientId,
       );
 
@@ -473,23 +475,23 @@ class InstitutionAttributeNotifier with ChangeNotifier {
     }
   }
 
-  Future updateInstitutionParameterAttribute({
-    required BuildContext context,
-    required String? token,
-    required int idUserAppInstitution,
-    required int idInstitution,
-    required String parameterIdShAnonymous,
-    required String parameterEmailUserAuthMyosotis,
-  }) async {
+  Future updateInstitutionParameterAttribute(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int idInstitution,
+      required String parameterIdShAnonymous,
+      required String parameterEmailUserAuthMyosotis,
+      required String predefinedProduct}) async {
     try {
       var response =
           await institutionAttributeAPI.updateInstitutionParameterAttribute(
-        token: token,
-        idUserAppInstitution: idUserAppInstitution,
-        idInstitution: idInstitution,
-        parameterIdShAnonymous: parameterIdShAnonymous,
-        parameterEmailUserAuthMyosotis: parameterEmailUserAuthMyosotis,
-      );
+              token: token,
+              idUserAppInstitution: idUserAppInstitution,
+              idInstitution: idInstitution,
+              parameterIdShAnonymous: parameterIdShAnonymous,
+              parameterEmailUserAuthMyosotis: parameterEmailUserAuthMyosotis,
+              predefinedProduct: predefinedProduct);
 
       final Map<String, dynamic> parseData = await jsonDecode(response);
       bool isOk = parseData['isOk'];

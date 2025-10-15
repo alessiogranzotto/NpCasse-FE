@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:np_casse/core/api/cart.api.dart';
+import 'package:np_casse/core/api/common.api.dart';
 import 'package:np_casse/core/models/cart.model.dart';
 import 'package:np_casse/core/models/cart.product.model.dart';
+import 'package:np_casse/core/models/product.catalog.model.dart';
 import 'package:np_casse/core/notifiers/authentication.notifier.dart';
 import 'package:np_casse/core/utils/snackbar.util.dart';
 import 'package:provider/provider.dart';
 
 class CartNotifier with ChangeNotifier {
   final CartAPI cartAPI = CartAPI();
+  final CommonAPI commonAPI = CommonAPI();
 
   CartModel currentCartModel = CartModel.empty();
   // int _nrProductInCart = 0;
@@ -88,10 +91,8 @@ class CartNotifier with ChangeNotifier {
             // Navigator.pop(context);
           }
         } else {
-          // ProjectModel projectDetail =
-          //     ProjectModel.fromJson(parseData['okResult']);
-          //return projectDetail;
-          //notifyListeners();
+          CartModel cartModel = CartModel.fromJson(parseData['okResult'] ?? '');
+          setCurrentCart(cartModel);
         }
       } else {
         AuthenticationNotifier authenticationNotifier =
@@ -480,5 +481,57 @@ class CartNotifier with ChangeNotifier {
 
   void refresh() {
     notifyListeners();
+  }
+
+  Future getProduct(
+      {required BuildContext context,
+      required String? token,
+      required int idUserAppInstitution,
+      required int idProduct}) async {
+    try {
+      var response = await commonAPI.getProducts(
+          token: token,
+          idUserAppInstitution: idUserAppInstitution,
+          idProduct: idProduct,
+          idCategory: 0,
+          readAlsoDeleted: false,
+          numberResult: '1',
+          nameDescSearch: '',
+          readImageData: false,
+          orderBy: '',
+          showVariant: false,
+          viewOutOfAssortment: false);
+      if (response != null) {
+        final Map<String, dynamic> parseData = await jsonDecode(response);
+        bool isOk = parseData['isOk'];
+        if (!isOk) {
+          String errorDescription = parseData['errorDescription'];
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackUtil.stylishSnackBar(
+                    title: "Prodotti",
+                    message: errorDescription,
+                    contentType: "failure"));
+          }
+        } else {
+          List<ProductCatalogModel> products = List.from(parseData['okResult'])
+              .map((e) => ProductCatalogModel.fromJson(e))
+              .toList();
+          return products.firstOrNull;
+          // notifyListeners();
+        }
+      } else {
+        AuthenticationNotifier authenticationNotifier =
+            Provider.of<AuthenticationNotifier>(context, listen: false);
+        authenticationNotifier.exit(context);
+      }
+    } on SocketException catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackUtil.stylishSnackBar(
+            title: "Prodotti",
+            message: "Errore di connessione",
+            contentType: "failure"));
+      }
+    }
   }
 }

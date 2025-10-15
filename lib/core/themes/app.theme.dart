@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:np_casse/app/constants/colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   AppTheme._();
@@ -63,113 +63,112 @@ class AppTheme {
   // *****************
   // Text Style - light
   // *****************
+  static final TextStyle _lightTitleLargeText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 26,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightTitleLargeText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 26,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightTitleMediumText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightTitleMediumText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 20,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightTitleSmallText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightTitleSmallText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 14,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightHeadlineLargeText = GoogleFonts.openSans(
+    color: _lightonPrimaryContainer,
+    fontStyle: FontStyle.normal,
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightHeadlineLargeText = TextStyle(
-      color: _lightonPrimaryContainer,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 20,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightHeadlineMediumText = GoogleFonts.openSans(
+    color: _lightonPrimaryContainer,
+    fontStyle: FontStyle.normal,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightHeadlineMediumText = TextStyle(
-      color: _lightonPrimaryContainer,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 16,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightHeadlineSmallText = GoogleFonts.openSans(
+    color: _lightonPrimaryContainer,
+    fontStyle: FontStyle.normal,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightHeadlineSmallText = TextStyle(
-      color: _lightonPrimaryContainer,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 12,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightBodyLargeText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+  );
 
-  static const TextStyle _lightBodyLargeText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 14,
-      fontWeight: FontWeight.normal);
+  static final TextStyle _lightBodyMediumText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 12,
+    fontWeight: FontWeight.normal,
+  );
 
-  static const TextStyle _lightBodyMediumText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontWeight: FontWeight.normal,
-      fontSize: 12);
+  static final TextStyle _lightBodySmallText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 10,
+    fontWeight: FontWeight.normal,
+  );
 
-  static const TextStyle _lightBodySmallText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 10,
-      fontWeight: FontWeight.normal);
+  static final TextStyle _lightLabelLargeText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightLabelLargeText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 14,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightLabelMediumText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightLabelMediumText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 12,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightLabelSmallText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 10,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightLabelSmallText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 10,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightDisplayLargeText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightDisplayLargeText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 16,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightDisplayMediumText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightDisplayMediumText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 14,
-      fontWeight: FontWeight.bold);
+  static final TextStyle _lightDisplaySmallText = GoogleFonts.openSans(
+    color: _lightTextColorPrimary,
+    fontStyle: FontStyle.normal,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
 
-  static const TextStyle _lightDisplaySmallText = TextStyle(
-      color: _lightTextColorPrimary,
-      fontFamily: "Roboto",
-      fontStyle: FontStyle.normal,
-      fontSize: 12,
-      fontWeight: FontWeight.bold);
-
-  static const TextTheme _lightTextTheme = TextTheme(
+  static TextTheme _lightTextTheme = TextTheme(
     titleMedium: _lightTitleMediumText,
     titleLarge: _lightTitleLargeText,
     titleSmall: _lightTitleSmallText,
@@ -340,3 +339,93 @@ class AppTheme {
       textTheme: _darkTextTheme,
       textSelectionTheme: _textSelectionTheme);
 }
+
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+
+class CustomColors {
+  static const Color darkBlue = Color(0xFF0C2044);
+}
+
+// class AppTheme {
+//   AppTheme._();
+
+//   static const String defaultFont = 'Open Sans';
+
+//   static TextTheme _baseTextTheme(Color textColor, String font) => TextTheme(
+//         titleLarge: GoogleFonts.getFont(font,
+//             color: textColor, fontSize: 26, fontWeight: FontWeight.bold),
+//         titleMedium: GoogleFonts.getFont(font,
+//             color: textColor, fontSize: 20, fontWeight: FontWeight.bold),
+//         titleSmall: GoogleFonts.getFont(font,
+//             color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
+//         bodyLarge: GoogleFonts.getFont(font, color: textColor, fontSize: 14),
+//         bodyMedium: GoogleFonts.getFont(font, color: textColor, fontSize: 12),
+//         bodySmall: GoogleFonts.getFont(font, color: textColor, fontSize: 10),
+//         labelLarge: GoogleFonts.getFont(font,
+//             color: textColor, fontSize: 14, fontWeight: FontWeight.bold),
+//       );
+
+//   static ThemeData buildTheme({
+//     required Brightness brightness,
+//     required Color seedColor,
+//     required String font,
+//     Color? scaffoldColor,
+//   }) {
+//     final colorScheme =
+//         ColorScheme.fromSeed(seedColor: seedColor, brightness: brightness);
+//     final textColor =
+//         brightness == Brightness.dark ? Colors.white : Colors.black87;
+//     final textTheme = _baseTextTheme(textColor, font);
+
+//     return ThemeData(
+//       brightness: brightness,
+//       colorScheme: colorScheme,
+//       scaffoldBackgroundColor: scaffoldColor ?? colorScheme.surface,
+//       textTheme: textTheme,
+//       primaryTextTheme: textTheme,
+//       appBarTheme: AppBarTheme(
+//         backgroundColor: colorScheme.primaryContainer,
+//         foregroundColor: colorScheme.onPrimaryContainer,
+//         titleTextStyle: GoogleFonts.getFont(font,
+//             color: colorScheme.onPrimaryContainer,
+//             fontSize: 20,
+//             fontWeight: FontWeight.bold),
+//         iconTheme: IconThemeData(color: colorScheme.onPrimaryContainer),
+//       ),
+//       elevatedButtonTheme: ElevatedButtonThemeData(
+//         style: ElevatedButton.styleFrom(
+//           backgroundColor: colorScheme.primary,
+//           foregroundColor: colorScheme.onPrimary,
+//           textStyle: GoogleFonts.getFont(font, fontWeight: FontWeight.bold),
+//         ),
+//       ),
+//       textSelectionTheme: TextSelectionThemeData(
+//         cursorColor: colorScheme.primary,
+//         selectionColor: colorScheme.primaryContainer.withAlpha(80),
+//       ),
+//     );
+//   }
+
+//   // predefiniti (usali come convenienza ma non obbligatori)
+//   static ThemeData get lightTheme => buildTheme(
+//         brightness: Brightness.light,
+//         seedColor: Colors.grey.shade200,
+//         font: defaultFont,
+//         scaffoldColor: Colors.white,
+//       );
+
+//   static ThemeData get darkTheme => buildTheme(
+//         brightness: Brightness.dark,
+//         seedColor: Colors.grey.shade700,
+//         font: defaultFont,
+//         scaffoldColor: Colors.black,
+//       );
+
+//   static ThemeData get blueTheme => buildTheme(
+//         brightness: Brightness.light,
+//         seedColor: CustomColors.darkBlue,
+//         font: defaultFont,
+//         scaffoldColor: Colors.white,
+//       );
+// }
