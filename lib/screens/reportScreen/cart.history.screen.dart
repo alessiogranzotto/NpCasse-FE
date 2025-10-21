@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/app/constants/functional.dart';
 
 import 'package:np_casse/componenents/custom.alert.dialog.dart';
 import 'package:np_casse/componenents/custom.table.footer.dart';
@@ -77,9 +78,9 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               .add('Filter=stateFilter:::' + stateModel.id.toString());
         }
         if (filterModel['paymentTypeFilter'] != null) {
-          StateModel stateModel = filterModel['paymentTypeFilter'];
+          PaymentType stateModel = filterModel['paymentTypeFilter'];
           filterStringModel
-              .add('Filter=paymentTypeFilter:::' + stateModel.id.toString());
+              .add('Filter=paymentTypeFilter:::' + stateModel.toString());
         }
 
         if (filterModel['startDate'] != null) {
@@ -421,26 +422,16 @@ class _CartHistoryScreenState extends State<CartHistoryScreen> {
               },
               displayStringForOption: (state) => state.name,
             ),
-            CustomDropdownTableFilter<StateModel>(
-              loadOptions: () async {
-                final states = [
-                  StateModel(id: 'PaymentType.bancomat', name: 'Bancomat'),
-                  StateModel(
-                      id: 'PaymentType.cartaCredito', name: 'Carta di Credito'),
-                  StateModel(id: 'PaymentType.contanti', name: 'Contanti'),
-                  StateModel(id: 'PaymentType.assegni', name: 'Assegni'),
-                ];
-
-                return states;
-              },
+            CustomDropdownTableFilter<PaymentType>(
+              loadOptions: () async => PaymentType.values,
               chipFormatter: (value) =>
-                  'Tipo pagamento: ${value?.name ?? "None"}',
+                  'Pagamento: ${value?.name ?? "Nessuno"}',
               id: "paymentTypeFilter",
-              name: "Tipo pagamento",
-              onChanged: (StateModel? newValue) {
+              name: "Tipo di pagamento",
+              displayStringForOption: (e) => e.name,
+              onChanged: (PaymentType? newValue) {
                 setState(() {});
               },
-              displayStringForOption: (state) => state.name,
             ),
             DateTextTableFilter(
               id: "startDate",

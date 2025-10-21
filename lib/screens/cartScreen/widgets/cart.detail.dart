@@ -1207,6 +1207,8 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
 
                                                 // Logica in base al tipo di pagamento selezionato
                                                 switch (selected) {
+                                                  case PaymentType.Nessuno:
+                                                    throw UnimplementedError();
                                                   case PaymentType.Contanti:
                                                     _isSelectedPaymentVisible =
                                                         true;

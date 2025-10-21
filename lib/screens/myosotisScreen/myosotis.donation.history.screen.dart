@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:np_casse/app/constants/functional.dart';
+import 'package:np_casse/app/routes/app_routes.dart';
 
 import 'package:np_casse/componenents/custom.table.footer.dart';
 import 'package:np_casse/componenents/table.filter.dart';
 import 'package:np_casse/core/models/myosotis.donation.history.model.dart';
+import 'package:np_casse/core/models/myosotis.donation.model.dart';
 import 'package:np_casse/core/models/state.model.dart';
 import 'package:np_casse/core/notifiers/cart.notifier.dart';
 import 'package:np_casse/core/notifiers/report.cart.notifier.dart';
@@ -36,6 +39,217 @@ class _MyosotisDonationHistoryScreenState
   String? sortBy;
   String? sortDirection;
   String sortColumnAndDirection = '';
+  bool showAllColumns = false;
+
+  List<ReadOnlyTableColumn<String, Map<String, dynamic>>> getAllColumns() {
+    return [
+      TableColumn(
+        id: 'finalizeAction',
+        title: const Text(''),
+        cellBuilder: (context, item, index) {
+          if (item['stateDescription']?.toString() == '0-Pending') {
+            return Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // riduce larghezza al minimo
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      final currentMyosotisDonationModel =
+                          MyosotisDonationModel.fromJson(item);
+                      Navigator.of(context).pushNamed(
+                          AppRouter.myosotisDonationFinalizeRoute,
+                          arguments: currentMyosotisDonationModel);
+                    },
+                    icon: const Icon(Icons.account_balance),
+                    tooltip: 'Finalizza donazione',
+                    color: CustomColors.darkBlue,
+                    padding: EdgeInsets.zero, // rimuove padding extra
+                    constraints:
+                        const BoxConstraints(), // riduce lo spazio extra
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+        size: const FixedColumnSize(72),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'idMyosotisFormData',
+        title: const Text('#'),
+        cellBuilder: (context, item, index) => SelectableText(
+            item['idMyosotisFormData'].toString().padLeft(6, '0')),
+        size: const FixedColumnSize(100),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'nameMyosotisConfiguration',
+        title: const Text('Nome configurazione'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['nameMyosotisConfiguration']),
+        size: const FixedColumnSize(300),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'stateDescription',
+        title: const Text('Stato'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['stateDescription'].toString()),
+        size: const FixedColumnSize(150),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'dateDonation',
+        title: const Text('Data donazione'),
+        cellBuilder: (context, item, index) {
+          return SelectableText(
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(item['dateDonation']));
+        },
+        size: const FixedColumnSize(200),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'amountDonation',
+        title: const Text('Importo donazione'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['amountDonation'].toStringAsFixed(2)),
+        size: const FixedColumnSize(200),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'paymentType',
+        title: const Text('Tipo pagamento'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['paymentType'].toString().split('.').last),
+        size: const FixedColumnSize(150),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'name-surname-businessName',
+        title: const Text('Nominativo'),
+        cellBuilder: (context, item, index) => SelectableText(
+            (item['businessName'].toString()).isNotEmpty
+                ? item['businessName'].toString()
+                : item['name'].toString() + ' ' + item['surname'].toString()),
+        size: const FixedColumnSize(200),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'cf',
+        title: const Text('CF/PIVA'),
+        cellBuilder: (context, item, index) => SelectableText(item['cf'] != null
+            ? item['cf'].toString()
+            : item['piva'].toString()),
+        size: const FixedColumnSize(200),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'email',
+        title: const Text('Email'),
+        cellBuilder: (context, item, index) => SelectableText(item['email']),
+        size: const FixedColumnSize(300),
+        sortable: true,
+      ),
+      TableColumn(
+        id: 'phone',
+        title: const Text('Telefono'),
+        cellBuilder: (context, item, index) => SelectableText(item['phone']),
+        size: const FixedColumnSize(200),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'mobile',
+        title: const Text('Cellulare'),
+        cellBuilder: (context, item, index) => SelectableText(item['mobile']),
+        size: const FixedColumnSize(200),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'externalIdPayment1',
+        title: const Text('Id pagamento'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['externalIdPayment1']),
+        size: const FixedColumnSize(200),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'externalIdPayment2',
+        title: const Text('Id sottoscrizione'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['externalIdPayment2']),
+        size: const FixedColumnSize(200),
+        sortable: false,
+      ),
+
+      // TableColumn(
+      //   id: 'idGive',
+      //   title: const Text('Id give'),
+      //   cellBuilder: (context, item, index) => SelectableText(item['idGive']),
+      //   size: const FixedColumnSize(2000),
+      //   sortable: false,
+      // ),
+      TableColumn(
+        id: 'typeDonation',
+        title: const Text('Tipo donazione'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['typeDonation']),
+        size: const FixedColumnSize(150),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'frequency',
+        title: const Text('Frequenza donazione'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['frequency']),
+        size: const FixedColumnSize(200),
+        sortable: false,
+      ),
+      // TableColumn(
+      //   id: 'currency',
+      //   title: const Text('Valuta'),
+      //   cellBuilder: (context, item, index) =>
+      //       SelectableText(item['currency']),
+      //   size: const FixedColumnSize(100),
+      //   sortable: false,
+      // ),
+      TableColumn(
+        id: 'optionalField',
+        title: const Text('Dati opzionali'),
+        cellBuilder: (context, item, index) =>
+            SelectableText(item['optionalField']),
+        size: const FixedColumnSize(2000),
+        sortable: false,
+      ),
+      TableColumn(
+        id: 'actions',
+        title: const Text('Azioni'),
+        cellBuilder: (context, item, index) => PopupMenuButton<int>(
+          icon: const Icon(Icons.more_vert),
+          itemBuilder: (context) => [
+            if (item['stateDescription']?.toString() == '0-Pending')
+              PopupMenuItem<int>(
+                value: 1,
+                child: const Text('Finalizza donazione'),
+              ),
+          ],
+          onSelected: (value) {
+            if (value == 1) {
+              final currentMyosotisDonationModel =
+                  MyosotisDonationModel.fromJson(item);
+              Navigator.of(context).pushNamed(
+                  AppRouter.myosotisDonationFinalizeRoute,
+                  arguments: currentMyosotisDonationModel);
+            }
+          },
+        ),
+        size: const FixedColumnSize(100),
+      ),
+    ];
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -79,9 +293,9 @@ class _MyosotisDonationHistoryScreenState
               .add('Filter=stateFilter:::' + stateModel.id.toString());
         }
         if (filterModel['paymentTypeFilter'] != null) {
-          StateModel stateModel = filterModel['paymentTypeFilter'];
+          PaymentType stateModel = filterModel['paymentTypeFilter'];
           filterStringModel
-              .add('Filter=paymentTypeFilter:::' + stateModel.id.toString());
+              .add('Filter=paymentTypeFilter:::' + stateModel.toString());
         }
         if (filterModel['startDate'] != null) {
           String cStartDate = filterModel['startDate'];
@@ -166,6 +380,24 @@ class _MyosotisDonationHistoryScreenState
     UserAppInstitutionModel cUserAppInstitutionModel =
         authenticationNotifier.getSelectedUserAppInstitution();
 
+    final columns = showAllColumns
+        ? getAllColumns()
+        : getAllColumns().where((col) {
+            const visibleIds = [
+              'finalizeAction',
+              'name-surname-businessName',
+              'typeDonation',
+              'idMyosotisFormData',
+              'nameMyosotisConfiguration',
+              'stateDescription',
+              'dateDonation',
+              'amountDonation',
+              'paymentType',
+              'actions'
+            ];
+            return visibleIds.contains(col.id);
+          }).toList();
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -185,27 +417,36 @@ class _MyosotisDonationHistoryScreenState
           pageSizes: const [10, 20, 50],
           fetcher: (pageSize, sortModel, filterModel, pageToken) =>
               fetchData(pageSize, sortModel, filterModel, pageToken),
-          filterBarChild: PopupMenuButton(
-            icon: const Icon(Icons.more_vert_outlined),
-            itemBuilder: (context) => <PopupMenuEntry>[
-              // PopupMenuItem(
-              //   child: const Text("Seleziona tutti"),
-              //   onTap: () {
-              //     tableController.selectAllRows();
-              //   },
-              // ),
-              // PopupMenuItem(
-              //   child: const Text("Deseleziona tutti"),
-              //   onTap: () {
-              //     tableController.unselectAllRows();
-              //   },
-              // ),
-              // const PopupMenuDivider(),
-              PopupMenuItem(
-                child: const Text("Export Excel"),
-                onTap: () {
-                  handleDownloadDonationList(context);
+          filterBarChild: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Checkbox(
+                    value: showAllColumns,
+                    onChanged: (value) {
+                      setState(() {
+                        showAllColumns = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text("Mostra tutte le colonne"),
+                ],
+              ),
+              SizedBox(width: 32),
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert_outlined),
+                onSelected: (value) {
+                  if (value == 'export_excel') {
+                    handleDownloadDonationList(context);
+                  }
                 },
+                itemBuilder: (context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'export_excel',
+                    child: Text("Export Excel"),
+                  ),
+                ],
               ),
             ],
           ),
@@ -214,165 +455,12 @@ class _MyosotisDonationHistoryScreenState
             totalAmount: totalAmount,
             controller: tableController,
           ),
-          columns: [
-            // RowSelectorColumn(),
-            TableColumn(
-              id: 'idMyosotisFormData',
-              title: const Text('#'),
-              cellBuilder: (context, item, index) => SelectableText(
-                  item['idMyosotisFormData'].toString().padLeft(6, '0')),
-              size: const FixedColumnSize(100),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'nameMyosotisConfiguration',
-              title: const Text('Nome configurazione'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['nameMyosotisConfiguration']),
-              size: const FixedColumnSize(300),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'name-surname-businessName',
-              title: const Text('Nominativo'),
-              cellBuilder: (context, item, index) => SelectableText(
-                  (item['businessName'].toString()).isNotEmpty
-                      ? item['businessName'].toString()
-                      : item['name'].toString() +
-                          ' ' +
-                          item['surname'].toString()),
-              size: const FixedColumnSize(200),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'cf',
-              title: const Text('CF/PIVA'),
-              cellBuilder: (context, item, index) => SelectableText(
-                  item['cf'] != null
-                      ? item['cf'].toString()
-                      : item['piva'].toString()),
-              size: const FixedColumnSize(200),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'email',
-              title: const Text('Email'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['email']),
-              size: const FixedColumnSize(300),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'phone',
-              title: const Text('Telefono'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['phone']),
-              size: const FixedColumnSize(200),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'mobile',
-              title: const Text('Cellulare'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['mobile']),
-              size: const FixedColumnSize(200),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'dateDonation',
-              title: const Text('Data donazione'),
-              cellBuilder: (context, item, index) {
-                return SelectableText(DateFormat('yyyy-MM-dd HH:mm:ss')
-                    .format(item['dateDonation']));
-              },
-              size: const FixedColumnSize(200),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'amountDonation',
-              title: const Text('Importo donazione'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['amountDonation'].toStringAsFixed(2)),
-              size: const FixedColumnSize(200),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'paymentType',
-              title: const Text('Tipo pagamento'),
-              cellBuilder: (context, item, index) => SelectableText(
-                  item['paymentType'].toString().split('.').last),
-              size: const FixedColumnSize(150),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'externalIdPayment1',
-              title: const Text('Id pagamento'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['externalIdPayment1']),
-              size: const FixedColumnSize(200),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'externalIdPayment2',
-              title: const Text('Id sottoscrizione'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['externalIdPayment2']),
-              size: const FixedColumnSize(200),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'stateDescription',
-              title: const Text('Stato'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['stateDescription'].toString()),
-              size: const FixedColumnSize(150),
-              sortable: true,
-            ),
-            TableColumn(
-              id: 'idGive',
-              title: const Text('Id give'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['idGive']),
-              size: const FixedColumnSize(2000),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'typeDonation',
-              title: const Text('Tipo donazione'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['typeDonation']),
-              size: const FixedColumnSize(150),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'frequency',
-              title: const Text('Frequenza donazione'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['frequency']),
-              size: const FixedColumnSize(200),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'currency',
-              title: const Text('Valuta'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['currency']),
-              size: const FixedColumnSize(100),
-              sortable: false,
-            ),
-            TableColumn(
-              id: 'optionalField',
-              title: const Text('Dati opzionali'),
-              cellBuilder: (context, item, index) =>
-                  SelectableText(item['optionalField']),
-              size: const FixedColumnSize(2000),
-              sortable: false,
-            ),
-          ],
+          columns: columns,
           filters: [
             CustomDropdownTableFilter<StateModel>(
               loadOptions: () async {
                 final states = [
+                  StateModel(id: 0, name: '0-Pending'),
                   StateModel(id: 1, name: '1-Creato'),
                   StateModel(id: 2, name: '2-Acquisito'),
                   StateModel(id: 3, name: '3-Ringraziato'),
@@ -386,6 +474,17 @@ class _MyosotisDonationHistoryScreenState
                 setState(() {});
               },
               displayStringForOption: (state) => state.name,
+            ),
+            CustomDropdownTableFilter<PaymentType>(
+              loadOptions: () async => PaymentType.values,
+              chipFormatter: (value) =>
+                  'Pagamento: ${value?.name ?? "Nessuno"}',
+              id: "paymentTypeFilter",
+              name: "Tipo di pagamento",
+              displayStringForOption: (e) => e.name,
+              onChanged: (PaymentType? newValue) {
+                setState(() {});
+              },
             ),
             DateTextTableFilter(
               id: "startDate",

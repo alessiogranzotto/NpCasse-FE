@@ -297,7 +297,10 @@ class _MyosotisConfigurationScreenState
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   AppRouter.myosotisConfigurationDetailRoute,
-                  arguments: MyosotisConfigurationModel.empty(),
+                  arguments: MyosotisConfigurationModelMultipleArgument(
+                      opType: "New",
+                      cMyosotisConfigurationModel:
+                          MyosotisConfigurationModel.empty()),
                 );
               },
               //backgroundColor: Colors.deepOrangeAccent,

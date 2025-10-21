@@ -11,20 +11,26 @@ import 'package:np_casse/core/models/myosotis.configuration.model.dart';
 
 class ImagePickerCard extends StatelessWidget {
   const ImagePickerCard(
-      {required this.label, required this.imageBase64, required this.onPick});
+      {required this.label,
+      required this.imageBase64,
+      required this.onPick,
+      required this.onClear});
 
   final String label;
   final String imageBase64;
   final void Function(String) onPick;
+  final VoidCallback onClear;
 
   Future<void> _pick() async {
     final res = await ImageUtils.imageSelectorFile();
-    onPick(res);
+    if (res.isNotEmpty) {
+      onPick(res);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-// Supponendo che imageBase64 sia una variabile esterna di tipo String?
+    // Supponendo che imageBase64 sia una variabile esterna di tipo String?
     Widget imageWidget;
 
     try {
@@ -45,7 +51,7 @@ class ImagePickerCard extends StatelessWidget {
     }
 
     return SizedBox(
-      width: 240,
+      width: 270,
       child: Card(
         elevation: 8,
         child: Column(
@@ -59,12 +65,24 @@ class ImagePickerCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(label),
-                Tooltip(
-                  message: 'Upload $label',
-                  child: IconButton(
-                    icon: const Icon(Icons.upload, size: 20),
-                    onPressed: _pick,
-                  ),
+                SizedBox(width: 20),
+                Row(
+                  children: [
+                    Tooltip(
+                      message: 'Upload $label',
+                      child: IconButton(
+                        icon: const Icon(Icons.upload, size: 20),
+                        onPressed: _pick,
+                      ),
+                    ),
+                    Tooltip(
+                      message: 'Cancella $label',
+                      child: IconButton(
+                        icon: const Icon(Icons.delete_outline, size: 20),
+                        onPressed: onClear,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -338,16 +356,17 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
     super.initState();
     optionalFieldItem = widget.optionalFieldList
         .map((d) => OptionalField(
-              labelOptionalField: d.labelOptionalField,
-              typeOptionalField: d.typeOptionalField,
-              selectableDDOptionalField: List.from(d.selectableDDOptionalField),
-              mantainOptionalFieldOnTransactionNotifier:
-                  d.mantainOptionalFieldOnTransactionNotifier,
-              giveFieldNameOptionalField: d.giveFieldNameOptionalField,
-              mandatoryOptionalFieldNotifier: d.mandatoryOptionalFieldNotifier,
-              textTypeOptionalField: d.textTypeOptionalField,
-              // availableTextTypeOptionalField:
-              //     List.from(d.availableTextTypeOptionalField),
+            labelOptionalField: d.labelOptionalField,
+            typeOptionalField: d.typeOptionalField,
+            selectableDDOptionalField: List.from(d.selectableDDOptionalField),
+            mantainOptionalFieldOnTransactionNotifier:
+                d.mantainOptionalFieldOnTransactionNotifier,
+            giveFieldNameOptionalField: d.giveFieldNameOptionalField,
+            mandatoryOptionalFieldNotifier: d.mandatoryOptionalFieldNotifier,
+            textTypeOptionalField: d.textTypeOptionalField,
+            onOtherActivateFreeFieldNotifier: d.onOtherActivateFreeFieldNotifier
+            // availableTextTypeOptionalField:
+            //     List.from(d.availableTextTypeOptionalField),
             ))
         .toList();
     labelOptionalFieldController = optionalFieldItem
@@ -357,7 +376,10 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
         .map((d) => TextEditingController(text: d.giveFieldNameOptionalField))
         .toList();
     showAvailableItemOptionalFieldList = widget.optionalFieldList.map((d) {
-      return ValueNotifier<bool>(d.typeOptionalField == 'Elenco a discesa');
+      return ValueNotifier<bool>((d.typeOptionalField == 'Elenco a discesa' ||
+          d.typeOptionalField == 'Elenco a discesa multiplo' ||
+          d.typeOptionalField == 'Satisfaction STAR' ||
+          d.typeOptionalField == 'Satisfaction FACE'));
     }).toList();
   }
 
@@ -383,6 +405,7 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
         mantainOptionalFieldOnTransactionNotifier: ValueNotifier(false),
         mandatoryOptionalFieldNotifier: ValueNotifier(false),
         textTypeOptionalField: widget.availableTextTypeOptionalField.first,
+        onOtherActivateFreeFieldNotifier: ValueNotifier(false),
         // availableTextTypeOptionalField: []
       ));
       labelOptionalFieldController.add(TextEditingController());
@@ -410,9 +433,7 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
     notifyParent();
   }
 
-  void onChipTapped(String topping, int index) {
-    // Se modifichi qualcosa qui, chiama notifyParent anche qui
-  }
+  void onChipTapped(String topping, int index) {}
 
   void onTypeOptionalFieldChanged(String? value, int index) {
     if (value == null) return;
@@ -422,7 +443,10 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
       optionalFieldItem[index].textTypeOptionalField =
           widget.availableTextTypeOptionalField.first;
       showAvailableItemOptionalFieldList[index].value =
-          value == 'Elenco a discesa';
+          (value == 'Elenco a discesa' ||
+              value == 'Elenco a discesa multiplo' ||
+              value == 'Satisfaction STAR' ||
+              value == 'Satisfaction FACE');
     });
     notifyParent();
   }
@@ -431,8 +455,6 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
     if (value == null) return;
     setState(() {
       optionalFieldItem[index].textTypeOptionalField = value;
-      showAvailableItemOptionalFieldList[index].value =
-          value == 'Elenco a discesa';
     });
     notifyParent();
   }
@@ -495,7 +517,7 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              flex: 1,
+              flex: 2,
               child: Align(
                 alignment: Alignment.center,
                 child: CustomTextFormField(
@@ -511,15 +533,16 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
             Expanded(
-              flex: 1,
+              flex: 2,
               child: Center(
                 child: ValueListenableBuilder<bool>(
                   valueListenable:
                       optionalField.mantainOptionalFieldOnTransactionNotifier,
                   builder: (context, value, child) {
                     return CheckboxListTile(
+                      dense: true,
                       title: Text('Mantieni valore'),
                       value: value,
                       onChanged: (bool? newValue) {
@@ -532,14 +555,15 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
             Expanded(
-              flex: 1,
+              flex: 2,
               child: Center(
                 child: ValueListenableBuilder<bool>(
                   valueListenable: optionalField.mandatoryOptionalFieldNotifier,
                   builder: (context, value, child) {
                     return CheckboxListTile(
+                      dense: true,
                       title: Text('Elemento obbligatorio'),
                       value: value,
                       onChanged: (bool? newValue) {
@@ -552,9 +576,9 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
             Expanded(
-              flex: 1,
+              flex: 2,
               child: Align(
                 alignment: Alignment.center,
                 child: CustomTextFormField(
@@ -570,15 +594,15 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
             Expanded(
-              flex: 1,
+              flex: 3,
               child: Align(
                 alignment: Alignment.center,
                 child: CustomDropDownButtonFormField(
                   enabled: true,
                   actualValue: optionalField.typeOptionalField,
-                  labelText: 'Tipo elemento opzionale',
+                  labelText: 'Tipo elemento',
                   listOfValue: widget.availableTypeOptionalField
                       .map((value) => DropdownMenuItem(
                             value: value,
@@ -586,16 +610,16 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                           ))
                       .toList(),
                   onItemChanged: (value) {
-                    showAvailableItemOptionalFieldList[index].value =
-                        (value ?? '') == 'Elenco a discesa';
+                    // showAvailableItemOptionalFieldList[index].value =
+                    //     (value ?? '') == 'Elenco a discesa';
                     onTypeOptionalFieldChanged(value, index);
                   },
                 ),
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
             Expanded(
-              flex: 2,
+              flex: 6,
               child: ValueListenableBuilder<bool>(
                 valueListenable: showAvailableItemOptionalFieldList[index],
                 builder: (context, value, child) {
@@ -650,9 +674,9 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                                       ))
                                   .toList(),
                               onItemChanged: (value) {
-                                showAvailableItemOptionalFieldList[index]
-                                        .value =
-                                    (value ?? '') == 'Elenco a discesa';
+                                // showAvailableItemOptionalFieldList[index]
+                                //         .value =
+                                //     (value ?? '') == 'Elenco a discesa';
                                 onTextTypeOptionalFieldChanged(value, index);
                               },
                             ),
@@ -661,7 +685,29 @@ class _OptionalFieldWidgetState extends State<OptionalFieldWidget> {
                 },
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 2),
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable:
+                      optionalField.onOtherActivateFreeFieldNotifier,
+                  builder: (context, value, child) {
+                    return CheckboxListTile(
+                      dense: true,
+                      title: Text('Testo su altr*'),
+                      value: value,
+                      onChanged: (bool? newValue) {
+                        optionalField.onOtherActivateFreeFieldNotifier.value =
+                            newValue ?? false;
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(width: 2),
             Align(
               alignment: Alignment.center,
               child: IconButton(

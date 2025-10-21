@@ -47,43 +47,45 @@ class VersionServiceImpl implements VersionService {
       final current = await getCurrentVersion();
       final latest = await getLatestVersion();
       if (current != latest) {
-        if (context.mounted) {
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text("Nuova versione disponibile",
-                  style: Theme.of(context).textTheme.titleSmall),
-              content: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                      "È disponibile una nuova versione. Aggiorna per continuare."),
-                  const SizedBox(height: 16),
-                  Text("Versione attuale: $current"),
-                  const SizedBox(height: 8),
-                  Text("Versione nuova: $latest"),
-                ],
-              ),
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue, // colore del bottone
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: () async {
-                    // Salva la versione corrente solo quando l’utente clicca
-                    await saveCurrentVersion(latest);
-                    html.window.location.reload();
-                  },
-                  child: const Text("Aggiorna"),
-                ),
-              ],
-            ),
-          );
-        }
+        // if (context.mounted) {
+        //   await showDialog(
+        //     context: context,
+        //     barrierDismissible: false,
+        //     builder: (context) => AlertDialog(
+        //       title: Text("Nuova versione disponibile",
+        //           style: Theme.of(context).textTheme.titleSmall),
+        //       content: Column(
+        //         mainAxisAlignment: MainAxisAlignment.start,
+        //         mainAxisSize: MainAxisSize.min,
+        //         children: [
+        //           const Text(
+        //               "È disponibile una nuova versione. Aggiorna per continuare."),
+        //           const SizedBox(height: 16),
+        //           Text("Versione attuale: $current"),
+        //           const SizedBox(height: 8),
+        //           Text("Versione nuova: $latest"),
+        //         ],
+        //       ),
+        //       actions: [
+        //         ElevatedButton(
+        //           style: ElevatedButton.styleFrom(
+        //             backgroundColor: Colors.blue, // colore del bottone
+        //             foregroundColor: Colors.white,
+        //             textStyle: const TextStyle(fontWeight: FontWeight.bold),
+        //           ),
+        //           onPressed: () async {
+        //             // Salva la versione corrente solo quando l’utente clicca
+        //             await saveCurrentVersion(latest);
+        //             html.window.location.reload();
+        //           },
+        //           child: const Text("Aggiorna"),
+        //         ),
+        //       ],
+        //     ),
+        //   );
+        // }
+        await saveCurrentVersion(latest);
+        html.window.location.reload();
       }
     } catch (e) {
       // Ignora errori, non vogliamo bloccare l'app

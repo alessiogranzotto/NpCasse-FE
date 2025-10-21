@@ -44,7 +44,7 @@ class VersionServiceImpl implements VersionService {
 
       if (checkPermission) {
         Map<Permission, PermissionStatus> statuses = await [
-          Permission.storage,
+          // Permission.storage,
           Permission.manageExternalStorage,
           Permission.requestInstallPackages,
         ].request();

@@ -47,7 +47,7 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(6.0),
       child: TextFormField(
         cursorColor: Theme.of(context).colorScheme.inversePrimary,
         controller: controller,
@@ -72,7 +72,8 @@ class CustomTextFormField extends StatelessWidget {
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           labelText: labelText,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: hintText?.isNotEmpty == true ? hintText : labelText,
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
           labelStyle: Theme.of(context).textTheme.labelLarge!,
           hintStyle: Theme.of(context)
               .textTheme

@@ -55,7 +55,6 @@ class ProductAttributeMappingAPI {
         },
         body: jsonEncode(productAttributeMappingModelList));
 
-    print(jsonEncode(productAttributeMappingModelList));
     if (response.statusCode == 200) {
       final dynamic body = response.body;
       return body;

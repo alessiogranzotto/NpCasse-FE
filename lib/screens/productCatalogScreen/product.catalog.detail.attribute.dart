@@ -521,7 +521,6 @@ class _ProductAttributeDetailState
                       return null;
                     },
                     onSelectionChange: (selectedItems) {
-                      debugPrint("OnSelectionChange: $selectedItems");
                       setState(() {
                         selectedProductAttributeModel = selectedItems;
                         buttonCreateVariantEnabled = false;

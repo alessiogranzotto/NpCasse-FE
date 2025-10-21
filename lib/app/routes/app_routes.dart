@@ -4,6 +4,7 @@ import 'package:np_casse/core/models/comunication.model.dart';
 import 'package:np_casse/core/models/comunication.sending.model.dart';
 import 'package:np_casse/core/models/give.model.dart';
 import 'package:np_casse/core/models/myosotis.configuration.model.dart';
+import 'package:np_casse/core/models/myosotis.donation.model.dart';
 import 'package:np_casse/core/models/product.attribute.mapping.model.dart';
 import 'package:np_casse/core/models/product.attribute.model.dart';
 import 'package:np_casse/core/models/product.catalog.model.dart';
@@ -27,6 +28,7 @@ import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.recipien
 import 'package:np_casse/screens/comunicationSendingScreen/mass.sending.statistics.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.detail.dart';
 import 'package:np_casse/screens/myosotisScreen/myosotis.configuration.screen.dart';
+import 'package:np_casse/screens/myosotisScreen/myosotis.donation.finalize.screen.dart';
 import 'package:np_casse/screens/onBoardingScreen/onBoarding.screen.dart';
 import 'package:np_casse/screens/taskScreen/task.planned.detail.screen.dart';
 import 'package:np_casse/screens/productAttributeScreen/product.attribute.detail.screen.dart';
@@ -56,6 +58,16 @@ class ShManageMultipleArgument {
   ShManageMultipleArgument({
     required this.idCart,
     required this.cStakeholderGiveModelSearch,
+  });
+}
+
+class MyosotisConfigurationModelMultipleArgument {
+  final String opType;
+  final MyosotisConfigurationModel cMyosotisConfigurationModel;
+
+  MyosotisConfigurationModelMultipleArgument({
+    required this.opType,
+    required this.cMyosotisConfigurationModel,
   });
 }
 
@@ -126,6 +138,9 @@ class AppRouter {
 
   static const String receiptPdf = "/receiptPdf";
   static const String taskPlannedDetailRoute = "/taskPlannedDetail";
+
+  static const String myosotisDonationFinalizeRoute =
+      "/myosotisDonationFinalize";
 
 // Route _createRoute() {
 //   return PageRouteBuilder(
@@ -349,10 +364,12 @@ class AppRouter {
 
       case myosotisConfigurationDetailRoute:
         {
+          final args =
+              settings.arguments as MyosotisConfigurationModelMultipleArgument;
           return MaterialPageRoute(
             builder: (context) => MyosotisConfigurationDetailScreen(
-              myosotisConfiguration: ModalRoute.of(context)!.settings.arguments
-                  as MyosotisConfigurationModel,
+              opType: args.opType,
+              myosotisConfiguration: args.cMyosotisConfigurationModel,
             ),
             settings: settings,
           );
@@ -462,6 +479,16 @@ class AppRouter {
             builder: (context) => TaskPlannedDetailScreen(
               taskPlanned: ModalRoute.of(context)!.settings.arguments
                   as TaskPlannedModel,
+            ),
+            settings: settings,
+          );
+        }
+      case myosotisDonationFinalizeRoute:
+        {
+          return MaterialPageRoute(
+            builder: (context) => MyosotisDonationFinalizeScreen(
+              myosotisDonationModel: ModalRoute.of(context)!.settings.arguments
+                  as MyosotisDonationModel,
             ),
             settings: settings,
           );

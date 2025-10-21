@@ -41,7 +41,6 @@ class MassSendingAPI {
     int idMassSending = massSendingModel.idMassSending;
     final http.Response response;
     var t = jsonEncode(massSendingModel);
-    print(t);
     if (idMassSending == 0) {
       final Uri uri =
           Uri.parse('${ApiRoutes.baseComunicationSendingURL}/Mass-sending/');

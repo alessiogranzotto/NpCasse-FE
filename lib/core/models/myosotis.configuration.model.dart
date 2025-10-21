@@ -143,6 +143,7 @@ class MyosotisConfigurationDetailModel {
       required this.idSubCategoryCausalDonation,
       required this.idGiveFromProjectOrFixedValue,
       required this.customIdGive,
+      required this.showCausalBeforeAmount,
       required this.showPrivacy,
       required this.textPrivacy,
       required this.urlPrivacy,
@@ -183,6 +184,7 @@ class MyosotisConfigurationDetailModel {
   //
   late String idGiveFromProjectOrFixedValue;
   late List<String> customIdGive;
+  late bool showCausalBeforeAmount;
   //
   late String causalDonationText;
   late int idFormGive;
@@ -232,6 +234,7 @@ class MyosotisConfigurationDetailModel {
 
     idGiveFromProjectOrFixedValue = "";
     customIdGive = [];
+    showCausalBeforeAmount = false;
     causalDonationText = '';
     idFormGive = 0;
     idSubCategoryCausalDonation = 0;
@@ -274,18 +277,18 @@ class MyosotisConfigurationDetailModel {
       formFont = json['formFont'];
     }
 
-    showLogo = json['showLogo'];
+    showLogo = json['showLogo'] == true;
     logoEncoded = json['logoEncoded'] ?? '';
     bigImageString = json['bigImageString'];
     smallImageString = json['smallImageString'];
     title = json['title'];
     subtitle = json['subtitle'];
-    showPreestablishedAmount = json['showPreestablishedAmount'];
+    showPreestablishedAmount = json['showPreestablishedAmount'] == true;
 
     preestablishedAmount = List.from(json['preestablishedAmount']);
-    showFreePrice = json['showFreePrice'];
+    showFreePrice = json['showFreePrice'] == true;
 
-    showContinuousDonation = json['showContinuousDonation'];
+    showContinuousDonation = json['showContinuousDonation'] == true;
 
     if (json['frequencyContinuousDonation'] != null) {
       frequencyContinuousDonation =
@@ -309,6 +312,8 @@ class MyosotisConfigurationDetailModel {
     } else {
       customIdGive = List.empty();
     }
+    showCausalBeforeAmount = json['showCausalBeforeAmount'] == true;
+
     causalDonationText = json['causalDonationText'];
     idFormGive = json['idFormGive'];
     idSubCategoryCausalDonation = json['idSubCategoryCausalDonation'];
@@ -321,18 +326,18 @@ class MyosotisConfigurationDetailModel {
       productCausalDonation = List.empty();
     }
 
-    showPrivacy = json['showPrivacy'];
+    showPrivacy = json['showPrivacy'] == true;
     textPrivacy = json['textPrivacy'];
     urlPrivacy = json['urlPrivacy'];
-    isMandatoryPrivacy = json['isMandatoryPrivacy'];
-    showNewsletter = json['showNewsletter'];
+    isMandatoryPrivacy = json['isMandatoryPrivacy'] == true;
+    showNewsletter = json['showNewsletter'] == true;
     textNewsletter = json['textNewsletter'];
-    isMandatoryNewsletter = json['isMandatoryNewsletter'];
+    isMandatoryNewsletter = json['isMandatoryNewsletter'] == true;
 
     visiblePersonalFormField = List.from(json['visiblePersonalFormField']);
     mandatoryPersonalFormField = List.from(json['mandatoryPersonalFormField']);
 
-    showCompanyForm = json['showCompanyForm'];
+    showCompanyForm = json['showCompanyForm'] == true;
     visibleCompanyFormField = List.from(json['visibleCompanyFormField']);
     mandatoryCompanyFormField = List.from(json['mandatoryCompanyFormField']);
 
@@ -397,6 +402,7 @@ class MyosotisConfigurationDetailModel {
 
     data['idGiveFromProjectOrFixedValue'] = idGiveFromProjectOrFixedValue;
     data['customIdGive'] = customIdGive;
+    data['showCausalBeforeAmount'] = showCausalBeforeAmount;
 
     data['showPrivacy'] = showPrivacy;
     data['textPrivacy'] = textPrivacy;
@@ -626,6 +632,7 @@ class OptionalField {
     required this.giveFieldNameOptionalField,
     required this.mandatoryOptionalFieldNotifier,
     required this.textTypeOptionalField,
+    required this.onOtherActivateFreeFieldNotifier,
     // required this.availableTextTypeOptionalField
   });
   late String labelOptionalField;
@@ -635,6 +642,7 @@ class OptionalField {
   late String giveFieldNameOptionalField;
   late ValueNotifier<bool> mandatoryOptionalFieldNotifier;
   late String textTypeOptionalField;
+  late ValueNotifier<bool> onOtherActivateFreeFieldNotifier;
   // late List<String> availableTextTypeOptionalField;
 
   OptionalField.empty() {
@@ -646,6 +654,7 @@ class OptionalField {
     mandatoryOptionalFieldNotifier = ValueNotifier(false);
     // availableTextTypeOptionalField = [];
     textTypeOptionalField = '';
+    onOtherActivateFreeFieldNotifier = ValueNotifier(false);
   }
 
   // JSON deserialization
@@ -659,6 +668,8 @@ class OptionalField {
     mandatoryOptionalFieldNotifier =
         ValueNotifier(json['mandatoryOptionalField'] ?? false);
     textTypeOptionalField = json['textTypeOptionalField'];
+    onOtherActivateFreeFieldNotifier =
+        ValueNotifier(json['onOtherActivateFreeField'] ?? false);
     // availableTextTypeOptionalField =
     //     List.from(json['availableTextTypeOptionalField']);
   }
@@ -672,6 +683,7 @@ class OptionalField {
     data['giveFieldNameOptionalField'] = giveFieldNameOptionalField;
     data['mandatoryOptionalField'] = mandatoryOptionalFieldNotifier.value;
     data['textTypeOptionalField'] = textTypeOptionalField;
+    data['onOtherActivateFreeField'] = onOtherActivateFreeFieldNotifier.value;
     // data['availableTextTypeOptionalField'] = availableTextTypeOptionalField;
 
     return data;

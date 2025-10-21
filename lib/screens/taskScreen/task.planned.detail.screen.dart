@@ -388,7 +388,6 @@ class _ProductAttributeDetailState extends State<TaskPlannedDetailScreen> {
                                   selectedRangeExtractionTaskPlanned = value;
                                 },
                                 validator: (value) {
-                                  print(value);
                                   if (selectedRangeExtractionTaskPlanned ==
                                       null) {
                                     return AppStrings
@@ -511,7 +510,6 @@ class _ProductAttributeDetailState extends State<TaskPlannedDetailScreen> {
                                   selectedExportModeTaskPlanned = value;
                                 },
                                 validator: (value) {
-                                  print(value);
                                   if (selectedExportModeTaskPlanned == null) {
                                     return AppStrings
                                         .pleaseEnterExportModeTaskPlanned;
@@ -561,7 +559,6 @@ class _ProductAttributeDetailState extends State<TaskPlannedDetailScreen> {
                                     }
                                   },
                                   validator: (value) {
-                                    print(value);
                                     if (selectedSendModeTaskPlanned.value ==
                                         null) {
                                       return AppStrings

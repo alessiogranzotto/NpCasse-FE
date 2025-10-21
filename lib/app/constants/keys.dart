@@ -9,7 +9,7 @@ class AppKeys {
   static String onBoardDone = 'onBoard';
 
   static String appName = 'np_casse';
-  static String version = '1.21.005';
+  static String version = '1.21.006';
 }
 
 // class AppRegex {
@@ -259,7 +259,7 @@ class AppStrings {
   static const pleaseEnterFrequencyContinuousDonation =
       "Inserire frequenze donazioni continuative";
 
-  static const labelOptionalField = "Etichetta campo opzionale";
+  static const labelOptionalField = "Etichetta campo ";
   static const giveFieldOptionalField = "Campo GIVE";
 
   static const availableTypeOptionalField = 'Elementi selezionabili';
@@ -347,6 +347,16 @@ class AppStrings {
   static const pleaseEnterRangeExtractionTaskPlanned =
       "Inserire modalità estrazione dati";
   static const timePlanTaskPlanned = "Orario esecuzione";
+
+  static const bankAccountIban = 'Iban del conto';
+  static const bankAccountHolder = 'Titolare del conto';
+
+  static const creditCardHolder = 'Titolare carta di credito';
+  static const creditCardNumber = 'Numero carta di credito';
+  static const creditCardExpireDate = 'Scadenza carta di credito';
+  static const creditCardCVV = 'CVV carta di credito';
+
+  static const showCausalBeforeNotifier = 'Mostra causali prima di importi';
 }
 
 class AppColors {

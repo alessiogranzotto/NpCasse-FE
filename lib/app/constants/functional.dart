@@ -77,6 +77,7 @@ const List<String> idGivePaymentType = [
 ];
 
 enum PaymentType {
+  Nessuno,
   Contanti,
   Bancomat,
   CartaCredito,
@@ -161,6 +162,8 @@ final Map<String, Map<String, dynamic>> paymentTypeInfo = {
 
 String? mapPaymentTypeToDbValue(PaymentType type) {
   switch (type) {
+    case PaymentType.Nessuno:
+      return "";
     case PaymentType.Contanti:
       return "IdPagamentoContante";
     case PaymentType.Bancomat:

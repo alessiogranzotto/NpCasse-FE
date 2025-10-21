@@ -44,9 +44,7 @@ class ProductCatalogAPI {
       {required String? token,
       required ProductCatalogModel productCatalogModel}) async {
     int idProduct = productCatalogModel.idProduct;
-    if (kDebugMode) {
-      print(jsonEncode(productCatalogModel));
-    }
+
     final http.Response response;
     if (idProduct == 0) {
       final Uri uri = Uri.parse('${ApiRoutes.baseProductURL}');

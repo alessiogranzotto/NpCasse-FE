@@ -95,9 +95,6 @@ class MyosotisDonationModel {
   late final String stateDescription;
   late final String nameMyosotisConfiguration;
 
-  // Empty constructor with default values
-  MyosotisDonationModel.empty() {}
-  // JSON deserialization
   MyosotisDonationModel.fromJson(Map<String, dynamic> json) {
     idMyosotisFormData = json['idMyosotisFormData'];
     idInstitution = json['idInstitution'];
@@ -129,11 +126,20 @@ class MyosotisDonationModel {
     consentNewletter = json['consentNewletter'] ?? 0;
     consentPrivacy = json['consentPrivacy'] ?? 0;
 
-    var dateTimeC =
-        DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateDonation'], true);
-    var dateLocalC = dateTimeC.toLocal();
+    // var dateTimeC =
+    //     DateFormat("yyyy-MM-ddTHH:mm:ss").parse(json['dateDonation'], true);
+    // var dateLocalC = dateTimeC.toLocal();
 
-    dateDonation = dateLocalC;
+    var rawDate = json['dateDonation'];
+
+    if (rawDate is String) {
+      dateDonation = DateTime.parse(rawDate).toLocal();
+    } else if (rawDate is DateTime) {
+      dateDonation = rawDate.toLocal();
+    } else {
+      dateDonation = DateTime.now(); // fallback di sicurezza
+    }
+
     idProduct = json['idProduct'];
     idSubCategory = json['idSubCategory'];
     amountDonation = json['amountDonation'];

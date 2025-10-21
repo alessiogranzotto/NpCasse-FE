@@ -24,9 +24,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 class MyosotisConfigurationDetailScreen extends StatefulWidget {
   final MyosotisConfigurationModel myosotisConfiguration;
+  final String opType;
 
   const MyosotisConfigurationDetailScreen(
-      {super.key, required this.myosotisConfiguration});
+      {super.key, required this.opType, required this.myosotisConfiguration});
   @override
   State<MyosotisConfigurationDetailScreen> createState() =>
       _MyosotisConfigurationDetailState();
@@ -147,6 +148,10 @@ class _MyosotisConfigurationDetailState
 
   //CUSTOM FIXED ID GIVE
   late List<String> customIdGive = [];
+
+  //SHOW CAUSAL BEFORE AMOUNT
+  final ValueNotifier<bool> showCausalBeforeAmountNotifier =
+      ValueNotifier<bool>(false);
 
   //ID FORM GIVE
   late final TextEditingController idFormGiveConfigurationController;
@@ -627,6 +632,11 @@ class _MyosotisConfigurationDetailState
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.customIdGive =
         myosotisConfigurationDetailModel.customIdGive;
 
+    //SHOW CAUSAL BEFORE AMOUNT
+    widget.myosotisConfiguration.myosotisConfigurationDetailModel
+            .showCausalBeforeAmount =
+        myosotisConfigurationDetailModel.showCausalBeforeAmount;
+
     //ID FORM GIVE
     widget.myosotisConfiguration.myosotisConfigurationDetailModel.idFormGive =
         myosotisConfigurationDetailModel.idFormGive;
@@ -852,6 +862,10 @@ class _MyosotisConfigurationDetailState
     //CUSTOM ID GIVE
     customIdGive = new List<String>.from(widget
         .myosotisConfiguration.myosotisConfigurationDetailModel.customIdGive);
+
+    //SHOW CAUSAL BEFORE AMOUNT
+    showCausalBeforeAmountNotifier.value = widget.myosotisConfiguration
+        .myosotisConfigurationDetailModel.showCausalBeforeAmount;
 
     //ID FORM GIVE
     idFormGiveConfigurationController.text = widget.myosotisConfiguration
@@ -1486,12 +1500,14 @@ class _MyosotisConfigurationDetailState
                             imageBase64: bigImageString,
                             onPick: (img) =>
                                 setState(() => bigImageString = img),
+                            onClear: () => setState(() => bigImageString = ''),
                           ),
                           ImagePickerCard(
                             label: 'Immagine di sfondo piccola',
                             imageBase64: smallImageString,
                             onPick: (img) =>
                                 setState(() => smallImageString = img),
+                            onClear: () => setState(() => bigImageString = ''),
                           ),
                         ],
                       ),
@@ -2060,7 +2076,7 @@ class _MyosotisConfigurationDetailState
                                                               0]
                                                       ? Container(
                                                           key: ValueKey(value),
-                                                          // height: 145,
+                                                          height: 145,
                                                           // padding: EdgeInsets.all(8),
                                                           // color: Colors.grey[200],
                                                           child: Column(
@@ -2071,7 +2087,7 @@ class _MyosotisConfigurationDetailState
                                                               Row(
                                                                 children: [
                                                                   Expanded(
-                                                                    flex: 1,
+                                                                    flex: 2,
                                                                     child:
                                                                         CustomTextFormField(
                                                                       enabled:
@@ -2100,7 +2116,7 @@ class _MyosotisConfigurationDetailState
                                                                     ),
                                                                   ),
                                                                   Expanded(
-                                                                    flex: 1,
+                                                                    flex: 2,
                                                                     child:
                                                                         CustomDropDownButtonFormField(
                                                                       enabled:
@@ -2128,6 +2144,24 @@ class _MyosotisConfigurationDetailState
                                                                       // },
                                                                     ),
                                                                   ),
+                                                                  Expanded(
+                                                                    flex: 1,
+                                                                    child: ValueListenableBuilder<
+                                                                            bool>(
+                                                                        valueListenable:
+                                                                            showCausalBeforeAmountNotifier,
+                                                                        builder: (context,
+                                                                            value,
+                                                                            child) {
+                                                                          return CheckboxListTile(
+                                                                              title: SizedBox(width: 100, child: Text(AppStrings.showCausalBeforeNotifier)),
+                                                                              value: value,
+                                                                              onChanged: (bool? value) {
+                                                                                showCausalBeforeAmountNotifier.value = value ?? false;
+                                                                              },
+                                                                              controlAffinity: ListTileControlAffinity.leading);
+                                                                        }),
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ],
@@ -2135,7 +2169,7 @@ class _MyosotisConfigurationDetailState
                                                         )
                                                       : Container(
                                                           key: ValueKey(value),
-                                                          // height: 145,
+                                                          height: 145,
                                                           // padding: EdgeInsets.all(8),
                                                           // color: Colors.blueAccent[200],
                                                           child: Column(
@@ -3052,17 +3086,23 @@ class _MyosotisConfigurationDetailState
                           //
                           idGiveFromProjectOrFixedValue: idGiveFromProjectOrFixedValue.value,
                           customIdGive: customIdGive,
+                          showCausalBeforeAmount: showCausalBeforeAmountNotifier.value,
                           idFormGive: int.parse(idFormGiveConfigurationController.text),
                           thankYouMethod: thankYouMethod.value,
                           idTransactionalSending: idTransactionalSending,
                           waTemplateName: waTemplateNameController.text,
                           tyEndMessage: tyEndMessageMyosotisConfigurationController.text,
                           optionalField: optionalField);
-
+                  int idMyosotisConfiguration = 0;
+                  if (widget.opType == 'Duplicate') {
+                    idMyosotisConfiguration = 0;
+                  } else {
+                    idMyosotisConfiguration =
+                        widget.myosotisConfiguration.idMyosotisConfiguration;
+                  }
                   MyosotisConfigurationModel myosotisConfigurationModel =
                       MyosotisConfigurationModel(
-                          idMyosotisConfiguration: widget
-                              .myosotisConfiguration.idMyosotisConfiguration,
+                          idMyosotisConfiguration: idMyosotisConfiguration,
                           nameMyosotisConfiguration:
                               nameMyosotisConfigurationController.text,
                           descriptionMyosotisConfiguration:

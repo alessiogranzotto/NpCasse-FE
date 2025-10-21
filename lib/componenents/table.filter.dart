@@ -463,8 +463,9 @@ class CustomDropdownTableFilter<T extends Object> extends TableFilter<T> {
                   },
                   decoration:
                       (decoration ?? InputDecoration(labelText: name)).copyWith(
-                    hintText:
-                        _isLoading ? 'Loading options...' : 'Select an option',
+                    hintText: _isLoading
+                        ? 'Caricamento opzioni...'
+                        : 'Selezionare opzione',
                     // Add a border to ensure only the bottom line is visible
                     border: UnderlineInputBorder(
                       borderSide: BorderSide(
