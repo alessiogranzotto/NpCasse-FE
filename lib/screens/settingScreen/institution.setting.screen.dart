@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -503,11 +504,12 @@ class _InstitutionSettingScreenState extends State<InstitutionSettingScreen> {
             .where((element) =>
                 element.attributeName == 'Parameter.EmailUserAuthMyosotis')
             .firstOrNull;
+
         if (itemEmailUserAuthMyosotis != null) {
-          selectedUserModelTeam = userModelTeam
-              .where((element) =>
-                  element.email == itemEmailUserAuthMyosotis.attributeValue)
-              .first;
+          selectedUserModelTeam = userModelTeam.firstWhereOrNull(
+            (element) =>
+                element.email == itemEmailUserAuthMyosotis.attributeValue,
+          );
         }
 
         var itemPredefinedProduct = cValue
